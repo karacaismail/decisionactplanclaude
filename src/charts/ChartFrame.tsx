@@ -18,7 +18,7 @@ export function ChartFrame({ title, summary, option, table, height = 280 }: {
   const { token } = theme.useToken()
   const [showTable, setShowTable] = useState(false)
   return (
-    <figure style={{ margin: 0, background: token.colorBgContainer, borderRadius: token.borderRadiusLG, padding: 16, display: 'grid', gap: 12 }}>
+    <figure style={{ margin: 0, background: token.colorBgContainer, borderRadius: token.borderRadiusLG, padding: 16, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
       <figcaption style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
         <Typography.Text strong style={{ fontSize: 16 }}>{title}</Typography.Text>
         <Button size="small" icon={showTable ? <ChartBar size={16} /> : <TableIcon size={16} />} onClick={() => setShowTable((s) => !s)} aria-pressed={showTable}>

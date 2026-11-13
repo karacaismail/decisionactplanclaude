@@ -19,14 +19,14 @@ export function StartScreen() {
   const setLocation = usePlanStore((s) => s.setLocation)
   if (!plan) return null
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>Bugün nereden başlayacaksınız?</Typography.Title>
         <Typography.Paragraph style={{ fontSize: 16, color: token.colorTextSecondary }}>Bir sonraki harcamaya hangi kanıtla karar vereceksiniz? Önce sıradaki işi yazın. Sonra kararı değiştirecek bulguyu seçin.</Typography.Paragraph>
       </div>
       <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
         {OPTIONS.map((o) => (
-          <Card key={o.value} hoverable style={{ background: plan.entry === o.value ? token.colorPrimaryBg : token.colorBgContainer }} styles={{ body: { display: 'grid', gap: 12 } }}>
+          <Card key={o.value} hoverable style={{ background: plan.entry === o.value ? token.colorPrimaryBg : token.colorBgContainer }} styles={{ body: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 } }}>
             <o.Icon size={32} color={o.value === 'acil' ? token.colorError : token.colorPrimary} aria-hidden />
             <Typography.Text strong style={{ fontSize: 18 }}>{o.title}</Typography.Text>
             <Typography.Text style={{ color: token.colorTextSecondary }}>{o.text}</Typography.Text>

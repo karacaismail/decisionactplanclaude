@@ -23,7 +23,7 @@ export function DecisionScreen() {
   const last = lastDecision(plan, d.n)
   const firstOpen = steps.find((s) => stepApplies(s.mandatory, plan) !== 'gizli' && plan.steps[s.id]?.status !== 'tamam' && plan.steps[s.id]?.status !== 'atlandi') ?? steps[0]
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
         <Icon size={36} color={token.colorPrimary} aria-hidden />
         <div>

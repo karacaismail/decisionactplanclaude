@@ -9,11 +9,11 @@ export function FormRenderer({ step, plan, values, onChange }: { step: StepDef; 
   const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
   return (
-    <div style={{ display: 'grid', gap: 32 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 32 }}>
       {step.sections.map((sec, i) => {
         if (!evalCondition(sec.when, plan, step.id, values)) return null
         return (
-          <section key={i} aria-labelledby={sec.title ? `${step.id}-b${i}` : undefined} style={{ display: 'grid', gap: 16 }}>
+          <section key={i} aria-labelledby={sec.title ? `${step.id}-b${i}` : undefined} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16 }}>
             {sec.title ? (
               <div>
                 <Typography.Title level={3} id={`${step.id}-b${i}`} style={{ fontSize: 20, margin: 0 }}>{sec.title}</Typography.Title>

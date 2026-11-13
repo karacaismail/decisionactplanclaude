@@ -138,11 +138,11 @@ export const KARAR6: StepDef[] = [
         title: 'Adım 25 için eşikler',
         description: 'Üç işletme ölçüsü ve bir fayda ölçüsü yazın. Sayısal eşiği siz yazarsınız.',
         fields: [
-          { key: 'exampleConsumer', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Tüketici işi ve dijital ürün için örnek: deneyenlerin ilk değer anına ulaşma oranı, ilk hafta geri dönüş oranı, ödeyen sayısı.', when: { all: [{ profile: { customer: ['tuketici'] } }, { profile: { offering: ['dijital'] } }] } },
-          { key: 'exampleBusiness', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'İşletme işi için örnek: pilot tamamlanma sayısı, yenileme niyeti bildiren müşteri sayısı, ödeyen sayısı.', when: { profile: { customer: ['isletme', 'kamu'] } } },
-          { key: 'examplePhysical', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Fiziksel ürün için örnek: iade oranı, tekrar sipariş oranı, birim katkı payı.', when: { profile: { offering: ['fiziksel'] } } },
-          { key: 'exampleService', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Hizmet için örnek: tekrar alım oranı, tavsiye eden müşteri sayısı, katkı payı.', when: { profile: { offering: ['hizmet'] } } },
-          { key: 'exampleMarketplace', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Pazar yeri için örnek: her iki tarafta eşleşme oranı, tekrar işlem oranı, komisyon geliri.', when: { profile: { customer: ['pazarYeri'] } } },
+          { key: 'exampleConsumer', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Tüketici işi ve dijital ürün için üç örnek vardır. Birinci ölçü deneyenlerin ilk değer anına ulaşma oranı olabilir. İkinci ölçü ilk hafta geri dönüş oranı olabilir. Üçüncü ölçü ödeyen sayısı olabilir.', when: { all: [{ profile: { customer: ['tuketici'] } }, { profile: { offering: ['dijital'] } }] } },
+          { key: 'exampleBusiness', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'İşletme işi için üç örnek vardır. Birinci ölçü pilot tamamlanma sayısı olabilir. İkinci ölçü yenileme niyeti bildiren müşteri sayısı olabilir. Üçüncü ölçü ödeyen sayısı olabilir.', when: { profile: { customer: ['isletme', 'kamu'] } } },
+          { key: 'examplePhysical', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Fiziksel ürün için üç örnek vardır. Birinci ölçü iade oranı olabilir. İkinci ölçü tekrar sipariş oranı olabilir. Üçüncü ölçü birim katkı payı olabilir.', when: { profile: { offering: ['fiziksel'] } } },
+          { key: 'exampleService', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Hizmet için üç örnek vardır. Birinci ölçü tekrar alım oranı olabilir. İkinci ölçü tavsiye eden müşteri sayısı olabilir. Üçüncü ölçü katkı payı olabilir.', when: { profile: { offering: ['hizmet'] } } },
+          { key: 'exampleMarketplace', type: 'info', label: 'Örnek ölçüler', tone: 'ornek', text: 'Pazar yeri için üç örnek vardır. Birinci ölçü her iki tarafta eşleşme oranı olabilir. İkinci ölçü tekrar işlem oranı olabilir. Üçüncü ölçü komisyon geliri olabilir.', when: { profile: { customer: ['pazarYeri'] } } },
           { key: 'measure1', type: 'measure', label: 'Birinci ölçü', required: true },
           { key: 'measure2', type: 'measure', label: 'İkinci ölçü', required: true },
           { key: 'measure3', type: 'measure', label: 'Üçüncü ölçü', required: true },
@@ -270,7 +270,7 @@ export const KARAR6: StepDef[] = [
     howTo: [
       'Profilinize göre 2 veya 3 kanal seçin.',
       'Her kanala küçük bütçe ve 2 hafta ayırın.',
-      'Her kanalda maliyeti, gelen kişiyi, deneyen kişiyi ve ödeyen kişiyi sayın.',
+      'Her kanalda maliyeti, geleni, deneyeni ve ödeyeni sayın.',
       'Bir mesajı iki biçimde deneyin. Hangisi daha çok dönüşüm getirdi, yazın.',
     ],
     sections: [

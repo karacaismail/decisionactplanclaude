@@ -15,7 +15,7 @@ export const LADDER: { level: number; label: string; hint: string }[] = [
 export function EvidenceLadderPicker({ value, onChange, id }: { value?: number; onChange: (v: number) => void; id?: string }) {
   const { token } = theme.useToken()
   return (
-    <div role="radiogroup" aria-label="Kanıt basamağı" id={id} style={{ display: 'grid', gap: 6 }}>
+    <div role="radiogroup" aria-label="Kanıt basamağı" id={id} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
       {LADDER.map((l) => {
         const selected = value === l.level
         const strong = l.level <= 3
@@ -67,7 +67,7 @@ export function EvidenceLadderPicker({ value, onChange, id }: { value?: number; 
 export function EvidenceLadder({ value }: { value?: number }) {
   const { token } = theme.useToken()
   return (
-    <ol style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'grid', gap: 4 }}>
+    <ol style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
       {LADDER.map((l) => (
         <li key={l.level} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 14, color: value === l.level ? token.colorPrimary : token.colorTextSecondary, fontWeight: value === l.level ? 600 : 400 }}>
           <span className="tabular" style={{ width: 20 }}>{l.level}.</span>

@@ -62,7 +62,7 @@ export function ReviewScreen() {
   const icon = (v: boolean | null) => (v === true ? <CheckCircle size={22} weight="fill" color={token.colorSuccess} aria-label="Karşılandı" /> : v === false ? <XCircle size={22} weight="fill" color={token.colorError} aria-label="Karşılanmadı" /> : <Question size={22} color={token.colorTextSecondary} aria-label="Ölçülmedi" />)
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Text style={{ color: token.colorTextSecondary, fontSize: 14 }}>Karar {d.n}. {d.title}</Typography.Text>
         <Typography.Title level={1} style={{ fontSize: 28, margin: '4px 0' }}>Kapı {d.n}. {d.gate.title}</Typography.Title>
@@ -81,7 +81,7 @@ export function ReviewScreen() {
         </Space>
       </Card>
       <Card title="Ölçütler">
-        <div style={{ display: 'grid', gap: 10 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 10 }}>
           {d.gate.criteria.map((c) => (
             <div key={c.id} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: 10, borderRadius: token.borderRadius, background: token.colorFillAlter }}>
               {icon(evaluation.criteria[c.id])}

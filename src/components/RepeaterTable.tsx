@@ -48,7 +48,7 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
 
   if (wide) {
     return (
-      <div style={{ display: 'grid', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
         <Table<Row>
           size="middle"
           pagination={false}
@@ -71,9 +71,9 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
     )
   }
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
       {rows.map((r, i) => (
-        <Card key={r._id} size="small" style={{ background: token.colorFillAlter }} styles={{ body: { display: 'grid', gap: 12 } }} title={`${i + 1}. kayıt`} extra={actions(i, r)}>
+        <Card key={r._id} size="small" style={{ background: token.colorFillAlter }} styles={{ body: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 } }} title={`${i + 1}. kayıt`} extra={actions(i, r)}>
           {columns.map((c) => (
             <FieldControl key={c.key} field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} idPrefix={`${idPrefix}-${r._id}`} />
           ))}

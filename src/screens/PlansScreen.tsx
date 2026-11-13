@@ -28,7 +28,7 @@ export function PlansScreen() {
   }
 
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>Planlar</Typography.Title>
         <Typography.Paragraph style={{ fontSize: 16, color: token.colorTextSecondary, marginBottom: 0 }}>
@@ -61,7 +61,7 @@ export function PlansScreen() {
         <div style={{ display: 'grid', gap: 12, gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
           {list.map((p) => (
             <Card key={p.id} title={p.name} extra={<Popconfirm title="Plan silinsin mi?" description="Bu işlem geri alınamaz." okText="Sil" cancelText="Vazgeç" onConfirm={() => deletePlan(p.id)}><Button type="text" danger aria-label="Planı sil" icon={<Trash size={18} />} /></Popconfirm>}>
-              <div style={{ display: 'grid', gap: 8 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
                 <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>Son değişiklik {formatDate(p.updatedAt)}</span>
                 <span className="tabular" style={{ fontSize: 14 }}>Sürüm {p.revision}. {p.decisions.length} karar kaydı.</span>
                 <Button type="primary" icon={<ArrowRight size={18} />} iconPosition="end" onClick={() => { selectPlan(p.id); nav(p.lastLocation ?? '/ozet') }}>
@@ -74,7 +74,7 @@ export function PlansScreen() {
       )}
       <Callout tone="bilgi" title="Veri nerede durur?">Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta "Çıktılar" ekranından JSON dışa aktarın.</Callout>
       <Modal open={open} title="Yeni plan" onCancel={() => setOpen(false)} onOk={create} okText="Oluştur" cancelText="Vazgeç" okButtonProps={{ disabled: !name.trim() }}>
-        <label style={{ display: 'grid', gap: 4 }}>
+        <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
           <span>Planın adı</span>
           <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Örneğin Mahalle kafesi" onPressEnter={create} autoFocus />
         </label>

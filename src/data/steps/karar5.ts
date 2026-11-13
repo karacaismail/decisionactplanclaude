@@ -181,10 +181,10 @@ export const KARAR5: StepDef[] = [
     intro: 'Ön ölüm analizi, işin battığını hayal edip nedenleri önceden yazmaktır. Böylece önlem erken alınır.',
     howTo: [
       '"Bu iş 12 ay sonra battı" diye düşünün. En olası 5 nedeni yazın.',
-      'Her neden için erken işaret, önlem, sorumlu ve durdurma eşiği yazın.',
+      'Her nedene erken işaret, önlem, sorumlu ve durdurma eşiği yazın.',
       'Riskleri altı başlıkta kontrol edin. Başlıklar ticari, teknik, para, operasyon, tedarik ve hukuktur.',
       'Her riske olasılık ve etki puanı verin. Puan 1 ile 3 arasıdır. Çarpımı 6 ve üstü olan risk kritiktir.',
-      'Her kritik risk için bir olay, koşul ve eylem kuralı yazın.',
+      'Her kritik riske bir olay, koşul ve eylem kuralı yazın.',
       'Geri dönülemez kararları işaretleyin. Örneğin uzun kira, büyük stok ve ortaklık payı geri dönülemez.',
     ],
     sections: [
@@ -398,7 +398,7 @@ export const KARAR5: StepDef[] = [
       'Bir hedef yazın. Üç anahtar sonuç yazın. Her sonuç bir sayı olsun.',
       'Sayılar öğrenmeyi ölçsün. "30 ödeyen müşteri" yazın. "1000 takipçi" yazmayın.',
       'Yolu üç kutuya bölün. Şimdi, sonra ve daha sonra. Şimdi kutusu ilk 90 gündür.',
-      'Her 90 günlük maddeye bir sahip ve bir bitiş tarihi yazın.',
+      'Her 90 günlük maddeye sahip ve bitiş tarihi yazın.',
       'Haftalık tek darboğaz sorusunu takvime koyun. "Bu hafta ilerlememi engelleyen tek şey ne?"',
     ],
     sections: [

@@ -16,7 +16,7 @@ export function ThresholdInput({ value, onChange, unit, idPrefix }: { value?: Th
     onChange(next)
   }
   return (
-    <div style={{ display: 'grid', gap: 8 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <InputNumber id={`${idPrefix}-deger`} aria-label="Eşik değeri" style={{ width: 160 }} value={v.value ?? undefined} onChange={(n) => set({ value: n ?? null })} addonAfter={unit || undefined} />
         {v.isGuess ? <Tag color="warning" style={{ fontSize: 14, margin: 0 }}>İlk tahmin</Tag> : <Tag color="success" style={{ fontSize: 14, margin: 0 }}>Dayanağı var</Tag>}

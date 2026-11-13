@@ -21,7 +21,7 @@ export function ScoreMatrix({ rows, criteria, value, onChange }: {
   const total = (r: string) => criteria.reduce((s, c) => s + (v.scores[r]?.[c.key] ?? 0) * (v.weights[c.key] ?? 1), 0)
   const best = Math.max(0, ...rows.map((r) => total(r.id)))
   return (
-    <div style={{ display: 'grid', gap: 12 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
         <Button icon={v.locked ? <Lock size={18} /> : <LockOpen size={18} />} onClick={() => onChange({ ...v, locked: !v.locked })}>
           {v.locked ? 'Ağırlıklar kilitli' : 'Ağırlıkları kilitle'}
@@ -38,7 +38,7 @@ export function ScoreMatrix({ rows, criteria, value, onChange }: {
           { title: 'Seçenek', dataIndex: 'label', fixed: 'left' as const, width: 180 },
           ...criteria.map((c) => ({
             title: (
-              <span style={{ display: 'grid', gap: 4 }}>
+              <span style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
                 {c.label}
                 <InputNumber size="small" min={1} max={5} aria-label={`${c.label} ağırlığı`} value={v.weights[c.key] ?? 1} disabled={v.locked} onChange={(n) => setWeight(c.key, n)} />
               </span>

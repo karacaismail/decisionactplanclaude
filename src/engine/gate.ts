@@ -81,6 +81,9 @@ export function evaluateGate(def: GateDef, plan: PlanDoc, flags: { harm?: boolea
     } else if (unknownCount > 0 && left > 0) {
       suggested = 'yenidenDene'
       reasons.push(`${unknownCount} ölçüt henüz ölçülmedi. Küçük bir deneme ile ölçün.`)
+    } else if (unknownCount > 0) {
+      suggested = 'beklet'
+      reasons.push(`${unknownCount} ölçüt ölçülmedi ve deneme hakkı bitti. Yeni bilgi gelene kadar bekletin ya da yön değiştirin.`)
     } else if (metCount >= Math.ceil(total * 0.6) && left > 0) {
       suggested = 'yenidenDene'
       reasons.push('Ölçütlerin çoğu karşılandı. Eksik olanı tamamlayın.')

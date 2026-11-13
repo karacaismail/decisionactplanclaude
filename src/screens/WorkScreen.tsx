@@ -82,7 +82,7 @@ export function WorkScreen() {
 
   return (
     <div style={{ display: 'grid', gap: 24, gridTemplateColumns: bp.xl ? 'minmax(0, 1fr) 320px' : 'minmax(0, 1fr)', alignItems: 'start' }}>
-      <div style={{ display: 'grid', gap: 24, minWidth: 0 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24, minWidth: 0 }}>
         <div>
           <Typography.Text style={{ color: token.colorTextSecondary, fontSize: 14 }}>Karar {step.decision}. {decision?.title}</Typography.Text>
           <Typography.Title level={1} style={{ fontSize: 28, margin: '4px 0 8px' }}>Adım {step.id}. {step.title}</Typography.Title>
@@ -124,13 +124,13 @@ export function WorkScreen() {
         </div>
       </div>
       {bp.xl ? (
-        <aside style={{ position: 'sticky', top: 76, display: 'grid', gap: 16 }}>
+        <aside style={{ position: 'sticky', top: 76, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16 }}>
           {step.howTo ? <HowTo items={step.howTo} /> : null}
           {decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null}
         </aside>
       ) : null}
       <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(`/karar/${STEPS[next].decision}/adim/${next}`) }}>
-        <label style={{ display: 'grid', gap: 4 }}>
+        <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
           <span>Neden atlıyorsunuz? Neden rapora yazılır.</span>
           <Input.TextArea rows={2} value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />
         </label>
@@ -142,7 +142,7 @@ export function WorkScreen() {
 function HowTo({ items }: { items: string[] }) {
   return (
     <Card size="small" title="Nasıl yapılır?">
-      <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 8 }}>{items.map((t, i) => <li key={i}>{t}</li>)}</ol>
+      <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>{items.map((t, i) => <li key={i}>{t}</li>)}</ol>
     </Card>
   )
 }

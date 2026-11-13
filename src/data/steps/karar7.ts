@@ -128,7 +128,7 @@ export const KARAR7: StepDef[] = [
       {
         title: 'Ölçüm yöntemi',
         fields: [
-          { key: 'methodConsumer', type: 'info', label: 'Ana ölçüm', tone: 'bilgi', text: 'Tüketici işi ve dijital ürün için "Bu ürün yarın kaybolsa ne hissedersiniz?" anketi yapın. Yüzde 40 ve üstü "çok üzülürüm" derse uyum işareti vardır. Geri dönüş eğrisi de düzleşmelidir.', when: { all: [{ profile: { customer: ['tuketici'] } }, { profile: { offering: ['dijital'] } }] } },
+          { key: 'methodConsumer', type: 'info', label: 'Ana ölçüm', tone: 'bilgi', text: 'Müşterilere şu soruyu sorun: "Bu ürün yarın kaybolsa ne hissedersiniz?" Yüzde 40 ve üstü "çok üzülürüm" derse uyum işareti vardır. Geri dönüş eğrisi de düzleşmelidir.', when: { all: [{ profile: { customer: ['tuketici'] } }, { profile: { offering: ['dijital'] } }] } },
           { key: 'methodBusiness', type: 'info', label: 'Ana ölçüm', tone: 'bilgi', text: 'İşletme işi için yenileme oranına bakın. İlk dönem sonunda müşterilerin çoğu yenilerse uyum işareti vardır. Kendi eşiğinizi yazın.', when: { profile: { customer: ['isletme', 'kamu'] } } },
           { key: 'methodPhysical', type: 'info', label: 'Ana ölçüm', tone: 'bilgi', text: 'Fiziksel ürün için tekrar sipariş oranına ve iade oranına bakın. Tekrar sipariş artıyor ve iade düşüyorsa uyum işareti vardır.', when: { profile: { offering: ['fiziksel'] } } },
           { key: 'methodService', type: 'info', label: 'Ana ölçüm', tone: 'bilgi', text: 'Hizmet için tekrar alıma ve tavsiyeye bakın. Yeni müşterilerin önemli bölümü tavsiyeyle geliyorsa uyum işareti vardır.', when: { profile: { offering: ['hizmet'] } } },

@@ -19,8 +19,8 @@ body { margin: 0; min-width: 320px; font-size: 16px; }
 :lang(tr) { -webkit-locale: 'tr'; }
 
 /* Çevreleyen odak halkası yasaktır. Gösterge öğenin sol dışında duran işarettir. */
-*:focus { outline: none; }
-*:focus-visible { outline: none; box-shadow: none; }
+*:focus { outline: none !important; }
+*:focus-visible { outline: none !important; box-shadow: none !important; }
 html[data-focus-mode='keyboard'] :focus-visible { position: relative; }
 html[data-focus-mode='keyboard'] :focus-visible::before {
   content: '';

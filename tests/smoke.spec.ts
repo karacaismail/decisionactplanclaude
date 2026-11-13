@@ -1,8 +1,11 @@
 import { expect, test, type Page } from '@playwright/test'
 
-async function noHorizontalOverflow(page: Page) {
-  const r = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth }))
-  expect(r.sw, 'Sayfa yatay taşmamalı').toBeLessThanOrEqual(r.iw + 1)
+async function noHorizontalOverflow(page: Page, label = '') {
+  const r = await page.evaluate(() => {
+    const wide = [...document.querySelectorAll('body *')].filter((e) => e.getBoundingClientRect().right > window.innerWidth + 1).slice(0, 5).map((e) => e.tagName + '.' + (e as HTMLElement).className.toString().slice(0, 60))
+    return { sw: document.documentElement.scrollWidth, iw: window.innerWidth, wide }
+  })
+  expect(r.sw, `Sayfa yatay taşmamalı ${label} ${r.wide.join(' | ')}`).toBeLessThanOrEqual(r.iw + 1)
 }
 
 async function createPlan(page: Page, name = 'Deneme planı') {
@@ -22,8 +25,8 @@ test('plan oluşturulur ve giriş ekranı taşmaz', async ({ page }) => {
 test('Adım 00 doldurulur, tamamlanır ve Adım 01 açılır', async ({ page }) => {
   await createPlan(page)
   await page.goto('/#/karar/1/adim/00')
-  for (const v of ['tuketici', 'hizmet', 'dusuk', 'tekKurucu', 'kendi', 'varOlan', 'sifirdan']) {
-    await page.getByRole('radio', { name: v }).check({ force: true })
+  for (const v of ['Tüketici', 'Hizmet', 'Düşük', 'Tek kurucu', 'Kendi param', 'Var olan pazar', 'Sıfırdan']) {
+    await page.getByText(v, { exact: true }).first().click()
   }
   await noHorizontalOverflow(page)
   await page.getByRole('button', { name: 'Adımı tamamla' }).click()
@@ -43,25 +46,27 @@ test('kapı ekranı öneri gösterir ve karar kaydeder', async ({ page }) => {
   await expect(save).toBeEnabled()
   await save.click()
   await page.goto('/#/gecmis')
-  await expect(page.getByText('Kapı 1')).toBeVisible()
+  await expect(page.getByText('Kapı 1', { exact: true })).toBeVisible()
   await noHorizontalOverflow(page)
 })
 
-test('çevreleyen odak halkası yok, klavye odağı görünür', async ({ page }) => {
+test('çevreleyen odak halkası yok, klavye odağı görünür', async ({ page, browserName }) => {
   await createPlan(page)
   await page.goto('/#/ozet')
-  await page.keyboard.press('Tab')
-  await page.keyboard.press('Tab')
+  // Safari ailesi düğme ve bağlantılara yalnız Option+Tab ile gider.
+  const tab = browserName === 'webkit' ? 'Alt+Tab' : 'Tab'
+  await page.keyboard.press(tab)
+  await page.keyboard.press(tab)
   const result = await page.evaluate(() => {
     const el = document.activeElement as HTMLElement | null
     if (!el || el === document.body) return { mode: document.documentElement.getAttribute('data-focus-mode'), outline: 'yok', hasMarker: false }
     const cs = getComputedStyle(el)
     const before = getComputedStyle(el, '::before')
-    return { mode: document.documentElement.getAttribute('data-focus-mode'), outline: cs.outlineStyle, shadow: cs.boxShadow, hasMarker: before.width === '3px' }
+    return { mode: document.documentElement.getAttribute('data-focus-mode'), outline: cs.outlineStyle, outlineWidth: cs.outlineWidth, shadow: cs.boxShadow, hasMarker: before.width === '3px', tag: el.tagName + '.' + el.className }
   })
   expect(result.mode).toBe('keyboard')
-  expect(result.outline === 'none' || result.outline === 'yok').toBeTruthy()
-  expect(result.hasMarker).toBeTruthy()
+  expect(result.outline === 'none' || result.outline === 'yok' || result.outlineWidth === '0px', JSON.stringify(result)).toBeTruthy()
+  expect(result.hasMarker, JSON.stringify(result)).toBeTruthy()
 })
 
 test('çıktılar ekranı iki belgeyi üretir', async ({ page }) => {
@@ -71,4 +76,23 @@ test('çıktılar ekranı iki belgeyi üretir', async ({ page }) => {
   await page.getByText('Girişimci aksiyon planı', { exact: true }).click()
   await expect(page.getByRole('heading', { name: 'Girişimci aksiyon planı' })).toBeVisible()
   await noHorizontalOverflow(page)
+})
+
+test('35 adımın hepsi hatasız açılır', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', (e) => errors.push(e.message))
+  page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('antd')) errors.push(m.text()) })
+  await createPlan(page)
+  const ids = Array.from({ length: 35 }, (_, i) => String(i).padStart(2, '0'))
+  for (const id of ids) {
+    const n = id === '00' ? 1 : Number(id) <= 4 ? 1 : Number(id) <= 8 ? 2 : Number(id) <= 12 ? 3 : Number(id) <= 15 ? 4 : Number(id) <= 20 ? 5 : Number(id) <= 25 ? 6 : Number(id) <= 32 ? 7 : 8
+    await page.goto(`/#/karar/${n}/adim/${id}`)
+    await expect(page.getByRole('heading', { name: new RegExp(`Adım ${id}\\.`) })).toBeVisible()
+    await noHorizontalOverflow(page, `adım ${id}`)
+  }
+  for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) {
+    await page.goto(`/#/karar/${n}/kapi`)
+    await expect(page.getByText('Sistemin önerisi')).toBeVisible()
+  }
+  expect(errors, errors.join('\n')).toEqual([])
 })

@@ -30,7 +30,7 @@ export function TasksScreen() {
     setAction(''); setOwner(''); setDue(undefined)
   }
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>İşler</Typography.Title>
         <Typography.Text style={{ color: token.colorTextSecondary }}>Her iş bir karara bağlanır. Sahibi veya tarihi eksik iş taslak kalır. Boş tarihin yerine keyfî süre yazılmaz.</Typography.Text>

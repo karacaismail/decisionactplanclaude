@@ -22,18 +22,18 @@ export function TakeoverScreen() {
   const t = (plan.takeover ?? {}) as Record<string, unknown>
   const set = (k: string, v: unknown) => update((p) => { p.takeover = { ...(p.takeover ?? {}), [k]: v } })
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>Devralma girişi</Typography.Title>
         <Typography.Text style={{ color: token.colorTextSecondary }}>Çalışan bir işi devralıyorsunuz. Planı baştan değil, ortasından başlatırsınız. Adım 00, 01, 02 ve 05 her devralmada yapılır.</Typography.Text>
       </div>
       <Callout tone="uyari" title="Vaatleri sonuçlarla karşılaştırın">Yerine getirilmemiş sözleri ayrıca yazın. Kaydı olmayan cevabı "bilinmiyor" diye yazın. Hiç kayıt yoksa önce 4 haftalık ölçüm yapın. Karar vermeyin.</Callout>
       <Card title="İlk iki haftada üç soru">
-        <div style={{ display: 'grid', gap: 12 }}>
-          <label style={{ display: 'grid', gap: 4 }}><span>Gerçekten ödeyen müşteri var mı? Kaç tane? Son 3 ayda kaç tane kayboldu?</span><Input.TextArea rows={2} value={(t.q1 as string) ?? ''} onChange={(e) => set('q1', e.target.value)} /></label>
-          <label style={{ display: 'grid', gap: 4 }}><span>Hedef nedir? Hangi süre ve hangi parayla?</span><Input.TextArea rows={2} value={(t.q2 as string) ?? ''} onChange={(e) => set('q2', e.target.value)} /></label>
-          <label style={{ display: 'grid', gap: 4 }}><span>En büyük işletme engeli ne?</span><Input.TextArea rows={2} value={(t.q3 as string) ?? ''} onChange={(e) => set('q3', e.target.value)} /></label>
-          <label style={{ display: 'grid', gap: 4 }}><span>Yerine getirilmemiş sözler</span><Input.TextArea rows={2} value={(t.promises as string) ?? ''} onChange={(e) => set('promises', e.target.value)} placeholder="Vaat, kime verildi, durumu" /></label>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Gerçekten ödeyen müşteri var mı? Kaç tane? Son 3 ayda kaç tane kayboldu?</span><Input.TextArea rows={2} value={(t.q1 as string) ?? ''} onChange={(e) => set('q1', e.target.value)} /></label>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Hedef nedir? Hangi süre ve hangi parayla?</span><Input.TextArea rows={2} value={(t.q2 as string) ?? ''} onChange={(e) => set('q2', e.target.value)} /></label>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>En büyük işletme engeli ne?</span><Input.TextArea rows={2} value={(t.q3 as string) ?? ''} onChange={(e) => set('q3', e.target.value)} /></label>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Yerine getirilmemiş sözler</span><Input.TextArea rows={2} value={(t.promises as string) ?? ''} onChange={(e) => set('promises', e.target.value)} placeholder="Vaat, kime verildi, durumu" /></label>
         </div>
       </Card>
       <Card title="Kontrol tablosu">

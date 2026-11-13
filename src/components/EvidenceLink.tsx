@@ -29,19 +29,19 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
       <Button icon={<Plus size={18} />} onClick={() => setOpen(true)}>Yeni kanıt ekle</Button>
       <Modal open={open} title="Yeni kanıt" onCancel={() => setOpen(false)} onOk={save} okText="Kaydet" cancelText="Vazgeç" destroyOnHidden>
         <Space direction="vertical" style={{ width: '100%' }} size={12}>
-          <label style={{ display: 'grid', gap: 4 }}>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
             <span>Kanıtın adı</span>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Örneğin 3 Kasım görüşme notu" />
           </label>
-          <label style={{ display: 'grid', gap: 4 }}>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
             <span>Türü</span>
             <Select value={kind} onChange={setKind} options={[{ value: 'gozlem', label: 'Gözlem. Kayda geçmiş olay.' }, { value: 'tahmin', label: 'Tahmin. Beklenen sonuç.' }, { value: 'varsayim', label: 'Varsayım. Doğru kabul edilen söz.' }]} />
           </label>
-          <label style={{ display: 'grid', gap: 4 }}>
+          <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
             <span>Kaynak ve tarih</span>
             <Input value={source} onChange={(e) => setSource(e.target.value)} placeholder="Kim, ne zaman, nerede?" />
           </label>
-          <div style={{ display: 'grid', gap: 4 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
             <span>Kanıt basamağı</span>
             <EvidenceLadderPicker value={ladder} onChange={setLadder} />
           </div>

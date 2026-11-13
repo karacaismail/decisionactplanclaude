@@ -25,7 +25,7 @@ export function EvidenceScreen() {
     setOpen(null)
   }
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div>
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>Kanıtlar</Typography.Title>
         <Typography.Text style={{ color: token.colorTextSecondary }}>Tek kanıt defteri. Aynı kanıt birden çok adımda kullanılır. Aynı haberin iki kopyası tek kaynaktır.</Typography.Text>
@@ -56,14 +56,14 @@ export function EvidenceScreen() {
       <Callout tone="ipucu" title="Bir bulgu neyi kanıtlar?">Gözlem kayda geçmiş olaydır. Tahmin gelecekte beklediğiniz sonuçtur. Varsayım doğru kabul ettiğiniz sözdür. Eksik ölçümü "bilinmiyor" diye kaydedin. Sıfır yazmayın.</Callout>
       <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.id ? 'Kanıtı düzenle' : 'Yeni kanıt'} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} extra={<Button type="primary" onClick={save} disabled={!open?.title?.trim()}>Kaydet</Button>}>
         {open ? (
-          <div style={{ display: 'grid', gap: 12 }}>
-            <label style={{ display: 'grid', gap: 4 }}><span>Kanıtın adı</span><Input value={open.title ?? ''} onChange={(e) => setOpen({ ...open, title: e.target.value })} /></label>
-            <label style={{ display: 'grid', gap: 4 }}><span>Türü</span><Select value={open.kind} onChange={(v) => setOpen({ ...open, kind: v })} options={[{ value: 'gozlem', label: 'Gözlem' }, { value: 'tahmin', label: 'Tahmin' }, { value: 'varsayim', label: 'Varsayım' }]} /></label>
-            <label style={{ display: 'grid', gap: 4 }}><span>Olay tarihi</span><Input type="date" value={open.date ?? ''} onChange={(e) => setOpen({ ...open, date: e.target.value })} /></label>
-            <label style={{ display: 'grid', gap: 4 }}><span>Kaynak</span><Input value={open.source ?? ''} onChange={(e) => setOpen({ ...open, source: e.target.value })} placeholder="Kim, nerede?" /></label>
-            <label style={{ display: 'grid', gap: 4 }}><span>İlgili grup</span><Input value={open.group ?? ''} onChange={(e) => setOpen({ ...open, group: e.target.value })} placeholder="Hangi müşteri grubu?" /></label>
-            <label style={{ display: 'grid', gap: 4 }}><span>Karşı bulgu</span><Input.TextArea rows={2} value={open.counterFinding ?? ''} onChange={(e) => setOpen({ ...open, counterFinding: e.target.value })} placeholder="Bu iddiayla çelişen ne var?" /></label>
-            <div style={{ display: 'grid', gap: 4 }}><span>Kanıt basamağı</span><EvidenceLadderPicker value={open.ladder} onChange={(l) => setOpen({ ...open, ladder: l })} /></div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Kanıtın adı</span><Input value={open.title ?? ''} onChange={(e) => setOpen({ ...open, title: e.target.value })} /></label>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Türü</span><Select value={open.kind} onChange={(v) => setOpen({ ...open, kind: v })} options={[{ value: 'gozlem', label: 'Gözlem' }, { value: 'tahmin', label: 'Tahmin' }, { value: 'varsayim', label: 'Varsayım' }]} /></label>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Olay tarihi</span><Input type="date" value={open.date ?? ''} onChange={(e) => setOpen({ ...open, date: e.target.value })} /></label>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Kaynak</span><Input value={open.source ?? ''} onChange={(e) => setOpen({ ...open, source: e.target.value })} placeholder="Kim, nerede?" /></label>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>İlgili grup</span><Input value={open.group ?? ''} onChange={(e) => setOpen({ ...open, group: e.target.value })} placeholder="Hangi müşteri grubu?" /></label>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Karşı bulgu</span><Input.TextArea rows={2} value={open.counterFinding ?? ''} onChange={(e) => setOpen({ ...open, counterFinding: e.target.value })} placeholder="Bu iddiayla çelişen ne var?" /></label>
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}><span>Kanıt basamağı</span><EvidenceLadderPicker value={open.ladder} onChange={(l) => setOpen({ ...open, ladder: l })} /></div>
           </div>
         ) : null}
       </Drawer>

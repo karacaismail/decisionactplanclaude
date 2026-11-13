@@ -35,21 +35,21 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving }: { ev
   const condOk = d.chosen !== 'kosulluIlerle' || (d.conditional?.scope && d.conditional?.deadline && d.conditional?.owner && d.conditional?.closingEvidence)
   const canSave = d.reason.trim().length > 0 && d.decidedBy.trim().length > 0 && condOk && (!needsSecond || d.secondOpinion.trim().length > 0)
   return (
-    <div style={{ display: 'grid', gap: 16 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16 }}>
       <Callout tone="sonuc" title="Sistemin önerisi">
-        <div style={{ display: 'grid', gap: 8 }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
           <DecisionBadge outcome={evaluation.suggested} size="lg" />
           <ul style={{ margin: 0, paddingLeft: 20 }}>{evaluation.reasons.map((r, i) => <li key={i}>{r}</li>)}</ul>
         </div>
       </Callout>
-      <div style={{ display: 'grid', gap: 8 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
         <Typography.Text strong>Sonucu seçin</Typography.Text>
-        <Radio.Group value={d.chosen} onChange={(e) => setD({ ...d, chosen: e.target.value })} style={{ display: 'grid', gap: 8 }}>
+        <Radio.Group value={d.chosen} onChange={(e) => setD({ ...d, chosen: e.target.value })} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
           {OUTCOME_PRIORITY.map((o) => {
             const blocked = evaluation.blockedOutcomes.includes(o)
             return (
               <Radio key={o} value={o} disabled={blocked} style={{ alignItems: 'flex-start', padding: 10, borderRadius: token.borderRadius, background: d.chosen === o ? token.colorPrimaryBg : token.colorFillAlter, width: '100%', margin: 0 }}>
-                <span style={{ display: 'grid', gap: 2 }}>
+                <span style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 2 }}>
                   <span style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
                     <span style={{ fontWeight: 600 }}>{OUTCOME_LABEL[o]}</span>
                     {o === evaluation.suggested ? <Tag color="processing" style={{ fontSize: 14 }}>Öneri</Tag> : null}
@@ -63,7 +63,7 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving }: { ev
         </Radio.Group>
       </div>
       {d.chosen === 'kosulluIlerle' ? (
-        <div style={{ display: 'grid', gap: 12, background: token.colorFillAlter, padding: 12, borderRadius: token.borderRadiusLG }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12, background: token.colorFillAlter, padding: 12, borderRadius: token.borderRadiusLG }}>
           <Typography.Text strong>Koşullu izin</Typography.Text>
           <Input placeholder="Hangi iş açılıyor? Kapsam" value={d.conditional?.scope ?? ''} onChange={(e) => setD({ ...d, conditional: { ...(d.conditional ?? { amountKurus: 0, deadline: '', owner: '', closingEvidence: '' }), scope: e.target.value } })} aria-label="Kapsam" />
           <Space wrap>
@@ -75,16 +75,16 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving }: { ev
           <span style={{ fontSize: 14, color: token.colorTextSecondary }}>Süre uzatılamaz. Kanıt gelmezse sonuç kendiliğinden "Beklet" olur.</span>
         </div>
       ) : null}
-      <label style={{ display: 'grid', gap: 4 }}>
+      <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
         <span style={{ fontWeight: 500 }}>Gerekçe{changed ? '. Öneriden farklı seçtiniz. Nedenini yazın.' : ''}</span>
         <Input.TextArea rows={3} value={d.reason} onChange={(e) => setD({ ...d, reason: e.target.value })} aria-required />
       </label>
-      <label style={{ display: 'grid', gap: 4 }}>
+      <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
         <span style={{ fontWeight: 500 }}>Karşı görüş. Kim neden karşı?</span>
         <Input.TextArea rows={2} value={d.counterView} onChange={(e) => setD({ ...d, counterView: e.target.value })} />
       </label>
       {needsSecond ? (
-        <label style={{ display: 'grid', gap: 4 }}>
+        <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
           <span style={{ fontWeight: 500 }}>İkinci görüş. Tek kurucu öneriyi aşıyor. Konuyu bilen kişi ne dedi?</span>
           <Input.TextArea rows={2} value={d.secondOpinion} onChange={(e) => setD({ ...d, secondOpinion: e.target.value })} aria-required />
         </label>

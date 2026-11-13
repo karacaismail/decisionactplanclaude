@@ -31,7 +31,7 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
   const id = `${idPrefix}-${field.key}`
   const helper = (t?: string) => (t ? <div style={{ fontSize: 14, color: token.colorTextSecondary, marginTop: 4 }}>{t}</div> : null)
   const wrap = (control: React.ReactNode, extra?: React.ReactNode) => (
-    <div style={{ display: 'grid', gap: 6, minWidth: 0 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6, minWidth: 0 }}>
       {field.label ? (
         <label htmlFor={id} style={{ fontSize: compact ? 14 : 16, fontWeight: 500 }}>
           {field.label}
@@ -140,7 +140,7 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
       return wrap(<ScoreMatrix rows={rows} criteria={field.criteria} value={value as ScoreMatrixValue} onChange={onChange} />)
     }
     case 'checklist':
-      return wrap(<Checkbox.Group value={(value as string[]) ?? []} onChange={(v) => onChange(v)} options={field.items} style={{ display: 'grid', gap: 8 }} />)
+      return wrap(<Checkbox.Group value={(value as string[]) ?? []} onChange={(v) => onChange(v)} options={field.items} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }} />)
     case 'info':
       return <Callout tone={field.tone ?? 'bilgi'} title={field.label || undefined}>{field.text}</Callout>
     case 'evidenceLink':

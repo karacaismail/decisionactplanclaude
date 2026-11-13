@@ -30,7 +30,7 @@ export function ModelChips({ indexes }: { indexes: number[] }) {
   const [open, setOpen] = useState<Model | null>(null)
   if (!indexes.length) return null
   return (
-    <div style={{ display: 'grid', gap: 8 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
       <span style={{ fontSize: 14, color: token.colorTextSecondary, display: 'flex', alignItems: 'center', gap: 6 }}>
         <BookOpen size={18} aria-hidden /> Karar Kitabı'nda hangi modeller var?
       </span>
@@ -40,7 +40,7 @@ export function ModelChips({ indexes }: { indexes: number[] }) {
           if (!m) return null
           return (
             <Button key={g} size="middle" onClick={() => setOpen(m)} style={{ height: 'auto', padding: '6px 12px', textAlign: 'left', whiteSpace: 'normal' }}>
-              <span style={{ display: 'grid' }}>
+              <span style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)' }}>
                 <span style={{ fontWeight: 500 }}>{m.title}</span>
                 <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{m.section}, {m.no}. sırada</span>
               </span>
@@ -48,7 +48,7 @@ export function ModelChips({ indexes }: { indexes: number[] }) {
           )
         })}
       </div>
-      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} styles={{ body: { display: 'grid', gap: 16, alignContent: 'start' } }}>
+      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} styles={{ body: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16, alignContent: 'start' } }}>
         {open ? (
           <>
             <Space wrap>

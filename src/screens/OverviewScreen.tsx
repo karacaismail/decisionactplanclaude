@@ -19,7 +19,7 @@ export function OverviewScreen() {
   if (!plan) return null
   const openTasks = plan.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
   return (
-    <div style={{ display: 'grid', gap: 24 }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', gap: 16, flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div>
           <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 4 }}>{plan.name}</Typography.Title>
@@ -45,7 +45,7 @@ export function OverviewScreen() {
           const locked = d.n > 1 && !gatePassed(plan, d.n - 1)
           const last = lastDecision(plan, d.n)
           return (
-            <Card key={d.n} style={{ opacity: locked ? 0.7 : 1 }} styles={{ body: { display: 'grid', gap: 10 } }}>
+            <Card key={d.n} style={{ opacity: locked ? 0.7 : 1 }} styles={{ body: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 10 } }}>
               <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                 <Icon size={28} weight={passed ? 'fill' : 'regular'} color={token.colorPrimary} aria-hidden />
                 <Typography.Text strong style={{ fontSize: 18 }}>{d.n}. {d.title}</Typography.Text>
@@ -63,7 +63,7 @@ export function OverviewScreen() {
       </div>
       <Card title="Açık işler" extra={<Link to="/isler">Hepsini gör</Link>}>
         {openTasks.length === 0 ? <Typography.Text style={{ color: token.colorTextSecondary }}>Açık iş yok.</Typography.Text> : (
-          <ul style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 6 }}>
+          <ul style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
             {openTasks.slice(0, 5).map((t) => <li key={t.id}>{t.action} {t.owner ? `(${t.owner})` : ''} {t.dueDate ? `· ${formatDate(t.dueDate, false)}` : ''}</li>)}
           </ul>
         )}
