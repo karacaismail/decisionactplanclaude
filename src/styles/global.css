@@ -23,7 +23,7 @@
   --space-6: 24px;
   --space-8: 32px;
   --space-12: 48px;
-  --content-max: 1120px;
+  --content-max: 1440px;
 }
 
 html { -webkit-text-size-adjust: 100%; }
@@ -337,3 +337,116 @@ textarea.ant-input { resize: none; }
 .work-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); position: sticky; top: 72px; }
 .howto { display: grid; gap: 6px; }
 .howto ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+/* ================================================================== */
+/* Kurumsal görünüm katmanı: koyu yan menü, beyaz kartlar, gölge.      */
+/* Önceki sınıfların üstüne yazar. Renkler yalnız değişkenlerden gelir. */
+/* ================================================================== */
+:root { --radius-panel: 12px; --radius-control: 8px; --radius-hero: 16px; --shadow-card: 0 1px 2px var(--color-shadow), 0 1px 3px var(--color-shadow); --shadow-float: 0 12px 32px var(--color-shadow); }
+body { letter-spacing: -0.005em; }
+
+/* Yan menü: koyu lacivert */
+.shell-sider { background: var(--color-hero-surface) !important; border-right: 0; }
+.shell-sider .brand { padding: 16px 16px 12px; height: 60px; }
+.shell-sider .brand-mark { background: var(--color-hero-action); color: var(--color-hero-action-text); width: 32px; height: 32px; border-radius: 8px; }
+.shell-sider .brand-text strong { color: var(--color-hero-text); font-size: 15px; }
+.shell-sider .shell-menu.ant-menu, .ant-drawer .shell-menu.ant-menu { color: var(--color-hero-muted); padding: 8px 12px; }
+.shell-sider .shell-menu .ant-menu-item, .ant-drawer .shell-menu .ant-menu-item { color: var(--color-hero-muted) !important; height: 40px !important; line-height: 40px !important; border-radius: 8px; padding-inline: 12px !important; }
+.shell-sider .shell-menu .ant-menu-item .ant-menu-item-icon, .ant-drawer .shell-menu .ant-menu-item .ant-menu-item-icon { color: var(--color-hero-muted); }
+.shell-sider .shell-menu .ant-menu-item:hover, .ant-drawer .shell-menu .ant-menu-item:hover { color: var(--color-hero-text) !important; background: rgba(255, 255, 255, 0.06) !important; }
+.shell-sider .shell-menu .ant-menu-item-selected, .ant-drawer .shell-menu .ant-menu-item-selected { color: var(--color-hero-text) !important; background: rgba(255, 255, 255, 0.10) !important; box-shadow: inset 3px 0 0 var(--color-hero-action); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.shell-sider .shell-menu .ant-menu-item-selected .ant-menu-item-icon, .ant-drawer .shell-menu .ant-menu-item-selected .ant-menu-item-icon { color: var(--color-hero-action); }
+.shell-sider .shell-menu .ant-menu-item-group-title, .ant-drawer .shell-menu .ant-menu-item-group-title { color: var(--color-hero-muted); opacity: 0.8; padding: 18px 12px 6px; }
+.shell-sider .status-dot, .ant-drawer .status-dot { background: var(--color-hero-line); }
+.shell-sider .status-dot.is-passed, .ant-drawer .status-dot.is-passed { background: var(--color-status-ok); }
+.shell-sider .status-dot.is-current, .ant-drawer .status-dot.is-current { background: var(--color-hero-action); box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.25); }
+.ant-drawer .ant-drawer-header, .ant-drawer .ant-drawer-body { background: var(--color-hero-surface) !important; }
+.ant-drawer .brand-text strong { color: var(--color-hero-text); }
+.ant-drawer .ant-drawer-close { color: var(--color-hero-muted) !important; }
+
+/* Üst şerit: beyaz, gölgeli */
+.shell-header { height: 60px !important; line-height: 60px !important; background: var(--color-surface-work) !important; border-bottom: 0; box-shadow: 0 1px 0 var(--color-border), 0 2px 8px var(--color-shadow); }
+.breadcrumb { font-size: 14px; }
+.breadcrumb .crumb.is-current { font-size: 15px; }
+.shell-content { padding: 28px 16px 96px; }
+@media (min-width: 992px) { .shell-content { padding: 32px 36px 96px; } }
+
+/* Kartlar: beyaz yüzey, yumuşak gölge, kenarlık yok */
+.section { background: var(--color-surface-work); border-radius: var(--radius-panel); padding: 24px; box-shadow: var(--shadow-card); }
+.section + .section, .section.is-divided { border-top: 0; padding-top: 24px; }
+.panel { border: 0; box-shadow: var(--shadow-card); }
+.surface-card { border: 0; box-shadow: var(--shadow-card); }
+.surface-card.is-link:hover { box-shadow: var(--shadow-float); transform: translateY(-1px); transition: box-shadow var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+.surface-card.is-selected { box-shadow: 0 0 0 2px var(--color-action-primary), var(--shadow-card); }
+.choice-list { border: 0; box-shadow: var(--shadow-card); }
+.empty-state { border-top: 0; padding: 8px 0; }
+.page-header h1, h1.page-title { font-size: 30px; letter-spacing: -0.02em; }
+.page-kicker { color: var(--color-action-primary); }
+
+/* KPI kartları: ikonlu, beyaz, gölgeli */
+.kpi-strip { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; border: 0; }
+@media (min-width: 860px) { .kpi-strip { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.kpi { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 18px 20px; gap: 6px; min-height: 108px; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'label icon' 'value icon' 'note icon'; align-items: start; }
+.kpi + .kpi { border-left: 0; padding-left: 20px; }
+@media (max-width: 859px) { .kpi:nth-child(n + 3) { border-top: 0; } .kpi:nth-child(3) { padding-left: 20px; } }
+.kpi.is-link { transition: box-shadow var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+.kpi.is-link:hover { box-shadow: var(--shadow-float); transform: translateY(-1px); }
+.kpi.is-link:hover .kpi-value { color: var(--color-text-primary); }
+.kpi-label { grid-area: label; letter-spacing: 0.04em; text-transform: none; font-size: 14px; }
+.kpi-label > span { display: none; }
+.kpi-value { grid-area: value; font-size: 30px; letter-spacing: -0.02em; }
+.kpi-note { grid-area: note; }
+.kpi-icon { grid-area: icon; display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: var(--color-tone-orange-bg); color: var(--color-action-primary); }
+.kpi:nth-child(2) .kpi-icon { background: var(--color-tone-teal-bg); color: var(--color-tone-teal); }
+.kpi:nth-child(3) .kpi-icon { background: var(--color-tone-purple-bg); color: var(--color-tone-purple); }
+.kpi:nth-child(4) .kpi-icon { background: var(--color-tone-navy-bg); color: var(--color-tone-navy); }
+
+/* Hero: derin gradyan, gölge */
+.hero { background: linear-gradient(135deg, var(--color-hero-surface) 0%, var(--color-hero-surface-alt) 100%); border-radius: var(--radius-hero); box-shadow: var(--shadow-float); padding: 28px 24px; }
+@media (min-width: 860px) { .hero { padding: 36px 40px; min-height: 220px; } }
+.hero::after { content: ''; position: absolute; right: -80px; top: -80px; width: 320px; height: 320px; border-radius: 50%; background: radial-gradient(closest-side, rgba(249, 115, 22, 0.18), transparent); pointer-events: none; }
+.hero h2 { font-size: 28px; }
+@media (min-width: 860px) { .hero h2 { font-size: 32px; } }
+.hero .ant-btn.hero-button, .hero .ant-btn.hero-button:hover { box-shadow: 0 6px 16px rgba(249, 115, 22, 0.35); }
+.ring { width: 112px; height: 112px; }
+.ring-text { font-size: 24px; }
+
+/* Sınır satırı ve anahtar: kart içinde */
+.meta-stack { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 8px 24px; align-items: center; justify-content: space-between; }
+
+/* Listeler: satır çizgileri daha hafif */
+.route-item { min-height: 48px; }
+.route-item.is-current { background: var(--color-selected-bg); border-radius: 8px; padding-inline: 8px; }
+.route-item:hover { border-radius: 8px; padding-inline: 8px; }
+
+/* Etiketler: hap biçimi */
+.tag, .decision-badge { border-radius: 999px; padding: 0 10px; }
+.ant-tag { border-radius: 999px !important; padding: 0 10px !important; }
+.status-dot { width: 8px; height: 8px; }
+
+/* Tablolar: başlık zemini hafif, satırlar çizgili */
+.ant-table-thead > tr > th { background: var(--color-surface-context) !important; text-transform: none; letter-spacing: 0.02em; }
+.ant-table-thead > tr > th:first-child { border-top-left-radius: 8px; }
+.ant-table-thead > tr > th:last-child { border-top-right-radius: 8px; }
+
+/* Girişler */
+.ant-input, .ant-input-affix-wrapper, .ant-select-selector, .ant-input-number, .ant-picker { border-color: var(--color-border-strong) !important; box-shadow: 0 1px 2px var(--color-shadow) !important; }
+.ant-btn-default { box-shadow: 0 1px 2px var(--color-shadow) !important; }
+.ant-btn-primary { box-shadow: 0 4px 12px rgba(194, 65, 12, 0.28) !important; }
+
+/* Not bloğu: hafif zemin */
+.note { background: var(--color-surface-context); border-radius: 0 8px 8px 0; padding: 12px 16px; }
+
+/* Form bölümleri kart içinde */
+.form-section { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 24px; }
+.form-section + .form-section { border-top: 0; padding-top: 24px; }
+.work-aside .howto, .work-aside .note { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 20px; }
+.work-aside .note { border-left-width: 3px; border-radius: 0 12px 12px 0; }
+.action-bar { background: var(--color-surface-work); box-shadow: 0 -4px 16px var(--color-shadow); border-top: 0; }
+
+/* Bağlantılar: menü ve satır bağlantıları çizgisiz; metin içi bağlantılar altı çizili. */
+a { text-decoration: none; }
+.shell-menu a, .route-item, .shortcut, .plan-row, .breadcrumb a { text-decoration: none !important; }
+.note a, p a, .helper a, .recent-reason a, .section-head a, .ant-typography a { text-decoration: underline; text-underline-offset: 2px; }
+/* Tablo hücresi girişleri: gölge yok, yalnız alt çizgi. */
+.cell-input, .cell-input.ant-select .ant-select-selector, .cell-input.ant-input, .cell-input.ant-input-number { box-shadow: none !important; border-color: transparent !important; }

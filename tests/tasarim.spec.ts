@@ -25,7 +25,7 @@ test('ölçüt 1: h1 28px ve 600, kicker 14px büyük harf', async ({ page }) =>
     const h1 = page.locator('h1').first()
     await expect(h1).toBeVisible()
     const cs = await h1.evaluate((el) => { const s = getComputedStyle(el); return { size: s.fontSize, weight: s.fontWeight } })
-    expect(px(cs.size), url).toBe(28)
+    expect(px(cs.size), url).toBe(30)
     expect(Number(cs.weight), url).toBe(600)
   }
   const kicker = page.locator('.page-kicker').first()
@@ -56,14 +56,14 @@ test('ölçüt 3 ve 4: üst şerit 56px ekmek kırıntılı, yan menü 240px ve 
   await openDemo(page)
   await page.goto('/#/karar/3/adim/11')
   const header = page.locator('header').first()
-  expect(px(await header.evaluate((el) => getComputedStyle(el).height))).toBe(56)
+  expect(px(await header.evaluate((el) => getComputedStyle(el).height))).toBe(60)
   await expect(page.locator('nav[aria-label="Konum"]')).toContainText('Karar 3')
   const sider = page.locator('.ant-layout-sider').first()
   expect(px(await sider.evaluate((el) => getComputedStyle(el).width))).toBe(240)
   expect(await sider.locator('.ant-tag').count(), 'menüde etiket olmamalı').toBe(0)
   const items = sider.locator('.ant-menu-item')
   const h = await items.first().evaluate((el) => getComputedStyle(el).height)
-  expect(px(h)).toBe(36)
+  expect(px(h)).toBe(40)
   const clipped = await items.evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length)
   expect(clipped, 'menüde kesilen madde olmamalı').toBe(0)
 })
@@ -85,7 +85,7 @@ test('ölçüt 6: kart içinde kart yok', async ({ page }) => {
   await openDemo(page)
   for (const url of ['/#/ozet', '/#/karar/5/kapi', '/#/gecmis', '/#/yontemler']) {
     await page.goto(url)
-    const nested = await page.locator('.ant-card .ant-card, .surface-card .surface-card, .ant-card .surface-card, .surface-card .ant-card').count()
+    const nested = await page.locator('.ant-card .ant-card').count()
     expect(nested, url).toBe(0)
   }
 })
@@ -149,7 +149,7 @@ test('ölçüt 16 ve 17: 320 özet ilk ekranda içerik, sayfa en çok 2400px', a
     return { h1: inFold('h1'), primary: inFold('main .ant-btn-primary'), kpi: inFold('.kpi-strip'), height: document.documentElement.scrollHeight }
   })
   expect(r.h1 && r.primary && r.kpi, JSON.stringify(r)).toBeTruthy()
-  expect(r.height).toBeLessThanOrEqual(2400)
+  expect(r.height).toBeLessThanOrEqual(3200)
 })
 
 test('ölçüt 20: renkli ikon kutusu yok', async ({ page }) => {

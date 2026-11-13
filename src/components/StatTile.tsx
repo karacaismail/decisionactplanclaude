@@ -30,10 +30,8 @@ export function StatTile({
   const clickable = Boolean(to || onClick)
   const body = (
     <>
-      <span className="kpi-label">
-        {icon ? <span aria-hidden style={{ display: 'inline-flex' }}>{icon}</span> : null}
-        {label}
-      </span>
+      <span className="kpi-label">{label}</span>
+      {icon ? <span className="kpi-icon" aria-hidden>{icon}</span> : null}
       <span className="kpi-value">
         {value}
         {unit ? <span>{unit}</span> : null}

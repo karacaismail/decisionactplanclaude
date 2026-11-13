@@ -15,6 +15,10 @@ Bu belge ekranların uyması gereken ortak kuralları anlatır. Kurallar [1. tur
 
 Yalnız 400 ve 600 ağırlık kullanılır. 14 px altı metin yoktur.
 
+## Görünüm kararı (3. tur, 13 Kasım 2026)
+
+Kullanıcı düz bej görünümü "Windows 95 gibi" buldu. Karar: kurumsal yazılımların tanıdık dili kullanılır. Yan menü koyu lacivert, üst şerit beyaz ve gölgeli, bölümler beyaz kart ve yumuşak gölge, KPI kartlarında renkli ikon kutusu, giriş bloğu derin gradyan. Kenarlık yerine gölge ve yüzey tonu ayrım kurar. Bu karar bağımsız eleştirmenin "kart yok, ikon kutusu yok" önerisinin önüne geçer.
+
 ## Yüzey ve köşe
 
 - Sayfa zemini `--color-surface-page`. İş yüzeyi `--color-surface-work`. Çukur yüzey `--color-surface-context` yalnız seçili durum ve giriş zemini için kullanılır.
