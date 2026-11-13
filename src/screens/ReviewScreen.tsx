@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Button, Card, Checkbox, Input, Space, Table, Tag, Typography, theme, App as AntApp } from 'antd'
+import { Button, Checkbox, Input, Table, App as AntApp } from 'antd'
 import { useNavigate, useParams } from 'react-router'
 import { CheckCircle, XCircle, Question } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -9,12 +9,15 @@ import { OutcomePanel, type OutcomeDraft } from '@/components/OutcomePanel'
 import { LimitsBar } from '@/components/LimitsBar'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { Callout } from '@/components/Callout'
-import { OUTCOME_LABEL } from '@/data/types'
+import { PageHeader, SectionHead } from '@/components/PageHeader'
+import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { openReviews } from '@/engine/changes'
+import '@/styles/screens-kapi.css'
+
+interface RuleRow { condition: string; outcome: Outcome; note?: string }
 
 export function ReviewScreen() {
-  const { token } = theme.useToken()
   const { n } = useParams()
   const nav = useNavigate()
   const { message } = AntApp.useApp()
@@ -76,91 +79,137 @@ export function ReviewScreen() {
     nav(to)
   }
 
-  const icon = (v: boolean | null) => (v === true ? <CheckCircle size={22} weight="fill" color={token.colorSuccess} aria-label="Karşılandı" /> : v === false ? <XCircle size={22} weight="fill" color={token.colorError} aria-label="Karşılanmadı" /> : <Question size={22} color={token.colorTextSecondary} aria-label="Ölçülmedi" />)
+  const icon = (v: boolean | null) =>
+    v === true ? (
+      <span className="criterion-icon is-ok"><CheckCircle size={16} weight="fill" aria-label="Karşılandı" /></span>
+    ) : v === false ? (
+      <span className="criterion-icon is-harm"><XCircle size={16} weight="fill" aria-label="Karşılanmadı" /></span>
+    ) : (
+      <span className="criterion-icon is-muted"><Question size={16} aria-label="Ölçülmedi" /></span>
+    )
+
+  const rows: RuleRow[] = [
+    { condition: 'Ciddi zarar tehlikesi var', outcome: 'durdur', note: 'Etkilenen işi güvenli biçimde kapatın.' },
+    { condition: 'Gerekli izin veya yetki eksik', outcome: 'beklet', note: 'İzne bağlı işi açmayın. Yüksek satış beklentisi bu engeli kaldırmaz.' },
+    ...d.gate.rows,
+  ]
+  const matched = (r: RuleRow) => evaluation.matchedRow?.condition === r.condition
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
-      <div>
-        <Typography.Text style={{ color: token.colorTextSecondary, fontSize: 14 }}>Karar {d.n}. {d.title}</Typography.Text>
-        <Typography.Title level={1} style={{ fontSize: 28, margin: '4px 0' }}>Kapı {d.n}. {d.gate.title}</Typography.Title>
-        <Typography.Text>Hangi işe karar veriyoruz? {d.question}</Typography.Text>
-      </div>
+    <div className="page">
+      <PageHeader
+        kicker={`Karar ${d.n}. ${d.title}`}
+        title={`Kapı ${d.n}. ${d.gate.title}`}
+        documentTitle={`Kapı ${d.n}`}
+        description={<>Hangi işe karar veriyoruz? {d.question}</>}
+      />
+
       {last ? (
         <Callout tone={last.stale ? 'uyari' : 'bilgi'} title={`Son kayıt: ${formatDate(last.decidedAt)}`}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
-            <Space wrap><DecisionBadge outcome={effectiveOutcome(last)} />{last.stale ? <Tag color="warning" style={{ fontSize: 14, margin: 0 }}>İnceleme bekliyor</Tag> : null}<span>{last.reason}</span></Space>
+          <div className="history-notes">
+            <span className="history-meta">
+              <DecisionBadge outcome={effectiveOutcome(last)} />
+              {last.stale ? <span className="tag is-hold">İnceleme bekliyor</span> : null}
+            </span>
+            <span>{last.reason}</span>
             {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Kapı geçilmiş sayılmaz. Kararı yeniden kaydedin.</span> : null}
           </div>
         </Callout>
       ) : null}
+
+      <LimitsBar plan={plan} retriesLeft={evaluation.retriesLeft} compact />
+
       {pending.length > 0 ? (
-        <Card title="İkinci görüş bekleyen değişiklikler">
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
-            <Typography.Text>Tek kurucu sınırı artırdı. Konuyu bilen başka bir kişi görüş yazmadan "İlerle" ve "Koşullu ilerle" kaydedilmez.</Typography.Text>
-            <ul role="list" style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
-              {pending.map((c) => (
-                <li key={c.id}>
-                  <strong>{c.label}</strong>: {changeValue(c.key, c.before)} yerine {changeValue(c.key, c.after)}. <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>{formatDate(c.at)}</span>
-                </li>
-              ))}
-            </ul>
-            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
-              <span style={{ fontWeight: 500 }}>İnceleyen kişi. Kararı veren kurucu olamaz.</span>
-              <Input value={reviewer} onChange={(e) => setReviewer(e.target.value)} placeholder="Ad Soyad" style={{ maxWidth: 320 }} />
-            </label>
-            <Space wrap>
-              {pending.map((c) => (
-                <Button key={c.id} disabled={!reviewer.trim()} onClick={() => saveReview(c.id)}>
-                  Görüşü kaydet: {c.label}
-                </Button>
-              ))}
-            </Space>
+        <section className="section" aria-labelledby="ikinci-gorus-title">
+          <div className="section-head">
+            <h2 id="ikinci-gorus-title">İkinci görüş bekleyen değişiklikler</h2>
+            <p>Tek kurucu sınırı artırdı. Konuyu bilen başka bir kişi görüş yazmadan "İlerle" ve "Koşullu ilerle" kaydedilmez.</p>
           </div>
-        </Card>
+          <ul className="row-list">
+            {pending.map((c) => (
+              <li key={c.id}>
+                <div className="row">
+                  <span className="grow"><strong>{c.label}</strong>: {changeValue(c.key, c.before)} yerine {changeValue(c.key, c.after)}.</span>
+                  <span className="helper">{formatDate(c.at)}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+          <div className="field" style={{ maxWidth: 360 }}>
+            <label className="field-label" htmlFor="inceleyen">İnceleyen kişi</label>
+            <Input id="inceleyen" value={reviewer} onChange={(e) => setReviewer(e.target.value)} placeholder="Ad Soyad" />
+            <span className="field-help">Kararı veren kurucu olamaz.</span>
+          </div>
+          <div className="toolbar-group">
+            {pending.map((c) => (
+              <Button key={c.id} disabled={!reviewer.trim()} onClick={() => saveReview(c.id)}>
+                Görüşü kaydet: {c.label}
+              </Button>
+            ))}
+          </div>
+        </section>
       ) : null}
-      <LimitsBar plan={plan} retriesLeft={evaluation.retriesLeft} />
-      <Card title="Önce zarar ve izin">
-        <Space orientation="vertical">
-          <Checkbox checked={harm} onChange={(e) => setHarm(e.target.checked)}>Ciddi zarar tehlikesi var. Etkilenen iş durdurulmalı.</Checkbox>
-          <Checkbox checked={permitMissing} onChange={(e) => setPermitMissing(e.target.checked)}>Gerekli izin veya yetki eksik. İzne bağlı iş açılmamalı.</Checkbox>
-        </Space>
-      </Card>
-      <Card title="Ölçütler">
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 10 }}>
-          {d.gate.criteria.map((c) => (
-            <div key={c.id} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: 10, borderRadius: token.borderRadius, background: token.colorFillAlter }}>
-              {icon(evaluation.criteria[c.id])}
-              <div>
-                <div>{c.label}</div>
-                {c.hint ? <div style={{ fontSize: 14, color: token.colorTextSecondary }}>{c.hint}</div> : null}
-              </div>
+
+      <div className="kapi-grid">
+        <div className="kapi-main">
+          <section className="section" aria-label="Önce zarar ve izin">
+            <SectionHead title="Önce zarar ve izin" description="Bu iki soru ölçütlerden önce gelir." />
+            <div className="check-list">
+              <Checkbox checked={harm} onChange={(e) => setHarm(e.target.checked)}>Ciddi zarar tehlikesi var. Etkilenen iş durdurulmalı.</Checkbox>
+              <Checkbox checked={permitMissing} onChange={(e) => setPermitMissing(e.target.checked)}>Gerekli izin veya yetki eksik. İzne bağlı iş açılmamalı.</Checkbox>
             </div>
-          ))}
-          <Typography.Text style={{ color: token.colorTextSecondary }} className="tabular">{evaluation.metCount} / {evaluation.total} ölçüt karşılandı. {evaluation.unknownCount} ölçüt ölçülmedi.</Typography.Text>
+          </section>
+
+          <section className="section" aria-label="Ölçütler">
+            <SectionHead title="Ölçütler" />
+            <ul className="criteria-list">
+              {d.gate.criteria.map((c) => {
+                const v = evaluation.criteria[c.id]
+                return (
+                  <li key={c.id}>
+                    <div className="criterion">
+                      {icon(v)}
+                      <div className="criterion-text">
+                        <span>{c.label}</span>
+                        {c.hint ? <span className="helper">{c.hint}</span> : null}
+                      </div>
+                      {v === null ? <span className="tag is-muted">Ölçülmedi</span> : <span />}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+            <span className="helper tabular">{evaluation.metCount} / {evaluation.total} ölçüt karşılandı. {evaluation.unknownCount} ölçüt ölçülmedi.</span>
+          </section>
+
+          <section className="section" aria-label="Koşula göre sonuç">
+            <SectionHead title="Koşula göre sonuç" />
+            <div className="table-scroll">
+              <Table<RuleRow>
+                size="small"
+                pagination={false}
+                rowKey={(r) => r.condition}
+                dataSource={rows}
+                style={{ minWidth: 560 }}
+                rowClassName={(r) => (matched(r) ? 'is-matched' : '')}
+                columns={[
+                  { title: 'Durum', dataIndex: 'condition', width: '40%', render: (t: string, r) => <span className="history-meta" style={{ fontWeight: matched(r) ? 600 : 400 }}>{t}{matched(r) ? <span className="tag">Uyuyor</span> : null}</span> },
+                  { title: 'Sonuç', dataIndex: 'outcome', width: 160, render: (o: Outcome) => <DecisionBadge outcome={o} /> },
+                  { title: 'Not', dataIndex: 'note' },
+                ]}
+              />
+            </div>
+            <span className="helper">Üstteki satır önce gelir.</span>
+          </section>
         </div>
-      </Card>
-      <Card title="Koşula göre sonuç" size="small" extra={<span style={{ fontSize: 14, color: token.colorTextSecondary }}>Üstteki satır önce gelir.</span>}>
-        <Table
-          size="small"
-          pagination={false}
-          rowKey={(r) => r.condition}
-          dataSource={[
-            { condition: 'Ciddi zarar tehlikesi var', outcome: 'durdur' as const, note: 'Etkilenen işi güvenli biçimde kapatın.' },
-            { condition: 'Gerekli izin veya yetki eksik', outcome: 'beklet' as const, note: 'İzne bağlı işi açmayın. Yüksek satış beklentisi bu engeli kaldırmaz.' },
-            ...d.gate.rows,
-          ]}
-          rowClassName={(r) => (evaluation.matchedRow?.condition === r.condition ? 'eslesen-satir' : '')}
-          columns={[
-            { title: 'Durum', dataIndex: 'condition', render: (t: string, r) => <span style={{ fontWeight: evaluation.matchedRow?.condition === r.condition ? 600 : 400 }}>{t}{evaluation.matchedRow?.condition === r.condition ? <Tag color="processing" style={{ marginLeft: 8, fontSize: 14 }}>Uyuyor</Tag> : null}</span> },
-            { title: 'Sonuç', dataIndex: 'outcome', render: (o) => <DecisionBadge outcome={o} size="sm" /> },
-            { title: 'Not', dataIndex: 'note' },
-          ]}
-          scroll={{ x: 'max-content' }}
-        />
-      </Card>
-      <Card title="Kararı kaydedin">
-        <OutcomePanel evaluation={evaluation} onSave={save} singleFounder={single} plan={plan} def={d.gate} harm={harm} />
-      </Card>
+
+        <div className="kapi-aside">
+          <section className="section" aria-label="Kararı kaydedin">
+            <SectionHead title="Kararı kaydedin" description="Öneriyi seçin ya da gerekçeyle değiştirin." />
+            <OutcomePanel evaluation={evaluation} onSave={save} singleFounder={single} plan={plan} def={d.gate} harm={harm} />
+          </section>
+        </div>
+      </div>
     </div>
   )
 }

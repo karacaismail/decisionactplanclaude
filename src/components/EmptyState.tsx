@@ -1,23 +1,15 @@
 import type { ReactNode } from 'react'
+import '@/styles/screens-pano.css'
 
-/** Boş durum: ikon, başlık, tek cümle açıklama ve eylemler. Kenarlıksız yüzey. */
-export function EmptyState({
-  icon,
-  title,
-  text,
-  actions,
-  tone = 'navy',
-}: {
-  icon?: ReactNode
-  title: string
-  text?: ReactNode
-  actions?: ReactNode
-  tone?: 'teal' | 'purple' | 'orange' | 'navy'
-}) {
+/**
+ * Boş durum: başlık, tek cümle açıklama ve en çok iki düğme.
+ * Kart değildir. İkon isteğe bağlıdır ve 16 px gri çizilir. Renkli ikon kutusu yoktur.
+ */
+export function EmptyState({ icon, title, text, actions }: { icon?: ReactNode; title: string; text?: ReactNode; actions?: ReactNode }) {
   return (
     <div className="empty-state" role="status">
       {icon ? (
-        <span className={`icon-tile ${tone}`} aria-hidden style={{ width: 56, height: 56 }}>
+        <span className="empty-icon" aria-hidden>
           {icon}
         </span>
       ) : null}

@@ -1,28 +1,36 @@
 import { useEffect, useRef } from 'react'
 import { theme } from 'antd'
 import * as echarts from 'echarts/core'
+import type { ECBasicOption } from 'echarts/types/dist/shared'
 import { BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent } from 'echarts/components'
+import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, DataZoomComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { font, motion } from '@/theme/tokens'
 
-echarts.use([BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, CanvasRenderer])
+echarts.use([BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, DataZoomComponent, CanvasRenderer])
 
-/** ECharts sarmalayıcı. Renk ve yazı tokenlardan gelir. Etiketler 14 pikselin altına inmez. */
+/** ECharts sarmalayıcı. Renk ve yazı tokenlardan gelir. Etiketler 14 pikselin altına inmez. Desen çizilmez. */
 export default function EChart({ option, height, ariaLabel }: { option: unknown; height: number; ariaLabel: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { token } = theme.useToken()
   useEffect(() => {
     if (!ref.current) return
     const chart = echarts.init(ref.current, undefined, { renderer: 'canvas' })
+    /* Desen (decal) yok. Yazı 14 px Outfit. Süre ve eğri hareket tokenından gelir. */
     const base = {
-      color: [token.colorPrimary, token.colorInfo, token.colorSuccess, token.colorWarning, token.colorError, token.colorTextSecondary],
-      textStyle: { fontFamily: font.family, fontSize: 14, color: token.colorText },
-      aria: { enabled: true, decal: { show: true } },
+      color: [token.colorText, token.colorTextSecondary, token.colorBorder, token.colorSuccess, token.colorWarning, token.colorError],
+      backgroundColor: 'transparent',
+      textStyle: { fontFamily: font.family, fontSize: font.helper, color: token.colorText },
+      aria: { enabled: true, decal: { show: false } },
       animationDuration: motion.page,
+      animationDurationUpdate: motion.page,
       animationEasing: 'cubicInOut' as const,
+      animationEasingUpdate: 'cubicInOut' as const,
     }
-    chart.setOption({ ...base, ...(option as object) }, true)
+    /* Seçenek "baseOption" ve "media" taşıyabilir. Ortak biçim o zaman baseOption içine girer. */
+    const o = option as { baseOption?: object; media?: object[] }
+    const resolved: object = o.baseOption ? { baseOption: { ...base, ...o.baseOption }, media: o.media ?? [] } : { ...base, ...(option as object) }
+    chart.setOption(resolved as ECBasicOption, true)
     const ro = new ResizeObserver(() => chart.resize())
     ro.observe(ref.current)
     return () => {

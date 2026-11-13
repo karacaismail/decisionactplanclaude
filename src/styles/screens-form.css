@@ -1,0 +1,129 @@
+/*
+  Adım (form) ekranı ve form bileşenleri. Ortak kurallar docs/tasarim-sistemi.md dosyasındadır.
+  Renk ve yarıçap değişkenleri AppShell tarafından yazılır. Bu dosyada sabit renk yoktur.
+*/
+
+/* Başlık altı tek satır: gereklilik etiketi, durum etiketi ve "Kim yapar?" */
+.work-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.work-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
+.work-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+.work-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
+
+/* "Nasıl yapılır?" dar ekranda kapalı başlar. Kart değildir. */
+.howto-collapse.ant-collapse { border: 0; background: transparent; border-radius: 0; }
+.howto-collapse.ant-collapse > .ant-collapse-item { border-bottom: 1px solid var(--color-border); border-radius: 0; }
+.howto-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 12px 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); align-items: center; }
+.howto-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; }
+.howto-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 0 16px; }
+.howto-collapse .howto { gap: 8px; }
+
+/* Form alanı ızgarası: 24 sütun yalnız geniş ekranda. */
+.field-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (min-width: 768px) { .field-grid { grid-template-columns: repeat(24, minmax(0, 1fr)); } }
+.field-grid > .field-cell { min-width: 0; grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .field-grid > .field-cell.span-6 { grid-column: span 6; }
+  .field-grid > .field-cell.span-8 { grid-column: span 8; }
+  .field-grid > .field-cell.span-12 { grid-column: span 12; }
+}
+
+/* Tek alan: etiket, giriş, yardım */
+.field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
+.field .field-label { margin-bottom: 6px; }
+.field-required { font-weight: 400; color: var(--color-text-secondary); }
+.field .ant-input, .field .ant-input-number, .field .ant-select, .field .ant-picker, .field .ant-input-number-group-wrapper, .field .ant-input-affix-wrapper { width: 100%; }
+
+/* Yan yana küçük alanlar (ölçü adı, birim, dönem) */
+.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; min-width: 0; }
+.field-group .field-label { margin-bottom: 6px; }
+.field-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.subhead { margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); }
+
+/* Seçim düğmeleri: sarılır, seçili olan dolgusuz ve tek tonlu. */
+.choice-buttons.ant-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice-buttons .ant-radio-button-wrapper { border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: 14px; }
+.choice-buttons .ant-radio-button-wrapper::before { display: none; }
+.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) { background: var(--color-selected-bg); color: var(--color-text-primary); border-color: var(--color-border-strong); font-weight: 600; }
+.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover { color: var(--color-text-primary); border-color: var(--color-text-secondary); }
+
+/* Çoklu seçim çipleri */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: 16px; line-height: 1.3; text-align: left; cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+.chip:hover { border-color: var(--color-text-secondary); }
+.chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; }
+.chip:disabled { cursor: not-allowed; color: var(--color-text-secondary); }
+
+/* Sade onay kutusu listesi */
+.plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.plain-list .ant-checkbox-wrapper { min-height: 40px; align-items: center; font-size: 16px; margin: 0; }
+.toggle-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
+.rate-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
+
+/* Kanıt basamakları: tek seçimli satır listesi */
+.choice-list button.choice { appearance: none; width: 100%; font: inherit; color: var(--color-text-primary); text-align: left; border-inline: 0; border-top: 0; }
+.choice-list button.choice:last-child { border-bottom: 0; }
+.choice-num { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-text-secondary); line-height: 1.5; }
+.choice.is-selected .choice-num { color: var(--color-action-primary); }
+.choice-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+.choice-title .choice-check { display: inline-flex; color: var(--color-action-primary); }
+
+/* Tekrarlı tablo: hücre içi girişler kenarlıksız, satır 44 px */
+.repeater { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; justify-items: start; }
+.repeater .ant-table-wrapper { width: 100%; justify-self: stretch; }
+.repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; }
+.repeater-table .ant-table-cell .ant-input { padding-top: 8px; padding-bottom: 8px; }
+.repeater-table .ant-input, .repeater-table .ant-input-number, .repeater-table .ant-input-number-group-wrapper .ant-input-number-group-addon, .repeater-table .ant-select-selector, .repeater-table .ant-picker, .repeater-table .ant-input-affix-wrapper, .repeater-table .ant-input-number-affix-wrapper { background: transparent !important; }
+.repeater-table .ant-input:hover, .repeater-table .ant-input:focus, .repeater-table .ant-input-number:hover, .repeater-table .ant-input-number-focused, .repeater-table .ant-select:hover .ant-select-selector, .repeater-table .ant-select-focused .ant-select-selector, .repeater-table .ant-picker:hover, .repeater-table .ant-picker-focused { background: var(--color-surface-context) !important; }
+.repeater-table .ant-table-cell .field { gap: 0; }
+.repeater-table .ant-table-cell .field-help { display: none; }
+.repeater-table .ant-table-cell .toggle-field { flex-wrap: nowrap; white-space: nowrap; }
+.repeater-table .ant-select, .repeater-table .ant-input-number, .repeater-table .ant-picker { width: 100%; }
+.repeater-actions { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
+.repeater-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.repeater-cards .surface-card { gap: 16px; }
+.repeater-cards .surface-card-head h3 { font-size: 16px; }
+
+/* Puan tablosu */
+.score-matrix { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.score-matrix .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; }
+.score-matrix .ant-input-number { width: 100%; background: transparent !important; }
+.score-matrix .ant-input-number:hover, .score-matrix .ant-input-number-focused { background: var(--color-surface-context) !important; }
+.score-matrix .ant-input-number-disabled { background: transparent !important; }
+.score-matrix .weight-row td { color: var(--color-text-secondary); }
+.score-matrix .weight-row td:first-child { font-weight: 600; }
+.score-matrix .option-label { font-weight: 600; }
+.score-matrix .total-cell { display: inline-flex; min-width: 48px; justify-content: center; }
+
+/* Eşik satırı */
+.threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; max-width: 220px; }
+
+/* Kanıt bağlama */
+.evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: start; min-width: 0; }
+.evidence-link .ant-select { width: 100%; }
+.modal-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+/* Yöntem çipleri: nötr etiket görünümlü düğmeler. Dokunma alanı 36 px. */
+.model-chips { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+.model-chip-row { display: flex; flex-wrap: wrap; gap: 12px 8px; }
+button.tag.model-chip { position: relative; appearance: none; cursor: pointer; font-family: inherit; max-width: 100%; height: auto; min-height: 24px; padding: 2px 8px; white-space: normal; text-align: left; line-height: 1.3; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+button.tag.model-chip::after { content: ''; position: absolute; inset: -6px -4px; }
+button.tag.model-chip:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); background: var(--color-surface-context); }
+.drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
+.drawer-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* Grafik çerçevesi: kart yok, gölge yok */
+.chart-frame { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.chart-frame .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+/* Alt işlem şeridi: solda "Geri", sağda üç işlem. Dar ekranda işlemler tam satır olur. */
+.step-actions { align-self: start; }
+.step-actions .action-main { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+@media (max-width: 599px) {
+  .step-actions { gap: 8px; }
+  .step-actions .action-main { flex: 1 1 100%; }
+  .step-actions .action-main .ant-btn:not(.ant-btn-text) { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Yalnız ekran okuyucuya görünen metin */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

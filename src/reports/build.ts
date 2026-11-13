@@ -30,10 +30,22 @@ const v = (p: PlanDoc, s: string, k: string): unknown => p.steps[s]?.values?.[k]
 const str = (x: unknown, fallback = 'Bilinmiyor'): string => (typeof x === 'string' && x.trim() ? x : typeof x === 'number' ? String(x) : fallback)
 const rows = (p: PlanDoc, s: string, k: string): Record<string, unknown>[] => (v(p, s, k) as Record<string, unknown>[]) ?? []
 const measureText = (m?: Measure): string => {
-  if (!m) return 'Ölçü tanımlanmadı'
-  if (m.status === 'bilinmiyor') return `${m.name || 'Ölçü'}: bilinmiyor`
-  if (m.status === 'uygulanmiyor') return `${m.name || 'Ölçü'}: uygulanmıyor. ${m.naReason ?? ''}`
+  if (!m) return 'Ölçü tanımlanmadı.'
+  if (m.status === 'bilinmiyor') return `${m.name || 'Ölçü'}: bilinmiyor.`
+  if (m.status === 'uygulanmiyor') return `${m.name || 'Ölçü'}: uygulanmıyor. ${m.naReason ?? ''}`.trim()
   return `${m.name || 'Ölçü'}: ${formatNumber(m.value, m.unit)}. Eşik ${formatNumber(m.threshold, m.unit)}${m.isGuess ? ' (ilk tahmin)' : ''}.`
+}
+/**
+ * Birden çok ölçüyü satırlara çevirir. Tanımlanmamış ölçüler tek satırda toplanır:
+ * "3 ölçü tanımlanmadı." Aynı cümle üç kez alt alta yazılmaz.
+ */
+export function measureLines(measures: (Measure | undefined)[]): string[] {
+  const defined = measures.filter((m): m is Measure => Boolean(m))
+  const missing = measures.length - defined.length
+  const lines = defined.map((m) => measureText(m))
+  if (missing === 1) lines.push(measures.length === 1 ? 'Ölçü tanımlanmadı.' : '1 ölçü tanımlanmadı.')
+  else if (missing > 1) lines.push(missing === measures.length ? `${missing} ölçü de tanımlanmadı.` : `${missing} ölçü tanımlanmadı.`)
+  return lines
 }
 
 const PROFILE_LABEL: Record<string, Record<string, string>> = {
@@ -85,7 +97,7 @@ export function buildExecutiveReport(p: PlanDoc): Report {
         lines: [
           `Problem: ${str(v(p, '05', 'who'))}, ${str(v(p, '05', 'context'))}, ${str(v(p, '05', 'job'))}. Engel: ${str(v(p, '05', 'obstacle'))}.`,
           `Görüşme sayısı: ${rows(p, '06', 'interviews').length}. Problemi tanıyan: ${rows(p, '06', 'interviews').filter((x) => x.recognizes === true).length}.`,
-          measureText(v(p, '07', 'repeatMeasure') as Measure), measureText(v(p, '07', 'effortMeasure') as Measure), measureText(v(p, '07', 'lossMeasure') as Measure),
+          ...measureLines([v(p, '07', 'repeatMeasure') as Measure | undefined, v(p, '07', 'effortMeasure') as Measure | undefined, v(p, '07', 'lossMeasure') as Measure | undefined]),
           `Teklif sayısı: ${rows(p, '15', 'offers').length}. Güçlü taahhüt (1 ile 3. basamak): ${rows(p, '15', 'offers').filter((o) => Number(o.ladder) <= 3).length}.`,
         ],
       },
@@ -100,8 +112,8 @@ export function buildExecutiveReport(p: PlanDoc): Report {
       {
         title: 'Teslim ve tekrar',
         lines: [
-          measureText(v(p, '22', 'measure1') as Measure), measureText(v(p, '22', 'measure2') as Measure), measureText(v(p, '22', 'measure3') as Measure),
-          `Fayda: ${measureText(v(p, '22', 'benefitMeasure') as Measure)}`,
+          ...measureLines([v(p, '22', 'measure1') as Measure | undefined, v(p, '22', 'measure2') as Measure | undefined, v(p, '22', 'measure3') as Measure | undefined]),
+          v(p, '22', 'benefitMeasure') ? `Fayda: ${measureText(v(p, '22', 'benefitMeasure') as Measure)}` : 'Fayda ölçüsü tanımlanmadı.',
           `Uyum işareti: ${str(v(p, '28', 'signal'), 'ölçülmedi')}.`,
           `Ömür değeri bölü kazanma maliyeti: ${(() => { const l = Number(v(p, '29', 'ltvKurus') ?? 0), c = Number(v(p, '29', 'cacKurus') ?? 0); return l && c ? (l / c).toFixed(2) : 'hesaplanamaz' })()}.`,
         ],

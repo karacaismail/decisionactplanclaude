@@ -1,0 +1,96 @@
+/*
+  Kapı, kanıt, iş ve geçmiş ekranlarının ortak sınıfları.
+  Kurallar docs/tasarim-sistemi.md dosyasındadır. Sabit renk yoktur; yalnız --color-* değişkenleri okunur.
+*/
+
+/* ------------------------------------------------------------------ */
+/* Karar rozeti: 24 px, 14 px 600, 4 px köşe, 16 px ikon                */
+/* ------------------------------------------------------------------ */
+.decision-badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 4px; border: 1px solid transparent; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; box-sizing: border-box; }
+.decision-badge svg { flex-shrink: 0; }
+.decision-badge.is-ilerle { color: var(--color-status-ok); background: var(--color-status-ok-bg); }
+.decision-badge.is-kosulluIlerle { color: var(--color-status-ok); background: transparent; border-color: var(--color-status-ok); }
+.decision-badge.is-yenidenDene { color: var(--color-status-info); background: var(--color-status-info-bg); }
+.decision-badge.is-yonDegistir { color: var(--color-tone-purple); background: var(--color-tone-purple-bg); }
+.decision-badge.is-beklet { color: var(--color-status-hold); background: var(--color-status-hold-bg); }
+.decision-badge.is-durdur { color: var(--color-status-harm); background: var(--color-status-harm-bg); }
+
+/* ------------------------------------------------------------------ */
+/* Kapı ekranı: solda ölçütler, sağda yapışkan karar sütunu              */
+/* ------------------------------------------------------------------ */
+.kapi-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; align-items: start; }
+.kapi-main, .kapi-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+@media (min-width: 1100px) {
+  .kapi-grid { grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); }
+  .kapi-aside { position: sticky; top: 72px; }
+  .kapi-aside > .section { border-top: 0; padding-top: 0; }
+}
+.kapi-grid .kapi-aside > .section:first-child { border-top: 1px solid var(--color-border); padding-top: var(--space-8); }
+@media (min-width: 1100px) { .kapi-grid .kapi-aside > .section:first-child { border-top: 0; padding-top: 0; } }
+
+/* Sade onay satırları */
+.check-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+.check-list .ant-checkbox-wrapper { font-size: 16px; line-height: 1.5; align-items: flex-start; }
+
+/* Ölçüt listesi: 1 px çizgiyle ayrılmış satırlar, solda 16 px ikon */
+.criteria-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.criterion { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--color-border); min-width: 0; }
+.criteria-list li:last-child .criterion { border-bottom: 0; }
+.criterion-icon { display: inline-flex; margin-top: 4px; }
+.criterion-icon.is-ok { color: var(--color-status-ok); }
+.criterion-icon.is-harm { color: var(--color-status-harm); }
+.criterion-icon.is-muted { color: var(--color-text-secondary); }
+.criterion-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; font-size: 16px; line-height: 1.5; overflow-wrap: break-word; }
+.criterion .tag { margin-top: 0; }
+
+/* Tablo kabı: tablo içeride kayar, sayfa kaymaz */
+.table-scroll { overflow-x: auto; max-width: 100%; min-width: 0; -webkit-overflow-scrolling: touch; }
+.table-scroll .ant-table-wrapper { overflow: visible; }
+.table-scroll .ant-table-cell { word-break: normal; overflow-wrap: normal; white-space: normal; vertical-align: top; }
+.table-scroll .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
+.table-scroll .ant-table-tbody > tr.is-matched > td { background: var(--color-selected-bg); }
+.table-scroll .ant-table-tbody > tr.is-link { cursor: pointer; }
+.table-scroll .ant-table-row-cell { font-size: 16px; }
+
+/* Satır listesi (telefon tabloları, sürümler): 44 px satır, 1 px çizgi */
+.row-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 44px; padding: 8px 0; border-bottom: 1px solid var(--color-border); min-width: 0; box-sizing: border-box; }
+.row-list li:last-child .row { border-bottom: 0; }
+.row strong { font-weight: 600; }
+.row .grow { flex: 1 1 160px; min-width: 0; overflow-wrap: break-word; }
+.row .helper { flex: 0 0 auto; }
+
+/* Telefon tablosu: tek sütunlu hücre içi yığın */
+.cell-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.cell-stack .cell-title { font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: break-word; }
+.cell-stack .cell-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+
+/* ------------------------------------------------------------------ */
+/* Sonuç paneli                                                        */
+/* ------------------------------------------------------------------ */
+.suggestion-line { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 16px; }
+.suggestion-reasons { margin: 0; padding-left: 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+/* Seçenek satırı antd Radio ile çizilir. Radio sarmalayıcısı ızgaraya girer. */
+.choice-list.ant-radio-group { display: grid; }
+.choice.ant-radio-wrapper { margin: 0; font-size: 16px; }
+.choice.ant-radio-wrapper::after { display: none; }
+.choice.ant-radio-wrapper > .ant-radio { margin-top: 3px; }
+.choice.ant-radio-wrapper > span:not(.ant-radio) { padding: 0; min-width: 0; }
+.choice.ant-radio-wrapper-disabled { cursor: not-allowed; color: var(--color-text-secondary); }
+.choice.ant-radio-wrapper-disabled:hover { background: var(--color-surface-work); }
+.choice-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+
+/* Alan grubu */
+.field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
+.field .ant-input, .field .ant-input-number, .field .ant-picker, .field .ant-select { width: 100%; }
+
+/* ------------------------------------------------------------------ */
+/* Geçmiş                                                              */
+/* ------------------------------------------------------------------ */
+.history-item .recent-reason { font-size: 16px; color: var(--color-text-primary); }
+.history-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.history-notes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+/* Durum seçimi: kapalı kontrol etiketi gösterir */
+.ant-select-sm .ant-select-selection-item .tag { height: 22px; }

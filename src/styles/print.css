@@ -1,6 +1,7 @@
 /*
  * Yazdırma biçimi. Çıktılar ekranı bu dosyayı yükler.
- * Menü, başlık ve düğmeler gizlenir. Rapor A4 sayfaya oturur.
+ * Menü, başlık, sekmeler ve araç çubuğu gizlenir. Rapor A4 sayfaya oturur.
+ * Yazı tipi Outfit kalır. Siyah beyaz basılır.
  */
 @media print {
   @page {
@@ -18,15 +19,19 @@
   }
 
   .no-print,
+  .report-toolbar,
+  .report-tabs,
   .ant-layout-sider,
   .ant-layout-header,
   .ant-drawer,
-  .ant-drawer-mask {
+  .ant-drawer-mask,
+  .ant-dropdown {
     display: none !important;
   }
 
   .ant-layout,
-  .ant-layout-content {
+  .ant-layout-content,
+  .shell-content {
     background: #fff !important;
     padding: 0 !important;
     margin: 0 !important;
@@ -34,29 +39,50 @@
     min-height: 0 !important;
   }
 
+  .page,
+  .section {
+    gap: 24px !important;
+    border: 0 !important;
+    padding: 0 !important;
+  }
+
+  .report-wrap {
+    display: block;
+  }
+
   .report {
     max-width: none !important;
     padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     background: #fff !important;
     color: #000 !important;
+    gap: 20px !important;
   }
 
-  .report h1,
+  .report h2,
+  .report h3,
+  .report .report-meta,
+  .report p,
+  .report .note-body,
+  .report .note-title {
+    color: #000 !important;
+  }
+
   .report h2,
   .report h3 {
-    color: #000 !important;
     break-after: avoid;
     page-break-after: avoid;
     break-inside: avoid;
   }
 
-  .report h1 {
+  .report h2.report-title {
     font-size: 28px !important;
   }
 
-  .report h2 {
+  .report h3 {
     font-size: 20px !important;
   }
 
@@ -77,11 +103,9 @@
     display: table-header-group;
   }
 
-  .report .ant-table-wrapper {
-    overflow: visible !important;
-  }
-
-  .report .ant-table-content {
+  .report .ant-table-wrapper,
+  .report .ant-table-content,
+  .report .ant-table-body {
     overflow: visible !important;
   }
 
@@ -95,12 +119,12 @@
     font-size: 14px !important;
     padding: 6px 8px !important;
     border-bottom: 1px solid #999 !important;
+    background: transparent !important;
   }
 
-  .report .report-stamp {
-    border: 1px solid #000;
-    padding: 6px 10px;
-    font-weight: 600;
+  /* Örnek damgası: düz sol çizgi siyah basılır. */
+  .report .note {
+    border-left-color: #000 !important;
   }
 
   a,

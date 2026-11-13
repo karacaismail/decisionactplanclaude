@@ -1,13 +1,14 @@
-import { useState } from 'react'
-import { App as AntApp, Button, Input, Modal, Popconfirm, Tag, Upload } from 'antd'
-import { Plus, UploadSimple, Trash, ArrowRight, Folders, Sparkle } from '@phosphor-icons/react'
-import { useNavigate } from 'react-router'
+import { useRef, useState, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react'
+import { App as AntApp, Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
+import { Plus, DotsThree, CaretDown, UploadSimple, Sparkle, Trash } from '@phosphor-icons/react'
+import { Link, useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
 import { buildDemoPlan } from '@/data/demo'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { EmptyState } from '@/components/EmptyState'
+import '@/styles/screens-pano.css'
 
 export function PlansScreen() {
   const nav = useNavigate()
@@ -20,6 +21,8 @@ export function PlansScreen() {
   const { message } = AntApp.useApp()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
+  const [confirmId, setConfirmId] = useState<string | null>(null)
+  const fileInput = useRef<HTMLInputElement>(null)
   const list = Object.values(plans).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
 
   const create = () => {
@@ -35,93 +38,150 @@ export function PlansScreen() {
     nav('/ozet')
   }
 
-  const newPlanButton = (
-    <Button type="primary" size="large" icon={<Plus size={20} />} onClick={() => setOpen(true)}>
-      Yeni plan
-    </Button>
-  )
-  const demoButton = (
-    <Button size="large" icon={<Sparkle size={20} />} onClick={openDemo}>
-      Örnek planı aç
-    </Button>
-  )
-  const importButton = (
-    <Upload
-      accept="application/json"
-      showUploadList={false}
-      beforeUpload={(file) => {
-        file.text().then((t) => {
-          try {
-            importPlanText(t, file.size)
-            message.success('Plan içe alındı.')
-          } catch (e) {
-            message.error(e instanceof Error ? e.message : 'Dosya okunamadı.')
-          }
-        })
-        return false
-      }}
-    >
-      <Button size="large" icon={<UploadSimple size={20} />}>JSON içe al</Button>
-    </Upload>
-  )
+  const openPlan = (id: string, to?: string) => {
+    selectPlan(id)
+    nav(to ?? '/ozet')
+  }
+
+  const onFile = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    file.text().then((t) => {
+      try {
+        importPlanText(t, file.size)
+        message.success('Plan içe alındı.')
+      } catch (err) {
+        message.error(err instanceof Error ? err.message : 'Dosya okunamadı.')
+      }
+    })
+  }
+
+  const moreMenu = {
+    items: [
+      { key: 'import', label: 'JSON içe al', icon: <UploadSimple size={16} /> },
+      { key: 'demo', label: 'Örnek planı aç', icon: <Sparkle size={16} /> },
+    ],
+    onClick: ({ key }: { key: string }) => {
+      if (key === 'import') fileInput.current?.click()
+      if (key === 'demo') openDemo()
+    },
+  }
 
   return (
     <div className="page">
       <PageHeader
         title="Planlar"
         kicker="Çalışma alanı"
-        icon={<span className="icon-tile deep" aria-hidden><Folders size={20} weight="fill" /></span>}
         description="Her iş fikri ayrı bir plandır. Plan bu tarayıcıda saklanır. İstediğinizde dosya olarak dışa aktarırsınız."
         actions={
-          list.length > 0 ? (
-            <>
-              {newPlanButton}
-              {demoButton}
-              {importButton}
-            </>
-          ) : null
+          <>
+            <Button type="primary" icon={<Plus size={16} />} onClick={() => setOpen(true)}>
+              Yeni plan
+            </Button>
+            <Dropdown menu={moreMenu} trigger={['click']}>
+              <Button icon={<CaretDown size={16} />} iconPlacement="end">
+                Daha fazla
+              </Button>
+            </Dropdown>
+          </>
         }
       />
+      <input ref={fileInput} type="file" accept="application/json" hidden onChange={onFile} aria-label="JSON dosyası seç" />
 
       {list.length === 0 ? (
         <EmptyState
-          icon={<Folders size={28} weight="fill" />}
           title="Henüz plan yok"
           text="Yeni bir plan açın. Ya da örnek planla ekranları tanıyın."
           actions={
             <>
-              {newPlanButton}
-              {demoButton}
-              {importButton}
+              <Button icon={<Sparkle size={16} />} onClick={openDemo}>
+                Örnek planı aç
+              </Button>
+              <Button type="text" icon={<UploadSimple size={16} />} onClick={() => fileInput.current?.click()}>
+                JSON içe al
+              </Button>
             </>
           }
         />
       ) : (
         <div className="card-grid">
-          {list.map((p) => (
-            <article key={p.id} className={`surface-card${p.example ? ' is-example' : ''}`} aria-label={p.name}>
-              <div className="surface-card-head">
-                <h3>{p.name}</h3>
-                <Popconfirm title="Plan silinsin mi?" description="Bu işlem geri alınamaz." okText="Sil" cancelText="Vazgeç" onConfirm={() => deletePlan(p.id)}>
-                  <Button type="text" danger aria-label={`${p.name} planını sil`} icon={<Trash size={18} />} />
-                </Popconfirm>
-              </div>
-              {p.example ? <Tag color="processing" style={{ fontSize: 14, margin: 0, width: 'fit-content' }}>Örnek</Tag> : null}
-              <div className="meta">
-                <span>Son değişiklik {formatDate(p.updatedAt)}</span>
-                <span className="tabular">Sürüm {p.revision}. {p.decisions.length} karar kaydı.</span>
-              </div>
-              <div className="card-actions">
-                <Button type="primary" icon={<ArrowRight size={18} />} iconPlacement="end" onClick={() => { selectPlan(p.id); nav(p.lastLocation ?? '/ozet') }}>
-                  Planı aç
-                </Button>
-              </div>
-            </article>
-          ))}
+          {list.map((p) => {
+            const to = p.lastLocation ?? '/ozet'
+            const onCardKey = (e: KeyboardEvent<HTMLElement>) => {
+              if (e.target !== e.currentTarget) return
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                openPlan(p.id, to)
+              }
+            }
+            const stop = (e: MouseEvent) => e.stopPropagation()
+            return (
+              <article
+                key={p.id}
+                className="surface-card is-link"
+                aria-label={p.name}
+                tabIndex={0}
+                onClick={() => openPlan(p.id, to)}
+                onKeyDown={onCardKey}
+              >
+                <div className="surface-card-head">
+                  <h3>{p.name}</h3>
+                  <span onClick={stop} onKeyDown={(e) => e.stopPropagation()}>
+                    <Popconfirm
+                      title="Plan silinsin mi?"
+                      description="Bu işlem geri alınamaz."
+                      okText="Sil"
+                      cancelText="Vazgeç"
+                      open={confirmId === p.id}
+                      onOpenChange={(v) => {
+                        if (!v) setConfirmId(null)
+                      }}
+                      onConfirm={() => {
+                        setConfirmId(null)
+                        deletePlan(p.id)
+                      }}
+                    >
+                      <Dropdown
+                        trigger={['click']}
+                        menu={{
+                          items: [{ key: 'delete', label: 'Planı sil', icon: <Trash size={16} />, danger: true }],
+                          onClick: ({ key }) => {
+                            if (key === 'delete') setConfirmId(p.id)
+                          },
+                        }}
+                      >
+                        <Button type="text" aria-label={`${p.name} için daha fazla işlem`} icon={<DotsThree size={20} weight="bold" />} />
+                      </Dropdown>
+                    </Popconfirm>
+                  </span>
+                </div>
+                {p.example ? <span className="tag is-hold">Örnek</span> : null}
+                <div className="meta">
+                  <span>Son değişiklik {formatDate(p.updatedAt)}</span>
+                  <span className="tabular">
+                    Sürüm {p.revision}. {p.decisions.length} karar kaydı.
+                  </span>
+                </div>
+                <Link
+                  className="card-link"
+                  to={to}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    selectPlan(p.id)
+                  }}
+                >
+                  Aç
+                </Link>
+              </article>
+            )
+          })}
         </div>
       )}
 
-      <Callout tone="bilgi" title="Veri nerede durur?">Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta "Çıktılar" ekranından JSON dışa aktarın.</Callout>
+      <Callout tone="ipucu" title="Veri nerede durur?">
+        Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta "Çıktılar" ekranından JSON dışa aktarın.
+      </Callout>
 
       <Modal open={open} title="Yeni plan" onCancel={() => setOpen(false)} onOk={create} okText="Oluştur" cancelText="Vazgeç" okButtonProps={{ disabled: !name.trim() }}>
         <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>

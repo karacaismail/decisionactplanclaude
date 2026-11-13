@@ -1,0 +1,59 @@
+/*
+  Rapor ekranlarına özel ortak sınıflar: Göstergeler, Karar Kitabı ve Çıktılar.
+  Genel sınıflar global.css dosyasındadır. Burada sabit renk yoktur.
+*/
+
+/* Göstergeler: dört özet sayı. Kutu yok, iki sütunlu sade liste. */
+.fact { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; padding: 12px 0; border-bottom: 1px solid var(--color-border); }
+.fact-value { font-size: 20px; line-height: 1.3; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-text-primary); overflow-wrap: break-word; }
+.fact-text { font-size: 16px; line-height: 1.5; font-weight: 400; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+/* Süzgeç alanı: etiket üstte, kontrol altta. En çok 360 px. */
+.filter-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; flex: 1 1 240px; max-width: 360px; min-width: 0; }
+.filter-field .field-label { margin-bottom: 0; }
+
+/* Karar Kitabı: yöntem kartları. */
+.method-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (min-width: 720px) { .method-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.method-question { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.method-sub { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.method-sub h4 { margin: 0; font-size: 14px; line-height: 1.4; font-weight: 600; color: var(--color-text-secondary); }
+.method-sub p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.method-sub p.helper { font-size: 14px; color: var(--color-text-secondary); }
+.method-tags { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+.method-tags a.tag { text-decoration: none; cursor: pointer; transition: border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
+.method-tags a.tag:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+.text-link:hover { text-decoration: underline; }
+
+/* Çıktılar: sekmeler, tek araç çubuğu ve belge. */
+.report-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 0; }
+.report-tabs.ant-tabs .ant-tabs-tab { padding: 10px 0; font-size: 16px; }
+.report-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 24px; }
+/* 320 ile 479 px arasında iki sekme tek satıra sığar. Yazı 14 px kalır, kesilmez. */
+@media (max-width: 479px) {
+  .report-tabs.ant-tabs .ant-tabs-tab { font-size: 14px; }
+  .report-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 16px; }
+}
+.report-tabs.ant-tabs .ant-tabs-tab-btn { font-weight: 400; }
+.report-tabs.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; }
+.report-toolbar { padding-top: 12px; }
+.report-toolbar .filter-field { flex: 1 1 240px; }
+.report-wrap { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.report { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; width: 100%; max-width: 760px; margin: 0 auto; padding: 24px 16px; box-sizing: border-box; min-width: 0; background: var(--color-surface-work); border: 1px solid var(--color-border); border-radius: var(--radius-panel); }
+@media (min-width: 720px) { .report { padding: 40px 48px; } }
+.report-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.report h2.report-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text-primary); overflow-wrap: break-word; }
+.report-meta { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
+.report-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+.report-section h3 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
+.report-section p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.report .ant-table-wrapper { overflow-x: auto; max-width: 100%; }
+.report .ant-table-cell { white-space: normal; min-width: 120px; }
+.report .ant-table-cell:first-child { min-width: 160px; }
+
+/* Kayıtlı sürümler listesi. Kart yok. */
+.version-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.version-list li { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 16px; }
+.version-list li:last-child { border-bottom: 0; }
+.version-list .version-date { font-size: 14px; color: var(--color-text-secondary); }

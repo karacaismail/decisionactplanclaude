@@ -22,7 +22,11 @@ export const light = {
   statusHoldBg: '#F6EBD3',
   statusHarmBg: '#F8E1DF',
   statusInfoBg: '#DFE9F0',
-  border: '#DAD3C8',
+  border: '#E3DDD3',
+  borderStrong: '#C9C1B4',
+  /* Seçili durum: eylem renginin yüzde 12 saydam katmanı. Kahverengi ton yoktur. */
+  selectedBg: 'rgba(184, 68, 28, 0.12)',
+  onAction: '#FFFFFF',
   /* Hero paneli: derin lacivert-yeşil zemin, sıcak krem metin. */
   heroSurface: '#15303A',
   heroSurfaceAlt: '#1E434C',
@@ -47,14 +51,14 @@ export const light = {
 export const dark = {
   /* surfacePage değeri başka bileşenlerce tema algısında kullanılır; değiştirmeyin. */
   surfacePage: '#16191D',
-  surfaceWork: '#1F2429',
-  surfaceContext: '#272D34',
-  surfaceSunken: '#2E353D',
-  textPrimary: '#ECEEF0',
-  textSecondary: '#AEB9C0',
-  actionPrimary: '#FFA17C',
-  actionHover: '#FFBFA3',
-  brandAccent: '#FF7A4F',
+  surfaceWork: '#22272D',
+  surfaceContext: '#2E353D',
+  surfaceSunken: '#3A424B',
+  textPrimary: '#F1F3F4',
+  textSecondary: '#B9C3C9',
+  actionPrimary: '#D4582F',
+  actionHover: '#E3673D',
+  brandAccent: '#F07A4F',
   statusOk: '#5FD3A6',
   statusHold: '#E0B35A',
   statusHarm: '#FF8A8E',
@@ -63,7 +67,10 @@ export const dark = {
   statusHoldBg: '#3F3520',
   statusHarmBg: '#452A2C',
   statusInfoBg: '#243744',
-  border: '#39424A',
+  border: '#343C44',
+  borderStrong: '#4C565F',
+  selectedBg: 'rgba(212, 88, 47, 0.16)',
+  onAction: '#FFFFFF',
   heroSurface: '#0E242B',
   heroSurfaceAlt: '#163640',
   heroText: '#F3EBDE',
@@ -105,8 +112,8 @@ export const motion = {
 } as const
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, section: 48 } as const
-export const radius = { control: 6, panel: 12, hero: 20 } as const
-export const control = { height: 44, dense: 32, touch: 44 } as const
+export const radius = { control: 6, panel: 8, hero: 8 } as const
+export const control = { height: 40, dense: 32, touch: 44 } as const
 export const font = {
   family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",

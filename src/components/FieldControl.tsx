@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker, Input, InputNumber, Radio, Rate, Select, Switch, Tag, theme } from 'antd'
+import { Checkbox, DatePicker, Input, InputNumber, Radio, Rate, Select, Switch } from 'antd'
 import dayjs from 'dayjs'
 import 'dayjs/locale/tr'
 import type { Field } from '@/data/schema'
@@ -6,7 +6,7 @@ import type { PlanDoc, Measure } from '@/data/types'
 import { evalCondition } from '@/engine/conditions'
 import { formatDate, formatMoney } from '@/engine/format'
 import { Callout } from './Callout'
-import { EvidenceLadderPicker } from './EvidenceLadderPicker'
+import { EvidenceLadderPicker, LADDER } from './EvidenceLadderPicker'
 import { MeasureInput } from './MeasureInput'
 import { ThresholdInput, type ThresholdValue } from './ThresholdInput'
 import { RepeaterTable, type Row } from './RepeaterTable'
@@ -17,6 +17,10 @@ dayjs.locale('tr')
 
 const RATE_DEFAULT = ['1', '2', '3', '4', '5']
 
+/**
+ * Tek form alanı. Etiket `.field-label`, yardım `.field-help`.
+ * `compact` tablo hücresi içindir: etiket çizilmez, girişe aria-label verilir, giriş kenarlıksızdır.
+ */
 export function FieldControl({ field, value, onChange, plan, values, compact, idPrefix }: {
   field: Field
   value: unknown
@@ -26,36 +30,45 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
   compact?: boolean
   idPrefix: string
 }) {
-  const { token } = theme.useToken()
   if (!evalCondition(field.when, plan, undefined, values)) return null
   const id = `${idPrefix}-${field.key}`
-  const helper = (t?: string) => (t ? <div style={{ fontSize: 14, color: token.colorTextSecondary, marginTop: 4 }}>{t}</div> : null)
-  const wrap = (control: React.ReactNode, extra?: React.ReactNode) => (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6, minWidth: 0 }}>
-      {field.label ? (
-        <label htmlFor={id} style={{ fontSize: compact ? 14 : 16, fontWeight: 500 }}>
-          {field.label}
-          {field.required ? <span aria-hidden style={{ color: token.colorError }}> *</span> : null}
-        </label>
+  const variant = compact ? ('borderless' as const) : undefined
+  const ariaLabel = compact ? field.label : undefined
+  const help = (t?: string) => (t && !compact ? <div className="field-help">{t}</div> : null)
+  const wrap = (control: React.ReactNode, extra?: React.ReactNode, labelAs: 'label' | 'span' = 'label') => (
+    <div className="field">
+      {field.label && !compact ? (
+        labelAs === 'label' ? (
+          <label htmlFor={id} className="field-label">
+            {field.label}
+            {field.required ? <span className="field-required"> (zorunlu)</span> : null}
+          </label>
+        ) : (
+          <span id={`${id}-etiket`} className="field-label">
+            {field.label}
+            {field.required ? <span className="field-required"> (zorunlu)</span> : null}
+          </span>
+        )
       ) : null}
       {control}
       {extra}
-      {!compact ? helper(field.help) : null}
+      {help(field.help)}
     </div>
   )
 
   switch (field.type) {
     case 'text':
-      return wrap(<Input id={id} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
+      return wrap(<Input id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
     case 'textarea':
-      return wrap(<Input.TextArea id={id} value={(value as string) ?? ''} rows={field.rows ?? 3} maxLength={field.maxLength} showCount={Boolean(field.maxLength)} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
+      return wrap(<Input.TextArea id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} rows={field.rows ?? 3} maxLength={field.maxLength} showCount={Boolean(field.maxLength) && !compact} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
     case 'number':
-      return wrap(<InputNumber id={id} style={{ width: '100%', maxWidth: 260 }} value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} addonAfter={field.unit} onChange={(v) => onChange(v ?? null)} />)
+      return wrap(<InputNumber id={id} variant={variant} aria-label={ariaLabel} value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} addonAfter={field.unit} onChange={(v) => onChange(v ?? null)} />)
     case 'money':
       return wrap(
         <InputNumber
           id={id}
-          style={{ width: '100%', maxWidth: 260 }}
+          variant={variant}
+          aria-label={ariaLabel}
           value={typeof value === 'number' ? value / 100 : undefined}
           min={0}
           step={100}
@@ -65,55 +78,59 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
           addonAfter="TL"
           onChange={(v) => onChange(v === null || v === undefined ? null : Math.round(Number(v) * 100))}
         />,
-        typeof value === 'number' ? <span className="tabular" style={{ fontSize: 14, color: token.colorTextSecondary }}>{formatMoney(value)}</span> : null,
+        typeof value === 'number' && !compact ? <span className="field-help tabular">{formatMoney(value)}</span> : null,
       )
     case 'date':
       return wrap(
-        <DatePicker id={id} style={{ width: '100%', maxWidth: 260 }} value={value ? dayjs(value as string) : null} format="DD.MM.YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün.Ay.Yıl" />,
-        value ? <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{formatDate(value as string)}</span> : null,
+        <DatePicker id={id} variant={variant} aria-label={ariaLabel} value={value ? dayjs(value as string) : null} format="DD.MM.YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün.Ay.Yıl" />,
+        value && !compact ? <span className="field-help">{formatDate(value as string)}</span> : null,
       )
     case 'select':
-      return wrap(<Select id={id} style={{ width: '100%', maxWidth: 360 }} value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" />)
+      return wrap(<Select id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" />)
     case 'segmented':
       return wrap(
         <Radio.Group
           id={id}
+          aria-labelledby={field.label && !compact ? `${id}-etiket` : undefined}
+          aria-label={ariaLabel}
+          className="choice-buttons"
           value={value as string}
           onChange={(e) => onChange(e.target.value)}
           optionType="button"
-          buttonStyle="solid"
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}
           options={field.options.map((o) => ({ value: o.value, label: o.label }))}
         />,
-        field.options.find((o) => o.value === value)?.help ? helper(field.options.find((o) => o.value === value)?.help) : null,
+        !compact ? help(field.options.find((o) => o.value === value)?.help) : null,
+        'span',
       )
     case 'chips': {
       const sel = (value as string[]) ?? []
+      const full = Boolean(field.max) && sel.length >= (field.max ?? 0)
       return wrap(
-        <div role="group" aria-labelledby={id} style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+        <div role="group" aria-labelledby={field.label && !compact ? `${id}-etiket` : undefined} aria-label={ariaLabel} className="chip-row">
           {field.options.map((o) => {
             const on = sel.includes(o.value)
             return (
-              <Tag.CheckableTag
+              <button
+                type="button"
                 key={o.value}
-                checked={on}
-                onChange={(c) => {
-                  if (c && field.max && sel.length >= field.max) return
-                  onChange(c ? [...sel, o.value] : sel.filter((x) => x !== o.value))
-                }}
-                style={{ fontSize: 16, lineHeight: '36px', padding: '0 14px', borderRadius: token.borderRadius, border: `1px solid ${on ? token.colorPrimary : token.colorBorder}` }}
+                className={`chip${on ? ' is-selected' : ''}`}
+                aria-pressed={on}
+                disabled={!on && full}
+                onClick={() => onChange(on ? sel.filter((x) => x !== o.value) : [...sel, o.value])}
               >
                 {o.label}
-              </Tag.CheckableTag>
+              </button>
             )
           })}
         </div>,
+        field.max && !compact ? <div className="field-help">En çok {field.max} seçim.</div> : null,
+        'span',
       )
     }
     case 'toggle':
       return wrap(
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <Switch id={id} checked={Boolean(value)} onChange={onChange} />
+        <div className="toggle-field">
+          <Switch id={id} aria-label={ariaLabel} checked={Boolean(value)} onChange={onChange} />
           <span>{value ? field.onLabel ?? 'Evet' : field.offLabel ?? 'Hayır'}</span>
         </div>,
       )
@@ -121,26 +138,29 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
       const labels = field.labels ?? RATE_DEFAULT
       const n = (value as number) ?? 0
       return wrap(
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <Rate id={id} count={field.max ?? 5} value={n} onChange={onChange} />
-          <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{n ? labels[n - 1] : 'Seçilmedi'}</span>
+        <div className="rate-field">
+          <Rate id={id} aria-label={ariaLabel} count={field.max ?? 5} value={n} onChange={onChange} />
+          <span className="helper">{n ? labels[n - 1] : 'Seçilmedi'}</span>
         </div>,
       )
     }
     case 'evidenceLadder':
-      return wrap(<EvidenceLadderPicker id={id} value={value as number} onChange={onChange} />)
+      if (compact) {
+        return wrap(<Select id={id} variant="borderless" aria-label={ariaLabel} value={(value as number) ?? undefined} onChange={onChange} placeholder="Basamak seçin" options={LADDER.map((l) => ({ value: l.level, label: `${l.level}. ${l.label}` }))} />)
+      }
+      return wrap(<EvidenceLadderPicker id={id} value={value as number} onChange={onChange} />, undefined, 'span')
     case 'threshold':
-      return wrap(<ThresholdInput idPrefix={id} unit={field.unit} value={value as ThresholdValue} onChange={onChange} />)
+      return wrap(<ThresholdInput idPrefix={id} unit={field.unit} value={value as ThresholdValue} onChange={onChange} />, undefined, 'span')
     case 'measure':
-      return wrap(<MeasureInput idPrefix={id} defaultName={field.defaultName} defaultUnit={field.defaultUnit} value={value as Measure} onChange={onChange} />)
+      return wrap(<MeasureInput idPrefix={id} defaultName={field.defaultName} defaultUnit={field.defaultUnit} value={value as Measure} onChange={onChange} />, undefined, 'span')
     case 'repeater':
-      return wrap(<RepeaterTable idPrefix={id} plan={plan} columns={field.columns} value={value as Row[]} onChange={onChange} addLabel={field.addLabel} minRows={field.minRows} maxRows={field.maxRows} fixedFirstRow={field.fixedFirstRow} />)
+      return wrap(<RepeaterTable idPrefix={id} plan={plan} columns={field.columns} value={value as Row[]} onChange={onChange} addLabel={field.addLabel} minRows={field.minRows} maxRows={field.maxRows} fixedFirstRow={field.fixedFirstRow} />, undefined, 'span')
     case 'scoreMatrix': {
       const rows = ((values[field.rowsFrom] as Row[]) ?? []).map((r) => ({ id: r._id, label: String(r[field.rowLabelKey] ?? 'Adsız') }))
-      return wrap(<ScoreMatrix rows={rows} criteria={field.criteria} value={value as ScoreMatrixValue} onChange={onChange} />)
+      return wrap(<ScoreMatrix rows={rows} criteria={field.criteria} value={value as ScoreMatrixValue} onChange={onChange} />, undefined, 'span')
     }
     case 'checklist':
-      return wrap(<Checkbox.Group value={(value as string[]) ?? []} onChange={(v) => onChange(v)} options={field.items} style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }} />)
+      return wrap(<Checkbox.Group className="plain-list" aria-labelledby={field.label ? `${id}-etiket` : undefined} value={(value as string[]) ?? []} onChange={(v) => onChange(v)} options={field.items} />, undefined, 'span')
     case 'info':
       return <Callout tone={field.tone ?? 'bilgi'} title={field.label || undefined}>{field.text}</Callout>
     case 'evidenceLink':

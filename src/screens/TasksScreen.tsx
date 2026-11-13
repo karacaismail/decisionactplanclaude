@@ -1,20 +1,32 @@
-import { useState } from 'react'
-import { Button, Card, Input, Select, Space, Table, Tag, Typography, theme, DatePicker } from 'antd'
+import { useId, useState } from 'react'
+import { Button, DatePicker, Grid, Input, Select, Table } from 'antd'
 import dayjs from 'dayjs'
 import { Plus } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import type { Task, TaskStatus } from '@/data/types'
 import { formatDate } from '@/engine/format'
+import { PageHeader, SectionHead } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
+import '@/styles/screens-kapi.css'
 
-const STATUS: { value: TaskStatus; label: string; color?: string }[] = [
-  { value: 'taslak', label: 'Taslak' },
-  { value: 'acik', label: 'Açık', color: 'processing' },
-  { value: 'bitti', label: 'Bitti', color: 'success' },
-  { value: 'iptal', label: 'İptal' },
+const STATUS: { value: TaskStatus; label: string; cls: string }[] = [
+  { value: 'taslak', label: 'Taslak', cls: '' },
+  { value: 'acik', label: 'Açık', cls: 'is-open' },
+  { value: 'bitti', label: 'Bitti', cls: 'is-ok' },
+  { value: 'iptal', label: 'İptal', cls: 'is-muted' },
 ]
+const STATUS_OPTIONS = STATUS.map((s) => ({ value: s.value, label: s.label }))
+
+function StatusTag({ status }: { status: TaskStatus }) {
+  const s = STATUS.find((x) => x.value === status) ?? STATUS[0]
+  return <span className={`tag ${s.cls}`.trim()}>{s.label}</span>
+}
 
 export function TasksScreen() {
-  const { token } = theme.useToken()
+  const uid = useId()
+  const id = (k: string) => `${uid}-${k}`
+  const bp = Grid.useBreakpoint()
+  const narrow = bp.md === false
   const plan = useCurrentPlan()
   const addTask = usePlanStore((s) => s.addTask)
   const updateTask = usePlanStore((s) => s.updateTask)
@@ -29,38 +41,110 @@ export function TasksScreen() {
     addTask({ action: action.trim(), owner: owner || undefined, dueDate: due, status: owner && due ? 'acik' : 'taslak' })
     setAction(''); setOwner(''); setDue(undefined)
   }
+  const sourceLabel = (sid?: string) => {
+    if (!sid) return ''
+    const g = plan.decisions.find((d) => d.id === sid)?.gate
+    return g ? `Kapı ${g}` : ''
+  }
+  /** Durum hem etiket hem seçim kutusudur. Kapalı kontrol etiketi gösterir; açılan panel durumu değiştirir. */
+  const statusSelect = (t: Task) => (
+    <Select
+      size="small"
+      variant="borderless"
+      value={t.status}
+      onChange={(v) => updateTask(t.id, { status: v })}
+      options={STATUS_OPTIONS}
+      labelRender={(p) => <StatusTag status={p.value as TaskStatus} />}
+      style={{ width: 140 }}
+      aria-label={`Durum: ${t.action}`}
+    />
+  )
+
+  const wideColumns = [
+    { title: 'İş', dataIndex: 'action', width: 320 },
+    { title: 'Sorumlu', dataIndex: 'owner', width: 160, render: (o?: string) => o ?? <span className="tag is-muted">Eksik</span> },
+    { title: 'Son tarih', dataIndex: 'dueDate', width: 160, render: (d?: string) => (d ? <span className="tabular">{formatDate(d, false)}</span> : <span className="tag is-muted">Tarih yok</span>) },
+    { title: 'Durum', dataIndex: 'status', width: 160, render: (_: TaskStatus, t: Task) => statusSelect(t) },
+    { title: 'Kaynak karar', dataIndex: 'sourceDecisionId', width: 140, render: (sid?: string) => sourceLabel(sid) },
+  ]
+  const narrowColumns = [
+    {
+      title: 'İş',
+      dataIndex: 'action',
+      render: (_: string, t: Task) => (
+        <div className="cell-stack">
+          <span className="cell-title">{t.action}</span>
+          <span className="cell-meta">
+            {statusSelect(t)}
+            <span className="helper">{t.owner ?? 'Sorumlu eksik'}</span>
+            <span className="helper tabular">{t.dueDate ? formatDate(t.dueDate, false) : 'Tarih yok'}</span>
+          </span>
+          {sourceLabel(t.sourceDecisionId) ? <span className="helper">{sourceLabel(t.sourceDecisionId)}</span> : null}
+        </div>
+      ),
+    },
+  ]
+
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
-      <div>
-        <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>İşler</Typography.Title>
-        <Typography.Text style={{ color: token.colorTextSecondary }}>Her iş bir karara bağlanır. Sahibi veya tarihi eksik iş taslak kalır. Boş tarihin yerine keyfî süre yazılmaz.</Typography.Text>
-      </div>
-      <Card title="Yeni iş">
-        <Space wrap style={{ width: '100%' }}>
-          <Input value={action} onChange={(e) => setAction(e.target.value)} placeholder="Ne yapılacak?" style={{ width: 320 }} aria-label="İş" />
-          <Input value={owner} onChange={(e) => setOwner(e.target.value)} placeholder="Sorumlu" style={{ width: 180 }} aria-label="Sorumlu" />
-          <DatePicker value={due ? dayjs(due) : null} onChange={(d) => setDue(d ? d.format('YYYY-MM-DD') : undefined)} format="DD.MM.YYYY" placeholder="Son tarih" aria-label="Son tarih" />
-          <Button type="primary" icon={<Plus size={18} />} onClick={add} disabled={!action.trim()}>Ekle</Button>
-        </Space>
-      </Card>
-      <Select value={filter} onChange={setFilter} style={{ width: 200 }} options={[{ value: 'hepsi', label: 'Hepsi' }, ...STATUS]} aria-label="Duruma göre süz" />
-      <Card>
-        <Table<Task>
-          rowKey="id"
-          size="middle"
-          dataSource={list}
-          pagination={{ pageSize: 20, hideOnSinglePage: true }}
-          scroll={{ x: 'max-content' }}
-          locale={{ emptyText: 'İş yok. Kapı kararları iş doğurur.' }}
-          columns={[
-            { title: 'İş', dataIndex: 'action' },
-            { title: 'Sorumlu', dataIndex: 'owner', render: (o?: string) => o ?? <Tag style={{ fontSize: 14 }}>Eksik</Tag> },
-            { title: 'Son tarih', dataIndex: 'dueDate', render: (d?: string) => (d ? formatDate(d, false) : <Tag style={{ fontSize: 14 }}>Tarih belirlenmedi</Tag>) },
-            { title: 'Durum', dataIndex: 'status', render: (s: TaskStatus, t) => <Select size="small" value={s} onChange={(v) => updateTask(t.id, { status: v })} options={STATUS} style={{ width: 120 }} aria-label="Durum" /> },
-            { title: 'Kaynak karar', dataIndex: 'sourceDecisionId', render: (id?: string) => (id ? `Kapı ${plan.decisions.find((d) => d.id === id)?.gate ?? ''}` : '') },
-          ]}
-        />
-      </Card>
+    <div className="page">
+      <PageHeader
+        kicker="İş listesi"
+        title="İşler"
+        description="Her iş bir karara bağlanır. Sahibi veya tarihi eksik iş taslak kalır. Boş tarihin yerine keyfî süre yazılmaz."
+      />
+
+      <section className="section" aria-label="Yeni iş">
+        <SectionHead title="Yeni iş" description="Sorumlu ve tarih dolu ise iş “Açık” olur. Biri eksikse “Taslak” kalır." />
+        <div className="form-section">
+          <div className="field">
+            <label className="field-label" htmlFor={id('is')}>Ne yapılacak?</label>
+            <Input id={id('is')} value={action} onChange={(e) => setAction(e.target.value)} onPressEnter={add} />
+          </div>
+          <div className="two-col">
+            <div className="field">
+              <label className="field-label" htmlFor={id('sorumlu')}>Sorumlu</label>
+              <Input id={id('sorumlu')} value={owner} onChange={(e) => setOwner(e.target.value)} />
+            </div>
+            <div className="field">
+              <label className="field-label" htmlFor={id('tarih')}>Son tarih</label>
+              <DatePicker id={id('tarih')} value={due ? dayjs(due) : null} onChange={(d) => setDue(d ? d.format('YYYY-MM-DD') : undefined)} format="DD.MM.YYYY" />
+            </div>
+          </div>
+          <div className="toolbar" style={{ justifyContent: 'flex-end' }}>
+            <div className="toolbar-group">
+              <Button type="primary" icon={<Plus size={16} />} onClick={add} disabled={!action.trim()}>İş ekle</Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" aria-label="İş listesi">
+        <SectionHead title="İş listesi" />
+        {plan.tasks.length === 0 ? (
+          <EmptyState title="Henüz iş yok" text="Kapı kararları iş doğurur. İlk işi yukarıdaki alandan da ekleyebilirsiniz." />
+        ) : (
+          <>
+            <div className="toolbar">
+              <div className="toolbar-group">
+                <label className="field-label" htmlFor={id('suz')} style={{ marginBottom: 0 }}>Durum</label>
+                <Select id={id('suz')} value={filter} onChange={setFilter} style={{ width: 180 }} options={[{ value: 'hepsi', label: 'Hepsi' }, ...STATUS_OPTIONS]} />
+              </div>
+              <span className="helper tabular">{list.length} iş</span>
+            </div>
+            <div className="table-scroll">
+              <Table<Task>
+                rowKey="id"
+                size="middle"
+                dataSource={list}
+                pagination={{ pageSize: 20, hideOnSinglePage: true }}
+                style={narrow ? undefined : { minWidth: 940 }}
+                locale={{ emptyText: 'Bu durumda iş yok.' }}
+                columns={narrow ? narrowColumns : wideColumns}
+              />
+            </div>
+          </>
+        )}
+      </section>
     </div>
   )
 }

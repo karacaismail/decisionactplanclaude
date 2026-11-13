@@ -1,7 +1,7 @@
-import { theme } from 'antd'
 import { CheckCircle, PauseCircle, ArrowsClockwise, ArrowBendUpRight, ShieldCheck, Prohibit } from '@phosphor-icons/react'
 import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { decisionColors } from '@/theme/tokens'
+import '@/styles/screens-kapi.css'
 
 const ICON: Record<Outcome, typeof CheckCircle> = {
   ilerle: CheckCircle,
@@ -20,32 +20,25 @@ const KEY: Record<Outcome, keyof typeof decisionColors.light> = {
   durdur: 'stop',
 }
 
+/**
+ * Grafikler için düz renk. Canvas CSS değişkeni okuyamaz; bu yüzden tema parametre ile gelir.
+ * Rozet bu işlevi kullanmaz, rengini CSS değişkenlerinden alır.
+ */
 export function outcomeColor(o: Outcome, dark: boolean): string {
   return (dark ? decisionColors.dark : decisionColors.light)[KEY[o]]
 }
 
-export function DecisionBadge({ outcome, size = 'md' }: { outcome: Outcome; size?: 'sm' | 'md' | 'lg' }) {
-  const { token } = theme.useToken()
-  const dark = token.colorBgLayout.toLowerCase() === '#16191d'
-  const color = outcomeColor(outcome, dark)
+/**
+ * Karar rozeti. 24 px yüksek, 14 px 600, 4 px köşe, 16 px ikon.
+ * Renk durum sisteminden gelir: İlerle ve Koşullu ilerle yeşil (koşullu çerçeveli),
+ * Yeniden dene mavi, Yön değiştir mor, Beklet sarı, Durdur kırmızı. Tema CSS değişkeniyle kendiliğinden değişir.
+ * `size` eski çağrılar için tutulur; tek boy vardır.
+ */
+export function DecisionBadge({ outcome }: { outcome: Outcome; size?: 'sm' | 'md' | 'lg' }) {
   const Icon = ICON[outcome]
-  const fs = size === 'lg' ? 18 : size === 'sm' ? 14 : 16
   return (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        gap: 6,
-        color,
-        background: `${color}1A`,
-        borderRadius: 6,
-        padding: size === 'lg' ? '8px 14px' : '4px 10px',
-        fontSize: fs,
-        fontWeight: 600,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      <Icon size={fs + 4} weight="fill" aria-hidden />
+    <span className={`decision-badge is-${outcome}`}>
+      <Icon size={16} weight={outcome === 'kosulluIlerle' ? 'regular' : 'fill'} aria-hidden />
       {OUTCOME_LABEL[outcome]}
     </span>
   )

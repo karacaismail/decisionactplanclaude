@@ -1,68 +1,85 @@
 import { useMemo, useState } from 'react'
-import { Select, Typography, theme } from 'antd'
-import { ChartBar } from '@phosphor-icons/react'
-import { useCurrentPlan } from '@/store/planStore'
+import { Select } from 'antd'
+import { useCurrentPlan, usePlanStore } from '@/store/planStore'
 import { ChartFrame } from '@/charts/ChartFrame'
 import { buildInsights, summaryTiles, type InsightPalette } from '@/charts/insights'
 import { outcomeColor } from '@/components/DecisionBadge'
-import { dark as darkPalette } from '@/theme/tokens'
+import { PageHeader } from '@/components/PageHeader'
+import { resolveMode } from '@/theme/antdTheme'
+import { palette as paletteOf } from '@/theme/tokens'
+import '@/styles/screens-rapor.css'
 
-/** Göstergeler. Dört özet kutusu ve seçilen grafik. Sayılar adımlardan gelir. */
+/**
+ * Göstergeler. Dört özet değer ve seçilen grafik. Sayılar adımlardan gelir.
+ * Özet değerler kutu değildir. KPI şeridi yalnız plan özetinde durur.
+ */
 export function InsightsScreen() {
-  const { token } = theme.useToken()
   const plan = useCurrentPlan()
+  const themePref = usePlanStore((s) => s.theme)
   const [selected, setSelected] = useState<string>('adimlar')
-  const isDark = token.colorBgLayout.toLowerCase() === darkPalette.surfacePage.toLowerCase()
-  const palette = useMemo<InsightPalette>(
-    () => ({ primary: token.colorPrimary, info: token.colorInfo, success: token.colorSuccess, warning: token.colorWarning, error: token.colorError, muted: token.colorBorder, outcome: (o) => outcomeColor(o, isDark) }),
-    [token, isDark],
-  )
+  const mode = resolveMode(themePref)
+  const isDark = mode === 'dark'
+  const colors = useMemo<InsightPalette>(() => {
+    const p = paletteOf(mode)
+    return {
+      primary: p.textPrimary,
+      info: p.statusInfo,
+      success: p.statusOk,
+      warning: p.statusHold,
+      error: p.statusHarm,
+      /* Kalan: açık gri. Koyu temada kenar rengi daha iyi görünür. */
+      muted: isDark ? p.borderStrong : p.surfaceSunken,
+      axis: p.textSecondary,
+      grid: p.border,
+      onInk: p.surfaceWork,
+      ramp: [p.textPrimary, p.textSecondary, p.borderStrong, p.surfaceSunken],
+      outcome: (o) => outcomeColor(o, isDark),
+    }
+  }, [mode, isDark])
   const tiles = useMemo(() => (plan ? summaryTiles(plan) : []), [plan])
-  const insights = useMemo(() => (plan ? buildInsights(plan, palette) : []), [plan, palette])
+  const insights = useMemo(() => (plan ? buildInsights(plan, colors) : []), [plan, colors])
   if (!plan) return null
   const current = insights.find((i) => i.id === selected) ?? insights[0]
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
-        <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 0 }}>Göstergeler</Typography.Title>
-        <Typography.Text style={{ color: token.colorTextSecondary }}>Bu ekran planınızdaki sayıları gösterir. Sayılar adımlarda yazdığınız cevaplardan gelir.</Typography.Text>
-      </div>
+    <div className="page">
+      <PageHeader kicker="Göstergeler" title="Göstergeler" description="Bu ekran planınızdaki sayıları gösterir. Sayılar adımlarda yazdığınız cevaplardan gelir." />
 
-      <div role="group" aria-label="Özet" style={{ display: 'grid', gap: 8, gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 170px), 1fr))' }}>
-        {tiles.map((t) => (
-          <div key={t.key} style={{ background: token.colorBgContainer, borderRadius: token.borderRadiusLG, padding: '14px 16px', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4, minWidth: 0 }}>
-            <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{t.title}</span>
-            <span className="tabular" style={{ fontSize: 22, fontWeight: 600, overflowWrap: 'anywhere' }}>{t.value}</span>
-            <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{t.note}</span>
+      <section className="section" aria-label="Özet">
+        <div className="two-col" style={{ rowGap: 0 }}>
+          {tiles.map((t) => (
+            <div key={t.key} className="fact">
+              <span className="helper">{t.title}</span>
+              {t.numeric ? <span className="fact-value">{t.value}</span> : <span className="fact-text">{t.value}</span>}
+              <span className="helper">{t.note}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section" aria-label="Grafik">
+        <div className="toolbar">
+          <div className="filter-field">
+            <label className="field-label" htmlFor="gosterge-sec">Gösterge</label>
+            <Select
+              id="gosterge-sec"
+              value={current.id}
+              onChange={setSelected}
+              options={insights.map((i) => ({ value: i.id, label: i.empty ? `${i.title} (ölçüm bekleniyor)` : i.title }))}
+              style={{ width: '100%' }}
+            />
           </div>
-        ))}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
-        <label htmlFor="gosterge-sec" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
-          <span style={{ fontSize: 16, fontWeight: 500 }}>Gösterge seçin</span>
-          <Select
-            id="gosterge-sec"
-            aria-label="Gösterge seçin"
-            value={current.id}
-            onChange={setSelected}
-            options={insights.map((i) => ({ value: i.id, label: i.empty ? `${i.title} (ölçüm bekleniyor)` : i.title }))}
-            style={{ width: '100%', maxWidth: 480 }}
-          />
-        </label>
-        <Typography.Text style={{ fontSize: 14, color: token.colorTextSecondary }}>{current.source}</Typography.Text>
+          <span className="helper" style={{ flex: '1 1 240px' }}>{current.source}</span>
+        </div>
         {current.empty ? (
-          <div role="status" style={{ background: token.colorBgContainer, borderRadius: token.borderRadiusLG, padding: 24, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8, justifyItems: 'start' }}>
-            <ChartBar size={28} color={token.colorTextSecondary} aria-hidden />
-            <Typography.Text strong style={{ fontSize: 16 }}>{current.title}</Typography.Text>
-            <Typography.Text style={{ fontSize: 16 }}>Bu gösterge için ölçüm bekleniyor.</Typography.Text>
-            <Typography.Text style={{ fontSize: 14, color: token.colorTextSecondary }}>{current.hint}</Typography.Text>
+          <div className="empty-state" role="status">
+            <h2>{current.title}</h2>
+            <p>Bu gösterge için ölçüm bekleniyor. {current.hint}</p>
           </div>
         ) : (
-          <ChartFrame key={current.id} title={current.title} summary={current.summary} option={current.option} table={current.table} height={current.id === 'nakit' ? 360 : 300} />
+          <ChartFrame key={current.id} title={current.title} summary={current.summary} option={current.option} table={current.table} />
         )}
-      </div>
+      </section>
     </div>
   )
 }

@@ -1,6 +1,10 @@
 /**
  * Göstergeler ekranının veri katmanı. Plan belgesinden grafik seçeneği ve tablo üretir.
  * Renkler ekrandan gelir. Alan adları docs/alan-sozlesmesi.md ile aynıdır.
+ *
+ * Grafik kuralları docs/tasarim-sistemi.md "Grafik" bölümündedir:
+ * çubuk 24 px, desen yok, tamamlanan koyu mürekkep, kalan açık gri,
+ * eksen yazısı 14 px, kategori adı metin, ızgara 1 px, çubuk üstünde değer.
  */
 import { DECISIONS } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
@@ -9,8 +13,10 @@ import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome } from '@/engine/gate'
 import { formatDate, formatMoney, formatNumber } from '@/engine/format'
 import { LADDER } from '@/components/EvidenceLadderPicker'
+import { font } from '@/theme/tokens'
 
 export interface InsightPalette {
+  /** Ana seri: tamamlanan, ölçülen. Koyu mürekkep. */
   primary: string
   info: string
   success: string
@@ -19,6 +25,14 @@ export interface InsightPalette {
   /** Soluk yardımcı renk. "Kalan" gibi ikincil seriler için. */
   muted: string
   outcome: (o: Outcome) => string
+  /** Eksen ve açıklama yazısı. Verilmezse primary kullanılır. */
+  axis?: string
+  /** Izgara ve eksen çizgisi. Verilmezse muted kullanılır. */
+  grid?: string
+  /** Koyu dolgu üstündeki yazı. Verilmezse beyaz yerine muted kullanılır. */
+  onInk?: string
+  /** Çok serili grafiklerde gri basamaklar. Koyu mürekkepten açık griye. */
+  ramp?: string[]
 }
 
 export interface ChartTable {
@@ -53,6 +67,8 @@ export interface SummaryTile {
   title: string
   value: string
   note: string
+  /** Değer bir sayı ya da kısa ölçüdür. Cümle ise false olur ve sayı gibi yazılmaz. */
+  numeric?: boolean
 }
 
 type Row = Record<string, unknown>
@@ -65,38 +81,86 @@ const rows = (p: PlanDoc, step: string, key: string): Row[] => {
 const num = (x: unknown): number | null => (typeof x === 'number' && !Number.isNaN(x) ? x : null)
 const lira = (kurus: number): number => Math.round(kurus) / 100
 
-const GRID = { left: 12, right: 16, top: 36, bottom: 8, containLabel: true }
+const BAR = 24
+const GRID = { left: 8, right: 16, top: 40, bottom: 8, containLabel: true }
 
-/** Dört özet kutusu. Pist, ödeme günü açığı, bütçe kullanımı ve deneme hakkı. */
+/** Ortak eksen, açıklama ve etiket biçimi. Yazı 14 px, ızgara 1 px. */
+function styles(c: InsightPalette) {
+  const axis = c.axis ?? c.primary
+  const grid = c.grid ?? c.muted
+  const line = { lineStyle: { color: grid, width: 1 } }
+  return {
+    axis,
+    grid,
+    axisText: { color: axis, fontSize: font.helper, fontFamily: font.family },
+    categoryAxis: { axisLine: line, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { color: axis, fontSize: font.helper, interval: 0 } },
+    valueAxis: { axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: true, ...line }, axisLabel: { color: axis, fontSize: font.helper } },
+    legend: { top: 0, left: 0, icon: 'rect', itemWidth: 12, itemHeight: 12, itemGap: 16, textStyle: { color: axis, fontSize: font.helper } },
+    valueLabel: { show: true, position: 'top', color: c.primary, fontSize: font.helper },
+    tooltip: { trigger: 'axis', textStyle: { fontSize: font.helper } },
+  }
+}
+
+/** Dar kapsayıcı sınırı. Bunun altında çok kategorili grafik kaydırılır. */
+const NARROW = 520
+
+/**
+ * Çok kategorili çubuk grafiği dar ekranda kaydırmalı yapar. Kategori adları kelime olarak kalır.
+ * Geniş ekranda kaydırma gizlenir ve bütün kategoriler görünür. Tablo her zaman tam listeyi verir.
+ */
+function scrollWhenNarrow(c: InsightPalette, option: Record<string, unknown>, visible: number, total: number) {
+  if (total <= visible) return option
+  const s = styles(c)
+  const slider = { type: 'slider', xAxisIndex: 0, height: 20, bottom: 4, brushSelect: false, zoomLock: true, showDetail: false, borderColor: s.grid, backgroundColor: 'transparent', fillerColor: c.muted, handleStyle: { color: c.axis, borderColor: c.axis }, moveHandleStyle: { color: c.axis }, dataBackground: { lineStyle: { color: s.grid }, areaStyle: { color: 'transparent' } }, selectedDataBackground: { lineStyle: { color: c.axis }, areaStyle: { color: 'transparent' } } }
+  return {
+    baseOption: { ...option, dataZoom: [{ type: 'inside', xAxisIndex: 0, zoomLock: true }, slider] },
+    media: [
+      { query: { maxWidth: NARROW }, option: { grid: { ...GRID, bottom: 36 }, dataZoom: [{ startValue: 0, endValue: visible - 1 }, { show: true, startValue: 0, endValue: visible - 1 }] } },
+      { option: { grid: GRID, dataZoom: [{ start: 0, end: 100 }, { show: false, start: 0, end: 100 }] } },
+    ],
+  }
+}
+
+/** Dar ve geniş kapsayıcı için ayrı ayarlar. Örneğin dar ekranda açıklama iki satıra sarınca ızgara aşağı iner. */
+function whenNarrow(option: Record<string, unknown>, narrow: Record<string, unknown>, wide: Record<string, unknown>) {
+  return { baseOption: option, media: [{ query: { maxWidth: NARROW }, option: narrow }, { option: wide }] }
+}
+
+function ramp(c: InsightPalette, n: number): string[] {
+  const base = c.ramp && c.ramp.length ? c.ramp : [c.primary, c.muted]
+  return Array.from({ length: n }, (_x, i) => base[Math.min(i, base.length - 1)])
+}
+
+/** Dört özet değer. Pist, ödeme günü açığı, bütçe kullanımı ve deneme hakkı. */
 export function summaryTiles(plan: PlanDoc): SummaryTile[] {
   const { cashKurus, monthlyBurnKurus, budgetKurus, retriesPerDecision } = plan.limits
 
   const runway: SummaryTile = cashKurus && monthlyBurnKurus
-    ? { key: 'pist', title: 'Pist', value: `${Math.floor(cashKurus / monthlyBurnKurus)} ay`, note: `Elinizde ${formatMoney(cashKurus)} var. Aylık gider ${formatMoney(monthlyBurnKurus)}.` }
-    : { key: 'pist', title: 'Pist', value: 'Hesaplanmadı', note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.' }
+    ? { key: 'pist', title: 'Pist', value: `${Math.floor(cashKurus / monthlyBurnKurus)} ay`, note: `Elinizde ${formatMoney(cashKurus)} var. Aylık gider ${formatMoney(monthlyBurnKurus)}.`, numeric: true }
+    : { key: 'pist', title: 'Pist', value: 'Hesaplanmadı', note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
 
   const days = rows(plan, '16', 'paymentDays').filter((r) => num(r.balanceAfterKurus) !== null)
   let gap: SummaryTile
   if (days.length === 0) {
-    gap = { key: 'acik', title: 'Ödeme günü açığı', value: 'Ölçüm bekleniyor', note: 'Adım 16’da ödeme günlerini yazın.' }
+    gap = { key: 'acik', title: 'Ödeme günü açığı', value: 'Ölçüm bekleniyor', note: 'Adım 16’da ödeme günlerini yazın.', numeric: false }
   } else {
     const minRow = days.reduce((a, b) => (Number(a.balanceAfterKurus) <= Number(b.balanceAfterKurus) ? a : b))
     const minBal = Number(minRow.balanceAfterKurus)
     gap = minBal < 0
-      ? { key: 'acik', title: 'Ödeme günü açığı', value: formatMoney(-minBal), note: `Kasa ${formatDate(String(minRow.date), false)} günü eksiye düşüyor.` }
-      : { key: 'acik', title: 'Ödeme günü açığı', value: 'Açık yok', note: `En düşük kasa ${formatMoney(minBal)}.` }
+      ? { key: 'acik', title: 'Ödeme günü açığı', value: formatMoney(-minBal), note: `Kasa ${formatDate(String(minRow.date), false)} günü eksiye düşüyor.`, numeric: true }
+      : { key: 'acik', title: 'Ödeme günü açığı', value: 'Açık yok', note: `En düşük kasa ${formatMoney(minBal)}.`, numeric: false }
   }
 
   const spent = rows(plan, '24', 'results').reduce((s, r) => s + (num(r.costKurus) ?? 0), 0)
   let budget: SummaryTile
-  if (!budgetKurus) budget = { key: 'butce', title: 'Bütçe kullanımı', value: 'Yazılmadı', note: 'Adım 02’de plana ayrılan en çok parayı yazın.' }
-  else if (spent === 0) budget = { key: 'butce', title: 'Bütçe kullanımı', value: 'Harcama yazılmadı', note: `Sınır ${formatMoney(budgetKurus)}. Harcamalar Adım 24’te kayda geçer.` }
-  else budget = { key: 'butce', title: 'Bütçe kullanımı', value: `%${Math.round((spent / budgetKurus) * 100)}`, note: `Sınır ${formatMoney(budgetKurus)}. Kanal testlerine ${formatMoney(spent)} harcandı.` }
+  if (!budgetKurus) budget = { key: 'butce', title: 'Bütçe kullanımı', value: 'Yazılmadı', note: 'Adım 02’de plana ayrılan en çok parayı yazın.', numeric: false }
+  else if (spent === 0) budget = { key: 'butce', title: 'Bütçe kullanımı', value: 'Harcama yazılmadı', note: `Sınır ${formatMoney(budgetKurus)}. Harcamalar Adım 24’te kayda geçer.`, numeric: false }
+  else budget = { key: 'butce', title: 'Bütçe kullanımı', value: `%${Math.round((spent / budgetKurus) * 100)}`, note: `Sınır ${formatMoney(budgetKurus)}. Kanal testlerine ${formatMoney(spent)} harcandı.`, numeric: true }
 
   const used = plan.decisions.filter((d) => d.chosen === 'yenidenDene').length
   const retries: SummaryTile = retriesPerDecision
-    ? { key: 'deneme', title: 'Deneme hakkı', value: `${retriesPerDecision} / karar`, note: used === 0 ? 'Henüz deneme hakkı kullanılmadı.' : `${used} deneme kullanıldı.` }
-    : { key: 'deneme', title: 'Deneme hakkı', value: 'Yazılmadı', note: 'Adım 02’de karar başına deneme sayısını yazın.' }
+    ? { key: 'deneme', title: 'Deneme hakkı', value: `${retriesPerDecision} / karar`, note: used === 0 ? 'Henüz deneme hakkı kullanılmadı.' : `${used} deneme kullanıldı.`, numeric: true }
+    : { key: 'deneme', title: 'Deneme hakkı', value: 'Yazılmadı', note: 'Adım 02’de karar başına deneme sayısını yazın.', numeric: false }
 
   return [runway, gap, budget, retries]
 }
@@ -107,59 +171,79 @@ export function buildInsights(plan: PlanDoc, c: InsightPalette): Insight[] {
 }
 
 function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const items = DECISIONS.map((d) => {
-    const steps = stepsOf(d.n).filter((s) => stepApplies(s.mandatory, plan) !== 'gizli' && (!plan.shortPath || s.shortPath))
-    const done = steps.filter((s) => plan.steps[s.id]?.status === 'tamam' || plan.steps[s.id]?.status === 'atlandi').length
-    return { label: `${d.n}. ${d.title}`, done, total: steps.length }
+    const steps = stepsOf(d.n).filter((x) => stepApplies(x.mandatory, plan) !== 'gizli' && (!plan.shortPath || x.shortPath))
+    const done = steps.filter((x) => plan.steps[x.id]?.status === 'tamam' || plan.steps[x.id]?.status === 'atlandi').length
+    return { name: d.title, label: `${d.n}. ${d.title}`, done, total: steps.length }
   })
-  const doneTotal = items.reduce((s, i) => s + i.done, 0)
-  const total = items.reduce((s, i) => s + i.total, 0)
+  const doneTotal = items.reduce((sum, i) => sum + i.done, 0)
+  const total = items.reduce((sum, i) => sum + i.total, 0)
   return {
     id: 'adimlar',
     title: 'Karar başına tamamlanan adım',
     source: 'Sayılar her adımın durumundan gelir. Atlanan adım tamamlanmış sayılır.',
     empty: false,
     summary: `${doneTotal} / ${total} adım tamamlandı.`,
-    option: {
-      tooltip: { trigger: 'axis' },
-      legend: { top: 0 },
+    option: scrollWhenNarrow(c, {
+      tooltip: s.tooltip,
+      legend: s.legend,
       grid: GRID,
-      xAxis: { type: 'category', data: items.map((i) => String(i.label.split('.')[0])), axisLabel: { interval: 0 } },
-      yAxis: { type: 'value', minInterval: 1 },
+      xAxis: { type: 'category', data: items.map((i) => i.name), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 72, overflow: 'break' } },
+      yAxis: { type: 'value', minInterval: 1, ...s.valueAxis },
       series: [
-        { type: 'bar', name: 'Tamamlanan', stack: 'adim', data: items.map((i) => i.done), itemStyle: { color: c.primary }, barMaxWidth: 40 },
-        { type: 'bar', name: 'Kalan', stack: 'adim', data: items.map((i) => i.total - i.done), itemStyle: { color: c.muted }, barMaxWidth: 40 },
+        { type: 'bar', name: 'Tamamlanan', stack: 'adim', data: items.map((i) => i.done), itemStyle: { color: c.primary }, barWidth: BAR },
+        {
+          type: 'bar',
+          name: 'Kalan',
+          stack: 'adim',
+          data: items.map((i) => i.total - i.done),
+          itemStyle: { color: c.muted },
+          barWidth: BAR,
+          label: { ...s.valueLabel, formatter: (p: { dataIndex: number }) => `${items[p.dataIndex].done}/${items[p.dataIndex].total}` },
+        },
       ],
-    },
+    }, 4, items.length),
     table: { head: ['Karar', 'Tamamlanan', 'Toplam'], rows: items.map((i) => [i.label, i.done, i.total]) },
   }
 }
 
 function ladderDistribution(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const count = (levels: number[]) => LADDER.map((l) => levels.filter((x) => x === l.level).length)
   const evidence = count(plan.evidence.map((e) => e.ladder))
   const interviews = count(rows(plan, '06', 'interviews').map((r) => Number(r.ladder)).filter((x) => x >= 1 && x <= 7))
   const offers = count(rows(plan, '15', 'offers').map((r) => Number(r.ladder)).filter((x) => x >= 1 && x <= 7))
-  const total = [...evidence, ...interviews, ...offers].reduce((s, x) => s + x, 0)
+  const total = [...evidence, ...interviews, ...offers].reduce((sum, x) => sum + x, 0)
   const base = { id: 'kanit', title: 'Kanıt basamağı dağılımı', source: 'Sayılar kanıt defterinden, Adım 06 görüşmelerinden ve Adım 15 teklif defterinden gelir.' }
   if (total === 0) return { ...base, empty: true, hint: 'Kanıt ekleyin. Ya da Adım 06 ve Adım 15’te basamak seçin.' }
-  const strong = LADDER.slice(0, 3).reduce((s, _l, i) => s + evidence[i] + interviews[i] + offers[i], 0)
+  const strong = LADDER.slice(0, 3).reduce((sum, _l, i) => sum + evidence[i] + interviews[i] + offers[i], 0)
+  const colors = ramp(c, 3)
+  const totals = LADDER.map((_l, i) => evidence[i] + interviews[i] + offers[i])
   return {
     ...base,
     empty: false,
     summary: `${strong} kanıt 1, 2 veya 3. basamakta. ${total - strong} kanıt yalnız ipucu.`,
-    option: {
-      tooltip: { trigger: 'axis' },
-      legend: { top: 0 },
+    option: whenNarrow({
+      tooltip: s.tooltip,
+      legend: s.legend,
       grid: GRID,
-      xAxis: { type: 'value', minInterval: 1 },
-      yAxis: { type: 'category', inverse: true, data: LADDER.map((l) => `${l.level}. basamak`) },
+      xAxis: { type: 'value', minInterval: 1, ...s.valueAxis, axisLabel: { ...s.valueAxis.axisLabel, hideOverlap: true } },
+      yAxis: { type: 'category', inverse: true, data: LADDER.map((l) => `${l.level}. basamak`), ...s.categoryAxis },
       series: [
-        { type: 'bar', name: 'Kanıt defteri', stack: 'kanit', data: evidence, itemStyle: { color: c.primary } },
-        { type: 'bar', name: 'Görüşmeler', stack: 'kanit', data: interviews, itemStyle: { color: c.info } },
-        { type: 'bar', name: 'Teklifler', stack: 'kanit', data: offers, itemStyle: { color: c.success } },
+        { type: 'bar', name: 'Kanıt defteri', stack: 'kanit', data: evidence, itemStyle: { color: colors[0] }, barMaxWidth: BAR },
+        { type: 'bar', name: 'Görüşmeler', stack: 'kanit', data: interviews, itemStyle: { color: colors[1] }, barMaxWidth: BAR },
+        {
+          type: 'bar',
+          name: 'Teklifler',
+          stack: 'kanit',
+          data: offers,
+          itemStyle: { color: colors[2] },
+          barMaxWidth: BAR,
+          label: { ...s.valueLabel, position: 'right', formatter: (p: { dataIndex: number }) => String(totals[p.dataIndex]) },
+        },
       ],
-    },
+    }, { grid: { ...GRID, top: 72 } }, { grid: GRID }),
     table: { head: ['Basamak', 'Kanıt defteri', 'Görüşmeler', 'Teklifler'], rows: LADDER.map((l, i) => [`${l.level}. ${l.label}`, evidence[i], interviews[i], offers[i]]) },
   }
 }
@@ -180,23 +264,38 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
     ['Taahhüt veren', offers.length > 0 ? accepted.length : null],
     ['Ödeme yapan', offers.length > 0 ? paid : null],
   ]
-  const data = stages.filter((s): s is [string, number] => s[1] !== null)
+  const data = stages.filter((st): st is [string, number] => st[1] !== null)
   const th = v(plan, '15', 'threshold') as { value?: number | null } | undefined
   const summary = th?.value ? `Eşik ${th.value} taahhüt. ${strong} güçlü taahhüt geldi. ${strong >= th.value ? 'Eşik geçildi.' : 'Eşik geçilmedi.'}` : `${strong} güçlü taahhüt geldi. Eşik yazılmadı.`
+  const colors = ramp(c, data.length)
+  /* Koyu basamaklarda açık yazı, açık basamaklarda koyu yazı. Kontrast 4,5:1 üstünde kalır. */
+  const labelColor = (i: number) => (i < Math.min(2, data.length) ? c.onInk ?? c.muted : c.primary)
   return {
     ...base,
     empty: false,
     summary,
     option: {
-      tooltip: { trigger: 'item' },
-      color: [c.primary, c.info, c.success, c.warning, c.error],
-      series: [{ type: 'funnel', sort: 'none', top: 8, bottom: 8, left: '4%', width: '92%', gap: 4, minSize: '12%', label: { show: true, position: 'inside', formatter: '{b}: {c}', fontSize: 14 }, data: data.map(([name, value]) => ({ name, value })) }],
+      tooltip: { trigger: 'item', textStyle: { fontSize: font.helper } },
+      series: [{
+        type: 'funnel',
+        sort: 'none',
+        top: 8,
+        bottom: 8,
+        left: '4%',
+        width: '92%',
+        gap: 4,
+        minSize: '16%',
+        label: { show: true, position: 'inside', formatter: '{b}: {c}', fontSize: font.helper },
+        itemStyle: { borderWidth: 0 },
+        data: data.map(([name, value], i) => ({ name, value, itemStyle: { color: colors[i] }, label: { color: labelColor(i) } })),
+      }],
     },
     table: { head: ['Aşama', 'Kişi'], rows: data.map(([name, value]) => [name, value]) },
   }
 }
 
 function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const keys: [string, string][] = [['07', 'repeatMeasure'], ['07', 'effortMeasure'], ['07', 'lossMeasure'], ['22', 'measure1'], ['22', 'measure2'], ['22', 'measure3'], ['22', 'benefitMeasure']]
   const items = keys
     .map(([step, key]) => ({ step, m: v(plan, step, key) as Measure | undefined }))
@@ -209,25 +308,26 @@ function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
     ...base,
     empty: false,
     summary: `${met} ölçü eşiği geçti. ${items.length - met} ölçü eşiğin altında. Çubuk eşiğin yüzdesini gösterir.`,
-    option: {
-      tooltip: { trigger: 'axis', valueFormatter: (x: number) => `%${x}` },
-      grid: GRID,
-      xAxis: { type: 'value', name: '%', axisLabel: { formatter: '%{value}' } },
-      yAxis: { type: 'category', inverse: true, data: items.map((i) => `${i.name} (Adım ${i.step})`) },
+    option: whenNarrow({
+      tooltip: { ...s.tooltip, valueFormatter: (x: number) => `%${x}` },
+      grid: { ...GRID, top: 32 },
+      xAxis: { type: 'value', ...s.valueAxis, axisLabel: { ...s.valueAxis.axisLabel, formatter: '%{value}', hideOverlap: true } },
+      yAxis: { type: 'category', inverse: true, data: items.map((i) => `${i.name} (Adım ${i.step})`), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 140, overflow: 'break' } },
       series: [{
         type: 'bar',
         name: 'Eşiğin yüzdesi',
         data: items.map((i) => ({ value: i.pct, itemStyle: { color: i.pct >= 100 ? c.success : c.warning } })),
-        barMaxWidth: 28,
-        label: { show: true, position: 'right', formatter: '%{c}' },
-        markLine: { symbol: 'none', lineStyle: { color: c.error }, label: { formatter: 'Eşik', position: 'insideEndTop' }, data: [{ xAxis: 100 }] },
+        barMaxWidth: BAR,
+        label: { ...s.valueLabel, position: 'right', formatter: '%{c}' },
+        markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { formatter: 'Eşik %100', position: 'start', distance: 6, color: c.error, fontSize: font.helper }, data: [{ xAxis: 100 }] },
       }],
-    },
+    }, { xAxis: { splitNumber: 3 }, yAxis: { axisLabel: { width: 96 } } }, { xAxis: { splitNumber: 5 }, yAxis: { axisLabel: { width: 140 } } }),
     table: { head: ['Ölçü', 'Adım', 'Birim', 'Ölçülen', 'Eşik', 'Eşiğin yüzdesi'], rows: items.map((i) => [i.name, i.step, i.unit, i.value, i.threshold, `%${i.pct}`]) },
   }
 }
 
 function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const days = rows(plan, '16', 'paymentDays')
     .filter((r) => num(r.balanceAfterKurus) !== null)
     .sort((a, b) => String(a.date ?? '').localeCompare(String(b.date ?? '')))
@@ -251,26 +351,38 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
     head: ['Ölçü', 'TL'],
     rows: [...cashLabels.map((l, i) => [`${l} kasa`, cashData[i]] as (string | number)[]), ...(hasUnit ? unitLabels.map((l, i) => [l, unitData[i]] as (string | number)[]) : [])],
   }
-  const cashSeries = { type: 'line', name: 'Kasa', data: cashData, itemStyle: { color: c.primary }, lineStyle: { color: c.primary }, markLine: { symbol: 'none', lineStyle: { color: c.error }, data: [{ yAxis: 0, name: 'Sıfır' }] } }
-  const unitSeries = { type: 'bar', name: 'TL', data: unitData.map((x, i) => ({ value: x, itemStyle: { color: i === 0 ? c.success : c.warning } })), barMaxWidth: 48, label: { show: true, position: 'top' } }
+  const cashSeries = {
+    type: 'line',
+    name: 'Kasa',
+    data: cashData,
+    symbolSize: 8,
+    itemStyle: { color: c.primary },
+    lineStyle: { color: c.primary, width: 2 },
+    markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { color: c.error, fontSize: font.helper }, data: [{ yAxis: 0, name: 'Sıfır' }] },
+  }
+  const unitSeries = { type: 'bar', name: 'TL', data: unitData.map((x, i) => ({ value: x, itemStyle: { color: i === 0 ? c.success : c.warning } })), barWidth: BAR, label: s.valueLabel }
+  const cashX = { type: 'category', data: cashLabels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } }
+  const unitX = { type: 'category', data: unitLabels, ...s.categoryAxis }
+  const tlY = { type: 'value', name: 'TL', nameTextStyle: s.axisText, ...s.valueAxis }
   let option: unknown
   if (hasCash && hasUnit) {
     option = {
-      tooltip: { trigger: 'axis' },
-      grid: [{ left: 12, right: 16, top: 32, height: '30%', containLabel: true }, { left: 12, right: 16, top: '60%', height: '28%', containLabel: true }],
-      xAxis: [{ type: 'category', data: cashLabels, gridIndex: 0, axisLabel: { hideOverlap: true } }, { type: 'category', data: unitLabels, gridIndex: 1 }],
-      yAxis: [{ type: 'value', name: 'TL', gridIndex: 0 }, { type: 'value', name: 'TL', gridIndex: 1 }],
+      tooltip: s.tooltip,
+      grid: [{ left: 8, right: 16, top: 32, height: '30%', containLabel: true }, { left: 8, right: 16, top: '60%', height: '28%', containLabel: true }],
+      xAxis: [{ ...cashX, gridIndex: 0 }, { ...unitX, gridIndex: 1 }],
+      yAxis: [{ ...tlY, gridIndex: 0 }, { ...tlY, gridIndex: 1 }],
       series: [{ ...cashSeries, xAxisIndex: 0, yAxisIndex: 0 }, { ...unitSeries, xAxisIndex: 1, yAxisIndex: 1 }],
     }
   } else if (hasCash) {
-    option = { tooltip: { trigger: 'axis' }, grid: GRID, xAxis: { type: 'category', data: cashLabels, axisLabel: { hideOverlap: true } }, yAxis: { type: 'value', name: 'TL' }, series: [cashSeries] }
+    option = { tooltip: s.tooltip, grid: GRID, xAxis: cashX, yAxis: tlY, series: [cashSeries] }
   } else {
-    option = { tooltip: { trigger: 'axis' }, grid: GRID, xAxis: { type: 'category', data: unitLabels }, yAxis: { type: 'value', name: 'TL' }, series: [unitSeries] }
+    option = { tooltip: s.tooltip, grid: GRID, xAxis: unitX, yAxis: tlY, series: [unitSeries] }
   }
   return { ...base, empty: false, summary: parts.join(' '), option, table }
 }
 
 function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const decisions = [...plan.decisions].sort((a, b) => a.decidedAt.localeCompare(b.decidedAt))
   const base = { id: 'kapilar', title: 'Kapı kararlarının zaman çizgisi', source: 'Noktalar kayıtlı kapı kararlarından gelir. Renk karar sonucunu gösterir.' }
   if (decisions.length === 0) return { ...base, empty: true, hint: 'Bir kararın kapı ekranında kararı kaydedin.' }
@@ -283,24 +395,25 @@ function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
     ...base,
     empty: false,
     summary: `${points.length} kapı kararı var. Son karar Kapı ${last.gate}: ${last.label}, ${last.date}.`,
-    option: {
-      tooltip: { trigger: 'item', formatter: (p: { dataIndex: number }) => { const x = points[p.dataIndex]; return `Kapı ${x.gate}: ${x.label}<br/>${x.date}<br/>${x.by}` } },
-      grid: GRID,
-      xAxis: { type: 'category', data: points.map((p) => p.date), axisLabel: { hideOverlap: true } },
-      yAxis: { type: 'category', data: DECISIONS.map((d) => `Kapı ${d.n}`), inverse: true },
+    option: whenNarrow({
+      tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { dataIndex: number }) => { const x = points[p.dataIndex]; return `Kapı ${x.gate}: ${x.label}<br/>${x.date}<br/>${x.by}` } },
+      grid: { ...GRID, top: 16, right: 64 },
+      xAxis: { type: 'category', data: points.map((p) => p.date), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } },
+      yAxis: { type: 'category', data: DECISIONS.map((d) => d.title), inverse: true, ...s.categoryAxis, splitLine: { show: true, lineStyle: { color: s.grid, width: 1 } }, axisLabel: { ...s.categoryAxis.axisLabel, width: 140, overflow: 'truncate' } },
       series: [{
         type: 'scatter',
         name: 'Karar',
-        symbolSize: 22,
+        symbolSize: 16,
         data: points.map((p) => ({ value: [p.i, p.gate - 1], itemStyle: { color: p.color }, name: p.label })),
-        label: { show: true, position: 'right', formatter: (p: { name: string }) => p.name, fontSize: 14 },
+        label: { show: true, position: 'right', color: s.axis, formatter: (p: { name: string }) => p.name, fontSize: font.helper },
       }],
-    },
+    }, { yAxis: { axisLabel: { width: 72 } } }, { yAxis: { axisLabel: { width: 140 } } }),
     table: { head: ['Kapı', 'Sonuç', 'Tarih', 'Karar veren'], rows: points.map((p) => [`Kapı ${p.gate}`, p.label, p.date, p.by]) },
   }
 }
 
 function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
+  const s = styles(c)
   const r = rows(plan, '06', 'interviews')
   const base = { id: 'gorusmeler', title: 'Görüşmelerde tanıma ve çaba', source: 'Sayılar Adım 06 görüşmelerinden gelir. Hedefler Kapı 2 ölçütlerinden gelir.' }
   if (r.length === 0) return { ...base, empty: true, hint: 'Adım 06’da görüşmeleri yazın.' }
@@ -314,14 +427,15 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
     empty: false,
     summary: ok ? 'Üç sayı da Kapı 2 hedefini karşılıyor.' : `${labels.filter((_l, i) => actual[i] < target[i]).join(' ve ')} hedefin altında.`,
     option: {
-      tooltip: { trigger: 'axis' },
-      legend: { top: 0 },
+      tooltip: s.tooltip,
+      legend: s.legend,
       grid: GRID,
-      xAxis: { type: 'category', data: labels, axisLabel: { interval: 0 } },
-      yAxis: { type: 'value', minInterval: 1 },
+      xAxis: { type: 'category', data: labels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 80, overflow: 'break' } },
+      yAxis: { type: 'value', minInterval: 1, ...s.valueAxis },
       series: [
-        { type: 'bar', name: 'Sayı', data: actual, itemStyle: { color: c.primary }, barMaxWidth: 40, label: { show: true, position: 'top' } },
-        { type: 'bar', name: 'Hedef', data: target, itemStyle: { color: c.muted }, barMaxWidth: 40 },
+        /* İki çubuk yan yana. Aralık çubuk genişliğinin üçte ikisidir, yani 16 px. */
+        { type: 'bar', name: 'Sayı', data: actual, itemStyle: { color: c.primary }, barWidth: BAR, barGap: '66%', label: s.valueLabel },
+        { type: 'bar', name: 'Hedef', data: target, itemStyle: { color: c.muted }, barWidth: BAR, label: { ...s.valueLabel, color: s.axis } },
       ],
     },
     table: { head: ['Ölçü', 'Sayı', 'Hedef'], rows: labels.map((l, i) => [l, actual[i], target[i]]) },

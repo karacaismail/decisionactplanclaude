@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Drawer, Space, Tag, Typography, theme } from 'antd'
+import { Button, Drawer } from 'antd'
 import { BookOpen, ArrowSquareOut } from '@phosphor-icons/react'
 import models from '@/data/models.json'
 import { Callout } from './Callout'
@@ -24,44 +24,40 @@ export function modelByIndex(g: number): Model | undefined {
 
 const KARAR_KITABI = 'https://karacaismail.github.io/karar/'
 
-/** Adım içinde Karar Kitabı modeli. Tıklanınca çekmece açılır. Bölüm adı ve sırası yazar. */
+/** Adım içinde Karar Kitabı yöntemleri. Nötr etiket görünümlü düğmeler. Tıklanınca çekmece açılır. */
 export function ModelChips({ indexes }: { indexes: number[] }) {
-  const { token } = theme.useToken()
   const [open, setOpen] = useState<Model | null>(null)
   if (!indexes.length) return null
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
-      <span style={{ fontSize: 14, color: token.colorTextSecondary, display: 'flex', alignItems: 'center', gap: 6 }}>
-        <BookOpen size={18} aria-hidden /> Karar Kitabı'nda hangi modeller var?
+    <div className="model-chips">
+      <span className="helper" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+        <BookOpen size={16} aria-hidden /> Karar Kitabı'nda hangi yöntemler var?
       </span>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+      <div className="model-chip-row">
         {indexes.map((g) => {
           const m = modelByIndex(g)
           if (!m) return null
           return (
-            <Button key={g} size="middle" onClick={() => setOpen(m)} style={{ height: 'auto', padding: '6px 12px', textAlign: 'left', whiteSpace: 'normal' }}>
-              <span style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)' }}>
-                <span style={{ fontWeight: 500 }}>{m.title}</span>
-                <span style={{ fontSize: 14, color: token.colorTextSecondary }}>{m.section}, {m.no}. sırada</span>
-              </span>
-            </Button>
+            <button key={g} type="button" className="tag model-chip" onClick={() => setOpen(m)} aria-haspopup="dialog">
+              {m.title}
+            </button>
           )
         })}
       </div>
-      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} styles={{ body: { display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16, alignContent: 'start' } }}>
+      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} size="default" styles={{ wrapper: { maxWidth: '100vw' } }}>
         {open ? (
-          <>
-            <Space wrap>
-              <Tag style={{ fontSize: 14 }}>{open.section}</Tag>
-              <Tag style={{ fontSize: 14 }}>Bölümde {open.no}. sırada</Tag>
-            </Space>
-            <Typography.Text type="secondary">{open.question}</Typography.Text>
-            {open.simple ? <Callout tone="sonuc" title="Kısaca">{open.simple}</Callout> : <Callout tone="sonuc" title="Kısaca">{open.summary}</Callout>}
+          <div className="drawer-body">
+            <div className="drawer-tags">
+              <span className="tag">{open.section}</span>
+              <span className="tag">Bölümde {open.no}. sırada</span>
+            </div>
+            <p className="helper" style={{ margin: 0 }}>{open.question}</p>
+            <Callout tone="sonuc" title="Kısaca">{open.simple ?? open.summary}</Callout>
             {open.example ? <Callout tone="ornek" title={open.example.title}>{open.example.text}</Callout> : null}
-            <Button type="link" href={`${KARAR_KITABI}#/model/${open.slug}/kavram`} target="_blank" rel="noreferrer" icon={<ArrowSquareOut size={18} />} style={{ padding: 0, justifySelf: 'start' }}>
+            <Button type="link" href={`${KARAR_KITABI}#/model/${open.slug}/kavram`} target="_blank" rel="noreferrer" icon={<ArrowSquareOut size={16} />} iconPlacement="end" style={{ padding: 0, justifySelf: 'start' }}>
               Karar Kitabı'nda aç
             </Button>
-          </>
+          </div>
         ) : null}
       </Drawer>
     </div>

@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router'
 export type StatTone = 'teal' | 'purple' | 'orange' | 'navy'
 
 /**
- * İstatistik kutusu: ikon, etiket, büyük sayı, birim ve kısa not.
- * `to` verilirse tıklanır ve o sayfaya gider.
+ * KPI öğesi. Kutu yoktur; şerit içinde 1 px çizgiyle ayrılır.
+ * Yalnız `KpiStrip` içinde ve yalnız plan özetinde kullanılır.
  */
 export function StatTile({
   icon,
@@ -13,15 +13,15 @@ export function StatTile({
   value,
   unit,
   note,
-  tone = 'teal',
   to,
   onClick,
 }: {
-  icon: ReactNode
+  icon?: ReactNode
   label: string
   value: string | number
   unit?: string
   note?: string
+  /** Eski çağrılar için tutulur, renk üretmez. */
   tone?: StatTone
   to?: string
   onClick?: () => void
@@ -30,24 +30,22 @@ export function StatTile({
   const clickable = Boolean(to || onClick)
   const body = (
     <>
-      <span className={`icon-tile ${tone}`} aria-hidden>
-        {icon}
+      <span className="kpi-label">
+        {icon ? <span aria-hidden style={{ display: 'inline-flex' }}>{icon}</span> : null}
+        {label}
       </span>
-      <span className="stat-label">{label}</span>
-      <span className="stat-number tabular">
+      <span className="kpi-value">
         {value}
         {unit ? <span>{unit}</span> : null}
       </span>
-      {note ? <span className="stat-note">{note}</span> : null}
+      {note ? <span className="kpi-note">{note}</span> : null}
     </>
   )
-  if (!clickable) {
-    return <div className="stat-tile">{body}</div>
-  }
+  if (!clickable) return <div className="kpi">{body}</div>
   return (
     <button
       type="button"
-      className="stat-tile is-link"
+      className="kpi is-link"
       onClick={() => {
         onClick?.()
         if (to) nav(to)
@@ -55,5 +53,14 @@ export function StatTile({
     >
       {body}
     </button>
+  )
+}
+
+/** Dört KPI'yı tek satırda gösteren şerit. */
+export function KpiStrip({ children, label = 'Plan sayıları' }: { children: ReactNode; label?: string }) {
+  return (
+    <div className="kpi-strip" role="group" aria-label={label}>
+      {children}
+    </div>
   )
 }

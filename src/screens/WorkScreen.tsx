@@ -1,20 +1,24 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Card, Grid, Input, Modal, Space, Table, Tag, Typography, theme, App as AntApp } from 'antd'
+import { Button, Collapse, Grid, Input, Modal, Table, App as AntApp } from 'antd'
 import { useNavigate, useParams } from 'react-router'
-import { ArrowLeft, ArrowRight, DoorOpen, SkipForward, Check } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { STEPS, nextStepId, prevStepId, decisionOf } from '@/data/registry'
 import { stepApplies } from '@/engine/conditions'
 import { FormRenderer } from '@/components/FormRenderer'
 import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
+import { PageHeader } from '@/components/PageHeader'
 import { ChartFrame } from '@/charts/ChartFrame'
 import type { Limits } from '@/data/types'
+import '@/styles/screens-form.css'
 
 const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBurnKurus', 'cashKurus', 'budgetKurus', 'deadline', 'retriesPerDecision', 'hoursPerWeek']
 
+/**
+ * Adım ekranı. Üstte sayfa başlığı ve tek satır durum. Ortada form ve yardım sütunu.
+ * Altta 64 px yapışkan işlem şeridi. Ekranda tek dolu düğme vardır: "Adımı tamamla".
+ */
 export function WorkScreen() {
-  const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
   const { n, id } = useParams()
   const nav = useNavigate()
@@ -44,6 +48,7 @@ export function WorkScreen() {
   if (!plan || !step) return null
   const decision = decisionOf(step.decision)
   const applies = stepApplies(step.mandatory, plan)
+  const wide = Boolean(bp.xl)
 
   const persist = (next: Record<string, unknown>, status?: 'tamam') => {
     if (isProfile) setProfile(next)
@@ -77,72 +82,89 @@ export function WorkScreen() {
   }
   const prev = prevStepId(step.id)
   const next = nextStepId(step.id)
+  const nextInDecision = next && STEPS[next].decision === step.decision ? next : null
   const chartData = step.chart?.build(values, plan)
   const rec = plan.steps[step.id]
+  const title = `Adım ${step.id}. ${step.title}`
+  const example = decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null
 
   return (
-    <div style={{ display: 'grid', gap: 24, gridTemplateColumns: bp.xl ? 'minmax(0, 1fr) 320px' : 'minmax(0, 1fr)', alignItems: 'start' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 24, minWidth: 0 }}>
-        <div>
-          <Typography.Text style={{ color: token.colorTextSecondary, fontSize: 14 }}>Karar {step.decision}. {decision?.title}</Typography.Text>
-          <Typography.Title level={1} style={{ fontSize: 28, margin: '4px 0 8px' }}>Adım {step.id}. {step.title}</Typography.Title>
-          <Typography.Paragraph style={{ fontSize: 18, marginBottom: 8 }}>{step.question}</Typography.Paragraph>
-          <Space wrap>
-            {applies === 'zorunlu' ? <Tag color="processing" style={{ fontSize: 14 }}>Zorunlu</Tag> : applies === 'kosullu' ? <Tag style={{ fontSize: 14 }}>Koşullu</Tag> : <Tag style={{ fontSize: 14 }}>Bu profilde gerekmez</Tag>}
-            {rec?.status === 'tamam' ? <Tag color="success" style={{ fontSize: 14 }}>Tamam</Tag> : rec?.status === 'atlandi' ? <Tag style={{ fontSize: 14 }}>Atlandı: {rec.skipReason}</Tag> : null}
-            <span style={{ fontSize: 14, color: token.colorTextSecondary }}>Kim yapar? {step.who}</span>
-          </Space>
-        </div>
-        {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
-        {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için "Bu adımı atla" düğmesini kullanın.</Callout> : null}
-        {step.intro ? <Typography.Paragraph style={{ fontSize: 16 }}>{step.intro}</Typography.Paragraph> : null}
-        {!bp.xl && step.howTo ? <HowTo items={step.howTo} /> : null}
-        <Card styles={{ body: { padding: bp.md ? 24 : 16 } }}>
-          <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
-        </Card>
-        {chartData && step.chart ? <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} /> : null}
-        {step.outcomeTable?.length ? (
-          <Card title="Koşula göre sonuç" size="small">
-            <Table size="small" pagination={false} rowKey={(r) => r.condition} dataSource={step.outcomeTable} columns={[{ title: 'Durum', dataIndex: 'condition' }, { title: 'Sonuç', dataIndex: 'result' }]} scroll={{ x: 'max-content' }} />
-          </Card>
-        ) : null}
-        {step.output ? <Callout tone="sonuc" title="Elinizde ne olur?">{step.output}</Callout> : null}
-        <ModelChips indexes={step.models} />
-        <div className="no-print" style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'space-between', position: 'sticky', bottom: 0, background: token.colorBgLayout, padding: '12px 0' }}>
-          <Space wrap>
-            <Button icon={<ArrowLeft size={18} />} disabled={!prev} onClick={() => prev && nav(`/karar/${STEPS[prev].decision}/adim/${prev}`)}>Geri</Button>
-            <Button icon={<SkipForward size={18} />} onClick={() => setSkipOpen(true)}>Bu adımı atla</Button>
-          </Space>
-          <Space wrap>
-            {next && STEPS[next].decision === step.decision ? (
-              <Button icon={<ArrowRight size={18} />} iconPlacement="end" onClick={() => { persist(values); nav(`/karar/${n}/adim/${next}`) }}>Taslak bırak, ilerle</Button>
-            ) : (
-              <Button icon={<DoorOpen size={18} />} onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
-            )}
-            <Button type="primary" icon={<Check size={18} />} onClick={complete}>Adımı tamamla</Button>
-          </Space>
+    <div className="page">
+      <div className="work-head">
+        <PageHeader kicker={decision ? `Karar ${step.decision}. ${decision.title}` : undefined} title={title} description={step.question} documentTitle={title} />
+        <div className="work-meta">
+          {applies === 'zorunlu' ? <span className="tag">Zorunlu</span> : applies === 'kosullu' ? <span className="tag">Koşullu</span> : <span className="tag is-muted">Bu profilde gerekmez</span>}
+          {rec?.status === 'tamam' ? <span className="tag is-ok">Tamam</span> : rec?.status === 'atlandi' ? <span className="tag is-muted">Atlandı</span> : null}
+          <span className="helper">Kim yapar? {step.who}</span>
+          {rec?.status === 'atlandi' && rec.skipReason ? <span className="helper">Atlama nedeni: {rec.skipReason}</span> : null}
         </div>
       </div>
-      {bp.xl ? (
-        <aside style={{ position: 'sticky', top: 76, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16 }}>
-          {step.howTo ? <HowTo items={step.howTo} /> : null}
-          {decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null}
-        </aside>
-      ) : null}
+
+      <div className="work-grid">
+        <div className="work-main">
+          {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
+          {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için "Bu adımı atla" düğmesini kullanın.</Callout> : null}
+          {step.intro ? <p className="work-intro">{step.intro}</p> : null}
+          {!wide && step.howTo ? (
+            <Collapse
+              className="howto-collapse"
+              ghost
+              items={[{ key: 'nasil', label: 'Nasıl yapılır?', children: <div className="howto"><HowToList items={step.howTo} /></div> }]}
+            />
+          ) : null}
+          <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
+          {chartData && step.chart ? (
+            <section className="section is-divided">
+              <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} />
+            </section>
+          ) : null}
+          {step.outcomeTable?.length ? (
+            <section className="section is-divided" aria-labelledby="kosul-sonuc">
+              <div className="section-head"><h3 id="kosul-sonuc">Koşula göre sonuç</h3></div>
+              <Table size="middle" pagination={false} rowKey={(r) => r.condition} dataSource={step.outcomeTable} columns={[{ title: 'Durum', dataIndex: 'condition', width: 240 }, { title: 'Sonuç', dataIndex: 'result', width: 360 }]} scroll={{ x: 'max-content' }} />
+            </section>
+          ) : null}
+          {step.output ? <Callout tone="sonuc" title="Elinizde ne olur?">{step.output}</Callout> : null}
+          {!wide ? example : null}
+          <ModelChips indexes={step.models} />
+        </div>
+        {wide ? (
+          <aside className="work-aside" aria-label="Yardım">
+            {step.howTo ? (
+              <div className="howto">
+                <div className="section-head"><h3>Nasıl yapılır?</h3></div>
+                <HowToList items={step.howTo} />
+              </div>
+            ) : null}
+            {example}
+          </aside>
+        ) : null}
+      </div>
+
+      <div className="action-bar step-actions no-print">
+        <Button type="text" disabled={!prev} onClick={() => prev && nav(`/karar/${STEPS[prev].decision}/adim/${prev}`)}>Geri</Button>
+        <span className="spacer" />
+        <Button type="text" onClick={() => setSkipOpen(true)}>Bu adımı atla</Button>
+        <div className="action-main">
+          {nextInDecision ? (
+            <Button onClick={() => { persist(values); nav(`/karar/${n}/adim/${nextInDecision}`) }}>Taslak bırak, ilerle</Button>
+          ) : (
+            <Button onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
+          )}
+          <Button type="primary" onClick={complete}>Adımı tamamla</Button>
+        </div>
+      </div>
+
       <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(`/karar/${STEPS[next].decision}/adim/${next}`) }}>
-        <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
-          <span>Neden atlıyorsunuz? Neden rapora yazılır.</span>
-          <Input.TextArea rows={2} value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />
-        </label>
+        <div className="field">
+          <label htmlFor="atlama-nedeni" className="field-label">Neden atlıyorsunuz? Neden rapora yazılır.</label>
+          <Input.TextArea id="atlama-nedeni" rows={2} value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />
+        </div>
       </Modal>
     </div>
   )
 }
 
-function HowTo({ items }: { items: string[] }) {
-  return (
-    <Card size="small" title="Nasıl yapılır?">
-      <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>{items.map((t, i) => <li key={i}>{t}</li>)}</ol>
-    </Card>
-  )
+function HowToList({ items }: { items: string[] }) {
+  return <ol>{items.map((t, i) => <li key={i}>{t}</li>)}</ol>
 }
