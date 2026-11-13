@@ -76,9 +76,7 @@ test('ölçüt 5: etkin menü maddesinin sol çizgisi düz köşeli', async ({ p
   const read = () => active.evaluate((el) => { const s = getComputedStyle(el); return { bw: s.borderLeftWidth, tl: s.borderTopLeftRadius, bl: s.borderBottomLeftRadius, shadow: s.boxShadow } })
   // Stil dosyası geç yüklenebilir; çizgi görünene kadar bekle.
   await expect.poll(async () => { const cs = await read(); return px(cs.bw) === 3 || cs.shadow.includes('inset') }, { timeout: 10_000, message: 'etkin maddede sol çizgi' }).toBeTruthy()
-  const cs = await read()
-  expect(px(cs.tl)).toBe(0)
-  expect(px(cs.bl)).toBe(0)
+  await expect.poll(async () => { const cs = await read(); return px(cs.tl) === 0 && px(cs.bl) === 0 }, { timeout: 10_000, message: 'çizgiye değen köşeler düz olmalı' }).toBeTruthy()
 })
 
 test('ölçüt 6: kart içinde kart yok', async ({ page }) => {
