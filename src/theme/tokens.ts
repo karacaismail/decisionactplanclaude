@@ -1,42 +1,99 @@
-/** Semantik tasarım tokenları. Bileşen içine sabit değer yazılmaz. */
+/**
+ * Semantik tasarım tokenları. Bileşen içine sabit değer yazılmaz.
+ *
+ * Kimlik: sıcak kırık beyaz yüzeyler, derin lacivert-yeşil "hero" paneli,
+ * turuncu-kızıl eylem rengi. Ayrım kenarlıkla değil boşluk ve yüzey tonuyla kurulur.
+ */
 export const light = {
-  surfacePage: '#F8F7F4',
-  surfaceWork: '#FFFFFF',
-  surfaceContext: '#F1F3F4',
-  textPrimary: '#20282F',
-  textSecondary: '#495761',
-  actionPrimary: '#8F2812',
-  actionHover: '#B52F0F',
-  brandAccent: '#F95428',
-  statusOk: '#17634C',
-  statusHold: '#79520F',
-  statusHarm: '#A02F34',
-  statusInfo: '#315A75',
-  border: '#D3D9DD',
+  surfacePage: '#F6F3EE',
+  surfaceWork: '#FFFDF9',
+  surfaceContext: '#EEE9E1',
+  surfaceSunken: '#E7E1D7',
+  textPrimary: '#1B2A31',
+  textSecondary: '#53636B',
+  actionPrimary: '#B8441C',
+  actionHover: '#99370F',
+  brandAccent: '#E8632B',
+  statusOk: '#1D6B4F',
+  statusHold: '#7A5410',
+  statusHarm: '#A3302F',
+  statusInfo: '#2E5A74',
+  statusOkBg: '#DDEFE6',
+  statusHoldBg: '#F6EBD3',
+  statusHarmBg: '#F8E1DF',
+  statusInfoBg: '#DFE9F0',
+  border: '#DAD3C8',
+  /* Hero paneli: derin lacivert-yeşil zemin, sıcak krem metin. */
+  heroSurface: '#15303A',
+  heroSurfaceAlt: '#1E434C',
+  heroText: '#F8EFE2',
+  heroMuted: '#A9C3BB',
+  heroLine: '#9BB8AF',
+  heroAction: '#F2A66B',
+  heroActionHover: '#F7BC8C',
+  heroActionText: '#2A1A0E',
+  /* Ton yüzeyleri: ikon kutuları ve küçük vurgular. */
+  toneTeal: '#1E6B5E',
+  toneTealBg: '#DCEDE6',
+  tonePurple: '#5A4A82',
+  tonePurpleBg: '#E9E4F1',
+  toneOrange: '#B8441C',
+  toneOrangeBg: '#F9E6DA',
+  toneNavy: '#2E4F62',
+  toneNavyBg: '#DFE8EE',
+  shadow: 'rgba(27, 42, 49, 0.10)',
 } as const
 
 export const dark = {
+  /* surfacePage değeri başka bileşenlerce tema algısında kullanılır; değiştirmeyin. */
   surfacePage: '#16191D',
   surfaceWork: '#1F2429',
-  surfaceContext: '#262C33',
+  surfaceContext: '#272D34',
+  surfaceSunken: '#2E353D',
   textPrimary: '#ECEEF0',
   textSecondary: '#AEB9C0',
-  actionPrimary: '#FF9A7D',
-  actionHover: '#FFC0AD',
-  brandAccent: '#FF6F4D',
+  actionPrimary: '#FFA17C',
+  actionHover: '#FFBFA3',
+  brandAccent: '#FF7A4F',
   statusOk: '#5FD3A6',
   statusHold: '#E0B35A',
   statusHarm: '#FF8A8E',
   statusInfo: '#8CC3E8',
+  statusOkBg: '#1F3B33',
+  statusHoldBg: '#3F3520',
+  statusHarmBg: '#452A2C',
+  statusInfoBg: '#243744',
   border: '#39424A',
+  heroSurface: '#0E242B',
+  heroSurfaceAlt: '#163640',
+  heroText: '#F3EBDE',
+  heroMuted: '#9DB8B0',
+  heroLine: '#7E9B93',
+  heroAction: '#F2A66B',
+  heroActionHover: '#F7BC8C',
+  heroActionText: '#2A1A0E',
+  toneTeal: '#9FD3C2',
+  toneTealBg: '#23403A',
+  tonePurple: '#CDBDE6',
+  tonePurpleBg: '#3A334D',
+  toneOrange: '#F5B48C',
+  toneOrangeBg: '#4A3023',
+  toneNavy: '#9FC2D6',
+  toneNavyBg: '#263A47',
+  shadow: 'rgba(0, 0, 0, 0.35)',
 } as const
 
 export type Palette = { [K in keyof typeof light]: string }
+export type ThemeMode = 'light' | 'dark'
+
+export function palette(mode: ThemeMode): Palette {
+  return (mode === 'dark' ? dark : light) as unknown as Palette
+}
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {
-  light: { proceed: '#17634C', conditional: '#5C7A1F', retry: '#315A75', pivot: '#5B3D8F', hold: '#4F5E6A', stop: '#A02F34' },
-  dark: { proceed: '#5FD3A6', conditional: '#B5D06A', retry: '#8CC3E8', pivot: '#C4A9F0', hold: '#AEB9C0', stop: '#FF8A8E' },
+  light: { proceed: '#1D6B4F', conditional: '#5C7A1F', retry: '#2E5A74', pivot: '#5A4A82', hold: '#53636B', stop: '#A3302F' },
+  dark: { proceed: '#5FD3A6', conditional: '#B5D06A', retry: '#8CC3E8', pivot: '#CDBDE6', hold: '#AEB9C0', stop: '#FF8A8E' },
 } as const
 
 export const motion = {
@@ -48,7 +105,7 @@ export const motion = {
 } as const
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, section: 48 } as const
-export const radius = { control: 6, panel: 12 } as const
+export const radius = { control: 6, panel: 12, hero: 20 } as const
 export const control = { height: 44, dense: 32, touch: 44 } as const
 export const font = {
   family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
@@ -58,5 +115,19 @@ export const font = {
   h3: 20,
   h2: 24,
   h1: 32,
+  display: 40,
   report: 40,
 } as const
+
+/** Paleti CSS değişkenlerine çevirir. global.css yalnız bu değişkenleri okur. */
+export function cssVariables(mode: ThemeMode): Record<string, string> {
+  const p = palette(mode)
+  const kebab = (k: string) => k.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`)
+  const vars: Record<string, string> = {}
+  for (const [k, v] of Object.entries(p)) vars[`--color-${kebab(k)}`] = v
+  vars['--radius-control'] = `${radius.control}px`
+  vars['--radius-panel'] = `${radius.panel}px`
+  vars['--radius-hero'] = `${radius.hero}px`
+  vars['--focus-marker'] = p.actionPrimary
+  return vars
+}

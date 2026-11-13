@@ -1,5 +1,6 @@
 import type { GateDef } from '@/data/schema'
-import type { Decision, Outcome, PlanDoc } from '@/data/types'
+import { OUTCOME_LABEL, type Decision, type Outcome, type PlanDoc } from '@/data/types'
+import { formatMoney } from './format'
 
 export const OUTCOME_PRIORITY: Outcome[] = ['durdur', 'beklet', 'yenidenDene', 'yonDegistir', 'kosulluIlerle', 'ilerle']
 
@@ -37,7 +38,7 @@ export function effectiveOutcome(d: Decision, now = new Date()): Outcome {
 
 export function gatePassed(plan: PlanDoc, gate: number): boolean {
   const d = lastDecision(plan, gate)
-  if (!d) return false
+  if (!d || d.stale) return false
   const o = effectiveOutcome(d)
   return o === 'ilerle' || o === 'kosulluIlerle'
 }
@@ -98,3 +99,72 @@ export function evaluateGate(def: GateDef, plan: PlanDoc, flags: { harm?: boolea
   }
   return { criteria, metCount, total, unknownCount, suggested, matchedRow, retriesLeft: left, blockedOutcomes: blocked, reasons }
 }
+
+/** Kayıt öncesi karar taslağı. OutcomePanel aynı biçimi kullanır. */
+export interface DecisionDraft {
+  chosen: Outcome
+  reason: string
+  secondOpinion?: string
+  decidedBy?: string
+  conditional?: { scope: string; amountKurus: number; deadline: string; owner: string; closingEvidence: string }
+}
+
+export const OVERRIDE_REASON_MIN = 20
+
+/** Koşullu izinlere bağlanmış toplam tutar. Harcanan sayılır. */
+export function committedKurus(plan: PlanDoc): number {
+  return plan.decisions.reduce((sum, d) => sum + (d.conditional?.amountKurus ?? 0), 0)
+}
+
+export function remainingBudgetKurus(plan: PlanDoc): number | null {
+  const budget = plan.limits.budgetKurus
+  if (budget === null || budget === undefined) return null
+  return budget - committedKurus(plan)
+}
+
+/**
+ * Kararın kaydedilebilir olup olmadığını denetler. Her engel Türkçe bir cümledir.
+ * Boş dizi dönerse kayıt serbesttir.
+ */
+export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEvaluation, draft: DecisionDraft, opts: { harm?: boolean; now?: Date } = {}): string[] {
+  const errors: string[] = []
+  const chosen = draft.chosen
+  const advancing = chosen === 'ilerle' || chosen === 'kosulluIlerle'
+
+  if (opts.harm && chosen !== 'durdur') errors.push('Ciddi zarar tehlikesi işaretli. Yalnız "Durdur" seçilebilir.')
+
+  if (chosen === 'ilerle' && evaluation.suggested !== 'ilerle') {
+    const second = (draft.secondOpinion ?? '').trim().length > 0
+    const reasonOk = draft.reason.trim().length >= OVERRIDE_REASON_MIN
+    if (!second || !reasonOk) {
+      errors.push(`Sistem "${OUTCOME_LABEL[evaluation.suggested]}" öneriyor. "İlerle" için ikinci görüş ve en az ${OVERRIDE_REASON_MIN} karakterlik gerekçe gerekir.`)
+    }
+  }
+
+  if (chosen === 'yenidenDene' && evaluation.retriesLeft <= 0) errors.push('Bu kapıda deneme hakkı kalmadı. "Yeniden dene" seçilemez.')
+
+  if (chosen === 'kosulluIlerle') {
+    if (conditionalUsed(plan, def.n)) errors.push('Bu kapıda koşullu izin daha önce kullanıldı. İkinci izin verilmez.')
+    const c = draft.conditional
+    if (!c) errors.push('Koşullu izin için kapsam, tutar, bitiş, sorumlu ve kapanış kanıtı gerekir.')
+    else {
+      if (!c.scope.trim()) errors.push('Koşullu iznin kapsamını yazın.')
+      if (!c.owner.trim()) errors.push('Koşullu iznin sorumlusunu yazın.')
+      if (!c.closingEvidence.trim()) errors.push('Kapanış kanıtını yazın. Ne gelince iş kapanır?')
+      if (!c.deadline) errors.push('Koşullu iznin bitiş tarihini seçin.')
+      const remaining = remainingBudgetKurus(plan)
+      if (remaining !== null && c.amountKurus > remaining) errors.push(`Tutar kalan bütçeyi aşıyor. Kalan bütçe ${formatMoney(remaining)}.`)
+      if (c.deadline && plan.limits.deadline && c.deadline.slice(0, 10) > plan.limits.deadline.slice(0, 10)) errors.push('Koşullu iznin bitişi planın bitiş tarihini geçemez.')
+    }
+  }
+
+  if (advancing && def.n > 1 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
+
+  if (advancing) {
+    const open = (plan.changes ?? []).filter((c) => c.needsReview && !c.reviewer)
+    if (open.length > 0) errors.push(`${open.length} sınır değişikliği ikinci görüş bekliyor. Görüş kaydedilmeden ilerlenmez.`)
+  }
+
+  return errors
+}
+

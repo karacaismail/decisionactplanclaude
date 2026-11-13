@@ -24,11 +24,11 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
     setOpen(false)
   }
   return (
-    <Space direction="vertical" style={{ width: '100%' }} size={8}>
+    <Space orientation="vertical" style={{ width: '100%' }} size={8}>
       <Select id={id} mode="multiple" style={{ width: '100%' }} value={value} options={options} onChange={onChange} placeholder="Kanıt seçin" suffixIcon={<Paperclip size={18} />} notFoundContent="Kanıt yok. Yeni kanıt ekleyin." />
       <Button icon={<Plus size={18} />} onClick={() => setOpen(true)}>Yeni kanıt ekle</Button>
       <Modal open={open} title="Yeni kanıt" onCancel={() => setOpen(false)} onOk={save} okText="Kaydet" cancelText="Vazgeç" destroyOnHidden>
-        <Space direction="vertical" style={{ width: '100%' }} size={12}>
+        <Space orientation="vertical" style={{ width: '100%' }} size={12}>
           <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
             <span>Kanıtın adı</span>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Örneğin 3 Kasım görüşme notu" />

@@ -4,7 +4,7 @@ import * as echarts from 'echarts/core'
 import { BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import { font } from '@/theme/tokens'
+import { font, motion } from '@/theme/tokens'
 
 echarts.use([BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, CanvasRenderer])
 
@@ -19,7 +19,7 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
       color: [token.colorPrimary, token.colorInfo, token.colorSuccess, token.colorWarning, token.colorError, token.colorTextSecondary],
       textStyle: { fontFamily: font.family, fontSize: 14, color: token.colorText },
       aria: { enabled: true, decal: { show: true } },
-      animationDuration: 320,
+      animationDuration: motion.page,
       animationEasing: 'cubicInOut' as const,
     }
     chart.setOption({ ...base, ...(option as object) }, true)

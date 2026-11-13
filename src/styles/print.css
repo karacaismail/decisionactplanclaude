@@ -1,0 +1,111 @@
+/*
+ * Yazdırma biçimi. Çıktılar ekranı bu dosyayı yükler.
+ * Menü, başlık ve düğmeler gizlenir. Rapor A4 sayfaya oturur.
+ */
+@media print {
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .no-print,
+  .ant-layout-sider,
+  .ant-layout-header,
+  .ant-drawer,
+  .ant-drawer-mask {
+    display: none !important;
+  }
+
+  .ant-layout,
+  .ant-layout-content {
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    min-height: 0 !important;
+  }
+
+  .report {
+    max-width: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .report h1,
+  .report h2,
+  .report h3 {
+    color: #000 !important;
+    break-after: avoid;
+    page-break-after: avoid;
+    break-inside: avoid;
+  }
+
+  .report h1 {
+    font-size: 28px !important;
+  }
+
+  .report h2 {
+    font-size: 20px !important;
+  }
+
+  .report p,
+  .report li {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .report header,
+  .report tr,
+  .report thead {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .report thead {
+    display: table-header-group;
+  }
+
+  .report .ant-table-wrapper {
+    overflow: visible !important;
+  }
+
+  .report .ant-table-content {
+    overflow: visible !important;
+  }
+
+  .report table {
+    width: 100% !important;
+    border-collapse: collapse;
+  }
+
+  .report .ant-table-cell {
+    color: #000 !important;
+    font-size: 14px !important;
+    padding: 6px 8px !important;
+    border-bottom: 1px solid #999 !important;
+  }
+
+  .report .report-stamp {
+    border: 1px solid #000;
+    padding: 6px 10px;
+    font-weight: 600;
+  }
+
+  a,
+  a:visited {
+    color: inherit !important;
+    text-decoration: none !important;
+  }
+}

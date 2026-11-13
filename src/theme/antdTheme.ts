@@ -1,30 +1,61 @@
 import { theme as antTheme, type ThemeConfig } from 'antd'
-import { control, dark, font, light, motion, radius, type Palette } from './tokens'
+import { control, font, motion, palette, radius, type ThemeMode } from './tokens'
+
+/** Mağaza tercihi "system" ise işletim sistemi tercihine bakar. */
+export function resolveMode(pref: ThemeMode | 'system'): ThemeMode {
+  if (pref !== 'system') return pref
+  return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
 
 /** Ant Design tokenları semantik tokenlardan beslenir. Varsayılan mavi görünmez. */
-export function buildTheme(mode: 'light' | 'dark'): ThemeConfig {
-  const p: Palette = (mode === 'dark' ? dark : light) as unknown as Palette
+export function buildTheme(mode: ThemeMode): ThemeConfig {
+  const p = palette(mode)
   const s = motion.ease
+  const dark = mode === 'dark'
   return {
     cssVar: { key: 'gap' },
     hashed: false,
-    algorithm: mode === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
+    algorithm: dark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
     token: {
       colorPrimary: p.actionPrimary,
       colorPrimaryHover: p.actionHover,
+      colorPrimaryActive: p.actionHover,
       colorLink: p.actionPrimary,
+      colorLinkHover: p.actionHover,
       colorInfo: p.statusInfo,
       colorSuccess: p.statusOk,
       colorWarning: p.statusHold,
       colorError: p.statusHarm,
+      /* antd koyu durum renklerinden gri ton üretir; açık zeminleri biz veririz. */
+      colorPrimaryBg: p.toneOrangeBg,
+      colorPrimaryBgHover: p.toneOrangeBg,
+      colorPrimaryBorder: p.toneOrangeBg,
+      colorSuccessBg: p.statusOkBg,
+      colorSuccessBgHover: p.statusOkBg,
+      colorSuccessBorder: p.statusOkBg,
+      colorWarningBg: p.statusHoldBg,
+      colorWarningBgHover: p.statusHoldBg,
+      colorWarningBorder: p.statusHoldBg,
+      colorErrorBg: p.statusHarmBg,
+      colorErrorBgHover: p.statusHarmBg,
+      colorErrorBorder: p.statusHarmBg,
+      colorInfoBg: p.statusInfoBg,
+      colorInfoBgHover: p.statusInfoBg,
+      colorInfoBorder: p.statusInfoBg,
       colorBgLayout: p.surfacePage,
       colorBgContainer: p.surfaceWork,
       colorBgElevated: p.surfaceWork,
       colorFillAlter: p.surfaceContext,
+      colorFillSecondary: p.surfaceContext,
+      colorFillTertiary: p.surfaceContext,
+      colorFillQuaternary: p.surfaceContext,
       colorText: p.textPrimary,
+      colorTextHeading: p.textPrimary,
       colorTextSecondary: p.textSecondary,
+      colorTextDescription: p.textSecondary,
       colorBorder: p.border,
       colorBorderSecondary: p.border,
+      colorSplit: p.border,
       fontFamily: font.family,
       fontFamilyCode: font.mono,
       fontSize: font.body,
@@ -35,6 +66,9 @@ export function buildTheme(mode: 'light' | 'dark'): ThemeConfig {
       fontSizeHeading3: font.h3,
       fontSizeHeading4: 18,
       fontSizeHeading5: 16,
+      fontWeightStrong: 600,
+      lineHeightHeading1: 1.15,
+      lineHeightHeading2: 1.2,
       borderRadius: radius.control,
       borderRadiusLG: radius.panel,
       borderRadiusSM: radius.control,
@@ -55,16 +89,37 @@ export function buildTheme(mode: 'light' | 'dark'): ThemeConfig {
       motionDurationFast: `${motion.micro}ms`,
       motionDurationMid: `${motion.small}ms`,
       motionDurationSlow: `${motion.panel}ms`,
-      boxShadow: '0 8px 24px rgba(32, 40, 47, 0.12)',
-      boxShadowSecondary: '0 4px 12px rgba(32, 40, 47, 0.10)',
+      boxShadow: `0 12px 32px ${p.shadow}`,
+      boxShadowSecondary: `0 6px 18px ${p.shadow}`,
+      boxShadowTertiary: `0 1px 2px ${p.shadow}`,
     },
     components: {
-      Button: { controlHeight: control.height, fontWeight: 500, primaryShadow: 'none', defaultShadow: 'none', dangerShadow: 'none' },
-      Card: { borderRadiusLG: radius.panel, paddingLG: 20 },
+      Button: {
+        controlHeight: control.height,
+        fontWeight: 500,
+        primaryShadow: 'none',
+        defaultShadow: 'none',
+        dangerShadow: 'none',
+        /* Koyu temada açık turuncu zemine koyu yazı. Beyaz yazı okunmaz. */
+        primaryColor: dark ? p.heroActionText : p.surfaceWork,
+        defaultBg: p.surfaceWork,
+        defaultBorderColor: p.border,
+      },
+      Card: { borderRadiusLG: radius.panel, paddingLG: 20, colorBorderSecondary: 'transparent', headerBg: 'transparent' },
       Alert: { borderRadiusLG: radius.panel, withDescriptionPadding: '16px', colorInfoBorder: 'transparent', colorSuccessBorder: 'transparent', colorWarningBorder: 'transparent', colorErrorBorder: 'transparent' },
-      Menu: { itemBorderRadius: radius.control, itemHeight: control.height, activeBarBorderWidth: 0, itemSelectedBg: p.surfaceContext },
+      Menu: {
+        itemBorderRadius: radius.control,
+        itemHeight: control.height,
+        activeBarBorderWidth: 0,
+        itemSelectedBg: p.toneOrangeBg,
+        itemSelectedColor: p.actionPrimary,
+        itemHoverBg: p.surfaceContext,
+        groupTitleColor: p.textSecondary,
+        groupTitleFontSize: font.helper,
+        iconMarginInlineEnd: 12,
+      },
       Segmented: { itemSelectedBg: p.surfaceWork, trackBg: p.surfaceContext },
-      Tabs: { inkBarColor: p.brandAccent },
+      Tabs: { inkBarColor: p.brandAccent, itemSelectedColor: p.actionPrimary, itemHoverColor: p.actionHover },
       Steps: { iconSize: 32 },
       Table: { headerBg: p.surfaceContext, cellPaddingBlock: 12 },
       Tag: { borderRadiusSM: radius.control },
@@ -72,6 +127,10 @@ export function buildTheme(mode: 'light' | 'dark'): ThemeConfig {
       Statistic: { contentFontSize: 28 },
       Rate: { starColor: p.brandAccent },
       Drawer: { paddingLG: 20 },
+      Progress: { defaultColor: p.toneTeal, remainingColor: p.surfaceSunken },
+      Switch: { colorPrimary: p.toneTeal, colorPrimaryHover: p.toneTeal },
+      Layout: { siderBg: p.surfaceWork, headerBg: p.surfacePage, bodyBg: p.surfacePage },
+      Modal: { contentBg: p.surfaceWork, headerBg: p.surfaceWork },
     },
   }
 }

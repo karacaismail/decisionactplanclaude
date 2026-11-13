@@ -17,9 +17,14 @@ export interface ReportSection {
 }
 export interface Report {
   title: string
+  /** Örnek planda rapor başına basılan uyarı. Gerçek planda yoktur. */
+  stamp?: string
   meta: string[]
   sections: ReportSection[]
 }
+
+export const EXAMPLE_STAMP = 'Örnek plan. Gerçek veri değildir.'
+const stampOf = (p: PlanDoc): string | undefined => (p.example ? EXAMPLE_STAMP : undefined)
 
 const v = (p: PlanDoc, s: string, k: string): unknown => p.steps[s]?.values?.[k]
 const str = (x: unknown, fallback = 'Bilinmiyor'): string => (typeof x === 'string' && x.trim() ? x : typeof x === 'number' ? String(x) : fallback)
@@ -70,6 +75,7 @@ export function buildExecutiveReport(p: PlanDoc): Report {
   })
   return {
     title: 'Yönetici raporu',
+    stamp: stampOf(p),
     meta: [`Plan: ${p.name}`, `Profil: ${profileSentence(p)}`, `Sürüm ${p.revision}`, `Oluşturma: ${formatDate(new Date().toISOString())}`],
     sections: [
       { title: 'Yönetici özeti', lines: summary },
@@ -133,6 +139,7 @@ export function buildActionPlan(p: PlanDoc): Report {
   const stop = p.limits.stopRules?.map((r) => r.rule) ?? []
   return {
     title: 'Girişimci aksiyon planı',
+    stamp: stampOf(p),
     meta: [`Plan: ${p.name}`, `Profil: ${profileSentence(p)}`, `Sürüm ${p.revision}`, `Oluşturma: ${formatDate(new Date().toISOString())}`],
     sections: [
       {
@@ -169,7 +176,9 @@ export function buildActionPlan(p: PlanDoc): Report {
 }
 
 export function reportToMarkdown(r: Report): string {
-  const out: string[] = [`# ${r.title}`, '', ...r.meta.map((m) => `- ${m}`), '']
+  const out: string[] = [`# ${r.title}`, '']
+  if (r.stamp) out.push(`**${r.stamp}**`, '')
+  out.push(...r.meta.map((m) => `- ${m}`), '')
   for (const s of r.sections) {
     out.push(`## ${s.title}`, '')
     for (const l of s.lines) out.push(l, '')

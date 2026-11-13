@@ -5,8 +5,10 @@ import trTR from 'antd/locale/tr_TR'
 import { HashRouter } from 'react-router'
 import './styles/global.css'
 import { buildTheme } from './theme/antdTheme'
+import { palette } from './theme/tokens'
 import { usePlanStore } from './store/planStore'
 import { FocusMode } from './app/FocusMode'
+import { SyncGuard } from './app/SyncGuard'
 import { AppRoutes } from './app/routes'
 
 function Root() {
@@ -19,12 +21,13 @@ function Root() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', resolved)
     document.documentElement.style.colorScheme = resolved
-    document.body.style.background = resolved === 'dark' ? '#16191D' : '#F8F7F4'
+    document.body.style.background = palette(resolved).surfacePage
   }, [resolved])
   return (
     <ConfigProvider theme={themeConfig} locale={trTR}>
       <AntApp>
         <FocusMode />
+        <SyncGuard />
         <HashRouter>
           <AppRoutes />
         </HashRouter>

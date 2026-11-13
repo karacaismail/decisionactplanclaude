@@ -20,6 +20,24 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Kalite kapıları. Biri kırmızıysa yayın durur.
+      - name: Tip denetimi ve arayüz kapısı
+        run: npm run lint
+      - name: Birim testleri
+        run: npm run test:unit
+      - name: Playwright Chromium kurulumu
+        run: npx playwright install --with-deps chromium
+      - name: Duman testi (Chromium 320 ve 1280)
+        run: npm run test:e2e:ci
+        env:
+          CI: true
+      - name: Playwright izleri
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-test-results
+          path: test-results
+          retention-days: 7
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Card, Checkbox, Space, Table, Tag, Typography, theme, App as AntApp } from 'antd'
+import { Button, Card, Checkbox, Input, Space, Table, Tag, Typography, theme, App as AntApp } from 'antd'
 import { useNavigate, useParams } from 'react-router'
 import { CheckCircle, XCircle, Question } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -10,7 +10,8 @@ import { LimitsBar } from '@/components/LimitsBar'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { Callout } from '@/components/Callout'
 import { OUTCOME_LABEL } from '@/data/types'
-import { formatDate } from '@/engine/format'
+import { formatDate, formatMoney } from '@/engine/format'
+import { openReviews } from '@/engine/changes'
 
 export function ReviewScreen() {
   const { token } = theme.useToken()
@@ -21,13 +22,29 @@ export function ReviewScreen() {
   const recordDecision = usePlanStore((s) => s.recordDecision)
   const addTask = usePlanStore((s) => s.addTask)
   const setLocation = usePlanStore((s) => s.setLocation)
+  const reviewChange = usePlanStore((s) => s.reviewChange)
   const [harm, setHarm] = useState(false)
+  const [reviewer, setReviewer] = useState('')
   const [permitMissing, setPermitMissing] = useState(false)
   const d = decisionOf(Number(n))
   const evaluation = useMemo(() => (plan && d ? evaluateGate(d.gate, plan, { harm, permitMissing }) : null), [plan, d, harm, permitMissing])
   if (!plan || !d || !evaluation) return null
   const last = lastDecision(plan, d.n)
   const single = plan.profile.team !== 'ekip'
+  const pending = openReviews(plan)
+
+  const saveReview = (id: string) => {
+    const error = reviewChange(id, reviewer)
+    if (error) message.error(error)
+    else message.success('Görüş kaydedildi.')
+  }
+  const changeValue = (key: string, v: unknown): string => {
+    if (v === null || v === undefined || v === '') return 'Boş'
+    if (key.endsWith('Kurus')) return formatMoney(Number(v))
+    if (key === 'deadline') return formatDate(String(v), false)
+    if (Array.isArray(v)) return `${v.length} kural`
+    return String(v)
+  }
 
   const save = (draft: OutcomeDraft) => {
     const id = recordDecision(
@@ -69,13 +86,41 @@ export function ReviewScreen() {
         <Typography.Text>Hangi işe karar veriyoruz? {d.question}</Typography.Text>
       </div>
       {last ? (
-        <Callout tone="bilgi" title={`Son kayıt: ${formatDate(last.decidedAt)}`}>
-          <Space wrap><DecisionBadge outcome={effectiveOutcome(last)} /><span>{last.reason}</span></Space>
+        <Callout tone={last.stale ? 'uyari' : 'bilgi'} title={`Son kayıt: ${formatDate(last.decidedAt)}`}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
+            <Space wrap><DecisionBadge outcome={effectiveOutcome(last)} />{last.stale ? <Tag color="warning" style={{ fontSize: 14, margin: 0 }}>İnceleme bekliyor</Tag> : null}<span>{last.reason}</span></Space>
+            {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Kapı geçilmiş sayılmaz. Kararı yeniden kaydedin.</span> : null}
+          </div>
         </Callout>
+      ) : null}
+      {pending.length > 0 ? (
+        <Card title="İkinci görüş bekleyen değişiklikler">
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+            <Typography.Text>Tek kurucu sınırı artırdı. Konuyu bilen başka bir kişi görüş yazmadan "İlerle" ve "Koşullu ilerle" kaydedilmez.</Typography.Text>
+            <ul role="list" style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 6 }}>
+              {pending.map((c) => (
+                <li key={c.id}>
+                  <strong>{c.label}</strong>: {changeValue(c.key, c.before)} yerine {changeValue(c.key, c.after)}. <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>{formatDate(c.at)}</span>
+                </li>
+              ))}
+            </ul>
+            <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
+              <span style={{ fontWeight: 500 }}>İnceleyen kişi. Kararı veren kurucu olamaz.</span>
+              <Input value={reviewer} onChange={(e) => setReviewer(e.target.value)} placeholder="Ad Soyad" style={{ maxWidth: 320 }} />
+            </label>
+            <Space wrap>
+              {pending.map((c) => (
+                <Button key={c.id} disabled={!reviewer.trim()} onClick={() => saveReview(c.id)}>
+                  Görüşü kaydet: {c.label}
+                </Button>
+              ))}
+            </Space>
+          </div>
+        </Card>
       ) : null}
       <LimitsBar plan={plan} retriesLeft={evaluation.retriesLeft} />
       <Card title="Önce zarar ve izin">
-        <Space direction="vertical">
+        <Space orientation="vertical">
           <Checkbox checked={harm} onChange={(e) => setHarm(e.target.checked)}>Ciddi zarar tehlikesi var. Etkilenen iş durdurulmalı.</Checkbox>
           <Checkbox checked={permitMissing} onChange={(e) => setPermitMissing(e.target.checked)}>Gerekli izin veya yetki eksik. İzne bağlı iş açılmamalı.</Checkbox>
         </Space>
@@ -114,7 +159,7 @@ export function ReviewScreen() {
         />
       </Card>
       <Card title="Kararı kaydedin">
-        <OutcomePanel evaluation={evaluation} onSave={save} singleFounder={single} />
+        <OutcomePanel evaluation={evaluation} onSave={save} singleFounder={single} plan={plan} def={d.gate} harm={harm} />
       </Card>
     </div>
   )

@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { Button, DatePicker, Input, InputNumber, Radio, Space, Tag, Typography, theme } from 'antd'
 import dayjs from 'dayjs'
-import { OUTCOME_LABEL, type Outcome } from '@/data/types'
+import { OUTCOME_LABEL, type Outcome, type PlanDoc } from '@/data/types'
+import type { GateDef } from '@/data/schema'
 import type { GateEvaluation } from '@/engine/gate'
-import { OUTCOME_PRIORITY } from '@/engine/gate'
+import { OUTCOME_PRIORITY, validateDecision } from '@/engine/gate'
 import { DecisionBadge } from './DecisionBadge'
 import { Callout } from './Callout'
 
@@ -26,14 +27,26 @@ const HELP: Record<Outcome, string> = {
   ilerle: 'Kanıt kabul ölçüsünü karşılıyor. Sonraki karar açılır.',
 }
 
-/** Kapı sonucu seçimi. Öneri gösterilir. Değiştirmek gerekçe ister. */
-export function OutcomePanel({ evaluation, onSave, singleFounder, saving }: { evaluation: GateEvaluation; onSave: (d: OutcomeDraft) => void; singleFounder: boolean; saving?: boolean }) {
+export interface OutcomePanelProps {
+  evaluation: GateEvaluation
+  onSave: (d: OutcomeDraft) => void
+  singleFounder: boolean
+  saving?: boolean
+  /** Kural denetimi için plan ve kapı tanımı. Verilmezse yalnız alan doluluğu denetlenir. */
+  plan?: PlanDoc
+  def?: GateDef
+  harm?: boolean
+}
+
+/** Kapı sonucu seçimi. Öneri gösterilir. Değiştirmek gerekçe ister. Kural engeli düğmeyi kilitler. */
+export function OutcomePanel({ evaluation, onSave, singleFounder, saving, plan, def, harm }: OutcomePanelProps) {
   const { token } = theme.useToken()
   const [d, setD] = useState<OutcomeDraft>({ chosen: evaluation.suggested, reason: '', counterView: '', secondOpinion: '', decidedBy: '', reopenWhen: '' })
   const changed = d.chosen !== evaluation.suggested
   const needsSecond = singleFounder && (d.chosen === 'ilerle' || d.chosen === 'kosulluIlerle') && changed
   const condOk = d.chosen !== 'kosulluIlerle' || (d.conditional?.scope && d.conditional?.deadline && d.conditional?.owner && d.conditional?.closingEvidence)
-  const canSave = d.reason.trim().length > 0 && d.decidedBy.trim().length > 0 && condOk && (!needsSecond || d.secondOpinion.trim().length > 0)
+  const errors = plan && def ? validateDecision(def, plan, evaluation, d, { harm }) : []
+  const canSave = d.reason.trim().length > 0 && d.decidedBy.trim().length > 0 && condOk && (!needsSecond || d.secondOpinion.trim().length > 0) && errors.length === 0
   return (
     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 16 }}>
       <Callout tone="sonuc" title="Sistemin önerisi">
@@ -93,7 +106,14 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving }: { ev
         <Input placeholder="Kararı kim verdi?" value={d.decidedBy} onChange={(e) => setD({ ...d, decidedBy: e.target.value })} aria-label="Karar sahibi" style={{ width: 240 }} />
         <Input placeholder="Hangi olayda yeniden açılır?" value={d.reopenWhen} onChange={(e) => setD({ ...d, reopenWhen: e.target.value })} aria-label="Yeniden açılma koşulu" style={{ width: 300 }} />
       </Space>
-      <Button type="primary" size="large" disabled={!canSave} loading={saving} onClick={() => onSave(d)}>
+      {errors.length > 0 ? (
+        <Callout tone="uyari" title="Kayıt için engel var">
+          <ul id="karar-engel" role="list" aria-live="polite" style={{ margin: 0, paddingLeft: 20, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
+            {errors.map((e) => <li key={e}>{e}</li>)}
+          </ul>
+        </Callout>
+      ) : null}
+      <Button type="primary" size="large" disabled={!canSave} loading={saving} aria-describedby={errors.length ? 'karar-engel' : undefined} onClick={() => onSave(d)}>
         Kararı kaydet
       </Button>
     </div>

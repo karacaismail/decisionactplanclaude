@@ -67,7 +67,7 @@ export function MeasureInput({ value, onChange, defaultName, defaultUnit, idPref
           <Input id={`${idPrefix}-neden`} value={m.naReason ?? ''} onChange={(e) => set({ naReason: e.target.value })} />
         </label>
       ) : null}
-      <Space direction="vertical" size={4} style={{ width: '100%' }}>
+      <Space orientation="vertical" size={4} style={{ width: '100%' }}>
         {label('Eşik ve dayanağı')}
         <ThresholdInput
           idPrefix={`${idPrefix}-esik`}
