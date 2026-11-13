@@ -72,8 +72,11 @@ test('ölçüt 5: etkin menü maddesinin sol çizgisi düz köşeli', async ({ p
   test.skip((viewport?.width ?? 0) < 1024, 'Yalnız masaüstü')
   await openDemo(page)
   const active = page.locator('.ant-menu-item-selected').first()
-  const cs = await active.evaluate((el) => { const s = getComputedStyle(el); return { bw: s.borderLeftWidth, tl: s.borderTopLeftRadius, bl: s.borderBottomLeftRadius, shadow: s.boxShadow } })
-  expect(px(cs.bw) === 3 || cs.shadow.includes('inset')).toBeTruthy()
+  await expect(active).toBeVisible()
+  const read = () => active.evaluate((el) => { const s = getComputedStyle(el); return { bw: s.borderLeftWidth, tl: s.borderTopLeftRadius, bl: s.borderBottomLeftRadius, shadow: s.boxShadow } })
+  // Stil dosyası geç yüklenebilir; çizgi görünene kadar bekle.
+  await expect.poll(async () => { const cs = await read(); return px(cs.bw) === 3 || cs.shadow.includes('inset') }, { timeout: 10_000, message: 'etkin maddede sol çizgi' }).toBeTruthy()
+  const cs = await read()
   expect(px(cs.tl)).toBe(0)
   expect(px(cs.bl)).toBe(0)
 })
