@@ -26,7 +26,7 @@ export function OverviewScreen() {
           <Typography.Text style={{ color: token.colorTextSecondary }}>Son değişiklik {formatDate(plan.updatedAt)}</Typography.Text>
         </div>
         {plan.lastLocation ? (
-          <Button type="primary" size="large" icon={<ArrowRight size={20} />} iconPosition="end" onClick={() => nav(plan.lastLocation!)}>
+          <Button type="primary" size="large" icon={<ArrowRight size={20} />} iconPlacement="end" onClick={() => nav(plan.lastLocation!)}>
             Kaldığım yerden devam et
           </Button>
         ) : null}

@@ -11,7 +11,7 @@ export function LimitsBar({ plan, retriesLeft }: { plan: PlanDoc; retriesLeft?: 
   const tile = (Icon: typeof Wallet, title: string, value: string) => (
     <div style={{ background: token.colorFillAlter, borderRadius: token.borderRadiusLG, padding: '12px 14px', display: 'flex', gap: 10, alignItems: 'center', minWidth: 0 }}>
       <Icon size={22} color={token.colorTextSecondary} aria-hidden style={{ flexShrink: 0 }} />
-      <Statistic title={<span style={{ fontSize: 14 }}>{title}</span>} value={value} valueStyle={{ fontSize: 18, fontWeight: 600 }} className="tabular" />
+      <Statistic title={<span style={{ fontSize: 14 }}>{title}</span>} value={value} styles={{ content: { fontSize: 18, fontWeight: 600 } }} className="tabular" />
     </div>
   )
   return (

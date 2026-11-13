@@ -64,7 +64,7 @@ export function PlansScreen() {
               <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 8 }}>
                 <span style={{ color: token.colorTextSecondary, fontSize: 14 }}>Son değişiklik {formatDate(p.updatedAt)}</span>
                 <span className="tabular" style={{ fontSize: 14 }}>Sürüm {p.revision}. {p.decisions.length} karar kaydı.</span>
-                <Button type="primary" icon={<ArrowRight size={18} />} iconPosition="end" onClick={() => { selectPlan(p.id); nav(p.lastLocation ?? '/ozet') }}>
+                <Button type="primary" icon={<ArrowRight size={18} />} iconPlacement="end" onClick={() => { selectPlan(p.id); nav(p.lastLocation ?? '/ozet') }}>
                   Planı aç
                 </Button>
               </div>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Button, Card, Segmented, Space, Table, Typography, theme } from 'antd'
+import { Button, Card, Radio, Space, Table, Typography, theme } from 'antd'
 import { DownloadSimple, Printer, FileText, ListChecks, Code } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Report } from '@/reports/build'
@@ -30,12 +30,25 @@ export function OutputsScreen() {
         <Typography.Title level={1} style={{ fontSize: 32, marginBottom: 8 }}>Çıktılar</Typography.Title>
         <Typography.Text style={{ color: token.colorTextSecondary }}>İki belge aynı veri sürümünden üretilir. Eksik bilgi uydurulmaz. "Bilinmiyor" yazılır.</Typography.Text>
       </div>
-      <Space wrap className="no-print">
-        <Segmented value={kind} onChange={(v) => setKind(v as 'yonetici' | 'aksiyon')} options={[{ value: 'yonetici', label: 'Yönetici raporu', icon: <FileText size={18} /> }, { value: 'aksiyon', label: 'Girişimci aksiyon planı', icon: <ListChecks size={18} /> }]} />
+      <div className="no-print" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+        <Radio.Group
+          aria-label="Belge seçimi"
+          value={kind}
+          onChange={(e) => setKind(e.target.value as 'yonetici' | 'aksiyon')}
+          optionType="button"
+          buttonStyle="solid"
+          style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}
+          options={[
+            { value: 'yonetici', label: <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><FileText size={18} /> Yönetici raporu</span> },
+            { value: 'aksiyon', label: <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><ListChecks size={18} /> Girişimci aksiyon planı</span> },
+          ]}
+        />
+        <Space wrap>
         <Button icon={<Printer size={18} />} onClick={() => window.print()}>Yazdır veya PDF</Button>
         <Button icon={<DownloadSimple size={18} />} onClick={() => { publish(); download(`${slug}-${kind}-surum-${plan.revision}.md`, reportToMarkdown(report), 'text/markdown') }}>Markdown indir</Button>
         <Button icon={<Code size={18} />} onClick={() => download(`${slug}-veri-surum-${plan.revision}.json`, JSON.stringify(plan, null, 2), 'application/json')}>JSON indir</Button>
-      </Space>
+        </Space>
+      </div>
       <article style={{ background: token.colorBgContainer, borderRadius: token.borderRadiusLG, padding: 32, display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 28, maxWidth: 820 }}>
         <header>
           <Typography.Title level={1} style={{ fontSize: 40, marginBottom: 8 }}>{report.title}</Typography.Title>

@@ -115,7 +115,7 @@ export function WorkScreen() {
           </Space>
           <Space wrap>
             {next && STEPS[next].decision === step.decision ? (
-              <Button icon={<ArrowRight size={18} />} iconPosition="end" onClick={() => { persist(values); nav(`/karar/${n}/adim/${next}`) }}>Taslak bırak, ilerle</Button>
+              <Button icon={<ArrowRight size={18} />} iconPlacement="end" onClick={() => { persist(values); nav(`/karar/${n}/adim/${next}`) }}>Taslak bırak, ilerle</Button>
             ) : (
               <Button icon={<DoorOpen size={18} />} onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
             )}
