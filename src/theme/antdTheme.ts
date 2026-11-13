@@ -3,10 +3,10 @@ import { control, dark, font, light, motion, radius, type Palette } from './toke
 
 /** Ant Design tokenları semantik tokenlardan beslenir. Varsayılan mavi görünmez. */
 export function buildTheme(mode: 'light' | 'dark'): ThemeConfig {
-  const p: Palette = mode === 'dark' ? dark : light
+  const p: Palette = (mode === 'dark' ? dark : light) as unknown as Palette
   const s = motion.ease
   return {
-    cssVar: true,
+    cssVar: { key: 'gap' },
     hashed: false,
     algorithm: mode === 'dark' ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
     token: {

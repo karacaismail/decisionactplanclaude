@@ -1,0 +1,8 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "isfikirlerim-preview", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "isfikirlerimclaude", "run", "preview"], "port": 4400 },
+    { "name": "karar-kitabi", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/w6x/Documents/Developer/DEV/thedecissionbook", "run", "dev", "--", "--port", "5178", "--strictPort"], "port": 5178 },
+    { "name": "decisionactplan", "runtimeExecutable": "npm", "runtimeArgs": ["--prefix", "/Users/w6x/Developer/decisionactplanclaude", "run", "dev", "--", "--port", "5179", "--strictPort"], "port": 5179 }
+  ]
+}

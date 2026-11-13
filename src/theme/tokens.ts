@@ -31,7 +31,7 @@ export const dark = {
   border: '#39424A',
 } as const
 
-export type Palette = typeof light
+export type Palette = { [K in keyof typeof light]: string }
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {

@@ -10,9 +10,11 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         // Yetenek tabanlı teslim: grafik ve rapor parçaları ayrı dosyada kalır.
-        manualChunks: {
-          antd: ['antd'],
-          react: ['react', 'react-dom', 'react-router'],
+        manualChunks: (id: string) => {
+          if (id.includes('node_modules/echarts') || id.includes('node_modules/zrender')) return 'echarts'
+          if (id.includes('node_modules/antd') || id.includes('node_modules/@ant-design') || id.includes('node_modules/rc-')) return 'antd'
+          if (id.includes('node_modules/react')) return 'react'
+          return undefined
         },
       },
     },
