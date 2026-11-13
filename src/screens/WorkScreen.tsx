@@ -81,7 +81,7 @@ export function WorkScreen() {
   const rec = plan.steps[step.id]
 
   return (
-    <div style={{ display: 'grid', gap: 24, gridTemplateColumns: bp.xl ? 'minmax(0, 1fr) 320px' : '1fr', alignItems: 'start' }}>
+    <div style={{ display: 'grid', gap: 24, gridTemplateColumns: bp.xl ? 'minmax(0, 1fr) 320px' : 'minmax(0, 1fr)', alignItems: 'start' }}>
       <div style={{ display: 'grid', gap: 24, minWidth: 0 }}>
         <div>
           <Typography.Text style={{ color: token.colorTextSecondary, fontSize: 14 }}>Karar {step.decision}. {decision?.title}</Typography.Text>

@@ -69,7 +69,7 @@ export function AppShell() {
           {menu}
         </Layout.Sider>
       ) : null}
-      <Layout>
+      <Layout style={{ minWidth: 0 }}>
         <Layout.Header className="no-print" style={{ background: token.colorBgContainer, padding: '0 16px', height: 60, display: 'flex', alignItems: 'center', gap: 12, borderBottom: `1px solid ${token.colorBorderSecondary}`, position: 'sticky', top: 0, zIndex: 10 }}>
           {!wide ? <Button type="text" aria-label="Menüyü aç" icon={<List size={24} />} onClick={() => setOpen(true)} /> : null}
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 8, overflow: 'hidden' }}>
@@ -80,11 +80,11 @@ export function AppShell() {
             <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={22} /> : <Moon size={22} />} onClick={() => setTheme(nextTheme)} />
           </Space>
         </Layout.Header>
-        <Layout.Content style={{ padding: wide ? 32 : 16, maxWidth: 1100, width: '100%', margin: '0 auto' }}>
+        <Layout.Content style={{ padding: wide ? 32 : 16, maxWidth: 1100, margin: '0 auto', minWidth: 0, boxSizing: 'border-box', width: '100%' }}>
           <Outlet />
         </Layout.Content>
       </Layout>
-      <Drawer open={open} onClose={() => setOpen(false)} placement="left" title="Girişimci Aksiyon Planı" width={Math.min(320, typeof window !== 'undefined' ? window.innerWidth - 24 : 320)} styles={{ body: { padding: 8 } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
+      <Drawer open={open} onClose={() => setOpen(false)} placement="left" title="Girişimci Aksiyon Planı" size={Math.min(320, typeof window !== 'undefined' ? window.innerWidth - 24 : 320)} styles={{ body: { padding: 8 } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
         {menu}
       </Drawer>
     </Layout>

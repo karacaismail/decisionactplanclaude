@@ -54,7 +54,7 @@ export function EvidenceScreen() {
         />
       </Card>
       <Callout tone="ipucu" title="Bir bulgu neyi kanıtlar?">Gözlem kayda geçmiş olaydır. Tahmin gelecekte beklediğiniz sonuçtur. Varsayım doğru kabul ettiğiniz sözdür. Eksik ölçümü "bilinmiyor" diye kaydedin. Sıfır yazmayın.</Callout>
-      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.id ? 'Kanıtı düzenle' : 'Yeni kanıt'} width={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} extra={<Button type="primary" onClick={save} disabled={!open?.title?.trim()}>Kaydet</Button>}>
+      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.id ? 'Kanıtı düzenle' : 'Yeni kanıt'} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} extra={<Button type="primary" onClick={save} disabled={!open?.title?.trim()}>Kaydet</Button>}>
         {open ? (
           <div style={{ display: 'grid', gap: 12 }}>
             <label style={{ display: 'grid', gap: 4 }}><span>Kanıtın adı</span><Input value={open.title ?? ''} onChange={(e) => setOpen({ ...open, title: e.target.value })} /></label>

@@ -48,7 +48,7 @@ export function ModelChips({ indexes }: { indexes: number[] }) {
           )
         })}
       </div>
-      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} width={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} styles={{ body: { display: 'grid', gap: 16, alignContent: 'start' } }}>
+      <Drawer open={Boolean(open)} onClose={() => setOpen(null)} title={open?.title} size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)} styles={{ body: { display: 'grid', gap: 16, alignContent: 'start' } }}>
         {open ? (
           <>
             <Space wrap>

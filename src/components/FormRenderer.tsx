@@ -20,7 +20,7 @@ export function FormRenderer({ step, plan, values, onChange }: { step: StepDef; 
                 {sec.description ? <div style={{ color: token.colorTextSecondary, marginTop: 4 }}>{sec.description}</div> : null}
               </div>
             ) : null}
-            <div style={{ display: 'grid', gap: 16, gridTemplateColumns: bp.md ? 'repeat(24, 1fr)' : '1fr' }}>
+            <div style={{ display: 'grid', gap: 16, gridTemplateColumns: bp.md ? 'repeat(24, minmax(0, 1fr))' : 'minmax(0, 1fr)' }}>
               {sec.fields.map((f) => (
                 <div key={f.key} style={{ gridColumn: bp.md ? `span ${f.span ?? 24}` : 'auto', minWidth: 0 }}>
                   <FieldControl field={f} value={values[f.key]} onChange={(v) => onChange(f.key, v)} plan={plan} values={values} idPrefix={`a${step.id}`} />
