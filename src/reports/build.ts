@@ -11,16 +11,25 @@ import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome, lastDecision } from '@/engine/gate'
 import { formatDate, formatMoney, formatNumber } from '@/engine/format'
 
+/** Başlık ve değer çifti. Ekranda `Descriptions` ile, Markdown'da madde olarak yazılır. */
+export interface Fact {
+  title: string
+  value: string
+}
 export interface ReportSection {
   title: string
   lines: string[]
   table?: { head: string[]; rows: string[][] }
+  /** Bölümün başlık ve değer çiftleri. Varsa ekranda `lines` yerine bu çiftler `Descriptions` ile çizilir. */
+  facts?: Fact[]
 }
 export interface Report {
   title: string
   /** Örnek planda rapor başına basılan uyarı. Gerçek planda yoktur. */
   stamp?: string
   meta: string[]
+  /** Üst bilgi çiftleri: Plan, Profil, Sürüm, Oluşturma. `meta` ile aynı bilgidir; ekran `Descriptions` için kullanır. */
+  facts: Fact[]
   sections: ReportSection[]
 }
 
@@ -43,6 +52,18 @@ const joinFilled = (parts: unknown[], sep = ', '): string | null => {
 export const labelled = (label: string, value: unknown, missing = 'yazılmadı'): string => {
   const t = text(value)
   return t ? `${label}: ${t.replace(/\.$/, '')}.` : `${label} henüz ${missing}.`
+}
+/**
+ * "Etiket: değer." biçimindeki cümleyi başlık ve değer çiftine çevirir.
+ * "Etiket henüz yazılmadı." gibi cümlelerde değer cümlenin kendisi olur, başlık ilk kelimelerden alınır.
+ * Örnek: factOf('Pist: 8 ay.') → { title: 'Pist', value: '8 ay' }
+ */
+export function factOf(line: string): Fact {
+  const m = /^([^:]{1,48}):\s+(.+)$/.exec(line.trim())
+  if (m) return { title: m[1].trim(), value: m[2].trim().replace(/\.$/, '') }
+  const missing = /^(.+?) henüz (.+)\.$/.exec(line.trim())
+  if (missing) return { title: missing[1].trim(), value: `Henüz ${missing[2]}` }
+  return { title: line.replace(/\.$/, ''), value: '' }
 }
 const rows = (p: PlanDoc, s: string, k: string): Record<string, unknown>[] => (v(p, s, k) as Record<string, unknown>[]) ?? []
 /** Para cümlesi. Değer yoksa "Etiket henüz yazılmadı." döner. */
@@ -104,6 +125,26 @@ function runwayMonths(p: PlanDoc): number | null {
   return b && c ? Math.floor(c / b) : null
 }
 
+const metaLines = (p: PlanDoc): string[] => [`Plan: ${p.name}`, `Profil: ${profileSentence(p)}`, `Sürüm ${p.revision}`, `Oluşturma: ${formatDate(new Date().toISOString())}`]
+const metaFacts = (p: PlanDoc): Fact[] => [
+  { title: 'Plan', value: p.name },
+  { title: 'Profil', value: profileSentence(p) },
+  { title: 'Sürüm', value: String(p.revision) },
+  { title: 'Oluşturma', value: formatDate(new Date().toISOString()) },
+]
+
+type Decided = PlanDoc['decisions'][number] | undefined
+function summaryFacts(latest: Decided, runway: number | null, p: PlanDoc, firstGap: Record<string, unknown> | undefined, risks: Record<string, unknown>[], openTasks: PlanDoc['tasks']): Fact[] {
+  return [
+    { title: 'Son kapı', value: latest ? `Kapı ${latest.gate}: ${OUTCOME_LABEL[effectiveOutcome(latest)]}, ${formatDate(latest.decidedAt)}` : 'Henüz kapı kararı yok' },
+    { title: 'Pist', value: runway !== null ? `${runway} ay` : 'Hesaplanmadı' },
+    { title: 'Toplam harcama sınırı', value: typeof p.limits.budgetKurus === 'number' ? formatMoney(p.limits.budgetKurus) : 'Henüz yazılmadı' },
+    { title: 'İlk kasa açığı', value: firstGap ? `${formatDate(String(firstGap.date), false)}, eksik ${formatMoney(Math.abs(Number(firstGap.balanceAfterKurus)))}` : 'Kayıtlı ödeme gününde açık yok' },
+    { title: 'Kritik risk', value: risks.length ? `${risks.length} risk${text(risks[0].risk) ? `. En önemlisi: ${text(risks[0].risk)}` : ''}` : 'Kayıt yok' },
+    { title: 'Sıradaki iş', value: openTasks.length ? `${openTasks[0].action}${openTasks[0].owner ? ` (${openTasks[0].owner})` : ''}` : 'Açık iş yok' },
+  ]
+}
+
 export function buildExecutiveReport(p: PlanDoc): Report {
   const latest = [...p.decisions].sort((a, b) => b.decidedAt.localeCompare(a.decidedAt))[0]
   const runway = runwayMonths(p)
@@ -126,9 +167,11 @@ export function buildExecutiveReport(p: PlanDoc): Report {
   return {
     title: 'Yönetici raporu',
     stamp: stampOf(p),
-    meta: [`Plan: ${p.name}`, `Profil: ${profileSentence(p)}`, `Sürüm ${p.revision}`, `Oluşturma: ${formatDate(new Date().toISOString())}`],
+    meta: metaLines(p),
+    facts: metaFacts(p),
     sections: [
-      { title: 'Yönetici özeti', lines: summary },
+      /* Özet cümleleri Markdown'a yazılır. Ekran aynı bilgiyi başlık ve değer çifti olarak çizer. */
+      { title: 'Yönetici özeti', lines: summary, facts: summaryFacts(latest, runway, p, firstGap, risks, openTasks) },
       { title: 'Karar yolculuğu', lines: [], table: { head: ['Karar', 'Konu', 'Sonuç', 'Tarih'], rows: journey } },
       {
         title: 'Sorun ve talep',
@@ -192,21 +235,27 @@ export function buildActionPlan(p: PlanDoc): Report {
   const roadmapRows = [...roadmap('now'), ...roadmap('next'), ...roadmap('later')]
   const stop = p.limits.stopRules?.map((r) => r.rule).filter((r) => text(r) !== null) ?? []
   const modelRows = Object.values(STEPS).filter((s) => p.steps[s.id]?.status === 'tamam' && s.models.length).map((s) => [s.id + '. ' + s.title, String(s.models.length)])
+  const profileLines = [
+    labelled('Başarı cümlesi', p.limits.successSentence),
+    money('Toplam harcama sınırı', p.limits.budgetKurus),
+    p.limits.deadline ? `Bitiş: ${formatDate(p.limits.deadline, false)}.` : 'Bitiş tarihi henüz yazılmadı.',
+    p.limits.retriesPerDecision ? `Karar başına ${p.limits.retriesPerDecision} deneme.` : 'Karar başına deneme sayısı henüz yazılmadı.',
+    ...(stop.length ? stop.map((r) => `Durdurma kuralı: ${r}`) : ['Durdurma kuralı yazılmadı.']),
+  ]
+  const profileFacts: Fact[] = [
+    factOf(profileLines[0]),
+    factOf(profileLines[1]),
+    { title: 'Bitiş', value: p.limits.deadline ? formatDate(p.limits.deadline, false) : 'Henüz yazılmadı' },
+    { title: 'Deneme hakkı', value: p.limits.retriesPerDecision ? `Karar başına ${p.limits.retriesPerDecision}` : 'Henüz yazılmadı' },
+    { title: 'Durdurma kuralı', value: stop.length ? stop.join(' ') : 'Yazılmadı' },
+  ]
   return {
     title: 'Girişimci aksiyon planı',
     stamp: stampOf(p),
-    meta: [`Plan: ${p.name}`, `Profil: ${profileSentence(p)}`, `Sürüm ${p.revision}`, `Oluşturma: ${formatDate(new Date().toISOString())}`],
+    meta: metaLines(p),
+    facts: metaFacts(p),
     sections: [
-      {
-        title: 'Profil ve sınırlar',
-        lines: [
-          labelled('Başarı cümlesi', p.limits.successSentence),
-          money('Toplam harcama sınırı', p.limits.budgetKurus),
-          p.limits.deadline ? `Bitiş: ${formatDate(p.limits.deadline, false)}.` : 'Bitiş tarihi henüz yazılmadı.',
-          p.limits.retriesPerDecision ? `Karar başına ${p.limits.retriesPerDecision} deneme.` : 'Karar başına deneme sayısı henüz yazılmadı.',
-          ...(stop.length ? stop.map((r) => `Durdurma kuralı: ${r}`) : ['Durdurma kuralı yazılmadı.']),
-        ],
-      },
+      { title: 'Profil ve sınırlar', lines: profileLines, facts: profileFacts },
       { title: 'İlk iş ve engel', lines: openTasks.length ? [`${openTasks[0].action}. Sorumlu: ${openTasks[0].owner ?? 'eksik'}. Tarih: ${openTasks[0].dueDate ? formatDate(openTasks[0].dueDate, false) : 'belirlenmedi'}.`] : ['Açık iş yok. Sıradaki adımı doldurun.'] },
       { title: 'Yapılacak adımlar', lines: [], table: { head: ['Adım', 'Ad', 'Tür', 'Durum'], rows: stepRows } },
       { title: '90 günlük çalışma', lines: roadmapRows.length ? ['Şimdi kutusu ilk 90 gündür.'] : ['Yol haritası henüz yazılmadı. Adım 19’da işleri yazın.'], table: roadmapRows.length ? { head: ['İş', 'Sorumlu', 'Tarih'], rows: roadmapRows } : undefined },

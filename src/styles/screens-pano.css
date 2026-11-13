@@ -7,12 +7,6 @@
 .limits-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; min-width: 0; }
 .limits-row .limits-line { flex: 1 1 320px; min-width: 0; }
 
-/* Özet meta alanı: üstte üç sınır tek satırda, altında "En kısa yol" anahtarı kendi satırında. */
-.meta-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
-.meta-stack .toggle-row { flex-wrap: nowrap; align-items: flex-start; }
-.meta-stack .toggle-row .ant-switch { flex-shrink: 0; margin-top: 1px; }
-.meta-stack .toggle-row label { flex: 1 1 0; min-width: 0; }
-
 /* Hero sorusu dar ekranda gizlenir. Hero 320'de 160 px kalır. Soru karar ekranında da yazılıdır. */
 @media (max-width: 599px) { .hero .hero-question { display: none; } }
 
@@ -42,26 +36,132 @@
 .choice.is-selected .choice-mark { color: var(--color-action-primary); }
 .choice-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
 
-/* Plan listesi: tam genişlik satırlar. Satır 56 px, tamamı tıklanır. Taşma menüsü sağda durur. */
-.plan-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); border-top: 1px solid var(--color-border); min-width: 0; }
-.plan-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; grid-template-areas: 'text tag menu'; align-items: center; gap: 12px; min-height: 56px; padding: 6px 0; border-bottom: 1px solid var(--color-border); cursor: pointer; color: var(--color-text-primary); min-width: 0; transition: background-color var(--motion-small) var(--motion-ease); }
-.plan-row-text { grid-area: text; }
-.plan-row > .tag { grid-area: tag; }
-.plan-row-menu { grid-area: menu; }
-/* Dar ekranda etiket metnin altına iner; menü sağ üstte kalır. */
-@media (max-width: 599px) {
-  .plan-row { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: 'text menu' 'tag menu'; gap: 6px 12px; align-items: start; }
-  .plan-row > .tag { justify-self: start; }
-  .plan-row-menu { align-self: center; }
-}
-.plan-row:hover { background: var(--color-surface-context); }
-.plan-row-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; align-self: center; }
-.plan-row-name { font-size: 16px; font-weight: 600; line-height: 1.3; overflow-wrap: break-word; }
-.plan-row-sub { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); overflow-wrap: break-word; }
-.plan-row-menu { display: inline-flex; align-items: center; }
-
 /* Sağa yaslı tek işlem satırı. */
 .action-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
 
 /* Boş durumdaki 16 px gri ikon. */
 .empty-state .empty-icon { display: inline-flex; color: var(--color-text-secondary); }
+
+/* ================================================================== */
+/* 3. tur: kurumsal kartlar (plan özeti, planlar, giriş)               */
+/* Kart beyaz yüzey ve gölgedir. Kart içinde kart yoktur.              */
+/* ================================================================== */
+.pano-card.ant-card { border: 0 !important; border-radius: var(--radius-panel); box-shadow: var(--shadow-card) !important; min-width: 0; background: var(--color-surface-work); }
+.pano-card.ant-card > .ant-card-head { padding: 16px 20px 0; min-height: 0; border-bottom: 0; }
+.pano-card.ant-card .ant-card-head-wrapper { align-items: center; gap: 8px 16px; flex-wrap: wrap; }
+.pano-card.ant-card .ant-card-head-title { font-size: 18px; font-weight: 600; line-height: 1.3; padding: 0; white-space: normal; min-width: 0; }
+.pano-card.ant-card .ant-card-extra { font-size: 14px; padding: 0; margin-inline-start: auto; min-width: 0; }
+.pano-card.ant-card .ant-card-extra a { color: var(--color-action-primary); font-weight: 600; text-decoration: none; }
+.pano-card.ant-card .ant-card-extra a:hover { text-decoration: underline; text-underline-offset: 2px; }
+.pano-card.ant-card > .ant-card-body { padding: 16px 20px 20px; min-width: 0; }
+@media (max-width: 599px) {
+  .pano-card.ant-card > .ant-card-head { padding: 14px 16px 0; }
+  .pano-card.ant-card > .ant-card-body { padding: 12px 16px 16px; }
+}
+.pano-card .ant-empty { margin: 8px 0; }
+.pano-card .ant-empty .ant-empty-description { font-size: 14px; color: var(--color-text-secondary); }
+.pano-card .ant-empty-footer a { color: var(--color-action-primary); font-weight: 600; }
+.pano-card .ant-statistic-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2px; }
+.pano-card .ant-statistic-content { font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
+.pano-card .ant-statistic-content-suffix { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 6px; }
+.pano-card .helper { margin: 0; }
+
+/* Özet yerleşimi. Telefonda sıra: hero, KPI, yan kartlar. Masaüstünde hero solda, yan kartlar sağda, KPI altta. */
+.page.ozet { gap: 24px; }
+.ozet-top { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.ozet-top > .hero { order: 1; }
+.ozet-top > .kpi-strip { order: 2; }
+.ozet-top > .ozet-side { order: 3; }
+.ozet-side { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (min-width: 600px) { .ozet-side { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) {
+  .ozet-top { grid-template-columns: minmax(0, 1fr) 340px; grid-template-areas: 'hero side' 'kpi kpi'; }
+  .ozet-top > .hero { grid-area: hero; }
+  .ozet-top > .ozet-side { grid-area: side; grid-template-columns: minmax(0, 1fr); }
+  .ozet-top > .kpi-strip { grid-area: kpi; }
+}
+@media (max-width: 599px) { .page.ozet { gap: 16px; } }
+/* Dar telefonda KPI kutusu sıkıdır: iç boşluk 12 px, ikon 32 px. Metin boyutu değişmez. */
+@media (max-width: 479px) {
+  .ozet .kpi { padding: 14px 12px; min-height: 0; gap: 4px; }
+  .ozet .kpi-icon { width: 32px; height: 32px; }
+  .ozet .kpi-value { font-size: 24px; }
+  .ozet .ring { width: 96px; height: 96px; }
+  .ozet .ring-text { font-size: 20px; }
+}
+.pist { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+.pist .ant-progress { margin: 0; line-height: 1; }
+.retry { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; min-width: 0; }
+.retry .ant-progress-text { font-size: 16px !important; font-weight: 600; color: var(--color-text-primary) !important; }
+
+/* Üçlü satır: rota, nakit, son kararlar. 720'de iki sütun, 1100'de üç. */
+.ozet-row3 { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+@media (min-width: 720px) {
+  .ozet-row3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ozet-row3 > :last-child { grid-column: 1 / -1; }
+}
+@media (min-width: 1100px) {
+  .ozet-row3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .ozet-row3 > :last-child { grid-column: auto; }
+}
+
+/* Karar rotası: dikey nokta adımları. Başlık 16 px 600, açıklama 14 px gri. Tıklanır. */
+.pano-steps.ant-steps .ant-steps-item-title { font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary); }
+.pano-steps.ant-steps .ant-steps-item-content, .pano-steps.ant-steps .ant-steps-item-description { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; }
+.pano-steps.ant-steps .ant-steps-item-wait .ant-steps-item-title { color: var(--color-text-secondary); font-weight: 400; }
+.pano-steps.ant-steps .ant-steps-item { padding-bottom: 4px; min-height: 48px; }
+
+/* Son kararlar zaman çizgisi. */
+.tl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+.tl-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.tl-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: start; min-width: 0; }
+.tl-reason { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.pano-timeline.ant-timeline .ant-timeline-item-title, .pano-timeline.ant-timeline .ant-steps-item-title { font-size: 16px; line-height: 1.4; }
+
+/* Plan kayıtları sekmeleri. */
+.pano-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 12px; }
+.pano-tabs.ant-tabs .ant-tabs-tab { padding: 8px 0; font-size: 16px; }
+.pano-tabs.ant-tabs .ant-tabs-tab-btn { font-weight: 400; }
+.pano-tabs.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; }
+.change-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; width: 100%; }
+.change-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.cell-wrap { white-space: normal; }
+
+/* Sınırlar: dikey açıklama listesi ve altında anahtar. */
+.pano-desc.ant-descriptions .ant-descriptions-item-label { font-size: 14px; color: var(--color-text-secondary); font-weight: 400; padding-bottom: 2px; }
+.pano-desc.ant-descriptions .ant-descriptions-item-content { font-size: 16px; font-weight: 600; color: var(--color-text-primary); font-variant-numeric: tabular-nums; }
+.pano-desc.ant-descriptions .ant-descriptions-row > th, .pano-desc.ant-descriptions .ant-descriptions-row > td { padding-bottom: 12px; }
+/* Telefonda etiket ve değer aynı satırda durur. */
+.pano-desc.ant-descriptions .ant-descriptions-item-container { align-items: baseline; gap: 8px; flex-wrap: wrap; }
+.pano-desc.ant-descriptions .ant-descriptions-row > td { padding-bottom: 8px; }
+.pano-card .pano-desc + .toggle-row { border-top: 1px solid var(--color-border); padding-top: 12px; flex-wrap: nowrap; align-items: flex-start; }
+.pano-card .toggle-row .ant-switch { flex-shrink: 0; margin-top: 1px; }
+.pano-card .toggle-row label { flex: 1 1 0; min-width: 0; }
+
+/* Planlar: üç sayı kartı, tablo ve telefonda liste kartları. */
+.stat-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (min-width: 600px) { .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.stat-row .pano-card > .ant-card-body { display: grid; gap: 6px; padding: 18px 20px; }
+.plan-search { width: 240px; max-width: 100%; }
+@media (max-width: 599px) { .plan-search { width: 100%; } .pano-card.ant-card .ant-card-extra:has(.plan-search) { flex: 1 1 100%; } }
+.ant-btn.ant-btn-link.plan-name { padding: 0; height: auto; min-height: 0; font-size: 16px; font-weight: 600; white-space: normal; text-align: left; line-height: 1.4; color: var(--color-text-primary); }
+.ant-btn.ant-btn-link.plan-name:hover { color: var(--color-action-primary); text-decoration: underline; text-underline-offset: 2px; }
+.tag-row { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+.plan-cards.ant-list .ant-list-item { padding: 12px 0; }
+.plan-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; width: 100%; }
+.plan-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-width: 0; }
+.plan-card .ant-progress { margin: 0; }
+
+/* Giriş: üç yol kartı. Seçili kart tonlu zemin ve derin gölge alır. Çevreleyen halka yoktur. */
+.entry-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+@media (min-width: 720px) { .entry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.entry-card.ant-card { cursor: pointer; transition: box-shadow var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+.entry-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+.entry-card.ant-card.is-selected { background: var(--color-selected-bg); box-shadow: var(--shadow-float) !important; }
+.entry-card.ant-card > .ant-card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 20px; }
+.entry-head { display: flex; justify-content: space-between; align-items: center; min-height: 24px; }
+.entry-icon { display: inline-flex; color: var(--color-text-secondary); transition: color var(--motion-small) var(--motion-ease); }
+.entry-card.is-selected .entry-icon, .entry-check { color: var(--color-action-primary); }
+.entry-check { display: inline-flex; min-width: 20px; }
+.entry-card h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary); overflow-wrap: break-word; }
+.entry-card p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }

@@ -1,29 +1,36 @@
-import { Input, InputNumber, Radio } from 'antd'
+import { Divider, Form, Input, InputNumber, Radio } from 'antd'
+import { Info } from '@phosphor-icons/react'
 import type { Measure } from '@/data/types'
 import { ThresholdInput } from './ThresholdInput'
 
 const EMPTY: Measure = { name: '', unit: '', status: 'bilinmiyor' }
 
-/** Ölçü adı, birim, dönem, başlangıç, eşik ve dayanak birlikte. "Bilinmiyor" sıfır değildir. Düz alan grubu, kutu yok. */
+/**
+ * Ölçü adı, birim, dönem, durum, değerler, eşik ve dayanak birlikte. "Bilinmiyor" sıfır değildir.
+ * Alanlar `Form.Item` düzenindedir ve yan yana ızgarada durur. Kutu yok; ayrımı `Divider` verir.
+ */
 export function MeasureInput({ value, onChange, defaultName, defaultUnit, idPrefix }: { value?: Measure; onChange: (m: Measure) => void; defaultName?: string; defaultUnit?: string; idPrefix: string }) {
   const m: Measure = { ...EMPTY, name: defaultName ?? '', unit: defaultUnit ?? '', ...(value ?? {}) }
   const set = (patch: Partial<Measure>) => onChange({ ...m, ...patch })
-  const field = (key: string, label: string, control: React.ReactNode) => (
-    <div className="field">
-      <label htmlFor={`${idPrefix}-${key}`} className="field-label">{label}</label>
+  const item = (key: string, label: string, control: React.ReactNode, extra?: string) => (
+    <Form.Item layout="vertical" className="step-field" label={label} htmlFor={`${idPrefix}-${key}`} extra={extra}>
       {control}
-    </div>
+    </Form.Item>
   )
   const statusId = `${idPrefix}-durum-etiket`
   return (
-    <div className="field-stack">
+    <div className="measure">
       <div className="field-group">
-        {field('ad', 'Ölçünün adı', <Input id={`${idPrefix}-ad`} value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder="Örneğin haftalık kayıp" />)}
-        {field('birim', 'Birim', <Input id={`${idPrefix}-birim`} value={m.unit} onChange={(e) => set({ unit: e.target.value })} placeholder="dakika, TL, adet" />)}
-        {field('donem', 'Dönem', <Input id={`${idPrefix}-donem`} value={m.period ?? ''} onChange={(e) => set({ period: e.target.value })} placeholder="hafta, ay" />)}
+        {item('ad', 'Ölçünün adı', <Input id={`${idPrefix}-ad`} value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder="Örneğin haftalık kayıp" />)}
+        {item('birim', 'Birim', <Input id={`${idPrefix}-birim`} value={m.unit} onChange={(e) => set({ unit: e.target.value })} placeholder="dakika, TL, adet" />)}
+        {item('donem', 'Dönem', <Input id={`${idPrefix}-donem`} value={m.period ?? ''} onChange={(e) => set({ period: e.target.value })} placeholder="hafta, ay" />)}
       </div>
-      <div className="field">
-        <span id={statusId} className="field-label">Ölçüm durumu</span>
+      <Form.Item
+        layout="vertical"
+        className="step-field"
+        label={<span id={statusId}>Ölçüm durumu</span>}
+        tooltip={{ title: '"Bilinmiyor" sıfır değildir. Ölçmediyseniz "Bilinmiyor" seçin.', icon: <Info size={16} aria-label="Yardım" /> }}
+      >
         <Radio.Group
           aria-labelledby={statusId}
           className="choice-buttons"
@@ -36,25 +43,23 @@ export function MeasureInput({ value, onChange, defaultName, defaultUnit, idPref
             { value: 'uygulanmiyor', label: 'Uygulanmıyor' },
           ]}
         />
-      </div>
+      </Form.Item>
       {m.status === 'olculdu' ? (
         <div className="field-group">
-          {field('baslangic', 'Başlangıç değeri', <InputNumber id={`${idPrefix}-baslangic`} value={m.baseline ?? undefined} onChange={(v) => set({ baseline: v ?? null })} />)}
-          {field('deger', 'Ölçülen değer', <InputNumber id={`${idPrefix}-deger`} value={m.value ?? undefined} onChange={(v) => set({ value: v ?? null })} />)}
-          {field('pay', 'Pay (oran ise)', <InputNumber id={`${idPrefix}-pay`} value={m.numerator ?? undefined} onChange={(v) => set({ numerator: v ?? null })} />)}
-          {field('payda', 'Payda (oran ise)', <InputNumber id={`${idPrefix}-payda`} value={m.denominator ?? undefined} onChange={(v) => set({ denominator: v ?? null })} />)}
+          {item('baslangic', 'Başlangıç değeri', <InputNumber id={`${idPrefix}-baslangic`} value={m.baseline ?? undefined} onChange={(v) => set({ baseline: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
+          {item('deger', 'Ölçülen değer', <InputNumber id={`${idPrefix}-deger`} value={m.value ?? undefined} onChange={(v) => set({ value: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
+          {item('pay', 'Pay', <InputNumber id={`${idPrefix}-pay`} value={m.numerator ?? undefined} onChange={(v) => set({ numerator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
+          {item('payda', 'Payda', <InputNumber id={`${idPrefix}-payda`} value={m.denominator ?? undefined} onChange={(v) => set({ denominator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
         </div>
       ) : null}
-      {m.status === 'uygulanmiyor' ? field('neden', 'Neden uygulanmıyor?', <Input id={`${idPrefix}-neden`} value={m.naReason ?? ''} onChange={(e) => set({ naReason: e.target.value })} />) : null}
-      <div className="field-stack">
-        <h4 className="subhead">Eşik ve dayanağı</h4>
-        <ThresholdInput
-          idPrefix={`${idPrefix}-esik`}
-          unit={m.unit}
-          value={{ value: m.threshold ?? null, basis: m.basis ?? '', isGuess: m.isGuess ?? !m.basis }}
-          onChange={(t) => set({ threshold: t.value, basis: t.basis, isGuess: t.isGuess })}
-        />
-      </div>
+      {m.status === 'uygulanmiyor' ? item('neden', 'Neden uygulanmıyor?', <Input id={`${idPrefix}-neden`} value={m.naReason ?? ''} onChange={(e) => set({ naReason: e.target.value })} placeholder="Kısa neden" />) : null}
+      <Divider className="measure-divider" titlePlacement="start" styles={{ content: { margin: 0 } }} plain>Eşik ve dayanağı</Divider>
+      <ThresholdInput
+        idPrefix={`${idPrefix}-esik`}
+        unit={m.unit}
+        value={{ value: m.threshold ?? null, basis: m.basis ?? '', isGuess: m.isGuess ?? !m.basis }}
+        onChange={(t) => set({ threshold: t.value, basis: t.basis, isGuess: t.isGuess })}
+      />
     </div>
   )
 }

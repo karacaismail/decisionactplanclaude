@@ -21,6 +21,8 @@
   .no-print,
   .report-toolbar,
   .report-tabs,
+  .report-anchor,
+  .report-card .ant-card-head,
   .ant-layout-sider,
   .ant-layout-header,
   .ant-drawer,
@@ -46,8 +48,20 @@
     padding: 0 !important;
   }
 
-  .report-wrap {
+  .report-layout {
     display: block;
+  }
+
+  /* Belge kartı kağıtta kutu çizmez. */
+  .report-card,
+  .report-card.ant-card,
+  .report-card > .ant-card-body {
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+    display: block !important;
   }
 
   .report {
@@ -64,8 +78,10 @@
 
   .report h2,
   .report h3,
-  .report .report-meta,
   .report p,
+  .report .ant-typography,
+  .report .ant-descriptions-item-label,
+  .report .ant-descriptions-item-content,
   .report .note-body,
   .report .note-title {
     color: #000 !important;

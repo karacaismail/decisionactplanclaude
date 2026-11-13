@@ -1,22 +1,26 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Collapse, Dropdown, Grid, Input, Modal, Table, App as AntApp } from 'antd'
-import { DotsThree } from '@phosphor-icons/react'
+import { Anchor, Button, Card, Collapse, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
+import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { STEPS, nextStepId, prevStepId, decisionOf } from '@/data/registry'
 import { stepApplies } from '@/engine/conditions'
-import { FormRenderer } from '@/components/FormRenderer'
+import { FormRenderer, sectionStats, type SectionStat } from '@/components/FormRenderer'
+import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
 import { ChartFrame } from '@/charts/ChartFrame'
+import type { StepDef } from '@/data/schema'
 import type { Limits } from '@/data/types'
 import '@/styles/screens-form.css'
 
 const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBurnKurus', 'cashKurus', 'budgetKurus', 'deadline', 'retriesPerDecision', 'hoursPerWeek']
 
 /**
- * Adım ekranı. Üstte sayfa başlığı ve tek satır durum. Ortada form ve yardım sütunu.
+ * Adım ekranı. Üstte sayfa başlığı ve etiket satırı. Ortada bölüm kartları (form) ve sağda "Bu adım" kartı.
+ * Sağ kartta doluluk halkası, bölüm bağlantıları, "Nasıl yapılır?", "Günlük Hayattan" ve yöntem etiketleri vardır.
+ * Dar ekranda bu kart formun altında açılır kapanır bölümler olur.
  * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
  * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
  * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
@@ -69,10 +73,7 @@ export function WorkScreen() {
     timer.current = window.setTimeout(() => persist(next), 400)
   }
   const complete = () => {
-    const missing = (step.completeWhen ?? []).filter((k) => {
-      const v = values[k]
-      return v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)
-    })
+    const missing = (step.completeWhen ?? []).filter((k) => !isFilled(values[k]))
     if (missing.length) {
       message.warning(`Eksik alan var: ${missing.length}. Zorunlu alanları doldurun.`)
       return
@@ -89,6 +90,7 @@ export function WorkScreen() {
   const chartData = step.chart?.build(values, plan)
   const rec = plan.steps[step.id]
   const title = `Adım ${step.id}. ${step.title}`
+  const stats = sectionStats(step, plan, values)
   const example = decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null
 
   return (
@@ -96,8 +98,9 @@ export function WorkScreen() {
       <div className="work-head">
         <PageHeader kicker={decision ? `Karar ${step.decision}. ${decision.title}` : undefined} title={title} description={step.question} documentTitle={title} />
         <div className="work-meta">
-          {applies === 'zorunlu' ? <span className="tag">Zorunlu</span> : applies === 'kosullu' ? <span className="tag">Koşullu</span> : <span className="tag is-muted">Bu profilde gerekmez</span>}
-          {rec?.status === 'tamam' ? <span className="tag is-ok">Tamam</span> : rec?.status === 'atlandi' ? <span className="tag is-muted">Atlandı</span> : null}
+          {applies === 'zorunlu' ? <Tag color="processing">Zorunlu</Tag> : applies === 'kosullu' ? <Tag>Koşullu</Tag> : <Tag>Bu profilde gerekmez</Tag>}
+          {rec?.status === 'tamam' ? <Tag color="success">Tamam</Tag> : rec?.status === 'atlandi' ? <Tag>Atlandı</Tag> : null}
+          {step.timebox ? <Tag>Süre: {step.timebox}</Tag> : null}
           <span className="helper">Kim yapar? {step.who}</span>
           {rec?.status === 'atlandi' && rec.skipReason ? <span className="helper">Atlama nedeni: {rec.skipReason}</span> : null}
         </div>
@@ -108,38 +111,77 @@ export function WorkScreen() {
           {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
           {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için alt şeritteki "Daha fazla" menüsünden "Bu adımı atla" seçeneğini kullanın.</Callout> : null}
           {step.intro ? <p className="work-intro">{step.intro}</p> : null}
-          {!wide && step.howTo ? (
-            <Collapse
-              className="howto-collapse"
-              ghost
-              items={[{ key: 'nasil', label: 'Nasıl yapılır?', children: <div className="howto"><HowToList items={step.howTo} /></div> }]}
-            />
-          ) : null}
           <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
           {chartData && step.chart ? (
-            <section className="section is-divided">
-              <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} />
-            </section>
+            <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} />
           ) : null}
           {step.outcomeTable?.length ? (
-            <section className="section is-divided" aria-labelledby="kosul-sonuc">
-              <div className="section-head"><h3 id="kosul-sonuc">Koşula göre sonuç</h3></div>
-              <Table size="middle" pagination={false} rowKey={(r) => r.condition} dataSource={step.outcomeTable} columns={[{ title: 'Durum', dataIndex: 'condition', width: 240 }, { title: 'Sonuç', dataIndex: 'result', width: 360 }]} scroll={{ x: 'max-content' }} />
-            </section>
+            <Card className="step-card" variant="borderless" title="Koşula göre sonuç" extra={<Tag>{step.outcomeTable.length} durum</Tag>}>
+              {bp.md ? (
+                <Table size="middle" pagination={false} rowKey={(r) => r.condition} dataSource={step.outcomeTable} tableLayout="fixed" columns={[{ title: 'Durum', dataIndex: 'condition', width: '38%' }, { title: 'Sonuç', dataIndex: 'result' }]} />
+              ) : (
+                <dl className="outcome-list">
+                  {step.outcomeTable.map((r) => (
+                    <div key={r.condition} className="outcome-item">
+                      <dt>{r.condition}</dt>
+                      <dd>{r.result}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
+            </Card>
           ) : null}
           {step.output ? <Callout tone="sonuc" title="Elinizde ne olur?">{step.output}</Callout> : null}
-          {!wide ? example : null}
-          <ModelChips indexes={step.models} />
+          {!wide ? (
+            <Collapse
+              className="aside-collapse"
+              expandIconPlacement="end"
+              defaultActiveKey={['durum']}
+              items={[
+                { key: 'durum', label: 'Bu adım', children: <StepProgress step={step} stats={stats} values={values} /> },
+                ...(step.howTo ? [{ key: 'nasil', label: 'Nasıl yapılır?', children: <HowToList items={step.howTo} /> }] : []),
+                ...(example ? [{ key: 'ornek', label: 'Günlük Hayattan', children: example }] : []),
+                ...(step.models.length ? [{ key: 'yontem', label: 'Karar Kitabı yöntemleri', children: <ModelChips indexes={step.models} showTitle={false} /> }] : []),
+              ]}
+            />
+          ) : null}
         </div>
         {wide ? (
-          <aside className="work-aside" aria-label="Yardım">
-            {step.howTo ? (
-              <div className="howto">
-                <div className="section-head"><h3>Nasıl yapılır?</h3></div>
-                <HowToList items={step.howTo} />
-              </div>
-            ) : null}
-            {example}
+          <aside className="work-aside" aria-label="Bu adım">
+            <Card className="step-card aside-card" variant="borderless" title="Bu adım" extra={<Tag>{stats.length} bölüm</Tag>}>
+              <StepProgress step={step} stats={stats} values={values} />
+              {stats.length > 1 ? (
+                <div className="aside-block">
+                  <span className="aside-label"><ListNumbers size={16} aria-hidden /> Bölümler</span>
+                  <Anchor
+                    affix={false}
+                    getContainer={() => window}
+                    targetOffset={80}
+                    items={stats.map((s) => ({ key: s.id, href: `#${s.id}`, title: s.total ? `${s.title} (${s.filled} / ${s.total})` : s.title }))}
+                    onClick={(e, link) => {
+                      e.preventDefault()
+                      document.getElementById(link.href.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                    }}
+                  />
+                </div>
+              ) : null}
+              {step.howTo ? (
+                <Collapse
+                  className="howto-collapse"
+                  ghost
+                  expandIconPlacement="end"
+                  defaultActiveKey={['nasil']}
+                  items={[{ key: 'nasil', label: <span className="aside-label"><Compass size={16} aria-hidden /> Nasıl yapılır?</span>, children: <HowToList items={step.howTo} /> }]}
+                />
+              ) : null}
+              {example}
+              {step.models.length ? (
+                <div className="aside-block">
+                  <span className="aside-label"><BookOpen size={16} aria-hidden /> Karar Kitabı yöntemleri</span>
+                  <ModelChips indexes={step.models} showTitle={false} />
+                </div>
+              ) : null}
+            </Card>
           </aside>
         ) : null}
       </div>
@@ -172,6 +214,29 @@ export function WorkScreen() {
   )
 }
 
+/** Doluluk halkası ve sayılar. Yüzde, görünen alanların dolu olanlarından hesaplanır. */
+function StepProgress({ step, stats, values }: { step: StepDef; stats: SectionStat[]; values: Record<string, unknown> }) {
+  const total = stats.reduce((s, x) => s + x.total, 0)
+  const filled = stats.reduce((s, x) => s + x.filled, 0)
+  const pct = total ? Math.round((filled / total) * 100) : 0
+  const must = step.completeWhen ?? []
+  const mustFilled = must.filter((k) => isFilled(values[k])).length
+  return (
+    <div className="step-progress">
+      <Progress type="circle" percent={pct} size={88} strokeWidth={9} format={(p) => <span className="progress-text tabular">{p}%</span>} aria-label={`Doluluk yüzde ${pct}`} />
+      <div className="step-progress-text">
+        <strong>{filled} / {total} alan dolu</strong>
+        {must.length ? <span className="helper">Zorunlu alan: {mustFilled} / {must.length} dolu</span> : <span className="helper">Bu adımda zorunlu alan yok.</span>}
+        {pct === 100 ? <Tag color="success">Hazır</Tag> : null}
+      </div>
+    </div>
+  )
+}
+
 function HowToList({ items }: { items: string[] }) {
-  return <ol>{items.map((t, i) => <li key={i}>{t}</li>)}</ol>
+  return (
+    <ol className="howto-list">
+      {items.map((t, i) => <li key={i}>{t}</li>)}
+    </ol>
+  )
 }

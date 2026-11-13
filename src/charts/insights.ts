@@ -9,7 +9,7 @@
  * Telefonda kaydırıcı yoktur. Sekiz çubuk 320 px'e sığar, kategori adı kısalır.
  */
 import { DECISIONS } from '@/data/decisions'
-import { stepsOf } from '@/data/registry'
+import { STEPS, stepsOf } from '@/data/registry'
 import { OUTCOME_LABEL, type Measure, type Outcome, type PlanDoc } from '@/data/types'
 import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome } from '@/engine/gate'
@@ -35,6 +35,8 @@ export interface InsightPalette {
   onInk?: string
   /** Çok serili grafiklerde gri basamaklar. Koyu mürekkepten açık griye. */
   ramp?: string[]
+  /** Kategori renkleri: donut ve huni dilimleri. Her iki temada zeminden ayrışan ton renkleri. */
+  series?: string[]
 }
 
 export interface ChartTable {
@@ -54,12 +56,22 @@ export interface InsightChart extends InsightBase {
   summary?: string
   option: unknown
   table: ChartTable
+  /** Grafik yüksekliği (px). Verilmezse ChartFrame varsayılanı kullanılır. */
+  height?: number
+}
+
+/** Boş göstergeden doldurulacak ekrana bağlantı. */
+export interface InsightLink {
+  label: string
+  to: string
 }
 
 export interface InsightEmpty extends InsightBase {
   empty: true
   /** Ölçüm için hangi adım doldurulur? */
   hint: string
+  /** Doldurulacak adımın ya da ekranın bağlantısı. */
+  link: InsightLink
 }
 
 export type Insight = InsightChart | InsightEmpty
@@ -73,7 +85,27 @@ export interface SummaryTile {
   numeric?: boolean
 }
 
+/** Üst şeritteki dört istatistik kartı. Yüzde çizgisi için `percent` 0 ile 100 arasıdır; hesaplanamazsa null. */
+export interface StatCard {
+  key: string
+  title: string
+  value: string
+  /** Değerin yanına yazılan birim ya da kısa ek. */
+  suffix?: string
+  /** İlerleme çizgisi yüzdesi. null ise çizgi çizilmez. */
+  percent: number | null
+  note: string
+  /** Sayı değilse değer cümle gibi yazılır. */
+  numeric: boolean
+}
+
 type Row = Record<string, unknown>
+
+/** Adım kimliğinden adım ekranına bağlantı. */
+function stepLink(id: string, label?: string): InsightLink {
+  const step = STEPS[id]
+  return { label: label ?? `Adım ${id}’yi doldurun`, to: step ? `/karar/${step.decision}/adim/${id}` : '/ozet' }
+}
 
 const v = (p: PlanDoc, step: string, key: string): unknown => p.steps[step]?.values?.[key]
 const rows = (p: PlanDoc, step: string, key: string): Row[] => {
@@ -117,6 +149,11 @@ function whenNarrow(option: Record<string, unknown>, narrow: Record<string, unkn
   return { baseOption: option, media: [{ query: { maxWidth: NARROW }, option: narrow }, { option: wide }] }
 }
 
+function seriesColors(c: InsightPalette, n: number): string[] {
+  const base = c.series && c.series.length ? c.series : ramp(c, 4)
+  return Array.from({ length: n }, (_x, i) => base[i % base.length])
+}
+
 function ramp(c: InsightPalette, n: number): string[] {
   const base = c.ramp && c.ramp.length ? c.ramp : [c.primary, c.muted]
   return Array.from({ length: n }, (_x, i) => base[Math.min(i, base.length - 1)])
@@ -156,9 +193,50 @@ export function summaryTiles(plan: PlanDoc): SummaryTile[] {
   return [runway, gap, budget, retries]
 }
 
-/** Yedi gösterge. Veri yoksa gösterge boş durumla döner. */
+/** Ölçü alanları: Adım 07 üç ölçü, Adım 22 dört ölçü. */
+const MEASURE_KEYS: [string, string][] = [['07', 'repeatMeasure'], ['07', 'effortMeasure'], ['07', 'lossMeasure'], ['22', 'measure1'], ['22', 'measure2'], ['22', 'measure3'], ['22', 'benefitMeasure']]
+
+const clampPct = (x: number): number => Math.max(0, Math.min(100, Math.round(x)))
+
+/**
+ * Dört istatistik kartı: pist (12 aya oranı), bütçe kullanımı, ölçülen ölçüt yüzdesi ve deneme hakkı.
+ * Her kartın altında yüzde çizgisi vardır. Hesaplanamayan değerde çizgi çizilmez.
+ */
+export function statCards(plan: PlanDoc): StatCard[] {
+  const { cashKurus, monthlyBurnKurus, budgetKurus, retriesPerDecision } = plan.limits
+
+  const months = cashKurus && monthlyBurnKurus ? Math.floor(cashKurus / monthlyBurnKurus) : null
+  const runway: StatCard = months !== null
+    ? { key: 'pist', title: 'Pist', value: String(months), suffix: 'ay', percent: clampPct((months / 12) * 100), note: `12 ayın yüzde ${clampPct((months / 12) * 100)}’i. Elinizde ${formatMoney(cashKurus!)} var.`, numeric: true }
+    : { key: 'pist', title: 'Pist', value: 'Hesaplanmadı', percent: null, note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
+
+  const spent = rows(plan, '24', 'results').reduce((s, r) => s + (num(r.costKurus) ?? 0), 0)
+  let budget: StatCard
+  if (!budgetKurus) budget = { key: 'butce', title: 'Bütçe kullanımı', value: 'Yazılmadı', percent: null, note: 'Adım 02’de plana ayrılan en çok parayı yazın.', numeric: false }
+  else if (spent === 0) budget = { key: 'butce', title: 'Bütçe kullanımı', value: '0', suffix: '%', percent: 0, note: `Sınır ${formatMoney(budgetKurus)}. Harcamalar Adım 24’te kayda geçer.`, numeric: true }
+  else {
+    const pct = Math.round((spent / budgetKurus) * 100)
+    budget = { key: 'butce', title: 'Bütçe kullanımı', value: String(pct), suffix: '%', percent: clampPct(pct), note: `Sınır ${formatMoney(budgetKurus)}. Harcanan ${formatMoney(spent)}.`, numeric: true }
+  }
+
+  const measures = MEASURE_KEYS.map(([step, key]) => v(plan, step, key) as Measure | undefined)
+  const defined = measures.filter((m): m is Measure => Boolean(m))
+  const measured = defined.filter((m) => m.status === 'olculdu' && num(m.value) !== null).length
+  const total = MEASURE_KEYS.length
+  const measurePct = Math.round((measured / total) * 100)
+  const measure: StatCard = { key: 'olcut', title: 'Ölçülen ölçüt', value: String(measurePct), suffix: '%', percent: clampPct(measurePct), note: `${total} ölçütün ${measured} tanesi ölçüldü. Ölçütler Adım 07 ve Adım 22’dedir.`, numeric: true }
+
+  const used = plan.decisions.filter((d) => d.chosen === 'yenidenDene').length
+  const retries: StatCard = retriesPerDecision
+    ? { key: 'deneme', title: 'Deneme hakkı', value: String(retriesPerDecision), suffix: '/ karar', percent: clampPct((used / (retriesPerDecision * DECISIONS.length)) * 100), note: used === 0 ? 'Henüz deneme hakkı kullanılmadı.' : `${used} deneme kullanıldı.`, numeric: true }
+    : { key: 'deneme', title: 'Deneme hakkı', value: 'Yazılmadı', percent: null, note: 'Adım 02’de karar başına deneme sayısını yazın.', numeric: false }
+
+  return [runway, budget, measure, retries]
+}
+
+/** Yedi gösterge. Sıra: karar ilerlemesi, kanıt basamağı, nakit, huni, ölçü ve eşik, karar zaman çizgisi, görüşmeler. Veri yoksa gösterge boş durumla döner. */
 export function buildInsights(plan: PlanDoc, c: InsightPalette): Insight[] {
-  return [stepsPerDecision(plan, c), ladderDistribution(plan, c), offerFunnel(plan, c), measureVsThreshold(plan, c), cashAndSpend(plan, c), gateTimeline(plan, c), interviewSignals(plan, c)]
+  return [stepsPerDecision(plan, c), ladderDistribution(plan, c), cashAndSpend(plan, c), offerFunnel(plan, c), measureVsThreshold(plan, c), gateTimeline(plan, c), interviewSignals(plan, c)]
 }
 
 function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
@@ -172,21 +250,21 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
   const total = items.reduce((sum, i) => sum + i.total, 0)
   return {
     id: 'adimlar',
-    title: 'Karar başına tamamlanan adım',
+    title: 'Karar ilerlemesi',
     source: 'Sayılar her adımın durumundan gelir. Atlanan adım tamamlanmış sayılır.',
     empty: false,
     summary: `${doneTotal} / ${total} adım tamamlandı.`,
+    height: 8 * 48 + 56,
     /*
-     * Y ekseni yalnız 0, 4 ve 8. Bir kararda en çok 7 adım vardır.
-     * Geniş ekranda ızgara kategori sayısına göre daralır: 32 px çubuk, 24 px aralık, sağda boşluk kalmaz.
-     * Dar ekranda sekiz çubuk kaydırıcısız sığar. Kategori adı kısalır ve 45 derece döner.
+     * Yatay çubuk: her satır bir karar. Karar adı solda tam yazılır, dar ekranda kısalır.
+     * X ekseni yalnız 0, 4 ve 8. Bir kararda en çok 7 adım vardır. Çubuk ucunda "tamamlanan/toplam" yazar.
      */
     option: whenNarrow({
       tooltip: s.tooltip,
       legend: s.legend,
-      grid: GRID,
-      xAxis: { type: 'category', data: items.map((i) => i.name), ...s.categoryAxis },
-      yAxis: { type: 'value', min: 0, max: 8, interval: 4, ...s.valueAxis },
+      grid: { ...GRID, right: 48 },
+      xAxis: { type: 'value', min: 0, max: 8, interval: 4, ...s.valueAxis },
+      yAxis: { type: 'category', inverse: true, data: items.map((i) => i.label), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 150, overflow: 'break', lineHeight: 16 } },
       series: [
         { type: 'bar', name: 'Tamamlanan', stack: 'adim', data: items.map((i) => i.done), itemStyle: { color: c.primary }, barMaxWidth: BAR, barCategoryGap: CATEGORY_GAP },
         {
@@ -197,57 +275,53 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
           itemStyle: { color: c.muted },
           barMaxWidth: BAR,
           barCategoryGap: CATEGORY_GAP,
-          label: { ...s.valueLabel, formatter: (p: { dataIndex: number }) => `${items[p.dataIndex].done}/${items[p.dataIndex].total}` },
+          label: { ...s.valueLabel, position: 'right', formatter: (p: { dataIndex: number }) => `${items[p.dataIndex].done}/${items[p.dataIndex].total}` },
         },
       ],
     }, {
-      grid: GRID,
-      xAxis: { data: items.map((i) => i.short), axisLabel: { rotate: 45, interval: 0 } },
+      /* Dar kartta karar adı 100 px içinde kelime sınırından sarılır. Satır 48 px: üç satıra kadar sığar. */
+      yAxis: { data: items.map((i) => i.label), axisLabel: { width: 100, overflow: 'break' } },
     }, {
-      /* Kategori bandı 60 px: 32 px çubuk, 28 px aralık. Tam ad 60 px içinde kelime sınırından sarılır. */
-      grid: { ...GRID, width: items.length * 60 + 44 },
-      xAxis: { data: items.map((i) => i.name), axisLabel: { rotate: 0, interval: 0, width: 60, overflow: 'break', lineHeight: 16 } },
+      yAxis: { data: items.map((i) => i.label), axisLabel: { width: 150, overflow: 'break' } },
     }),
     table: { head: ['Karar', 'Tamamlanan', 'Toplam'], rows: items.map((i) => [i.label, i.done, i.total]) },
   }
 }
 
 function ladderDistribution(plan: PlanDoc, c: InsightPalette): Insight {
-  const s = styles(c)
   const count = (levels: number[]) => LADDER.map((l) => levels.filter((x) => x === l.level).length)
   const evidence = count(plan.evidence.map((e) => e.ladder))
   const interviews = count(rows(plan, '06', 'interviews').map((r) => Number(r.ladder)).filter((x) => x >= 1 && x <= 7))
   const offers = count(rows(plan, '15', 'offers').map((r) => Number(r.ladder)).filter((x) => x >= 1 && x <= 7))
   const total = [...evidence, ...interviews, ...offers].reduce((sum, x) => sum + x, 0)
   const base = { id: 'kanit', title: 'Kanıt basamağı dağılımı', source: 'Sayılar kanıt defterinden, Adım 06 görüşmelerinden ve Adım 15 teklif defterinden gelir.' }
-  if (total === 0) return { ...base, empty: true, hint: 'Kanıt ekleyin. Ya da Adım 06 ve Adım 15’te basamak seçin.' }
+  if (total === 0) return { ...base, empty: true, hint: 'Kanıt ekleyin. Ya da Adım 06 ve Adım 15’te basamak seçin.', link: { label: 'Kanıt ekleyin', to: '/kanitlar' } }
   const strong = LADDER.slice(0, 3).reduce((sum, _l, i) => sum + evidence[i] + interviews[i] + offers[i], 0)
-  const colors = ramp(c, 3)
   const totals = LADDER.map((_l, i) => evidence[i] + interviews[i] + offers[i])
+  const colors = seriesColors(c, LADDER.length)
+  const axis = c.axis ?? c.primary
+  /* Donut: yalnız dolu basamaklar dilim olur. Açıklama altta, dar ekranda kayar. Dilim içinde sayı yazar. */
+  const slices = LADDER.map((l, i) => ({ name: `${l.level}. basamak`, value: totals[i], itemStyle: { color: colors[i] } })).filter((d) => d.value > 0)
   return {
     ...base,
     empty: false,
     summary: `${strong} kanıt 1, 2 veya 3. basamakta. ${total - strong} kanıt yalnız ipucu.`,
-    option: whenNarrow({
-      tooltip: s.tooltip,
-      legend: s.legend,
-      grid: GRID,
-      xAxis: { type: 'value', minInterval: 1, ...s.valueAxis, axisLabel: { ...s.valueAxis.axisLabel, hideOverlap: true } },
-      yAxis: { type: 'category', inverse: true, data: LADDER.map((l) => `${l.level}. basamak`), ...s.categoryAxis },
-      series: [
-        { type: 'bar', name: 'Kanıt defteri', stack: 'kanit', data: evidence, itemStyle: { color: colors[0] }, barMaxWidth: BAR },
-        { type: 'bar', name: 'Görüşmeler', stack: 'kanit', data: interviews, itemStyle: { color: colors[1] }, barMaxWidth: BAR },
-        {
-          type: 'bar',
-          name: 'Teklifler',
-          stack: 'kanit',
-          data: offers,
-          itemStyle: { color: colors[2] },
-          barMaxWidth: BAR,
-          label: { ...s.valueLabel, position: 'right', formatter: (p: { dataIndex: number }) => String(totals[p.dataIndex]) },
-        },
-      ],
-    }, { grid: { ...GRID, top: 72 } }, { grid: GRID }),
+    height: 300,
+    option: {
+      tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { name: string; value: number; percent: number }) => `${p.name}: ${p.value} kanıt (%${Math.round(p.percent)})` },
+      /* Açıklama altta ve satırlara sarılır; sayfalama yoktur. Halka üstte durur. */
+      legend: { bottom: 0, left: 'center', width: '100%', icon: 'circle', itemWidth: 12, itemHeight: 12, itemGap: 14, textStyle: { color: axis, fontSize: font.helper } },
+      series: [{
+        type: 'pie',
+        radius: ['40%', '62%'],
+        center: ['50%', '38%'],
+        avoidLabelOverlap: true,
+        itemStyle: { borderWidth: 0 },
+        label: { show: true, position: 'inside', formatter: '{c}', color: c.onInk ?? c.primary, fontSize: font.helper },
+        emphasis: { scale: false, label: { show: true } },
+        data: slices,
+      }],
+    },
     table: { head: ['Basamak', 'Kanıt defteri', 'Görüşmeler', 'Teklifler'], rows: LADDER.map((l, i) => [`${l.level}. ${l.label}`, evidence[i], interviews[i], offers[i]]) },
   }
 }
@@ -256,8 +330,8 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
   const offers = rows(plan, '15', 'offers')
   const reached = num(v(plan, '15', 'reached'))
   const tried = num(v(plan, '15', 'tried'))
-  const base = { id: 'huni', title: 'Teklif, taahhüt ve ödeme hunisi', source: 'Sayılar Adım 15’ten gelir. Ulaşılan kişi, deneyen kişi ve teklif defteri okunur.' }
-  if (offers.length === 0 && reached === null && tried === null) return { ...base, empty: true, hint: 'Adım 15’te talep testini ve teklif defterini doldurun.' }
+  const base = { id: 'huni', title: 'Teklif ve ödeme hunisi', source: 'Sayılar Adım 15’ten gelir. Ulaşılan kişi, deneyen kişi ve teklif defteri okunur.' }
+  if (offers.length === 0 && reached === null && tried === null) return { ...base, empty: true, hint: 'Adım 15’te talep testini ve teklif defterini doldurun.', link: stepLink('15') }
   const accepted = offers.filter((o) => o.result === 'kabul')
   const strong = accepted.filter((o) => Number(o.ladder) <= 3).length
   const paid = accepted.filter((o) => Number(o.ladder) === 1).length
@@ -271,9 +345,9 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
   const data = stages.filter((st): st is [string, number] => st[1] !== null)
   const th = v(plan, '15', 'threshold') as { value?: number | null } | undefined
   const summary = th?.value ? `Eşik ${th.value} taahhüt. ${strong} güçlü taahhüt geldi. ${strong >= th.value ? 'Eşik geçildi.' : 'Eşik geçilmedi.'}` : `${strong} güçlü taahhüt geldi. Eşik yazılmadı.`
-  const colors = ramp(c, data.length)
-  /* Koyu basamaklarda açık yazı, açık basamaklarda koyu yazı. Kontrast 4,5:1 üstünde kalır. */
-  const labelColor = (i: number) => (i < Math.min(2, data.length) ? c.onInk ?? c.muted : c.primary)
+  const colors = seriesColors(c, data.length)
+  /* Dilim renkleri zeminin tersi tondadır. Dilim içindeki yazı zemin rengindedir: açık temada beyaz, koyu temada koyu. */
+  const labelColor = () => c.onInk ?? c.muted
   return {
     ...base,
     empty: false,
@@ -288,10 +362,10 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
         left: '4%',
         width: '92%',
         gap: 4,
-        minSize: '16%',
+        minSize: '30%',
         label: { show: true, position: 'inside', formatter: '{b}: {c}', fontSize: font.helper },
         itemStyle: { borderWidth: 0 },
-        data: data.map(([name, value], i) => ({ name, value, itemStyle: { color: colors[i] }, label: { color: labelColor(i) } })),
+        data: data.map(([name, value], i) => ({ name, value, itemStyle: { color: colors[i] }, label: { color: labelColor() } })),
       }],
     },
     table: { head: ['Aşama', 'Kişi'], rows: data.map(([name, value]) => [name, value]) },
@@ -300,13 +374,12 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
 
 function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
   const s = styles(c)
-  const keys: [string, string][] = [['07', 'repeatMeasure'], ['07', 'effortMeasure'], ['07', 'lossMeasure'], ['22', 'measure1'], ['22', 'measure2'], ['22', 'measure3'], ['22', 'benefitMeasure']]
-  const items = keys
+  const items = MEASURE_KEYS
     .map(([step, key]) => ({ step, m: v(plan, step, key) as Measure | undefined }))
     .filter((x): x is { step: string; m: Measure } => Boolean(x.m && x.m.status === 'olculdu' && num(x.m.value) !== null && num(x.m.threshold) !== null && x.m.threshold !== 0))
     .map(({ step, m }) => ({ step, name: m.name || 'Adsız ölçü', unit: m.unit, value: m.value as number, threshold: m.threshold as number, pct: Math.round(((m.value as number) / (m.threshold as number)) * 100) }))
-  const base = { id: 'olcu', title: 'Ölçü ve eşik karşılaştırması', source: 'Ölçüler Adım 07 ve Adım 22’den gelir. Her çubuk eşiğin yüzdesini gösterir.' }
-  if (items.length === 0) return { ...base, empty: true, hint: 'Adım 07 ya da Adım 22’de ölçüyü "Ölçüldü" yapın. Değer ve eşik yazın.' }
+  const base = { id: 'olcu', title: 'Ölçü ve eşik', source: 'Ölçüler Adım 07 ve Adım 22’den gelir. Her çubuk eşiğin yüzdesini gösterir.' }
+  if (items.length === 0) return { ...base, empty: true, hint: 'Adım 07 ya da Adım 22’de ölçüyü "Ölçüldü" yapın. Değer ve eşik yazın.', link: stepLink('07') }
   const met = items.filter((i) => i.pct >= 100).length
   return {
     ...base,
@@ -339,8 +412,8 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
   const cac = num(v(plan, '29', 'cacKurus'))
   const hasCash = days.length > 0
   const hasUnit = ltv !== null || cac !== null
-  const base = { id: 'nakit', title: 'Nakit ve harcama', source: 'Kasa çizgisi Adım 16’dan gelir. Müşteri değeri ve kazanma maliyeti Adım 29’dan gelir.' }
-  if (!hasCash && !hasUnit) return { ...base, empty: true, hint: 'Adım 16’da ödeme günlerini yazın. Adım 29’da müşteri değerini ve maliyetini yazın.' }
+  const base = { id: 'nakit', title: 'Nakit akışı', source: 'Kasa çizgisi Adım 16’dan gelir. Müşteri değeri ve kazanma maliyeti Adım 29’dan gelir.' }
+  if (!hasCash && !hasUnit) return { ...base, empty: true, hint: 'Adım 16’da ödeme günlerini yazın. Adım 29’da müşteri değerini ve maliyetini yazın.', link: stepLink('16') }
   const cashLabels = days.map((r) => formatDate(String(r.date), false))
   const cashData = days.map((r) => lira(Number(r.balanceAfterKurus)))
   const unitLabels = ['Müşteri ömür değeri', 'Kazanma maliyeti']
@@ -360,8 +433,10 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
     name: 'Kasa',
     data: cashData,
     symbolSize: 8,
+    smooth: 0.2,
     itemStyle: { color: c.primary },
     lineStyle: { color: c.primary, width: 2 },
+    areaStyle: { color: c.primary, opacity: 0.08 },
     markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { color: c.error, fontSize: font.helper }, data: [{ yAxis: 0, name: 'Sıfır' }] },
   }
   const unitSeries = { type: 'bar', name: 'TL', data: unitData.map((x, i) => ({ value: x, itemStyle: { color: i === 0 ? c.success : c.warning } })), barMaxWidth: BAR, barCategoryGap: CATEGORY_GAP, label: s.valueLabel }
@@ -388,8 +463,8 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
 function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
   const s = styles(c)
   const decisions = [...plan.decisions].sort((a, b) => a.decidedAt.localeCompare(b.decidedAt))
-  const base = { id: 'kapilar', title: 'Kapı kararlarının zaman çizgisi', source: 'Noktalar kayıtlı kapı kararlarından gelir. Renk karar sonucunu gösterir.' }
-  if (decisions.length === 0) return { ...base, empty: true, hint: 'Bir kararın kapı ekranında kararı kaydedin.' }
+  const base = { id: 'kapilar', title: 'Karar zaman çizgisi', source: 'Noktalar kayıtlı kapı kararlarından gelir. Renk karar sonucunu gösterir.' }
+  if (decisions.length === 0) return { ...base, empty: true, hint: 'Bir kararın kapı ekranında kararı kaydedin.', link: { label: 'Kapı 1’e gidin', to: '/karar/1/kapi' } }
   const points = decisions.map((d, i) => {
     const o = effectiveOutcome(d)
     return { i, gate: d.gate, outcome: o, label: OUTCOME_LABEL[o], date: formatDate(d.decidedAt, false), by: d.decidedBy, color: c.outcome(o) }
@@ -420,7 +495,7 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
   const s = styles(c)
   const r = rows(plan, '06', 'interviews')
   const base = { id: 'gorusmeler', title: 'Görüşmelerde tanıma ve çaba', source: 'Sayılar Adım 06 görüşmelerinden gelir. Hedefler Kapı 2 ölçütlerinden gelir.' }
-  if (r.length === 0) return { ...base, empty: true, hint: 'Adım 06’da görüşmeleri yazın.' }
+  if (r.length === 0) return { ...base, empty: true, hint: 'Adım 06’da görüşmeleri yazın.', link: stepLink('06') }
   const t = plan.profile.customer
   const target = t === 'tuketici' ? [15, 9, 5] : t === 'kamu' ? [6, 4, 2] : [10, 6, 3]
   const actual = [r.length, r.filter((x) => x.recognizes === true).length, r.filter((x) => x.spendsToday === true).length]
@@ -434,7 +509,7 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
       tooltip: s.tooltip,
       legend: s.legend,
       grid: GRID,
-      xAxis: { type: 'category', data: labels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 80, overflow: 'break' } },
+      xAxis: { type: 'category', data: labels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 104, overflow: 'break', lineHeight: 16 } },
       yAxis: { type: 'value', minInterval: 1, ...s.valueAxis },
       series: [
         /* İki çubuk yan yana. Aralık çubuğun dörtte üçüdür: 32 px çubuk için 24 px. */

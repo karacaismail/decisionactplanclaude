@@ -7,6 +7,7 @@ import { DECISIONS } from '@/data/decisions'
 import { STEPS } from '@/data/registry'
 import { gatePassed } from '@/engine/gate'
 import { SaveStatus } from '@/components/SaveStatus'
+import { CommandPalette, CommandPaletteButton } from '@/components/CommandPalette'
 import { cssVariables } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
 import type { PlanDoc } from '@/data/types'
@@ -155,6 +156,7 @@ export function AppShell() {
             })}
           </nav>
           <div className="shell-status">
+            <CommandPaletteButton />
             {plan?.example && bp.md ? <span className="tag">Örnek plan</span> : null}
             {plan ? <SaveStatus /> : null}
             <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
@@ -163,6 +165,7 @@ export function AppShell() {
         <Layout.Content className="shell-content">
           <Outlet />
         </Layout.Content>
+        <CommandPalette />
       </Layout>
       <Drawer open={open} onClose={() => setOpen(false)} placement="left" title={brand} size={Math.min(300, typeof window !== 'undefined' ? window.innerWidth - 24 : 300)} styles={{ body: { padding: 0 }, header: { padding: '0 8px', borderBottom: `1px solid ${token.colorBorder}` } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
         {menu}

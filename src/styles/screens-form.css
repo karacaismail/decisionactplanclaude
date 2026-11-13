@@ -1,26 +1,61 @@
 /*
-  Adım (form) ekranı ve form bileşenleri. Ortak kurallar docs/tasarim-sistemi.md dosyasındadır.
+  Adım (form) ekranı ve form bileşenleri. Ortak kurallar docs/tasarim-sistemi.md ve docs/kurumsal-bilesenler.md dosyalarındadır.
   Renk ve yarıçap değişkenleri AppShell tarafından yazılır. Bu dosyada sabit renk yoktur.
+  Kart: antd `Card` (.step-card). Alan: antd `Form.Item` (.step-field). Hücre girişi: .cell-input.
 */
 
 /* Başlık altı tek satır: gereklilik etiketi, durum etiketi ve "Kim yapar?" */
 .work-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .work-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
-.work-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
-/* Telefonda blok arası 24 px: başlık, etiket satırı ve ilk bölüm 720 px yüksekliğe sığar. */
-@media (max-width: 599px) { .work-main { gap: var(--space-6); } .work-head { gap: var(--space-2); } }
+.work-meta .ant-tag { margin: 0; }
+.work-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+@media (max-width: 599px) { .work-main { gap: var(--space-4); } .work-head { gap: var(--space-2); } }
 .work-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
 
-/* "Nasıl yapılır?" dar ekranda kapalı başlar. Kart değildir. */
-.howto-collapse.ant-collapse { border: 0; background: transparent; border-radius: 0; }
-.howto-collapse.ant-collapse > .ant-collapse-item { border-bottom: 1px solid var(--color-border); border-radius: 0; }
-.howto-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 12px 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); align-items: center; }
-.howto-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; }
-.howto-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 0 16px; }
-.howto-collapse .howto { gap: 8px; }
+/* ------------------------------------------------------------------ */
+/* Kartlar: beyaz yüzey, yumuşak gölge, kenarlık yok. global.css'teki .ant-card gölge sıfırlaması burada geri açılır. */
+/* ------------------------------------------------------------------ */
+.step-card.ant-card { background: var(--color-surface-work); border: 0; border-radius: var(--radius-panel); box-shadow: var(--shadow-card) !important; min-width: 0; }
+.step-card.ant-card > .ant-card-head { padding: 16px 20px 0; min-height: 0; border-bottom: 0; }
+.step-card.ant-card > .ant-card-head .ant-card-head-wrapper { align-items: center; gap: 12px; flex-wrap: wrap; }
+.step-card.ant-card > .ant-card-head .ant-card-head-title { font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); white-space: normal; overflow: visible; text-overflow: clip; padding: 0; }
+.step-card.ant-card > .ant-card-head .ant-card-extra { padding: 0; margin-inline-start: auto; }
+.step-card.ant-card > .ant-card-body { padding: 16px 20px 20px; }
+@media (max-width: 599px) {
+  .step-card.ant-card > .ant-card-head { padding: 14px 16px 0; }
+  .step-card.ant-card > .ant-card-body { padding: 12px 16px 16px; }
+}
+.card-desc { margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); max-width: 72ch; }
+.fill-tag.ant-tag, .rate-tag.ant-tag, .ladder-tag.ant-tag, .threshold-tag.ant-tag, .total-cell.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+/* Tablo kartı: tablo kart kenarına yaslanır. */
+.step-card.ant-card .ant-table-wrapper { margin: 0; }
+
+/* ------------------------------------------------------------------ */
+/* Form alanı: antd Form.Item dikey düzen. Etiket 16 px, ipucu 14 px.  */
+/* ------------------------------------------------------------------ */
+.step-field.ant-form-item { margin-bottom: 0; min-width: 0; }
+.step-field .ant-form-item-label { padding-bottom: 6px; }
+.step-field .ant-form-item-label > label { height: auto; min-height: 24px; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); align-items: flex-start; }
+.step-field .ant-form-item-label > label::after { display: none; }
+.step-field .ant-form-item-tooltip { display: inline-flex; align-items: center; color: var(--color-text-secondary); margin-inline-start: 6px; cursor: help; }
+.step-field .ant-form-item-tooltip svg { display: block; }
+.step-field .ant-form-item-extra, .field-extra { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
+.field-extra { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+.field-required { font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 4px; }
+.step-field .ant-input, .step-field .ant-input-number, .step-field .ant-select, .step-field .ant-picker, .step-field .ant-input-number-group-wrapper, .step-field .ant-input-affix-wrapper { width: 100%; }
+.step-field .ant-input-prefix { color: var(--color-text-secondary); margin-inline-end: 8px; }
+.step-field .ant-input-number-prefix { color: var(--color-text-secondary); }
+.unit-suffix { font-size: 14px; color: var(--color-text-secondary); white-space: nowrap; }
+.ant-input-number-suffix { margin-inline-end: 4px; }
+.step-field .ant-input-number-group-addon { color: var(--color-text-secondary); font-size: 14px; background: var(--color-surface-context); }
+.step-field .ant-input-data-count { font-size: 14px; color: var(--color-text-secondary); }
+.step-field .ant-form-item-control-input { min-height: 0; }
+/* Yardım balonu içindeki seçenek listesi */
+.tooltip-list { margin: 0; padding: 0 0 0 16px; display: grid; gap: 4px; font-size: 14px; line-height: 1.45; }
+.tooltip-list strong { font-weight: 600; }
 
 /* Form alanı ızgarası: 24 sütun yalnız geniş ekranda. */
-.field-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.field-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px 16px; min-width: 0; align-items: start; }
 @media (min-width: 768px) { .field-grid { grid-template-columns: repeat(24, minmax(0, 1fr)); } }
 .field-grid > .field-cell { min-width: 0; grid-column: 1 / -1; }
 @media (min-width: 768px) {
@@ -29,45 +64,60 @@
   .field-grid > .field-cell.span-12 { grid-column: span 12; }
 }
 
-/* Tek alan: etiket, giriş, yardım */
+/* Tablo hücresi içindeki alan: etiket yok, boşluk yok. */
+.field.is-compact { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
 .field .field-label { margin-bottom: 6px; }
-.field-required { font-weight: 400; color: var(--color-text-secondary); }
 .field .ant-input, .field .ant-input-number, .field .ant-select, .field .ant-picker, .field .ant-input-number-group-wrapper, .field .ant-input-affix-wrapper { width: 100%; }
 
 /* Yan yana küçük alanlar (ölçü adı, birim, dönem) */
-.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; min-width: 0; }
-.field-group .field-label { margin-bottom: 6px; }
-.field-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
-.subhead { margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); }
+.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; min-width: 0; align-items: start; }
+.measure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.measure-divider.ant-divider { margin: 4px 0 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.measure-divider.ant-divider .ant-divider-inner-text { padding-inline-start: 0; font-size: 16px; }
 
-/* Seçim düğmeleri: sarılır, seçili olan dolgusuz ve tek tonlu. */
+/* Seçim düğmeleri: sarılır, seçili olan tonlu zemin ve eylem rengi kenar. */
 .choice-buttons.ant-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice-buttons .ant-radio-button-wrapper { border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: 14px; }
+.choice-buttons .ant-radio-button-wrapper { height: auto; min-height: 40px; line-height: 1.3; padding-block: 9px; white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: 14px; font-size: 16px; color: var(--color-text-primary); border-color: var(--color-border-strong); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 .choice-buttons .ant-radio-button-wrapper::before { display: none; }
-.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) { background: var(--color-selected-bg); color: var(--color-text-primary); border-color: var(--color-border-strong); font-weight: 600; }
-.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover { color: var(--color-text-primary); border-color: var(--color-text-secondary); }
+.choice-buttons .ant-radio-button-wrapper > span:not(.ant-radio-button) { display: inline-block; line-height: 1.3; }
+.choice-buttons .ant-radio-button-wrapper:hover { color: var(--color-text-primary); border-color: var(--color-text-secondary); }
+.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) { background: var(--color-selected-bg); color: var(--color-text-primary); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
+.choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled):hover { color: var(--color-text-primary); border-color: var(--color-action-hover, var(--color-action-primary)); }
+@media (max-width: 359px) { .choice-buttons .ant-radio-button-wrapper { padding-inline: 10px; } }
 
-/* Çoklu seçim çipleri */
+/* Çoklu seçim çipleri: düğme, seçilince onay işareti */
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: 16px; line-height: 1.3; text-align: left; cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-border-strong); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: 16px; line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
 .chip:hover { border-color: var(--color-text-secondary); }
-.chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; }
-.chip:disabled { cursor: not-allowed; color: var(--color-text-secondary); }
+.chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
+.chip.is-selected svg { color: var(--color-action-primary); }
+.chip:disabled { cursor: not-allowed; color: var(--color-text-secondary); box-shadow: none; }
 
-/* Sade onay kutusu listesi */
-.plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
-.plain-list .ant-checkbox-wrapper { min-height: 40px; align-items: center; font-size: 16px; margin: 0; }
+/* Sade onay kutusu listesi: satır çizgili */
+.plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.plain-list .ant-checkbox-wrapper { min-height: 44px; align-items: center; font-size: 16px; margin: 0; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
+.plain-list .ant-checkbox-wrapper:last-child { border-bottom: 0; }
 .toggle-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
+.toggle-text { font-size: 16px; color: var(--color-text-primary); }
 .rate-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
+.rate-field .ant-rate { font-size: 26px; line-height: 1; }
+.ant-rate .ant-rate-star svg { display: block; }
 
-/* Kanıt basamakları: tek seçimli satır listesi */
-.choice-list button.choice { appearance: none; width: 100%; font: inherit; color: var(--color-text-primary); text-align: left; border-inline: 0; border-top: 0; }
-.choice-list button.choice:last-child { border-bottom: 0; }
-.choice-num { font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-text-secondary); line-height: 1.5; }
-.choice.is-selected .choice-num { color: var(--color-action-primary); }
-.choice-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
-.choice-title .choice-check { display: inline-flex; color: var(--color-action-primary); }
+/* Kanıt basamakları: dikey Segmented, 7 satır. Satır metni sarılır, kesilmez. */
+.ladder-picker { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; justify-items: start; }
+.ladder-steps.ant-segmented { width: 100%; padding: 4px; background: var(--color-surface-context); border-radius: var(--radius-panel); }
+/* Dikey Segmented "block" ile satırları eşit böler (flex: 1). Satır yüksekliği içeriğe göre olmalı. */
+.ladder-steps.ant-segmented .ant-segmented-item { flex: 0 0 auto !important; border-radius: var(--radius-control); min-height: 44px; }
+.ladder-steps .ant-segmented-item-label { white-space: normal; overflow: visible; text-overflow: clip; text-align: start; padding: 8px 12px; line-height: 1.4; min-height: 44px; display: flex; align-items: center; }
+.ladder-steps .ant-segmented-item-selected { box-shadow: var(--shadow-card); }
+.ladder-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; width: 100%; }
+.ladder-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-work); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; box-shadow: 0 1px 2px var(--color-shadow); }
+.ant-segmented-item-selected .ladder-num { background: var(--color-action-primary); color: var(--color-on-action, var(--color-surface-work)); box-shadow: none; }
+.ladder-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+.ladder-title { font-size: 16px; color: var(--color-text-primary); }
+.ant-segmented-item-selected .ladder-title { font-weight: 600; }
+.ladder-hint { font-size: 14px; color: var(--color-text-secondary); }
 
 /* Düzenlenebilir hücre girişi (.cell-input): kenarlıksız giriş, altında 1 px çizgi.
    Çizgi hücrenin yazılabilir olduğunu gösterir. Üstüne gelince ve odakta çizgi koyulaşır, zemin bağlam rengi olur.
@@ -88,31 +138,34 @@
 .cell-input .ant-select-content-placeholder, .cell-input .ant-select-placeholder, .cell-input.ant-input::placeholder, .cell-input .ant-input-number-input::placeholder, .cell-input .ant-picker-input > input::placeholder { color: var(--color-text-secondary); opacity: 1; }
 
 /* Tekrarlı tablo: hücre içi girişler .cell-input, satır 44 px. İlk sütun sola sabit; sabit hücre zemini opak. */
-.repeater { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; justify-items: start; }
-.repeater .ant-table-wrapper { width: 100%; justify-self: stretch; }
+.repeater { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.repeater .ant-table-wrapper { width: 100%; }
 .repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
 .repeater-table .ant-table-cell .ant-input { padding-top: 8px; padding-bottom: 8px; }
 .repeater-table .ant-table-cell .field { gap: 0; }
-.repeater-table .ant-table-cell .field-help { display: none; }
 .repeater-table .ant-table-cell .toggle-field { flex-wrap: nowrap; white-space: nowrap; }
 .repeater-table .ant-select, .repeater-table .ant-input-number, .repeater-table .ant-picker { width: 100%; }
+.repeater-table .row-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
 .repeater-actions { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
-.repeater-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
-.repeater-cards .surface-card { gap: 16px; }
-.repeater-cards .surface-card-head h3 { font-size: 16px; }
+.repeater .ant-btn-dashed { height: 44px; font-size: 16px; }
+/* Telefonda satırlar kart listesi olur. Kart antd Card değildir; kart içinde kart yoktur. */
+.repeater-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.repeater-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px; min-width: 0; background: var(--color-surface-context); border-radius: var(--radius-panel); }
+.repeater-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.repeater-card-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.repeater-card .ant-input, .repeater-card .ant-input-affix-wrapper, .repeater-card .ant-input-number, .repeater-card .ant-select-selector, .repeater-card .ant-picker { background: var(--color-surface-work) !important; }
 
-/* Sabit ilk sütun (antd 6 sınıfı .ant-table-cell-fix-start): zemin opak kalır, kaydırılan içerik altından görünmez.
+/* Sabit sütun (antd 6 sınıfı .ant-table-cell-fix-start / -end): zemin opak kalır, kaydırılan içerik altından görünmez.
    Satır vurgusunda bağlam rengi. Dokunmatik ekranda vurgu yoktur. */
 .repeater-table .ant-table-tbody > tr > td.ant-table-cell-fix-start, .repeater-table .ant-table-thead > tr > th.ant-table-cell-fix-start,
-.score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-start, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-start { background: var(--color-surface-work) !important; }
-.repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start { background: var(--color-surface-context) !important; }
-@media (hover: none) { .repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start { background: var(--color-surface-work) !important; } }
+.score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-start, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-start,
+.score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-end, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-end { background: var(--color-surface-work) !important; }
+.repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-end { background: var(--color-surface-context) !important; }
+@media (hover: none) { .repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-end { background: var(--color-surface-work) !important; } }
 
 /* antd `scroll.x` ile tablo kendi iç kabında (.ant-table-content) kayar; dış kap kaymaz.
    Kaydırma gölgesi ve 8 px çubuk bu yüzden iç kaba da uygulanır. Desen global .ant-table-wrapper kuralıyla aynıdır. */
 .repeater-table .ant-table-content, .score-matrix .ant-table-content {
-  /* antd iç kaba scrollbar-width: thin yazar. Chromium bu özellik varken ::-webkit-scrollbar biçimini yok sayar ve çubuk gizlenir.
-     İkisi "auto" yapılır; 8 px çubuk her zaman görünür. */
   scrollbar-width: auto; scrollbar-color: auto;
   background:
     linear-gradient(to right, var(--color-surface-work) 40%, transparent) 0 0 / 48px 100%,
@@ -125,41 +178,106 @@
 .repeater-table .ant-table-content::-webkit-scrollbar, .score-matrix .ant-table-content::-webkit-scrollbar { height: 8px; }
 .repeater-table .ant-table-content::-webkit-scrollbar-thumb, .score-matrix .ant-table-content::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
 .repeater-table .ant-table-content::-webkit-scrollbar-track, .score-matrix .ant-table-content::-webkit-scrollbar-track { background: transparent; }
-/* antd ölçüm satırı hücresi satır içi "font-weight: bold" taşır (@rc-component/table MeasureCell). Satır görünmez ama hesaplanmış ağırlık kümesine girer.
-   Adım ekranındaki bütün tablolar için 400'e çekilir; bu yüzden !important. Diğer ekranlar için aynı kural global.css'e taşınmalıdır. */
+/* antd ölçüm satırı hücresi satır içi "font-weight: bold" taşır (@rc-component/table MeasureCell). Adım ekranındaki bütün tablolar için 400'e çekilir. */
 .work-main .ant-table-measure-row td, .work-main .ant-table-measure-row td * { font-weight: 400 !important; }
 
-/* Puan tablosu */
+/* Puan tablosu: yıldızlı hücreler, kilit anahtarı, toplam etiketi */
 .score-matrix { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
-.score-matrix .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
-.score-matrix .ant-input-number { width: 100%; }
-.score-matrix .weight-row td { color: var(--color-text-secondary); }
+.score-matrix .ant-table-tbody > tr > td { padding-top: 6px !important; padding-bottom: 6px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
+.score-matrix .ant-rate { font-size: 20px; line-height: 1; white-space: nowrap; }
+/* Dar ekranda puan blokları: seçenek başlığı, altında ölçüt satırları */
+.score-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px; background: var(--color-surface-context); border-radius: var(--radius-panel); min-width: 0; }
+.score-block-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 16px; }
+.score-block-head strong { font-weight: 600; color: var(--color-text-primary); }
+.score-block.is-weight .score-block-head strong { color: var(--color-text-secondary); }
+.score-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.score-row-label { font-size: 14px; color: var(--color-text-secondary); }
+/* Dar ekranda koşul listesi */
+.outcome-list { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+.outcome-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; padding: 12px 0; border-bottom: 1px solid var(--color-border); }
+.outcome-item:last-child { border-bottom: 0; padding-bottom: 0; }
+.outcome-item dt { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+.outcome-item dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.score-matrix .ant-rate-disabled .ant-rate-star { cursor: not-allowed; }
+.score-matrix .weight-row td { color: var(--color-text-secondary); background: var(--color-surface-context) !important; }
 .score-matrix .weight-row td:first-child { font-weight: 600; }
 .score-matrix .option-label { font-weight: 600; }
-.score-matrix .total-cell { display: inline-flex; min-width: 48px; justify-content: center; }
+.score-lock { padding: 10px 12px; background: var(--color-surface-context); border-radius: var(--radius-control); }
+.score-lock label { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); }
+.score-lock .ant-switch { flex-shrink: 0; }
 
-/* Eşik satırı */
+/* Eşik: iki alan yan yana, dar ekranda alt alta */
+.threshold-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+@media (min-width: 720px) { .threshold-grid { grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr); } }
 .threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; max-width: 220px; }
+.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: auto; min-width: 140px; max-width: 220px; }
 
 /* Kanıt bağlama */
-.evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: start; min-width: 0; }
+.evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
 .evidence-link .ant-select { width: 100%; }
-.modal-fields { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.evidence-link-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.drawer-foot { display: flex; justify-content: flex-end; gap: 8px; }
 
-/* Yöntem çipleri: nötr etiket görünümlü düğmeler. Dokunma alanı 36 px. */
+/* Yöntem etiketleri: tıklanabilir Tag. Dokunma alanı 36 px (::after). */
 .model-chips { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
-.model-chip-row { display: flex; flex-wrap: wrap; gap: 12px 8px; }
-button.tag.model-chip { position: relative; appearance: none; cursor: pointer; font-family: inherit; max-width: 100%; height: auto; min-height: 24px; padding: 2px 8px; white-space: normal; text-align: left; line-height: 1.3; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
-button.tag.model-chip::after { content: ''; position: absolute; inset: -6px -4px; }
-button.tag.model-chip:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); background: var(--color-surface-context); }
+.model-chips-title { display: inline-flex; align-items: center; gap: 6px; }
+.model-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.model-chip.ant-tag { position: relative; margin: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: auto; min-height: 32px; padding: 4px 12px !important; white-space: normal; text-align: left; line-height: 1.3; font-size: 14px; color: var(--color-text-primary); background: var(--color-surface-context); border-color: transparent; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+.model-chip.ant-tag::after { content: ''; position: absolute; inset: -4px 0; }
+.model-chip.ant-tag:hover { background: var(--color-selected-bg); color: var(--color-action-primary); }
+.model-chip.ant-tag .ant-tag-icon { display: inline-flex; color: var(--color-text-secondary); }
 .drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
 .drawer-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.drawer-tags .ant-tag { margin: 0; }
 
-/* Grafik çerçevesi: kart yok, gölge yok. Grafik kabı daralabilir (min-width 0); yükseklik ChartFrame `height` ile gelir. */
+/* Grafik kartı: sağ üstte Grafik | Tablo seçimi. Grafik kabı daralabilir (min-width 0). */
 .chart-frame { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .chart-frame .chart-canvas { min-width: 0; width: 100%; }
 .chart-frame .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.chart-view.ant-segmented { background: var(--color-surface-context); }
+.chart-view .ant-segmented-item-label { font-size: 14px; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+
+/* ------------------------------------------------------------------ */
+/* Sağ sütun "Bu adım" kartı: halka, bölüm bağlantıları, nasıl yapılır, örnek, yöntemler */
+/* ------------------------------------------------------------------ */
+.work-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; align-items: start; }
+@media (min-width: 1200px) { .work-grid { grid-template-columns: minmax(0, 1fr) 320px; gap: var(--space-8); } }
+.work-aside { position: sticky; top: 76px; min-width: 0; max-height: calc(100vh - 92px); overflow-y: auto; scrollbar-width: thin; }
+.aside-card.ant-card > .ant-card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.aside-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+.aside-label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-secondary); }
+.aside-label svg { flex-shrink: 0; }
+.step-progress { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; }
+.step-progress .ant-progress { margin: 0; line-height: 1; }
+.step-progress .ant-progress-text { font-size: 20px; font-weight: 600; color: var(--color-text-primary); }
+.step-progress-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: start; min-width: 0; }
+.step-progress-text strong { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.step-progress-text .ant-tag { margin: 0; }
+.work-aside .ant-anchor-wrapper { margin: 0; }
+.work-aside .ant-anchor .ant-anchor-link { padding-block: 6px; }
+.work-aside .ant-anchor .ant-anchor-link-title { font-size: 14px; line-height: 1.4; white-space: normal; color: var(--color-text-secondary); }
+.work-aside .ant-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-primary); font-weight: 600; }
+.work-aside .note { background: var(--color-surface-context); border-radius: 0 8px 8px 0; padding: 12px 16px; }
+
+/* "Nasıl yapılır?": kart içinde hafif, kenarlıksız açılır bölüm. */
+.howto-collapse.ant-collapse { border: 0; background: transparent; border-radius: 0; }
+.howto-collapse.ant-collapse > .ant-collapse-item { border-bottom: 0; border-radius: 0; }
+.howto-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 0 0 8px; align-items: center; }
+.howto-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; }
+.howto-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0; }
+.howto-list { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 10px; counter-reset: adim; }
+.howto-list li { position: relative; padding-left: 36px; font-size: 14px; line-height: 1.5; color: var(--color-text-primary); counter-increment: adim; }
+.howto-list li::before { content: counter(adim); position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.aside-collapse .howto-list li, .aside-collapse .howto-list li::before { font-size: 16px; }
+
+/* Dar ekranda yardım: formun altında kart görünümlü Collapse. */
+.aside-collapse.ant-collapse { background: var(--color-surface-work); border: 0; border-radius: var(--radius-panel); box-shadow: var(--shadow-card); overflow: hidden; }
+.aside-collapse.ant-collapse > .ant-collapse-item { border-bottom: 1px solid var(--color-border); }
+.aside-collapse.ant-collapse > .ant-collapse-item:last-child { border-bottom: 0; border-radius: 0; }
+.aside-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 14px 16px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); align-items: center; min-height: 48px; }
+.aside-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; }
+.aside-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 16px 16px; }
+.aside-collapse .step-progress-text strong { font-size: 16px; }
 
 /* Alt işlem şeridi: solda "Geri" bağlantısı, sağda "Daha fazla" menüsü ve iki düğme. En çok üç .ant-btn.
    "Geri" düğme değildir: 16 px metin, altı çizili değil, 40 px kutu ve 44 px dokunma alanı (::after). */

@@ -450,3 +450,6 @@ a { text-decoration: none; }
 .note a, p a, .helper a, .recent-reason a, .section-head a, .ant-typography a { text-decoration: underline; text-underline-offset: 2px; }
 /* Tablo hücresi girişleri: gölge yok, yalnız alt çizgi. */
 .cell-input, .cell-input.ant-select .ant-select-selector, .cell-input.ant-input, .cell-input.ant-input-number { box-shadow: none !important; border-color: transparent !important; }
+.save-dot { width: 10px; height: 10px; margin: 0 4px; }
+.save-dot.is-harm { background: var(--color-status-harm); }
+@media (max-width: 767px) { .shell-header { gap: 6px; padding: 0 10px !important; } .shell-status { gap: 2px; } }

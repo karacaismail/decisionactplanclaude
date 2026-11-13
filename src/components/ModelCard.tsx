@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { Badge, Card, Popover, Typography } from 'antd'
 import { ArrowSquareOut } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-rapor.css'
@@ -24,47 +25,52 @@ export function modelLink(m: ModelEntry): string {
 }
 
 /**
- * Tek yöntem kartı. En çok dört yazı stili: başlık 16/600, meta 14/400 gri, gövde 16/400 ve etiket.
- * Meta satırı bölümü, sırayı ve soruyu birlikte verir. "Kısaca" ilk gövde paragrafıdır.
- * Günlük hayattan örnek ikinci paragraftır. Akordeon ve ara başlık yoktur.
+ * Tek yöntem kartı (`Card hoverable`). Başlık, meta satırı (bölüm, sıra, soru), "Kısaca" paragrafı.
+ * Alt eylemler: "Karar Kitabı'nda aç" ve "Adımlarda kullanımı" (sayı rozeti; açılır pencerede adım bağlantıları).
  * 1 ile 128 arası genel sıra tek başına gösterilmez.
  */
 export function ModelCard({ model, steps, linkSteps }: { model: ModelEntry; steps: StepDef[]; linkSteps: boolean }) {
+  const titleId = `yontem-${model.slug}`
+  const usage = steps.length ? (
+    <ul className="method-steps" aria-label="Kullanıldığı adımlar">
+      {steps.map((s) => (
+        <li key={s.id}>
+          {linkSteps ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>Adım {s.id}. {s.title}</Link> : <span>Adım {s.id}. {s.title}</span>}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p className="helper method-steps-empty">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
+  )
   return (
-    <article className="surface-card method-card" aria-labelledby={`yontem-${model.slug}`}>
-      <div className="method-head">
-        <h3 id={`yontem-${model.slug}`}>{model.title}</h3>
-        <p className="helper">
-          {model.section}, {model.no}. yöntem. Soru: {model.question}
-        </p>
-      </div>
-      <p className="method-body">{model.simple ?? model.summary}</p>
+    <Card
+      hoverable
+      className="method-card"
+      title={<span id={titleId}>{model.title}</span>}
+      actions={[
+        <a key="kitap" className="method-action" href={modelLink(model)} target="_blank" rel="noreferrer">
+          <ArrowSquareOut size={16} aria-hidden />
+          Karar Kitabı'nda aç
+        </a>,
+        <Popover key="adimlar" title="Adımlarda kullanımı" content={usage} trigger={['click']} placement="top">
+          <button type="button" className="method-action method-usage" aria-label={`Adımlarda kullanımı: ${steps.length} adım`}>
+            Adımlarda kullanımı
+            <Badge count={steps.length} showZero overflowCount={999} size="small" className="method-badge" />
+          </button>
+        </Popover>,
+      ]}
+    >
+      <Typography.Text type="secondary" className="method-meta">
+        {model.section}, {model.no}. yöntem. Soru: {model.question}
+      </Typography.Text>
+      <Typography.Paragraph className="method-body">
+        <strong>Kısaca:</strong> {model.simple ?? model.summary}
+      </Typography.Paragraph>
       {model.example ? (
-        <p className="method-body">
+        <Typography.Paragraph className="method-body method-example">
           Günlük hayattan örnek: {model.example.title}. {model.example.text}
-        </p>
+        </Typography.Paragraph>
       ) : null}
-      {steps.length ? (
-        <div className="method-tags" aria-label="Kullanıldığı adımlar">
-          {steps.map((s) =>
-            linkSteps ? (
-              <Link key={s.id} className="tag" to={`/karar/${s.decision}/adim/${s.id}`} title={s.title}>
-                Adım {s.id}
-              </Link>
-            ) : (
-              <span key={s.id} className="tag" title={s.title}>
-                Adım {s.id}
-              </span>
-            ),
-          )}
-        </div>
-      ) : (
-        <p className="helper">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
-      )}
-      <a className="text-link" href={modelLink(model)} target="_blank" rel="noreferrer">
-        Karar Kitabı'nda aç
-        <ArrowSquareOut size={16} aria-hidden />
-      </a>
-    </article>
+    </Card>
   )
 }

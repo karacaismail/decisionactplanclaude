@@ -1,21 +1,35 @@
-import { useMemo, useState } from 'react'
-import { Button, Checkbox, Grid, Input, Table, App as AntApp } from 'antd'
-import { useNavigate, useParams } from 'react-router'
-import { CheckCircle, XCircle, Question, CaretDown } from '@phosphor-icons/react'
+import { useEffect, useMemo, useState } from 'react'
+import { Button, Card, Checkbox, Form, Grid, Input, Progress, Result, Select, Statistic, Steps, Switch, Table, Tag, Tooltip, App as AntApp } from 'antd'
+import { Link, useNavigate, useParams } from 'react-router'
+import { CheckCircle, XCircle, Question, CaretDown, Info, ArrowRight } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { decisionOf } from '@/data/registry'
+import { decisionOf, stepsOf, STEPS } from '@/data/registry'
+import type { GateCriterion, StepDef } from '@/data/schema'
 import { evaluateGate, lastDecision, effectiveOutcome } from '@/engine/gate'
 import { OutcomePanel, type OutcomeDraft } from '@/components/OutcomePanel'
-import { LimitsBar } from '@/components/LimitsBar'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { Callout } from '@/components/Callout'
-import { PageHeader, SectionHead } from '@/components/PageHeader'
+import { PageHeader } from '@/components/PageHeader'
 import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { openReviews } from '@/engine/changes'
+import { OUTCOME_PRIORITY } from '@/engine/gate'
 import '@/styles/screens-kapi.css'
 
 interface RuleRow { condition: string; outcome: Outcome; note?: string }
+interface CriterionRow { key: string; c: GateCriterion; value: boolean | null; step?: StepDef }
+
+/**
+ * Ölçütün dayandığı adım. Ölçüt tanımı adım kimliğini ayrıca taşımaz;
+ * denetim işlevinin kaynağındaki adım kimlikleri okunur. Bulunamazsa kararın ilk adımı gösterilir.
+ */
+function basisStep(c: GateCriterion, n: number): StepDef | undefined {
+  const ids = Array.from(c.check.toString().matchAll(/['"](\d{2})['"]/g)).map((m) => m[1])
+  const found = ids.map((id) => STEPS[id]).find((s): s is StepDef => Boolean(s) && s.decision <= n)
+  return found ?? stepsOf(n)[0]
+}
+
+const OUTCOME_FILTERS = OUTCOME_PRIORITY.map((o) => ({ text: OUTCOME_LABEL[o], value: o }))
 
 export function ReviewScreen() {
   const { n } = useParams()
@@ -31,12 +45,28 @@ export function ReviewScreen() {
   const [harm, setHarm] = useState(false)
   const [reviewer, setReviewer] = useState('')
   const [permitMissing, setPermitMissing] = useState(false)
+  const [onlyMissing, setOnlyMissing] = useState(false)
+  const [outcomeFilter, setOutcomeFilter] = useState<Outcome | undefined>()
+  const [draft, setDraft] = useState<OutcomeDraft | null>(null)
+  const [saved, setSaved] = useState<{ to: string; label: string } | null>(null)
   const d = decisionOf(Number(n))
+  /* Kapı değişince ekran durumu sıfırlanır. Aynı bileşen farklı kapılar için kullanılır. */
+  useEffect(() => {
+    setSaved(null)
+    setDraft(null)
+    setHarm(false)
+    setPermitMissing(false)
+    setOnlyMissing(false)
+    setOutcomeFilter(undefined)
+  }, [n])
   const evaluation = useMemo(() => (plan && d ? evaluateGate(d.gate, plan, { harm, permitMissing }) : null), [plan, d, harm, permitMissing])
   if (!plan || !d || !evaluation) return null
   const last = lastDecision(plan, d.n)
   const single = plan.profile.team !== 'ekip'
   const pending = openReviews(plan)
+  const { monthlyBurnKurus, cashKurus } = plan.limits
+  const runway = monthlyBurnKurus && cashKurus ? Math.floor(cashKurus / monthlyBurnKurus) : null
+  const percent = evaluation.total > 0 ? Math.round((evaluation.metCount / evaluation.total) * 100) : 0
 
   const saveReview = (id: string) => {
     const error = reviewChange(id, reviewer)
@@ -76,19 +106,37 @@ export function ReviewScreen() {
     if (draft.chosen === 'yenidenDene') addTask({ action: `Kapı ${d.n} için küçük deneme. Eksik ölçütü ölçün.`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
     if (draft.chosen === 'yonDegistir') addTask({ action: `Yön değişikliği. Etkilenen ilk adıma dönün. Gerekçe: ${draft.reason}`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
     message.success('Karar günlüğüne yazıldı. Yeni sürüm alındı.')
-    const to = draft.chosen === 'ilerle' || draft.chosen === 'kosulluIlerle' ? (d.n < 8 ? `/karar/${d.n + 1}` : '/ciktilar') : '/ozet'
+    const advancing = draft.chosen === 'ilerle' || draft.chosen === 'kosulluIlerle'
+    const to = advancing ? (d.n < 8 ? `/karar/${d.n + 1}` : '/ciktilar') : '/ozet'
+    const label = advancing ? (d.n < 8 ? 'Sonraki karara git' : 'Çıktılara git') : 'Plan özetine git'
     setLocation(to)
-    nav(to)
+    setSaved({ to, label })
   }
 
   const icon = (v: boolean | null) =>
     v === true ? (
-      <span className="criterion-icon is-ok"><CheckCircle size={16} weight="fill" aria-label="Karşılandı" /></span>
+      <span className="criterion-icon is-ok"><CheckCircle size={20} weight="fill" aria-label="Karşılandı" /></span>
     ) : v === false ? (
-      <span className="criterion-icon is-harm"><XCircle size={16} weight="fill" aria-label="Karşılanmadı" /></span>
+      <span className="criterion-icon is-harm"><XCircle size={20} weight="fill" aria-label="Karşılanmadı" /></span>
     ) : (
-      <span className="criterion-icon is-muted"><Question size={16} aria-label="Ölçülmedi" /></span>
+      <span className="criterion-icon is-muted"><Question size={20} aria-label="Ölçülmedi" /></span>
     )
+  const statusTag = (v: boolean | null) => (v === true ? <Tag color="success">Karşılandı</Tag> : v === false ? <Tag color="error">Karşılanmadı</Tag> : <Tag>Ölçülmedi</Tag>)
+  const criterionLabel = (c: GateCriterion) => (
+    <span className="criterion-label">
+      <span>{c.label}</span>
+      {c.hint ? (
+        <Tooltip title={c.hint}>
+          <span className="hint-icon" tabIndex={0} role="img" aria-label={`İpucu: ${c.hint}`}><Info size={16} /></span>
+        </Tooltip>
+      ) : null}
+    </span>
+  )
+  const stepLink = (s?: StepDef) => (s ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>Adım {s.id}. {s.title}</Link> : <span className="helper">Adım yok</span>)
+
+  const criteriaRows: CriterionRow[] = d.gate.criteria
+    .map((c) => ({ key: c.id, c, value: evaluation.criteria[c.id], step: basisStep(c, d.n) }))
+    .filter((r) => !onlyMissing || r.value !== true)
 
   const rows: RuleRow[] = [
     { condition: 'Ciddi zarar tehlikesi var', outcome: 'durdur', note: 'Etkilenen işi güvenli biçimde kapatın.' },
@@ -96,15 +144,45 @@ export function ReviewScreen() {
     ...d.gate.rows,
   ]
   const matched = (r: RuleRow) => evaluation.matchedRow?.condition === r.condition
+  const phoneRows = outcomeFilter ? rows.filter((r) => r.outcome === outcomeFilter) : rows
+
+  /* Kayıt adımı: 0 sonucu seçin, 1 gerekçeyi yazın, 2 kaydedin, 3 bitti. */
+  const stepCurrent = saved ? 3 : draft && draft.reason.trim() && draft.decidedBy.trim() ? 2 : draft && (draft.reason.trim() || draft.decidedBy.trim() || draft.chosen !== evaluation.suggested) ? 1 : 0
 
   return (
-    <div className="page">
+    <div className="page kapi-page">
       <PageHeader
         kicker={`Karar ${d.n}. ${d.title}`}
         title={`Kapı ${d.n}. ${d.gate.title}`}
         documentTitle={`Kapı ${d.n}`}
         description={<>Hangi işe karar veriyoruz? {d.question}</>}
       />
+
+      <div className="stat-grid has-ring" role="group" aria-label="Kapı özeti">
+        <Card className="k-card stat-card" variant="borderless">
+          <Statistic title="Karşılanan ölçüt" value={evaluation.metCount} suffix={`/ ${evaluation.total}`} />
+          <span className="stat-note">{evaluation.metCount === evaluation.total && evaluation.total > 0 ? 'Bütün ölçütler tamam.' : 'Eksik ölçütler aşağıda kırmızı işaretli.'}</span>
+        </Card>
+        <Card className="k-card stat-card" variant="borderless">
+          <Statistic title="Ölçülmeyen ölçüt" value={evaluation.unknownCount} />
+          <span className="stat-note">{evaluation.unknownCount > 0 ? 'Ölçülmeyen ölçüt küçük bir deneme ister.' : 'Her ölçüt ölçüldü.'}</span>
+        </Card>
+        <Card className="k-card stat-card" variant="borderless">
+          <Statistic title="Kalan deneme hakkı" value={evaluation.retriesLeft} suffix={`/ ${Math.min(plan.limits.retriesPerDecision ?? d.gate.maxRetries, d.gate.maxRetries)}`} />
+          <span className="stat-note">{evaluation.retriesLeft > 0 ? '"Yeniden dene" bir hak düşürür.' : 'Bu kapıda deneme hakkı bitti.'}</span>
+        </Card>
+        <Card className="k-card stat-card" variant="borderless">
+          <Statistic title="Pist" value={runway !== null ? runway : 'Hesaplanmadı'} suffix={runway !== null ? 'ay' : undefined} />
+          <span className="stat-note">{runway !== null ? 'Eldeki para bu kadar ay dayanır.' : 'Adım 02 sınırları dolunca hesaplanır.'}</span>
+        </Card>
+        <Card className="k-card ring-card is-wide" variant="borderless">
+          <div className="ring-copy">
+            <strong>Ölçüt yüzdesi</strong>
+            <span>{evaluation.metCount} / {evaluation.total} karşılandı</span>
+          </div>
+          <Progress type="circle" percent={percent} size={88} format={(p) => `%${Math.round(p ?? 0)}`} aria-label={`Ölçütlerin yüzde ${percent} kadarı karşılandı`} />
+        </Card>
+      </div>
 
       {last ? (
         <Callout tone={last.stale ? 'uyari' : 'bilgi'} title={`Son kayıt: ${formatDate(last.decidedAt)}`}>
@@ -119,14 +197,9 @@ export function ReviewScreen() {
         </Callout>
       ) : null}
 
-      <LimitsBar plan={plan} retriesLeft={evaluation.retriesLeft} compact />
-
       {pending.length > 0 ? (
-        <section className="section" aria-labelledby="ikinci-gorus-title">
-          <div className="section-head">
-            <h2 id="ikinci-gorus-title">İkinci görüş bekleyen değişiklikler</h2>
-            <p>Tek kurucu sınırı artırdı. Konuyu bilen başka bir kişi görüş yazmadan "İlerle" ve "Koşullu ilerle" kaydedilmez.</p>
-          </div>
+        <Card className="k-card" variant="borderless" title="İkinci görüş bekleyen değişiklikler" extra={<span>{pending.length} değişiklik</span>}>
+          <p className="helper" style={{ margin: 0 }}>Tek kurucu sınırı artırdı. Konuyu bilen başka bir kişi görüş yazmadan "İlerle" ve "Koşullu ilerle" kaydedilmez.</p>
           <ul className="row-list">
             {pending.map((c) => (
               <li key={c.id}>
@@ -137,11 +210,11 @@ export function ReviewScreen() {
               </li>
             ))}
           </ul>
-          <div className="field" style={{ maxWidth: 360 }}>
-            <label className="field-label" htmlFor="inceleyen">İnceleyen kişi</label>
-            <Input id="inceleyen" value={reviewer} onChange={(e) => setReviewer(e.target.value)} placeholder="Ad Soyad" />
-            <span className="field-help">Kararı veren kurucu olamaz.</span>
-          </div>
+          <Form className="k-form" layout="vertical" requiredMark={false} style={{ maxWidth: 360 }}>
+            <Form.Item label="İnceleyen kişi" htmlFor="inceleyen" extra="Kararı veren kurucu olamaz.">
+              <Input id="inceleyen" value={reviewer} onChange={(e) => setReviewer(e.target.value)} placeholder="Ad Soyad" />
+            </Form.Item>
+          </Form>
           <div className="toolbar-group">
             {pending.map((c) => (
               <Button key={c.id} disabled={!reviewer.trim()} onClick={() => saveReview(c.id)}>
@@ -149,47 +222,94 @@ export function ReviewScreen() {
               </Button>
             ))}
           </div>
-        </section>
+        </Card>
       ) : null}
 
       <div className="kapi-grid">
         <div className="kapi-main">
-          <section className="section" aria-label="Önce zarar ve izin">
-            <SectionHead title="Önce zarar ve izin" description="Bu iki soru ölçütlerden önce gelir." />
-            <div className="check-list">
-              <Checkbox checked={harm} onChange={(e) => setHarm(e.target.checked)}>Ciddi zarar tehlikesi var. Etkilenen iş durdurulmalı.</Checkbox>
-              <Checkbox checked={permitMissing} onChange={(e) => setPermitMissing(e.target.checked)}>Gerekli izin veya yetki eksik. İzne bağlı iş açılmamalı.</Checkbox>
+          <Card className="k-card" variant="borderless" title="Önce zarar ve izin" extra={<span>Bu iki soru ölçütlerden önce gelir.</span>}>
+            <div className="switch-list">
+              <div className="switch-row">
+                <div className="switch-row-text">
+                  <span className="switch-row-title" id="zarar-baslik">Ciddi zarar tehlikesi var</span>
+                  <span className="switch-row-desc" id="zarar-aciklama">Etkilenen iş durdurulmalı. Açıkken yalnız "Durdur" seçilebilir.</span>
+                </div>
+                <Switch checked={harm} onChange={setHarm} aria-labelledby="zarar-baslik" aria-describedby="zarar-aciklama" />
+              </div>
+              <div className="switch-row">
+                <div className="switch-row-text">
+                  <span className="switch-row-title" id="izin-baslik">Gerekli izin veya yetki eksik</span>
+                  <span className="switch-row-desc" id="izin-aciklama">İzne bağlı iş açılmamalı. Açıkken öneri "Beklet" olur.</span>
+                </div>
+                <Switch checked={permitMissing} onChange={setPermitMissing} aria-labelledby="izin-baslik" aria-describedby="izin-aciklama" />
+              </div>
             </div>
-          </section>
+          </Card>
 
-          <section className="section" aria-label="Ölçütler">
-            <SectionHead title="Ölçütler" />
-            <ul className="criteria-list">
-              {d.gate.criteria.map((c) => {
-                const v = evaluation.criteria[c.id]
-                return (
-                  <li key={c.id}>
-                    <div className="criterion">
-                      {icon(v)}
-                      <div className="criterion-text">
-                        <span>{c.label}</span>
-                        {c.hint ? <span className="helper">{c.hint}</span> : null}
-                      </div>
-                      {v === null ? <span className="tag">Ölçülmedi</span> : <span />}
-                    </div>
-                  </li>
-                )
-              })}
-            </ul>
+          <Card
+            className="k-card"
+            variant="borderless"
+            title="Ölçütler"
+            extra={<Checkbox checked={onlyMissing} onChange={(e) => setOnlyMissing(e.target.checked)}>Yalnız eksikleri göster</Checkbox>}
+          >
+            <div className="table-scroll">
+              <Table<CriterionRow>
+                size="middle"
+                pagination={false}
+                rowKey="key"
+                dataSource={criteriaRows}
+                locale={{ emptyText: 'Bütün ölçütler karşılandı.' }}
+                columns={
+                  narrow
+                    ? [
+                        {
+                          title: 'Ölçüt',
+                          key: 'olcut',
+                          render: (_, r) => (
+                            <div className="cell-stack">
+                              <span className="cell-head">
+                                <span className="cell-title" style={{ display: 'inline-flex', gap: 8, alignItems: 'flex-start' }}>{icon(r.value)}{criterionLabel(r.c)}</span>
+                                {statusTag(r.value)}
+                              </span>
+                              <span className="cell-line"><span>Dayanak:</span> {stepLink(r.step)}</span>
+                            </div>
+                          ),
+                        },
+                      ]
+                    : [
+                        { title: 'Durum', key: 'ikon', width: 56, align: 'center', render: (_, r) => icon(r.value) },
+                        {
+                          title: 'Ölçüt ve dayanak adım',
+                          key: 'etiket',
+                          render: (_, r) => (
+                            <div className="cell-stack">
+                              {criterionLabel(r.c)}
+                              <span className="cell-line"><span>Dayanak:</span> {stepLink(r.step)}</span>
+                            </div>
+                          ),
+                        },
+                        { title: 'Sonuç', key: 'sonuc', width: 150, render: (_, r) => statusTag(r.value) },
+                      ]
+                }
+              />
+            </div>
             <span className="helper tabular">{evaluation.metCount} / {evaluation.total} ölçüt karşılandı. {evaluation.unknownCount} ölçüt ölçülmedi.</span>
-          </section>
+          </Card>
 
-          <section className="section" aria-label="Koşula göre sonuç">
-            <SectionHead title="Koşula göre sonuç" />
+          <Card className="k-card" variant="borderless" title="Koşula göre sonuç" extra={<span>Üstteki satır önce gelir.</span>}>
             {narrow ? (
               <div className="outcome-table">
+                <Select<Outcome>
+                  allowClear
+                  placeholder="Sonuca göre süz"
+                  aria-label="Sonuca göre süz"
+                  value={outcomeFilter}
+                  onChange={(v) => setOutcomeFilter(v)}
+                  options={OUTCOME_PRIORITY.map((o) => ({ value: o, label: OUTCOME_LABEL[o] }))}
+                  style={{ width: '100%' }}
+                />
                 <ul className="outcome-list">
-                  {rows.map((r) => (
+                  {phoneRows.map((r) => (
                     <li key={r.condition}>
                       <details className={`outcome-row${matched(r) ? ' is-matched' : ''}`}>
                         <summary>
@@ -202,35 +322,60 @@ export function ReviewScreen() {
                     </li>
                   ))}
                 </ul>
-                <span className="helper">Satıra dokununca not açılır. Üstteki satır önce gelir.</span>
+                <span className="helper">Satıra dokununca not açılır.</span>
               </div>
             ) : (
               <div className="outcome-table">
                 <div className="table-scroll">
                   <Table<RuleRow>
-                    size="small"
+                    size="middle"
                     pagination={false}
                     rowKey={(r) => r.condition}
                     dataSource={rows}
                     rowClassName={(r) => (matched(r) ? 'is-matched' : '')}
                     columns={[
-                      { title: 'Durum', dataIndex: 'condition', width: '40%', render: (t: string, r) => <span className="history-meta" style={{ fontWeight: matched(r) ? 600 : 400 }}>{t}{matched(r) ? <span className="tag">Uyuyor</span> : null}</span> },
-                      { title: 'Sonuç', dataIndex: 'outcome', width: 160, render: (o: Outcome) => <DecisionBadge outcome={o} /> },
+                      { title: 'Koşul', dataIndex: 'condition', width: '40%', render: (t: string, r) => <span className="history-meta" style={{ fontWeight: matched(r) ? 600 : 400 }}>{t}{matched(r) ? <Tag>Uyuyor</Tag> : null}</span> },
+                      { title: 'Sonuç', dataIndex: 'outcome', width: 180, filters: OUTCOME_FILTERS, onFilter: (v, r) => r.outcome === v, render: (o: Outcome) => <DecisionBadge outcome={o} /> },
                       { title: 'Not', dataIndex: 'note', render: (t?: string) => t ?? <span className="helper">Ek not yok.</span> },
                     ]}
                   />
                 </div>
-                <span className="helper">Üstteki satır önce gelir.</span>
               </div>
             )}
-          </section>
+          </Card>
         </div>
 
         <div className="kapi-aside">
-          <section className="section" aria-label="Kararı kaydedin">
-            <SectionHead title="Kararı kaydedin" description="Öneriyi seçin ya da gerekçeyle değiştirin." />
-            <OutcomePanel evaluation={evaluation} onSave={save} singleFounder={single} plan={plan} def={d.gate} harm={harm} />
-          </section>
+          <Card className="k-card" variant="borderless" title="Kararı kaydedin" extra={<span>Öneriyi seçin ya da gerekçeyle değiştirin.</span>}>
+            <Steps
+              className="k-steps"
+              size="small"
+              current={stepCurrent}
+              orientation={narrow ? 'vertical' : 'horizontal'}
+              titlePlacement={narrow ? 'horizontal' : 'vertical'}
+              items={[
+                { title: 'Sonucu seçin', content: 'Öneri işaretli gelir.' },
+                { title: 'Gerekçeyi yazın', content: 'Karar sahibini de yazın.' },
+                { title: 'Kaydedin', content: 'Yeni sürüm alınır.' },
+              ]}
+            />
+            {saved ? (
+              <Result
+                className="k-result"
+                status="success"
+                icon={<CheckCircle size={56} weight="fill" aria-hidden />}
+                title="Karar kaydedildi"
+                subTitle={`Kapı ${d.n} için karar günlüğüne yazıldı. Yeni sürüm alındı.`}
+                extra={
+                  <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(saved.to)}>
+                    {saved.label}
+                  </Button>
+                }
+              />
+            ) : (
+              <OutcomePanel key={`${d.n}-${plan.decisions.length}`} evaluation={evaluation} onSave={save} onChange={setDraft} singleFounder={single} plan={plan} def={d.gate} harm={harm} />
+            )}
+          </Card>
         </div>
       </div>
     </div>

@@ -1,11 +1,16 @@
+import { useState } from 'react'
+import { Avatar, Card, Empty, Segmented, Statistic, Tag, Timeline } from 'antd'
+import { ArrowRight, Flag, PencilSimpleLine } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
 import { DecisionBadge } from '@/components/DecisionBadge'
-import { PageHeader, SectionHead } from '@/components/PageHeader'
-import { EmptyState } from '@/components/EmptyState'
+import { PageHeader } from '@/components/PageHeader'
 import { formatDate, formatMoney } from '@/engine/format'
-import { OUTCOME_LABEL } from '@/data/types'
+import { OUTCOME_LABEL, type ChangeRecord, type Decision } from '@/data/types'
 import { DECISIONS } from '@/data/decisions'
 import '@/styles/screens-kapi.css'
+
+type Filter = 'hepsi' | 'kararlar' | 'degisiklikler'
+type Entry = { kind: 'karar'; at: string; d: Decision } | { kind: 'degisiklik'; at: string; c: ChangeRecord }
 
 function changeValue(key: string, v: unknown): string {
   if (v === null || v === undefined || v === '') return 'Boş'
@@ -16,11 +21,65 @@ function changeValue(key: string, v: unknown): string {
   return String(v)
 }
 
+const initial = (name?: string) => (name?.trim() ? name.trim().charAt(0).toLocaleUpperCase('tr-TR') : '?')
+const dotClass = (d: Decision) => (d.chosen === 'ilerle' || d.chosen === 'kosulluIlerle' ? 'is-ok' : d.chosen === 'durdur' ? 'is-harm' : d.chosen === 'beklet' || d.stale ? 'is-hold' : '')
+
 export function HistoryScreen() {
   const plan = useCurrentPlan()
+  const [filter, setFilter] = useState<Filter>('hepsi')
   if (!plan) return null
-  const decisions = [...plan.decisions].reverse()
-  const changes = [...(plan.changes ?? [])].reverse()
+  const decisions = plan.decisions
+  const changes = plan.changes ?? []
+  const entries: Entry[] = [
+    ...decisions.map((d): Entry => ({ kind: 'karar', at: d.decidedAt, d })),
+    ...changes.map((c): Entry => ({ kind: 'degisiklik', at: c.at, c })),
+  ]
+    .filter((e) => filter === 'hepsi' || (filter === 'kararlar' ? e.kind === 'karar' : e.kind === 'degisiklik'))
+    .sort((a, b) => b.at.localeCompare(a.at))
+  const lastAt = [...decisions.map((d) => d.decidedAt), ...changes.map((c) => c.at)].sort().at(-1)
+
+  const decisionItem = (d: Decision) => {
+    const def = DECISIONS[d.gate - 1]
+    return (
+      <div className="tl-item">
+        <div className="tl-head">
+          <span className="tl-title">Kapı {d.gate}</span>
+          {def ? <span className="helper">{def.title}</span> : null}
+          <DecisionBadge outcome={d.chosen} />
+          {d.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
+        </div>
+        <span className="tl-date">{formatDate(d.decidedAt)}. Sürüm {d.revision}.</span>
+        <p className="tl-reason">{d.reason}</p>
+        <div className="tl-meta">
+          <Avatar size={28} aria-hidden>{initial(d.decidedBy)}</Avatar>
+          <span>Karar sahibi: {d.decidedBy || 'Yazılmadı'}</span>
+        </div>
+        <div className="tl-notes">
+          {d.chosen !== d.suggested ? <span>Sistemin önerisi: {OUTCOME_LABEL[d.suggested]}</span> : null}
+          {d.stale ? <span>Dayandığı veri sonradan değişti. Kapıyı yeniden inceleyin.</span> : null}
+          {d.counterView ? <span>Karşı görüş: {d.counterView}</span> : null}
+          {d.secondOpinion ? <span>İkinci görüş: {d.secondOpinion}</span> : null}
+          {d.conditional ? <span>Koşullu iş: {d.conditional.scope}. Bitiş {formatDate(d.conditional.deadline, false)}.</span> : null}
+          {d.reopenWhen ? <span>Yeniden açılır: {d.reopenWhen}</span> : null}
+        </div>
+      </div>
+    )
+  }
+  const changeItem = (c: ChangeRecord) => (
+    <div className="tl-item">
+      <div className="tl-head">
+        <span className="tl-title">{c.label}</span>
+        {c.needsReview ? (c.reviewer ? <Tag color="success">İkinci görüş alındı</Tag> : <Tag color="warning">İkinci görüş bekliyor</Tag>) : <Tag>Sınır değişikliği</Tag>}
+      </div>
+      <span className="tl-date">{formatDate(c.at)}</span>
+      <div className="tl-change" aria-label={`${changeValue(c.key, c.before)} yerine ${changeValue(c.key, c.after)}`}>
+        <Tag>{changeValue(c.key, c.before)}</Tag>
+        <span className="tl-arrow" aria-hidden><ArrowRight size={16} /></span>
+        <Tag color="processing">{changeValue(c.key, c.after)}</Tag>
+      </div>
+      {c.reviewer ? <span className="tl-notes">İnceleyen: {c.reviewer}{c.reviewedAt ? `. ${formatDate(c.reviewedAt)}` : ''}</span> : null}
+    </div>
+  )
 
   return (
     <div className="page">
@@ -30,63 +89,49 @@ export function HistoryScreen() {
         description="Her kapı kararı bir sürüm noktasıdır. Karar, kanıt ve karşı görüş birlikte durur. Silinmez."
       />
 
-      <section className="section" aria-label="Kapı kararları">
-        <SectionHead title="Kapı kararları" description={`${decisions.length} karar kaydedildi.`} />
-        {decisions.length === 0 ? (
-          <EmptyState title="Henüz karar kaydı yok" text="İlk kapıda kararı kaydedince burada görünür." />
-        ) : (
-          <ul className="recent-list">
-            {decisions.map((d) => {
-              const def = DECISIONS[d.gate - 1]
-              return (
-                <li key={d.id} className="recent-item history-item">
-                  <div className="recent-head">
-                    <span className="history-meta">
-                      <span className="recent-title">Kapı {d.gate}</span>
-                      {def ? <span className="helper">{def.title}</span> : null}
-                    </span>
-                    <span className="history-meta">
-                      <DecisionBadge outcome={d.chosen} />
-                      {d.stale ? <span className="tag is-hold">İnceleme bekliyor</span> : null}
-                    </span>
-                  </div>
-                  <span className="recent-date tabular">{formatDate(d.decidedAt)}. Sürüm {d.revision}. {d.decidedBy}</span>
-                  <span className="recent-reason">{d.reason}</span>
-                  <div className="history-notes helper">
-                    {d.chosen !== d.suggested ? <span>Sistemin önerisi: {OUTCOME_LABEL[d.suggested]}</span> : null}
-                    {d.stale ? <span>Dayandığı veri sonradan değişti. Kapıyı yeniden inceleyin.</span> : null}
-                    {d.counterView ? <span>Karşı görüş: {d.counterView}</span> : null}
-                    {d.secondOpinion ? <span>İkinci görüş: {d.secondOpinion}</span> : null}
-                    {d.conditional ? <span>Koşullu iş: {d.conditional.scope}. Bitiş {formatDate(d.conditional.deadline, false)}.</span> : null}
-                    {d.reopenWhen ? <span>Yeniden açılır: {d.reopenWhen}</span> : null}
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        )}
-      </section>
+      <div className="history-grid">
+        <Card
+          className="k-card"
+          variant="borderless"
+          title="Zaman çizgisi"
+          extra={
+            <Segmented<Filter>
+              value={filter}
+              onChange={(v) => setFilter(v)}
+              options={[
+                { value: 'hepsi', label: 'Hepsi' },
+                { value: 'kararlar', label: 'Kararlar' },
+                { value: 'degisiklikler', label: 'Değişiklikler' },
+              ]}
+              aria-label="Kayıt türü"
+            />
+          }
+        >
+          {entries.length === 0 ? (
+            <Empty description={filter === 'degisiklikler' ? 'Sınır değişikliği yok. Harcama sınırı, bitiş tarihi veya deneme hakkı değişince kayıt buraya düşer.' : 'Henüz kayıt yok. İlk kapıda kararı kaydedince burada görünür.'} />
+          ) : (
+            <Timeline
+              className="k-timeline"
+              items={entries.map((e) =>
+                e.kind === 'karar'
+                  ? { key: e.d.id, icon: <span className={`tl-dot ${dotClass(e.d)}`.trim()}><Flag size={16} weight="fill" aria-hidden /></span>, content: decisionItem(e.d) }
+                  : { key: e.c.id, icon: <span className={`tl-dot ${e.c.needsReview && !e.c.reviewer ? 'is-hold' : ''}`.trim()}><PencilSimpleLine size={16} aria-hidden /></span>, content: changeItem(e.c) },
+              )}
+            />
+          )}
+        </Card>
 
-      <section className="section" aria-label="Değişiklik kaydı">
-        <SectionHead title="Değişiklik kaydı" description="Sınır ve eşik değişiklikleri burada durur." />
-        {changes.length === 0 ? (
-          <EmptyState title="Sınır değişikliği yok" text="Harcama sınırı, bitiş tarihi veya deneme hakkı değişince kayıt buraya düşer." />
-        ) : (
-          <ul className="row-list">
-            {changes.map((c) => (
-              <li key={c.id}>
-                <div className="row">
-                  <span className="grow">
-                    <strong>{c.label}</strong>: {changeValue(c.key, c.before)} yerine {changeValue(c.key, c.after)}.
-                  </span>
-                  {c.needsReview ? (c.reviewer ? <span className="tag is-ok">Görüş alındı</span> : <span className="tag is-hold">İkinci görüş bekliyor</span>) : null}
-                  <span className="helper tabular">{formatDate(c.at)}{c.reviewer ? `. İnceleyen: ${c.reviewer}` : ''}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <aside className="history-aside" aria-label="Özet">
+          <Card className="k-card is-plain" variant="borderless" title="Özet">
+            <div className="stat-list">
+              <div><Statistic title="Karar sayısı" value={decisions.length} /></div>
+              <div><Statistic title="Değişiklik sayısı" value={changes.length} /></div>
+              <div><Statistic title="Son kayıt" value={lastAt ? formatDate(lastAt) : 'Henüz yok'} className="is-text" /></div>
+              <div><Statistic title="Plan sürümü" value={plan.revision} /></div>
+            </div>
+          </Card>
+        </aside>
+      </div>
     </div>
   )
 }

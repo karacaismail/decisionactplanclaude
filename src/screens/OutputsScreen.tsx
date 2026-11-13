@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react'
-import { Button, Collapse, Dropdown, Grid, Input, Select, Table, Tabs } from 'antd'
-import { CaretDown, Printer, PushPin } from '@phosphor-icons/react'
+import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
+import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Report, type ReportSection } from '@/reports/build'
+import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
 import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
-import { PageHeader, SectionHead } from '@/components/PageHeader'
+import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
-import { EmptyState } from '@/components/EmptyState'
 import '@/styles/screens-rapor.css'
 import '@/styles/print.css'
 
@@ -39,17 +38,32 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9ğüşöçı]+/gi, '-').replace(/^-+|-+$/g, '') || 'plan'
 }
 
-/** Rapor bölümünün gövdesi: cümleler ve varsa tablo. Boş tablo çizilmez. */
+/** Bölüm başlığından belge içi kimlik. İçindekiler bu kimliğe kaydırır. */
+const sectionId = (title: string) => `rapor-${slugify(title)}`
+
+/** Başlık ve değer çiftleri. Dar ekranda tek sütun, genişte iki sütun. */
+function FactList({ facts, columns = 1 }: { facts: Fact[]; columns?: 1 | 2 }) {
+  return (
+    <Descriptions
+      className="report-facts"
+      size="small"
+      column={columns === 2 ? { xs: 1, sm: 1, md: 2 } : 1}
+      items={facts.map((f, i) => ({ key: String(i), label: f.title, children: f.value || 'Bilinmiyor' }))}
+    />
+  )
+}
+
+/** Rapor bölümünün gövdesi: çiftler ya da cümleler ve varsa tablo. Boş tablo çizilmez. */
 function SectionBody({ s }: { s: ReportSection }) {
   return (
     <>
-      {s.lines.map((l, i) => <p key={i}>{l}</p>)}
+      {s.facts && s.facts.length ? <FactList facts={s.facts} /> : s.lines.map((l, i) => <Typography.Paragraph key={i} className="report-line">{l}</Typography.Paragraph>)}
       {s.table && s.table.rows.length ? (
         <Table
           size="small"
           pagination={false}
-          rowKey={(_, i) => String(i)}
-          dataSource={s.table.rows.map((r) => Object.fromEntries(r.map((c, i) => [String(i), c])))}
+          rowKey="key"
+          dataSource={s.table.rows.map((r, n) => ({ key: String(n), ...Object.fromEntries(r.map((c, i) => [String(i), c])) }))}
           columns={s.table.head.map((h, i) => ({ title: h, dataIndex: String(i) }))}
           scroll={{ x: 'max-content' }}
         />
@@ -59,9 +73,9 @@ function SectionBody({ s }: { s: ReportSection }) {
 }
 
 /**
- * Çıktılar. İki belge aynı veriden üretilir. Belge üstünde tek araç çubuğu vardır:
- * sürüm seçimi, "Yazdır veya PDF" ve "Daha fazla" menüsü. Belge sayfa ortasında 760 px durur.
- * Telefonda rapor bölümleri akordeondur. İlk bölüm açık gelir. Masaüstünde ve yazdırmada hepsi açıktır.
+ * Çıktılar. İki belge aynı veriden üretilir. Masaüstünde iki sütun:
+ * solda belge kartı (sekmeler, içindekiler, belge), sağda "Sürümler" ve "Dışa aktar" kartları.
+ * Telefonda tek sütun; rapor bölümleri akordeondur ve ilk bölüm açık gelir. Yazdırmada yalnız belge kalır.
  */
 export function OutputsScreen() {
   const plan = useCurrentPlan()
@@ -113,114 +127,140 @@ export function OutputsScreen() {
   const downloadJson = () => {
     if (viewed) download(`${slug}-veri-${versionSlug}.json`, JSON.stringify(viewed, null, 2), 'application/json')
   }
-  const moreMenu = {
-    items: [
-      { key: 'md', label: 'Markdown indir', disabled: !report, onClick: downloadMarkdown },
-      { key: 'json', label: 'JSON indir', disabled: !viewed, onClick: downloadJson },
-    ],
-  }
 
-  /* Sabitleme düğmesi tek yerde durur: liste boşken boş durumun içinde, doluyken ad alanının yanında. */
-  const pinButton = <Button icon={<PushPin size={16} />} onClick={pin} disabled={!isCurrent}>Bu sürümü sabitle</Button>
-  const pinForm = (
-    <div className="toolbar" style={{ justifyContent: 'flex-start', alignItems: 'flex-end' }}>
-      <div className="filter-field">
-        <label className="field-label" htmlFor="surum-adi">Sürüm adı</label>
-        <Input id="surum-adi" value={pinLabel} onChange={(e) => setPinLabel(e.target.value)} placeholder="Örneğin Yatırımcı görüşmesi öncesi" disabled={!isCurrent} onPressEnter={() => isCurrent && pin()} />
-      </div>
-      {plan.outputs.length ? pinButton : null}
-      <span className="helper" style={{ flexBasis: '100%' }}>
-        {isCurrent ? 'Sabitlenen sürüm sonraki değişikliklerden etkilenmez. Her kapı kararı da bir sürüm kaydeder.' : 'Yalnız güncel taslak sabitlenir. Önce “Güncel taslak” seçin.'}
-      </span>
-    </div>
-  )
+  /* Sürüm zaman çizgisi: en yeni üstte, güncel taslak en altta. Seçili sürüm turuncu nokta ile işaretlidir. */
+  const timelineItems = [
+    ...revisions.map((r, i) => ({ r, i })).reverse().map(({ r, i }) => ({
+      key: r.id,
+      color: r.id === versionId ? undefined : 'gray',
+      content: (
+        <span className="version-item">
+          <strong>{r.label}</strong>
+          <span className="helper">
+            {i + 1}. sürüm, {formatDate(r.createdAt, false)}.{' '}
+            {r.id === versionId ? 'Görüntüleniyor.' : <Button type="link" size="small" onClick={() => setVersionId(r.id)}>Görüntüle</Button>}
+          </span>
+        </span>
+      ),
+    })),
+    {
+      key: CURRENT,
+      color: isCurrent ? undefined : 'gray',
+      content: (
+        <span className="version-item">
+          <strong>Şu anki taslak</strong>
+          <span className="helper">
+            Sürüm {plan.revision}. Her değişiklikle güncellenir.{' '}
+            {isCurrent ? 'Görüntüleniyor.' : <Button type="link" size="small" onClick={() => setVersionId(CURRENT)}>Görüntüle</Button>}
+          </span>
+        </span>
+      ),
+    },
+  ]
+
+  const anchorItems = report ? report.sections.map((s) => ({ key: sectionId(s.title), href: `#${sectionId(s.title)}`, title: s.title })) : []
 
   return (
-    <div className="page">
+    <div className="page page-rapor">
       <div className="no-print">
         <PageHeader kicker="Çıktılar" title="Çıktılar" description="İki belge aynı veri sürümünden üretilir. Eksik bilgi uydurulmaz. Eksik yere “Bilinmiyor” yazılır." />
       </div>
 
-      <section className="section" aria-label="Belge">
-        <div className="no-print">
-          <Tabs
-            className="report-tabs"
-            activeKey={kind}
-            onChange={(k) => setKind(k as Kind)}
-            items={[
-              { key: 'yonetici', label: KIND_LABEL.yonetici },
-              { key: 'aksiyon', label: KIND_LABEL.aksiyon },
-            ]}
-          />
-          <div className="toolbar report-toolbar">
-            <div className="filter-field">
-              <label className="field-label" htmlFor="surum-secici">Sürüm</label>
-              <Select id="surum-secici" value={versionId} onChange={(val) => setVersionId(val)} options={versionOptions} style={{ width: '100%' }} popupMatchSelectWidth />
-            </div>
-            <div className="toolbar-group">
-              <Button type="primary" icon={<Printer size={16} />} onClick={() => window.print()} disabled={!report}>Yazdır veya PDF</Button>
-              <Dropdown menu={moreMenu} trigger={['click']}>
-                <Button icon={<CaretDown size={16} />} iconPlacement="end">Daha fazla</Button>
-              </Dropdown>
-            </div>
-          </div>
-          <p className="helper" style={{ margin: '8px 0 0' }}>
-            {isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : 'Bu sürüm kapı kararında donduruldu. Sonraki değişiklikler bu raporu etkilemez.'}
-          </p>
-        </div>
-
-        {!report || !viewed ? (
-          <Callout tone="uyari" danger title="Bu sürüm okunamadı">Kayıtlı sürüm verisi bozuk. Güncel taslağı seçin ya da başka bir sürüm deneyin.</Callout>
-        ) : (
-          <div className="report-wrap">
-            <article className="report">
-              <header className="report-head">
-                {report.stamp ? <Callout tone="uyari" title="Örnek">{report.stamp}</Callout> : null}
-                <h2 className="report-title">{report.title}</h2>
-                <div className="report-meta">{report.meta.map((m, i) => <span key={i}>{m}</span>)}</div>
-              </header>
+      <div className="report-layout">
+        <Card
+          className="report-card"
+          tabList={[
+            { key: 'yonetici', label: KIND_LABEL.yonetici },
+            { key: 'aksiyon', label: KIND_LABEL.aksiyon },
+          ]}
+          activeTabKey={kind}
+          onTabChange={(k) => setKind(k as Kind)}
+          tabProps={{ rootClassName: 'report-tabs', size: 'middle' }}
+        >
+          {!report || !viewed ? (
+            <Callout tone="uyari" danger title="Bu sürüm okunamadı">Kayıtlı sürüm verisi bozuk. Güncel taslağı seçin ya da başka bir sürüm deneyin.</Callout>
+          ) : (
+            <>
               {wide ? (
-                report.sections.map((s) => (
-                  <section key={s.title} className="report-section">
-                    <h3>{s.title}</h3>
-                    <SectionBody s={s} />
-                  </section>
-                ))
-              ) : (
-                <Collapse
-                  key={`${kind}-${versionId}`}
-                  className="report-collapse"
-                  ghost
-                  defaultActiveKey={[report.sections[0]?.title ?? '']}
-                  items={report.sections.map((s) => ({
-                    key: s.title,
-                    label: <h3 className="report-collapse-title">{s.title}</h3>,
-                    forceRender: true,
-                    children: <div className="report-section"><SectionBody s={s} /></div>,
-                  }))}
-                />
-              )}
-            </article>
-          </div>
-        )}
-      </section>
+                <nav className="report-anchor no-print" aria-label="İçindekiler">
+                  <Anchor direction="horizontal" affix={false} targetOffset={80} items={anchorItems} onClick={(e) => e.preventDefault()} />
+                </nav>
+              ) : null}
+              <article className="report">
+                <header className="report-head">
+                  {report.stamp ? <Callout tone="uyari" title="Örnek">{report.stamp}</Callout> : null}
+                  <h2 className="report-title">{report.title}</h2>
+                  <FactList facts={report.facts} />
+                  <p className="helper report-state">
+                    {isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : `Sürüm kaydı: ${formatDate(revision!.createdAt)}. Bu sürüm donduruldu. Sonraki değişiklikler bu raporu etkilemez.`}
+                  </p>
+                </header>
+                {wide ? (
+                  report.sections.map((s) => (
+                    <section key={s.title} id={sectionId(s.title)} className="report-section">
+                      <h3>{s.title}</h3>
+                      <SectionBody s={s} />
+                    </section>
+                  ))
+                ) : (
+                  <Collapse
+                    key={`${kind}-${versionId}`}
+                    className="report-collapse"
+                    ghost
+                    defaultActiveKey={[report.sections[0]?.title ?? '']}
+                    items={report.sections.map((s) => ({
+                      key: s.title,
+                      label: <h3 id={sectionId(s.title)} className="report-collapse-title">{s.title}</h3>,
+                      forceRender: true,
+                      children: <div className="report-section"><SectionBody s={s} /></div>,
+                    }))}
+                  />
+                )}
+              </article>
+            </>
+          )}
+        </Card>
 
-      <section className="section no-print" aria-label="Sürümler">
-        <SectionHead title="Sürümler" description="Sabitlenen sürüm değişmez. Markdown indirince belge yayımlanmış sayılır." />
-        {pinForm}
-        {plan.outputs.length === 0 ? (
-          <EmptyState title="Henüz yayımlanan belge yok" text="Güncel taslağı sabitleyin. Ya da “Daha fazla” menüsünden Markdown indirin. İndirilen belge burada listelenir." actions={pinButton} />
-        ) : (
-          <ul className="version-list" aria-label="Yayımlanan belgeler">
-            {plan.outputs.map((o) => (
-              <li key={o.id}>
-                <span>{KIND_LABEL[o.kind]}, sürüm {o.revision}</span>
-                <span className="version-date">{formatDate(o.createdAt, false)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+        <aside className="report-side no-print" aria-label="Sürümler ve dışa aktarma">
+          <Card title="Sürümler">
+            <div className="toolbar report-toolbar">
+              <div className="filter-field">
+                <label className="field-label" htmlFor="surum-secici">Sürüm</label>
+                <Select id="surum-secici" value={versionId} onChange={(val) => setVersionId(val)} options={versionOptions} style={{ width: '100%' }} popupMatchSelectWidth />
+              </div>
+              <div className="filter-field">
+                <label className="field-label" htmlFor="surum-adi">Sürüm adı</label>
+                <Input id="surum-adi" value={pinLabel} onChange={(e) => setPinLabel(e.target.value)} placeholder="Örneğin Yatırımcı görüşmesi öncesi" disabled={!isCurrent} onPressEnter={() => isCurrent && pin()} />
+              </div>
+              <Button icon={<PushPin size={16} />} onClick={pin} disabled={!isCurrent}>Bu sürümü sabitle</Button>
+            </div>
+            <p className="helper">
+              {isCurrent ? 'Sabitlenen sürüm sonraki değişikliklerden etkilenmez. Her kapı kararı da bir sürüm kaydeder.' : 'Yalnız güncel taslak sabitlenir. Önce “Güncel taslak” seçin.'}
+            </p>
+            <Timeline className="version-timeline" items={timelineItems} />
+          </Card>
+
+          <Card title="Dışa aktar">
+            <div className="export-actions">
+              <Button type="primary" block icon={<Printer size={16} />} onClick={() => window.print()} disabled={!report}>Yazdır veya PDF</Button>
+              <Button block icon={<DownloadSimple size={16} />} onClick={downloadMarkdown} disabled={!report}>Markdown indir</Button>
+              <Button block icon={<FileCode size={16} />} onClick={downloadJson} disabled={!viewed}>JSON indir</Button>
+            </div>
+            {plan.outputs.length === 0 ? (
+              <p className="helper">Markdown indirince belge yayımlanmış sayılır. Yayımlanan belgeler burada listelenir.</p>
+            ) : (
+              <ul className="published-list" aria-label="Yayımlanan belgeler">
+                {[...plan.outputs].reverse().map((o) => (
+                  <li key={o.id}>
+                    <span>{KIND_LABEL[o.kind]}, sürüm {o.revision}</span>
+                    <span className="helper">{formatDate(o.createdAt, false)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </aside>
+      </div>
     </div>
   )
 }
