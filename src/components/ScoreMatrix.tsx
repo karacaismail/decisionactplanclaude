@@ -1,4 +1,4 @@
-import { InputNumber, Switch, Table } from 'antd'
+import { Grid, InputNumber, Switch, Table } from 'antd'
 
 export interface ScoreMatrixValue {
   weights: Record<string, number>
@@ -12,7 +12,8 @@ const WEIGHT_ROW_ID = '__agirlik'
 
 /**
  * Ağırlıklı puanlama. Ağırlıklar ilk satırda yazılır ve kilitlenir. Kilit kapanmadan puan girilmez.
- * Tablo kendi kabında yatay kayar. Hücre girişleri kenarlıksızdır.
+ * Tablo kendi kabında yatay kayar. Geniş ekranda ilk sütun sola sabittir.
+ * Hücre girişleri `.cell-input` ile alt çizgilidir. Boş hücrede "1-5" yer tutucusu yazar.
  */
 export function ScoreMatrix({ rows, criteria, value, onChange }: {
   rows: { id: string; label: string }[]
@@ -20,6 +21,7 @@ export function ScoreMatrix({ rows, criteria, value, onChange }: {
   value?: ScoreMatrixValue
   onChange: (v: ScoreMatrixValue) => void
 }) {
+  const bp = Grid.useBreakpoint()
   const v: ScoreMatrixValue = value ?? { weights: Object.fromEntries(criteria.map((c) => [c.key, 1])), locked: false, scores: {} }
   const setWeight = (k: string, n: number | null) => onChange({ ...v, weights: { ...v.weights, [k]: n ?? 1 } })
   const setScore = (r: string, k: string, n: number | null) => onChange({ ...v, scores: { ...v.scores, [r]: { ...(v.scores[r] ?? {}), [k]: n ?? 0 } } })
@@ -41,16 +43,16 @@ export function ScoreMatrix({ rows, criteria, value, onChange }: {
         dataSource={data}
         rowClassName={(r) => (r.isWeight ? 'weight-row' : '')}
         columns={[
-          { title: 'Seçenek', dataIndex: 'label', width: 220, render: (t: string, r) => (r.isWeight ? t : <span className="option-label">{t}</span>) },
+          { title: 'Seçenek', dataIndex: 'label', width: 220, fixed: bp.md ? ('left' as const) : undefined, render: (t: string, r) => (r.isWeight ? t : <span className="option-label">{t}</span>) },
           ...criteria.map((c) => ({
             title: c.label,
             key: c.key,
             width: 140,
             render: (_: unknown, r: MatrixRow) =>
               r.isWeight ? (
-                <InputNumber variant="borderless" min={1} max={5} aria-label={`${c.label} ağırlığı`} value={v.weights[c.key] ?? 1} disabled={v.locked} onChange={(n) => setWeight(c.key, n)} />
+                <InputNumber className="cell-input" variant="borderless" min={1} max={5} aria-label={`${c.label} ağırlığı`} placeholder="1-5" value={v.weights[c.key] ?? 1} disabled={v.locked} onChange={(n) => setWeight(c.key, n)} />
               ) : (
-                <InputNumber variant="borderless" min={1} max={5} aria-label={`${r.label}, ${c.label} puanı`} placeholder="1-5" value={v.scores[r.id]?.[c.key]} disabled={!v.locked} onChange={(n) => setScore(r.id, c.key, n)} />
+                <InputNumber className="cell-input" variant="borderless" min={1} max={5} aria-label={`${r.label}, ${c.label} puanı`} placeholder="1-5" value={v.scores[r.id]?.[c.key]} disabled={!v.locked} onChange={(n) => setScore(r.id, c.key, n)} />
               ),
           })),
           {

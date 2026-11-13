@@ -10,7 +10,8 @@ export type Row = Record<string, unknown> & { _id: string }
 const WIDE_TYPES = new Set(['text', 'textarea', 'select'])
 
 /**
- * Satır ekleyip silinen tablo. Geniş ekranda tablo, hücre girişleri kenarlıksız.
+ * Satır ekleyip silinen tablo. Geniş ekranda tablo, hücre girişleri `.cell-input` ile alt çizgili.
+ * İlk sütun sola sabittir; tablo kendi kabında yatay kayar. Boş hücrede yer tutucu yazar.
  * Dar ekranda her satır bir `.surface-card` olur. Satır kimliği korunur.
  */
 export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekle', minRows = 0, maxRows, fixedFirstRow, plan, idPrefix }: {
@@ -65,6 +66,7 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
               title: c.label,
               dataIndex: c.key,
               width: ci === 0 ? 240 : WIDE_TYPES.has(c.type) ? 220 : c.type === 'toggle' ? 200 : 160,
+              fixed: ci === 0 ? ('left' as const) : undefined,
               render: (_: unknown, r: Row, i: number) => (
                 <FieldControl field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} compact idPrefix={`${idPrefix}-${r._id}`} />
               ),

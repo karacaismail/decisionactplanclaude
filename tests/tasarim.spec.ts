@@ -163,3 +163,122 @@ test('ölçüt 23: rapor ekranında belge üstünde en çok 4 kontrol', async ({
   const n = await page.locator('.report-toolbar').evaluate((el) => el.querySelectorAll('button, .ant-select, input').length)
   expect(n).toBeLessThanOrEqual(4)
 })
+
+/* ---------------------------------------------------------------- */
+/* 2. tur ölçütleri (docs/tasarim-elestirisi-2-tur.md)              */
+/* ---------------------------------------------------------------- */
+
+test('2. tur 3: ekranda görünür dolu düğme en çok 1, hero düğmesi dahil', async ({ page }) => {
+  await openDemo(page)
+  for (const url of ['/#/ozet', '/#/karar/1', '/#/karar/3/adim/11', '/#/karar/5/kapi', '/#/kanitlar', '/#/ciktilar', '/#/']) {
+    await page.goto(url)
+    const filled = await page.locator('main .ant-btn-primary:not(.ant-btn-text):not(.ant-btn-link), main .hero-button').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)
+    expect(filled, `${url}: dolu düğme`).toBeLessThanOrEqual(1)
+  }
+})
+
+test('2. tur 3: adım alt şeridi en çok 3 düğme, 320 yüksekliği en çok 112px', async ({ page, viewport }) => {
+  await openDemo(page)
+  await page.goto('/#/karar/3/adim/11')
+  const bar = page.locator('.action-bar')
+  await expect(bar).toBeVisible()
+  const n = await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)
+  expect(n).toBeLessThanOrEqual(3)
+  if ((viewport?.width ?? 0) <= 400) expect(px(await bar.evaluate((el) => getComputedStyle(el).height))).toBeLessThanOrEqual(112)
+})
+
+test('2. tur 5: telefonda konum satırı tek tam parça', async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 0) > 400, 'Yalnız telefon')
+  await openDemo(page)
+  await page.goto('/#/karar/3/adim/11')
+  const crumbs = page.locator('.breadcrumb .crumb')
+  await expect(crumbs).toHaveCount(1)
+  const clipped = await crumbs.first().evaluate((el) => el.scrollWidth > el.clientWidth + 1)
+  expect(clipped, 'konum metni kesilmemeli').toBeFalsy()
+})
+
+test('2. tur 2: onay kutusu ve radyo çevresinde eylem rengi yok', async ({ page }) => {
+  await openDemo(page)
+  await page.goto('/#/karar/5/kapi')
+  const box = page.locator('.ant-checkbox').first()
+  await expect(box).toBeVisible()
+  await box.hover()
+  const accent = (await page.evaluate(() => getComputedStyle(document.documentElement).getPropertyValue('--color-action-primary'))).trim().toLowerCase()
+  const toHex = (rgb: string) => { const m = rgb.match(/\d+/g); return m ? '#' + m.slice(0, 3).map((n) => Number(n).toString(16).padStart(2, '0')).join('') : rgb }
+  const border = toHex(await box.evaluate((el) => getComputedStyle(el).borderColor))
+  expect(border, 'onay kutusu kenarı eylem rengi olmamalı').not.toBe(accent)
+})
+
+test('2. tur 6: telefonda sonuç tablosu satırı en çok 72px ve rozet kesilmez', async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 0) > 400, 'Yalnız telefon')
+  await openDemo(page)
+  await page.goto('/#/karar/5/kapi')
+  const rows = page.locator('.outcome-table .ant-table-tbody > tr, .outcome-table li')
+  await expect(rows.first()).toBeVisible()
+  const heights = await rows.evaluateAll((els) => els.map((e) => e.getBoundingClientRect().height))
+  for (const h of heights) expect(h).toBeLessThanOrEqual(72)
+  const clippedBadges = await page.locator('.outcome-table .decision-badge').evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length)
+  expect(clippedBadges).toBe(0)
+})
+
+test('2. tur 4: karar rozetlerinde en çok 4 renkli sınıf, öneri etiketi nötr', async ({ page }) => {
+  await openDemo(page)
+  await page.goto('/#/karar/5/kapi')
+  const colored = await page.locator('.decision-badge').evaluateAll((els) => {
+    const set = new Set<string>()
+    for (const e of els) set.add(getComputedStyle(e).color + '|' + getComputedStyle(e).backgroundColor)
+    return set.size
+  })
+  expect(colored).toBeLessThanOrEqual(4)
+  const hint = page.locator('.choice .tag').first()
+  if (await hint.count()) {
+    const cls = await hint.getAttribute('class')
+    expect(cls).not.toContain('is-open')
+  }
+})
+
+test('2. tur 10: yazı ağırlığı kümesi yalnız 400 ve 600', async ({ page }) => {
+  await openDemo(page)
+  for (const url of ['/#/ozet', '/#/karar/5/kapi', '/#/yontemler']) {
+    await page.goto(url)
+    const weights = await page.evaluate(() => {
+      const set = new Set<string>()
+      for (const e of document.querySelectorAll('main *, aside *, header *')) {
+        const el = e as HTMLElement
+        if (!el.offsetParent || !el.textContent?.trim()) continue
+        if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim())) continue
+        set.add(getComputedStyle(el).fontWeight)
+      }
+      return [...set].sort()
+    })
+    for (const w of weights) expect(['400', '600'], `${url}: ağırlık ${w}`).toContain(w)
+  }
+})
+
+test('2. tur 9: koyu temada üç yüzey arasında en az yüzde 6 parlaklık farkı', async ({ page }) => {
+  await openDemo(page)
+  await page.getByRole('button', { name: /Koyu temaya geç/ }).click()
+  const l = await page.evaluate(() => {
+    const read = (v: string) => getComputedStyle(document.documentElement).getPropertyValue(v).trim()
+    const lum = (hex: string) => {
+      const n = hex.replace('#', '')
+      const c = [0, 2, 4].map((i) => parseInt(n.slice(i, i + 2), 16) / 255).map((x) => (x <= 0.03928 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4))
+      return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]
+    }
+    // CIE L* (0-100): "yüzde 6 parlaklık farkı" bu ölçekte 6 birimdir.
+    const lstar = (y: number) => (y > 0.008856 ? 116 * Math.cbrt(y) - 16 : 903.3 * y)
+    return [lstar(lum(read('--color-surface-page'))), lstar(lum(read('--color-surface-work'))), lstar(lum(read('--color-surface-context')))]
+  })
+  expect(l[1] - l[0], `yüzeyler L*: ${l.map((x) => x.toFixed(1)).join(', ')}`).toBeGreaterThanOrEqual(6)
+  expect(l[2] - l[1], `yüzeyler L*: ${l.map((x) => x.toFixed(1)).join(', ')}`).toBeGreaterThanOrEqual(6)
+})
+
+test('2. tur 8: 320 çıktılar araç çubuğu tam genişlik, sayfa en çok 2800px', async ({ page, viewport }) => {
+  test.skip((viewport?.width ?? 0) > 400, 'Yalnız telefon')
+  await openDemo(page)
+  await page.goto('/#/ciktilar')
+  const widths = await page.locator('.report-toolbar > *').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().width)))
+  const max = Math.max(...widths)
+  for (const w of widths) expect(w, 'araç çubuğu öğeleri aynı genişlikte').toBeGreaterThanOrEqual(max - 2)
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(2800)
+})

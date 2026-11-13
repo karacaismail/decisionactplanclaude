@@ -27,8 +27,8 @@ export function InsightsScreen() {
       success: p.statusOk,
       warning: p.statusHold,
       error: p.statusHarm,
-      /* Kalan: açık gri. Koyu temada kenar rengi daha iyi görünür. */
-      muted: isDark ? p.borderStrong : p.surfaceSunken,
+      /* Kalan: ikincil yazı rengi. Açık temada bej zeminden en az 3:1 ayrışır. İki temada da görünür. */
+      muted: p.textSecondary,
       axis: p.textSecondary,
       grid: p.border,
       onInk: p.surfaceWork,

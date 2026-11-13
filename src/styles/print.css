@@ -109,6 +109,22 @@
     overflow: visible !important;
   }
 
+  /* Telefon akordeonu basılırken bütün bölümler açık görünür. Ok gizlenir. */
+  .report-collapse .ant-collapse-content-hidden,
+  .report-collapse .ant-collapse-content {
+    display: block !important;
+    height: auto !important;
+    opacity: 1 !important;
+  }
+
+  .report-collapse .ant-collapse-expand-icon {
+    display: none !important;
+  }
+
+  .report-collapse .report-collapse-title {
+    color: #000 !important;
+  }
+
   .report table {
     width: 100% !important;
     border-collapse: collapse;

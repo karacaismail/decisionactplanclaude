@@ -3,8 +3,10 @@
  * Renkler ekrandan gelir. Alan adları docs/alan-sozlesmesi.md ile aynıdır.
  *
  * Grafik kuralları docs/tasarim-sistemi.md "Grafik" bölümündedir:
- * çubuk 24 px, desen yok, tamamlanan koyu mürekkep, kalan açık gri,
- * eksen yazısı 14 px, kategori adı metin, ızgara 1 px, çubuk üstünde değer.
+ * çubuk 32 px, kategori aralığı 24 px, desen yok, tamamlanan koyu mürekkep,
+ * kalan ikincil yazı rengi (zeminden en az 3:1 ayrışır), eksen yazısı 14 px,
+ * kategori adı metin, en çok 4 ızgara çizgisi, çubuk üstünde 14 px değer.
+ * Telefonda kaydırıcı yoktur. Sekiz çubuk 320 px'e sığar, kategori adı kısalır.
  */
 import { DECISIONS } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
@@ -22,7 +24,7 @@ export interface InsightPalette {
   success: string
   warning: string
   error: string
-  /** Soluk yardımcı renk. "Kalan" gibi ikincil seriler için. */
+  /** "Kalan" ve hedef çubukları. İkincil yazı rengi. Açık temada bej zeminden en az 3:1 ayrışır. */
   muted: string
   outcome: (o: Outcome) => string
   /** Eksen ve açıklama yazısı. Verilmezse primary kullanılır. */
@@ -81,8 +83,10 @@ const rows = (p: PlanDoc, step: string, key: string): Row[] => {
 const num = (x: unknown): number | null => (typeof x === 'number' && !Number.isNaN(x) ? x : null)
 const lira = (kurus: number): number => Math.round(kurus) / 100
 
-const BAR = 24
-const GRID = { left: 8, right: 16, top: 40, bottom: 8, containLabel: true }
+/** Çubuk 32 px. Kategori bandının yüzde 40'ı boşluk kalır: 32 px çubuk için 24 px aralık. */
+const BAR = 32
+const CATEGORY_GAP = '40%'
+const GRID = { left: 8, right: 8, top: 40, bottom: 8, containLabel: true }
 
 /** Ortak eksen, açıklama ve etiket biçimi. Yazı 14 px, ızgara 1 px. */
 function styles(c: InsightPalette) {
@@ -94,32 +98,19 @@ function styles(c: InsightPalette) {
     grid,
     axisText: { color: axis, fontSize: font.helper, fontFamily: font.family },
     categoryAxis: { axisLine: line, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { color: axis, fontSize: font.helper, interval: 0 } },
-    valueAxis: { axisLine: { show: false }, axisTick: { show: false }, splitLine: { show: true, ...line }, axisLabel: { color: axis, fontSize: font.helper } },
+    /* En çok 4 ızgara çizgisi. Sekiz çizgili eksen okunmaz. */
+    valueAxis: { axisLine: { show: false }, axisTick: { show: false }, splitNumber: 4, splitLine: { show: true, ...line }, axisLabel: { color: axis, fontSize: font.helper } },
     legend: { top: 0, left: 0, icon: 'rect', itemWidth: 12, itemHeight: 12, itemGap: 16, textStyle: { color: axis, fontSize: font.helper } },
     valueLabel: { show: true, position: 'top', color: c.primary, fontSize: font.helper },
     tooltip: { trigger: 'axis', textStyle: { fontSize: font.helper } },
   }
 }
 
-/** Dar kapsayıcı sınırı. Bunun altında çok kategorili grafik kaydırılır. */
+/** Dar kapsayıcı sınırı. Bunun altında kategori adları kısalır ve 45 derece döner. */
 const NARROW = 520
 
-/**
- * Çok kategorili çubuk grafiği dar ekranda kaydırmalı yapar. Kategori adları kelime olarak kalır.
- * Geniş ekranda kaydırma gizlenir ve bütün kategoriler görünür. Tablo her zaman tam listeyi verir.
- */
-function scrollWhenNarrow(c: InsightPalette, option: Record<string, unknown>, visible: number, total: number) {
-  if (total <= visible) return option
-  const s = styles(c)
-  const slider = { type: 'slider', xAxisIndex: 0, height: 20, bottom: 4, brushSelect: false, zoomLock: true, showDetail: false, borderColor: s.grid, backgroundColor: 'transparent', fillerColor: c.muted, handleStyle: { color: c.axis, borderColor: c.axis }, moveHandleStyle: { color: c.axis }, dataBackground: { lineStyle: { color: s.grid }, areaStyle: { color: 'transparent' } }, selectedDataBackground: { lineStyle: { color: c.axis }, areaStyle: { color: 'transparent' } } }
-  return {
-    baseOption: { ...option, dataZoom: [{ type: 'inside', xAxisIndex: 0, zoomLock: true }, slider] },
-    media: [
-      { query: { maxWidth: NARROW }, option: { grid: { ...GRID, bottom: 36 }, dataZoom: [{ startValue: 0, endValue: visible - 1 }, { show: true, startValue: 0, endValue: visible - 1 }] } },
-      { option: { grid: GRID, dataZoom: [{ start: 0, end: 100 }, { show: false, start: 0, end: 100 }] } },
-    ],
-  }
-}
+/** Telefonda kategori adı tek kelime. Tablo tam adı verir. */
+const SHORT_TITLE: Record<number, string> = { 1: 'Yetki', 2: 'Sorun', 3: 'Erişim', 4: 'Taahhüt', 5: 'Kaynak', 6: 'Teslim', 7: 'Tekrar', 8: 'Gelecek' }
 
 /** Dar ve geniş kapsayıcı için ayrı ayarlar. Örneğin dar ekranda açıklama iki satıra sarınca ızgara aşağı iner. */
 function whenNarrow(option: Record<string, unknown>, narrow: Record<string, unknown>, wide: Record<string, unknown>) {
@@ -175,7 +166,7 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
   const items = DECISIONS.map((d) => {
     const steps = stepsOf(d.n).filter((x) => stepApplies(x.mandatory, plan) !== 'gizli' && (!plan.shortPath || x.shortPath))
     const done = steps.filter((x) => plan.steps[x.id]?.status === 'tamam' || plan.steps[x.id]?.status === 'atlandi').length
-    return { name: d.title, label: `${d.n}. ${d.title}`, done, total: steps.length }
+    return { name: d.title, short: SHORT_TITLE[d.n] ?? d.title, label: `${d.n}. ${d.title}`, done, total: steps.length }
   })
   const doneTotal = items.reduce((sum, i) => sum + i.done, 0)
   const total = items.reduce((sum, i) => sum + i.total, 0)
@@ -185,25 +176,38 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
     source: 'Sayılar her adımın durumundan gelir. Atlanan adım tamamlanmış sayılır.',
     empty: false,
     summary: `${doneTotal} / ${total} adım tamamlandı.`,
-    option: scrollWhenNarrow(c, {
+    /*
+     * Y ekseni yalnız 0, 4 ve 8. Bir kararda en çok 7 adım vardır.
+     * Geniş ekranda ızgara kategori sayısına göre daralır: 32 px çubuk, 24 px aralık, sağda boşluk kalmaz.
+     * Dar ekranda sekiz çubuk kaydırıcısız sığar. Kategori adı kısalır ve 45 derece döner.
+     */
+    option: whenNarrow({
       tooltip: s.tooltip,
       legend: s.legend,
       grid: GRID,
-      xAxis: { type: 'category', data: items.map((i) => i.name), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 72, overflow: 'break' } },
-      yAxis: { type: 'value', minInterval: 1, ...s.valueAxis },
+      xAxis: { type: 'category', data: items.map((i) => i.name), ...s.categoryAxis },
+      yAxis: { type: 'value', min: 0, max: 8, interval: 4, ...s.valueAxis },
       series: [
-        { type: 'bar', name: 'Tamamlanan', stack: 'adim', data: items.map((i) => i.done), itemStyle: { color: c.primary }, barWidth: BAR },
+        { type: 'bar', name: 'Tamamlanan', stack: 'adim', data: items.map((i) => i.done), itemStyle: { color: c.primary }, barMaxWidth: BAR, barCategoryGap: CATEGORY_GAP },
         {
           type: 'bar',
           name: 'Kalan',
           stack: 'adim',
           data: items.map((i) => i.total - i.done),
           itemStyle: { color: c.muted },
-          barWidth: BAR,
+          barMaxWidth: BAR,
+          barCategoryGap: CATEGORY_GAP,
           label: { ...s.valueLabel, formatter: (p: { dataIndex: number }) => `${items[p.dataIndex].done}/${items[p.dataIndex].total}` },
         },
       ],
-    }, 4, items.length),
+    }, {
+      grid: GRID,
+      xAxis: { data: items.map((i) => i.short), axisLabel: { rotate: 45, interval: 0 } },
+    }, {
+      /* Kategori bandı 60 px: 32 px çubuk, 28 px aralık. Tam ad 60 px içinde kelime sınırından sarılır. */
+      grid: { ...GRID, width: items.length * 60 + 44 },
+      xAxis: { data: items.map((i) => i.name), axisLabel: { rotate: 0, interval: 0, width: 60, overflow: 'break', lineHeight: 16 } },
+    }),
     table: { head: ['Karar', 'Tamamlanan', 'Toplam'], rows: items.map((i) => [i.label, i.done, i.total]) },
   }
 }
@@ -321,7 +325,7 @@ function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
         label: { ...s.valueLabel, position: 'right', formatter: '%{c}' },
         markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { formatter: 'Eşik %100', position: 'start', distance: 6, color: c.error, fontSize: font.helper }, data: [{ xAxis: 100 }] },
       }],
-    }, { xAxis: { splitNumber: 3 }, yAxis: { axisLabel: { width: 96 } } }, { xAxis: { splitNumber: 5 }, yAxis: { axisLabel: { width: 140 } } }),
+    }, { yAxis: { axisLabel: { width: 96 } } }, { yAxis: { axisLabel: { width: 140 } } }),
     table: { head: ['Ölçü', 'Adım', 'Birim', 'Ölçülen', 'Eşik', 'Eşiğin yüzdesi'], rows: items.map((i) => [i.name, i.step, i.unit, i.value, i.threshold, `%${i.pct}`]) },
   }
 }
@@ -360,7 +364,7 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
     lineStyle: { color: c.primary, width: 2 },
     markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { color: c.error, fontSize: font.helper }, data: [{ yAxis: 0, name: 'Sıfır' }] },
   }
-  const unitSeries = { type: 'bar', name: 'TL', data: unitData.map((x, i) => ({ value: x, itemStyle: { color: i === 0 ? c.success : c.warning } })), barWidth: BAR, label: s.valueLabel }
+  const unitSeries = { type: 'bar', name: 'TL', data: unitData.map((x, i) => ({ value: x, itemStyle: { color: i === 0 ? c.success : c.warning } })), barMaxWidth: BAR, barCategoryGap: CATEGORY_GAP, label: s.valueLabel }
   const cashX = { type: 'category', data: cashLabels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } }
   const unitX = { type: 'category', data: unitLabels, ...s.categoryAxis }
   const tlY = { type: 'value', name: 'TL', nameTextStyle: s.axisText, ...s.valueAxis }
@@ -368,7 +372,7 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
   if (hasCash && hasUnit) {
     option = {
       tooltip: s.tooltip,
-      grid: [{ left: 8, right: 16, top: 32, height: '30%', containLabel: true }, { left: 8, right: 16, top: '60%', height: '28%', containLabel: true }],
+      grid: [{ left: 8, right: 8, top: 32, height: '30%', containLabel: true }, { left: 8, right: 8, top: '60%', height: '28%', containLabel: true }],
       xAxis: [{ ...cashX, gridIndex: 0 }, { ...unitX, gridIndex: 1 }],
       yAxis: [{ ...tlY, gridIndex: 0 }, { ...tlY, gridIndex: 1 }],
       series: [{ ...cashSeries, xAxisIndex: 0, yAxisIndex: 0 }, { ...unitSeries, xAxisIndex: 1, yAxisIndex: 1 }],
@@ -433,9 +437,9 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
       xAxis: { type: 'category', data: labels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 80, overflow: 'break' } },
       yAxis: { type: 'value', minInterval: 1, ...s.valueAxis },
       series: [
-        /* İki çubuk yan yana. Aralık çubuk genişliğinin üçte ikisidir, yani 16 px. */
-        { type: 'bar', name: 'Sayı', data: actual, itemStyle: { color: c.primary }, barWidth: BAR, barGap: '66%', label: s.valueLabel },
-        { type: 'bar', name: 'Hedef', data: target, itemStyle: { color: c.muted }, barWidth: BAR, label: { ...s.valueLabel, color: s.axis } },
+        /* İki çubuk yan yana. Aralık çubuğun dörtte üçüdür: 32 px çubuk için 24 px. */
+        { type: 'bar', name: 'Sayı', data: actual, itemStyle: { color: c.primary }, barMaxWidth: BAR, barGap: '75%', barCategoryGap: CATEGORY_GAP, label: s.valueLabel },
+        { type: 'bar', name: 'Hedef', data: target, itemStyle: { color: c.muted }, barMaxWidth: BAR, label: { ...s.valueLabel, color: s.axis } },
       ],
     },
     table: { head: ['Ölçü', 'Sayı', 'Hedef'], rows: labels.map((l, i) => [l, actual[i], target[i]]) },

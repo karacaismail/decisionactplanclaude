@@ -7,6 +7,8 @@
 .work-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .work-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
 .work-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+/* Telefonda blok arası 24 px: başlık, etiket satırı ve ilk bölüm 720 px yüksekliğe sığar. */
+@media (max-width: 599px) { .work-main { gap: var(--space-6); } .work-head { gap: var(--space-2); } }
 .work-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
 
 /* "Nasıl yapılır?" dar ekranda kapalı başlar. Kart değildir. */
@@ -67,13 +69,29 @@
 .choice-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
 .choice-title .choice-check { display: inline-flex; color: var(--color-action-primary); }
 
-/* Tekrarlı tablo: hücre içi girişler kenarlıksız, satır 44 px */
+/* Düzenlenebilir hücre girişi (.cell-input): kenarlıksız giriş, altında 1 px çizgi.
+   Çizgi hücrenin yazılabilir olduğunu gösterir. Üstüne gelince ve odakta çizgi koyulaşır, zemin bağlam rengi olur.
+   Köşe yuvarlatma yoktur; tek kenar çizgisi düz biter. antd 6 Select'te kutu kök öğedir; ok (.ant-select-suffix) sağda durur.
+   antd "borderless" kenar rengini !important ile siler; alt çizgi rengi bu yüzden !important taşır. */
+.cell-input.ant-input, .cell-input.ant-input-number, .cell-input.ant-picker, .cell-input.ant-select, .cell-input.ant-input-number-group-wrapper .ant-input-number, .cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon {
+  background: transparent !important; border-radius: 0 !important; border-bottom: 1px solid var(--color-border) !important;
+  transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease);
+}
+.cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { color: var(--color-text-secondary); }
+.cell-input.ant-input:hover, .cell-input.ant-input:focus, .cell-input.ant-input-number:hover, .cell-input.ant-input-number-focused, .cell-input.ant-picker:hover, .cell-input.ant-picker-focused,
+.cell-input.ant-select:hover, .cell-input.ant-select-focused, .cell-input.ant-select-open,
+.cell-input.ant-input-number-group-wrapper:hover .ant-input-number, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number-group-addon, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number-group-addon {
+  border-bottom-color: var(--color-border-strong) !important; background: var(--color-surface-context) !important;
+}
+.cell-input.ant-input-number-disabled, .cell-input.ant-input-number-disabled:hover { border-bottom-color: transparent !important; background: transparent !important; }
+.cell-input.ant-select .ant-select-suffix { margin-inline-end: 4px; color: var(--color-text-secondary); }
+.cell-input .ant-select-content-placeholder, .cell-input .ant-select-placeholder, .cell-input.ant-input::placeholder, .cell-input .ant-input-number-input::placeholder, .cell-input .ant-picker-input > input::placeholder { color: var(--color-text-secondary); opacity: 1; }
+
+/* Tekrarlı tablo: hücre içi girişler .cell-input, satır 44 px. İlk sütun sola sabit; sabit hücre zemini opak. */
 .repeater { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; justify-items: start; }
 .repeater .ant-table-wrapper { width: 100%; justify-self: stretch; }
-.repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; }
+.repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
 .repeater-table .ant-table-cell .ant-input { padding-top: 8px; padding-bottom: 8px; }
-.repeater-table .ant-input, .repeater-table .ant-input-number, .repeater-table .ant-input-number-group-wrapper .ant-input-number-group-addon, .repeater-table .ant-select-selector, .repeater-table .ant-picker, .repeater-table .ant-input-affix-wrapper, .repeater-table .ant-input-number-affix-wrapper { background: transparent !important; }
-.repeater-table .ant-input:hover, .repeater-table .ant-input:focus, .repeater-table .ant-input-number:hover, .repeater-table .ant-input-number-focused, .repeater-table .ant-select:hover .ant-select-selector, .repeater-table .ant-select-focused .ant-select-selector, .repeater-table .ant-picker:hover, .repeater-table .ant-picker-focused { background: var(--color-surface-context) !important; }
 .repeater-table .ant-table-cell .field { gap: 0; }
 .repeater-table .ant-table-cell .field-help { display: none; }
 .repeater-table .ant-table-cell .toggle-field { flex-wrap: nowrap; white-space: nowrap; }
@@ -83,12 +101,38 @@
 .repeater-cards .surface-card { gap: 16px; }
 .repeater-cards .surface-card-head h3 { font-size: 16px; }
 
+/* Sabit ilk sütun (antd 6 sınıfı .ant-table-cell-fix-start): zemin opak kalır, kaydırılan içerik altından görünmez.
+   Satır vurgusunda bağlam rengi. Dokunmatik ekranda vurgu yoktur. */
+.repeater-table .ant-table-tbody > tr > td.ant-table-cell-fix-start, .repeater-table .ant-table-thead > tr > th.ant-table-cell-fix-start,
+.score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-start, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-start { background: var(--color-surface-work) !important; }
+.repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start { background: var(--color-surface-context) !important; }
+@media (hover: none) { .repeater-table .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start { background: var(--color-surface-work) !important; } }
+
+/* antd `scroll.x` ile tablo kendi iç kabında (.ant-table-content) kayar; dış kap kaymaz.
+   Kaydırma gölgesi ve 8 px çubuk bu yüzden iç kaba da uygulanır. Desen global .ant-table-wrapper kuralıyla aynıdır. */
+.repeater-table .ant-table-content, .score-matrix .ant-table-content {
+  /* antd iç kaba scrollbar-width: thin yazar. Chromium bu özellik varken ::-webkit-scrollbar biçimini yok sayar ve çubuk gizlenir.
+     İkisi "auto" yapılır; 8 px çubuk her zaman görünür. */
+  scrollbar-width: auto; scrollbar-color: auto;
+  background:
+    linear-gradient(to right, var(--color-surface-work) 40%, transparent) 0 0 / 48px 100%,
+    linear-gradient(to left, var(--color-surface-work) 40%, transparent) 100% 0 / 48px 100%,
+    linear-gradient(to right, var(--color-shadow), transparent) 0 0 / 24px 100%,
+    linear-gradient(to left, var(--color-shadow), transparent) 100% 0 / 24px 100% !important;
+  background-repeat: no-repeat !important;
+  background-attachment: local, local, scroll, scroll !important;
+}
+.repeater-table .ant-table-content::-webkit-scrollbar, .score-matrix .ant-table-content::-webkit-scrollbar { height: 8px; }
+.repeater-table .ant-table-content::-webkit-scrollbar-thumb, .score-matrix .ant-table-content::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
+.repeater-table .ant-table-content::-webkit-scrollbar-track, .score-matrix .ant-table-content::-webkit-scrollbar-track { background: transparent; }
+/* antd ölçüm satırı hücresi satır içi "font-weight: bold" taşır (@rc-component/table MeasureCell). Satır görünmez ama hesaplanmış ağırlık kümesine girer.
+   Adım ekranındaki bütün tablolar için 400'e çekilir; bu yüzden !important. Diğer ekranlar için aynı kural global.css'e taşınmalıdır. */
+.work-main .ant-table-measure-row td, .work-main .ant-table-measure-row td * { font-weight: 400 !important; }
+
 /* Puan tablosu */
 .score-matrix { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
-.score-matrix .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; }
-.score-matrix .ant-input-number { width: 100%; background: transparent !important; }
-.score-matrix .ant-input-number:hover, .score-matrix .ant-input-number-focused { background: var(--color-surface-context) !important; }
-.score-matrix .ant-input-number-disabled { background: transparent !important; }
+.score-matrix .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
+.score-matrix .ant-input-number { width: 100%; }
 .score-matrix .weight-row td { color: var(--color-text-secondary); }
 .score-matrix .weight-row td:first-child { font-weight: 600; }
 .score-matrix .option-label { font-weight: 600; }
@@ -112,18 +156,27 @@ button.tag.model-chip:hover { border-color: var(--color-text-secondary); color: 
 .drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
 .drawer-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 
-/* Grafik çerçevesi: kart yok, gölge yok */
+/* Grafik çerçevesi: kart yok, gölge yok. Grafik kabı daralabilir (min-width 0); yükseklik ChartFrame `height` ile gelir. */
 .chart-frame { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+.chart-frame .chart-canvas { min-width: 0; width: 100%; }
 .chart-frame .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
 
-/* Alt işlem şeridi: solda "Geri", sağda üç işlem. Dar ekranda işlemler tam satır olur. */
+/* Alt işlem şeridi: solda "Geri" bağlantısı, sağda "Daha fazla" menüsü ve iki düğme. En çok üç .ant-btn.
+   "Geri" düğme değildir: 16 px metin, altı çizili değil, 40 px kutu ve 44 px dokunma alanı (::after). */
 .step-actions { align-self: start; }
-.step-actions .action-main { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
+.step-actions .bar-link { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 8px; border-radius: var(--radius-control); font-size: 16px; font-weight: 600; line-height: 1.5; color: var(--color-text-primary); text-decoration: none; transition: background-color var(--motion-small) var(--motion-ease); }
+.step-actions .bar-link::after { content: ''; position: absolute; inset: -2px 0; }
+.step-actions .bar-link:hover { color: var(--color-text-primary); background: var(--color-surface-context); }
+.step-actions .bar-more { color: var(--color-text-primary); }
+/* 320 px: iki satır. Üstte "Geri" (sol) ve "Daha fazla" (sağ). Altta "Taslak bırak, ilerle" ve dolu "Adımı tamamla". Toplam 112 px. */
 @media (max-width: 599px) {
-  .step-actions { gap: 8px; }
-  .step-actions .action-main { flex: 1 1 100%; }
-  .step-actions .action-main .ant-btn:not(.ant-btn-text) { flex: 1 1 auto; justify-content: center; }
+  .step-actions .bar-link { grid-column: 1; grid-row: 1; justify-self: start; }
+  .step-actions .bar-more { grid-column: 3; grid-row: 1; justify-self: end; }
+  .step-actions .bar-draft { grid-column: 1 / 2; grid-row: 2; }
+  .step-actions .ant-btn-primary { grid-column: 2 / 4; grid-row: 2; }
+  .step-actions .bar-draft, .step-actions .ant-btn-primary { padding-inline: 12px; white-space: nowrap; }
 }
+@media (max-width: 359px) { .step-actions .bar-draft, .step-actions .ant-btn-primary { padding-inline: 8px; } }
 
 /* Yalnız ekran okuyucuya görünen metin */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

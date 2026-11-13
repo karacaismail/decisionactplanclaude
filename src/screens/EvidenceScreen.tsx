@@ -33,7 +33,7 @@ export function EvidenceScreen() {
   const ladderLabel = (l: number) => `${l}. ${LADDER[l - 1]?.label ?? ''}`.trim()
 
   const wideColumns = [
-    { title: 'Kanıt', dataIndex: 'title', width: 280, render: (t: string) => <span>{t}</span> },
+    { title: 'Kanıt', dataIndex: 'title', width: 280, className: 'is-sticky-col', render: (t: string) => <span>{t}</span> },
     { title: 'Tür', dataIndex: 'kind', width: 110, render: (k: EvidenceKind) => <span className="tag">{KIND_LABEL[k]}</span> },
     { title: 'Basamak', dataIndex: 'ladder', width: 200, render: (l: number) => <span className="tabular">{ladderLabel(l)}</span> },
     { title: 'Tarih', dataIndex: 'date', width: 130, render: (d?: string) => <span className="tabular">{formatDate(d, false)}</span> },
@@ -46,12 +46,15 @@ export function EvidenceScreen() {
       dataIndex: 'title',
       render: (_: string, e: Evidence) => (
         <div className="cell-stack">
-          <span className="cell-title">{e.title}</span>
-          <span className="cell-meta">
+          <span className="cell-head">
+            <span className="cell-title">{e.title}</span>
             <span className="tag">{KIND_LABEL[e.kind]}</span>
-            <span className="helper tabular">{ladderLabel(e.ladder)}</span>
           </span>
-          <span className="helper tabular">{formatDate(e.date, false)}{e.source ? `. ${e.source}` : ''}</span>
+          <span className="cell-line tabular">{ladderLabel(e.ladder)}</span>
+          <span className="cell-line">
+            <span className="tabular">{formatDate(e.date, false)}</span>
+            {e.source ? <span>{e.source}</span> : null}
+          </span>
         </div>
       ),
     },

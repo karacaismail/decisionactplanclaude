@@ -3,13 +3,13 @@ import { theme } from 'antd'
 import * as echarts from 'echarts/core'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 import { BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, DataZoomComponent } from 'echarts/components'
+import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { font, motion } from '@/theme/tokens'
 
-echarts.use([BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, DataZoomComponent, CanvasRenderer])
+echarts.use([BarChart, LineChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, CanvasRenderer])
 
-/** ECharts sarmalayıcı. Renk ve yazı tokenlardan gelir. Etiketler 14 pikselin altına inmez. Desen çizilmez. */
+/** ECharts sarmalayıcı. Renk ve yazı tokenlardan gelir. Etiketler 14 pikselin altına inmez. Desen ve kaydırıcı yoktur. */
 export default function EChart({ option, height, ariaLabel }: { option: unknown; height: number; ariaLabel: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const { token } = theme.useToken()

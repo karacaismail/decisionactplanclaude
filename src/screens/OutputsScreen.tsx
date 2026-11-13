@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react'
-import { Button, Dropdown, Input, Select, Table, Tabs } from 'antd'
+import { Button, Collapse, Dropdown, Grid, Input, Select, Table, Tabs } from 'antd'
 import { CaretDown, Printer, PushPin } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Report } from '@/reports/build'
+import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Report, type ReportSection } from '@/reports/build'
 import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader, SectionHead } from '@/components/PageHeader'
@@ -39,14 +39,36 @@ function slugify(s: string): string {
   return s.toLowerCase().replace(/[^a-z0-9ğüşöçı]+/gi, '-').replace(/^-+|-+$/g, '') || 'plan'
 }
 
+/** Rapor bölümünün gövdesi: cümleler ve varsa tablo. Boş tablo çizilmez. */
+function SectionBody({ s }: { s: ReportSection }) {
+  return (
+    <>
+      {s.lines.map((l, i) => <p key={i}>{l}</p>)}
+      {s.table && s.table.rows.length ? (
+        <Table
+          size="small"
+          pagination={false}
+          rowKey={(_, i) => String(i)}
+          dataSource={s.table.rows.map((r) => Object.fromEntries(r.map((c, i) => [String(i), c])))}
+          columns={s.table.head.map((h, i) => ({ title: h, dataIndex: String(i) }))}
+          scroll={{ x: 'max-content' }}
+        />
+      ) : null}
+    </>
+  )
+}
+
 /**
  * Çıktılar. İki belge aynı veriden üretilir. Belge üstünde tek araç çubuğu vardır:
  * sürüm seçimi, "Yazdır veya PDF" ve "Daha fazla" menüsü. Belge sayfa ortasında 760 px durur.
+ * Telefonda rapor bölümleri akordeondur. İlk bölüm açık gelir. Masaüstünde ve yazdırmada hepsi açıktır.
  */
 export function OutputsScreen() {
   const plan = useCurrentPlan()
   const update = usePlanStore((s) => s.update)
   const snapshot = usePlanStore((s) => s.snapshot)
+  const bp = Grid.useBreakpoint()
+  const wide = Boolean(bp.md)
   const [kind, setKind] = useState<Kind>('yonetici')
   const [versionId, setVersionId] = useState<string>(CURRENT)
   const [pinLabel, setPinLabel] = useState('')
@@ -98,13 +120,15 @@ export function OutputsScreen() {
     ],
   }
 
+  /* Sabitleme düğmesi tek yerde durur: liste boşken boş durumun içinde, doluyken ad alanının yanında. */
+  const pinButton = <Button icon={<PushPin size={16} />} onClick={pin} disabled={!isCurrent}>Bu sürümü sabitle</Button>
   const pinForm = (
     <div className="toolbar" style={{ justifyContent: 'flex-start', alignItems: 'flex-end' }}>
       <div className="filter-field">
         <label className="field-label" htmlFor="surum-adi">Sürüm adı</label>
         <Input id="surum-adi" value={pinLabel} onChange={(e) => setPinLabel(e.target.value)} placeholder="Örneğin Yatırımcı görüşmesi öncesi" disabled={!isCurrent} onPressEnter={() => isCurrent && pin()} />
       </div>
-      <Button icon={<PushPin size={16} />} onClick={pin} disabled={!isCurrent}>Bu sürümü sabitle</Button>
+      {plan.outputs.length ? pinButton : null}
       <span className="helper" style={{ flexBasis: '100%' }}>
         {isCurrent ? 'Sabitlenen sürüm sonraki değişikliklerden etkilenmez. Her kapı kararı da bir sürüm kaydeder.' : 'Yalnız güncel taslak sabitlenir. Önce “Güncel taslak” seçin.'}
       </span>
@@ -155,22 +179,27 @@ export function OutputsScreen() {
                 <h2 className="report-title">{report.title}</h2>
                 <div className="report-meta">{report.meta.map((m, i) => <span key={i}>{m}</span>)}</div>
               </header>
-              {report.sections.map((s) => (
-                <section key={s.title} className="report-section">
-                  <h3>{s.title}</h3>
-                  {s.lines.map((l, i) => <p key={i}>{l}</p>)}
-                  {s.table ? (
-                    <Table
-                      size="small"
-                      pagination={false}
-                      rowKey={(_, i) => String(i)}
-                      dataSource={s.table.rows.map((r) => Object.fromEntries(r.map((c, i) => [String(i), c])))}
-                      columns={s.table.head.map((h, i) => ({ title: h, dataIndex: String(i) }))}
-                      scroll={{ x: 'max-content' }}
-                    />
-                  ) : null}
-                </section>
-              ))}
+              {wide ? (
+                report.sections.map((s) => (
+                  <section key={s.title} className="report-section">
+                    <h3>{s.title}</h3>
+                    <SectionBody s={s} />
+                  </section>
+                ))
+              ) : (
+                <Collapse
+                  key={`${kind}-${versionId}`}
+                  className="report-collapse"
+                  ghost
+                  defaultActiveKey={[report.sections[0]?.title ?? '']}
+                  items={report.sections.map((s) => ({
+                    key: s.title,
+                    label: <h3 className="report-collapse-title">{s.title}</h3>,
+                    forceRender: true,
+                    children: <div className="report-section"><SectionBody s={s} /></div>,
+                  }))}
+                />
+              )}
             </article>
           </div>
         )}
@@ -180,7 +209,7 @@ export function OutputsScreen() {
         <SectionHead title="Sürümler" description="Sabitlenen sürüm değişmez. Markdown indirince belge yayımlanmış sayılır." />
         {pinForm}
         {plan.outputs.length === 0 ? (
-          <EmptyState title="Henüz yayımlanan belge yok" text="“Daha fazla” menüsünden Markdown indirince belge burada listelenir." />
+          <EmptyState title="Henüz yayımlanan belge yok" text="Güncel taslağı sabitleyin. Ya da “Daha fazla” menüsünden Markdown indirin. İndirilen belge burada listelenir." actions={pinButton} />
         ) : (
           <ul className="version-list" aria-label="Yayımlanan belgeler">
             {plan.outputs.map((o) => (

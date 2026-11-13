@@ -1,5 +1,5 @@
 import { useLayoutEffect, useState } from 'react'
-import { Button, Drawer, Grid, Layout, Menu, Tag, theme } from 'antd'
+import { Button, Drawer, Grid, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, CaretRight } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -39,19 +39,20 @@ const PAGE_NAMES: Record<string, string> = {
 }
 
 /** Konum satırı: Plan › Karar 3 › Adım 11. Son parça kalın yazılır. */
-function crumbs(pathname: string, plan?: PlanDoc): { label: string; to?: string }[] {
-  const out: { label: string; to?: string }[] = []
-  if (plan && pathname !== '/') out.push({ label: plan.name, to: '/ozet' })
+type Crumb = { label: string; short: string; to?: string }
+function crumbs(pathname: string, plan?: PlanDoc): Crumb[] {
+  const out: Crumb[] = []
+  if (plan && pathname !== '/') out.push({ label: plan.name, short: plan.name, to: '/ozet' })
   const m = pathname.match(/^\/karar\/(\d+)(?:\/(adim|kapi)(?:\/(\w+))?)?/)
   if (m) {
     const n = Number(m[1])
     const d = DECISIONS.find((x) => x.n === n)
-    out.push({ label: `Karar ${n}. ${d?.title ?? ''}`.trim(), to: `/karar/${n}` })
-    if (m[2] === 'adim' && m[3]) out.push({ label: `Adım ${m[3]}. ${STEPS[m[3]]?.title ?? ''}`.trim() })
-    if (m[2] === 'kapi') out.push({ label: `Kapı ${n}` })
+    out.push({ label: `Karar ${n}. ${d?.title ?? ''}`.trim(), short: `Karar ${n}`, to: `/karar/${n}` })
+    if (m[2] === 'adim' && m[3]) out.push({ label: `Adım ${m[3]}. ${STEPS[m[3]]?.title ?? ''}`.trim(), short: `Adım ${m[3]}` })
+    if (m[2] === 'kapi') out.push({ label: `Kapı ${n}`, short: `Kapı ${n}` })
     return out
   }
-  if (PAGE_NAMES[pathname]) out.push({ label: PAGE_NAMES[pathname] })
+  if (PAGE_NAMES[pathname]) out.push({ label: PAGE_NAMES[pathname], short: PAGE_NAMES[pathname] })
   return out
 }
 
@@ -123,7 +124,8 @@ export function AppShell() {
   )
   const fullTrail = crumbs(loc.pathname, plan)
   /* Dar ekranda yalnız son iki parça görünür; plan adı menüde zaten vardır. */
-  const trail = bp.md ? fullTrail : fullTrail.slice(-2).filter((c, i, arr) => !(arr.length === 2 && i === 0 && c.to === '/ozet'))
+  /* Telefonda yalnız son parça tam yazılır; öncekiler menüden ve "Geri" ile ulaşılır. */
+  const trail = bp.md ? fullTrail : fullTrail.slice(-1)
 
   return (
     <Layout style={{ minHeight: '100dvh', background: token.colorBgLayout }}>
@@ -146,14 +148,14 @@ export function AppShell() {
                   {c.to && !last ? (
                     <Link to={c.to} className="crumb">{c.label}</Link>
                   ) : (
-                    <span className={`crumb ${last ? 'is-current' : ''}`} aria-current={last ? 'page' : undefined}>{c.label}</span>
+                    <span className={`crumb ${last ? 'is-current' : ''}`} aria-current={last ? 'page' : undefined} title={c.label}>{bp.md ? c.label : c.short}</span>
                   )}
                 </span>
               )
             })}
           </nav>
           <div className="shell-status">
-            {plan?.example && bp.md ? <Tag className="tag is-hold">Örnek plan</Tag> : null}
+            {plan?.example && bp.md ? <span className="tag">Örnek plan</span> : null}
             {plan ? <SaveStatus /> : null}
             <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
           </div>

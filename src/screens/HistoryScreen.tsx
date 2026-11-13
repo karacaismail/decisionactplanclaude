@@ -21,7 +21,6 @@ export function HistoryScreen() {
   if (!plan) return null
   const decisions = [...plan.decisions].reverse()
   const changes = [...(plan.changes ?? [])].reverse()
-  const revisions = [...plan.revisions].reverse()
 
   return (
     <div className="page">
@@ -82,25 +81,6 @@ export function HistoryScreen() {
                   </span>
                   {c.needsReview ? (c.reviewer ? <span className="tag is-ok">Görüş alındı</span> : <span className="tag is-hold">İkinci görüş bekliyor</span>) : null}
                   <span className="helper tabular">{formatDate(c.at)}{c.reviewer ? `. İnceleyen: ${c.reviewer}` : ''}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section className="section" aria-label="Sürümler">
-        <SectionHead title="Sürümler" description="Her kayıt yeni bir sürüm alır." />
-        {revisions.length === 0 ? (
-          <EmptyState title="Sürüm yok" text="İlk kapı kararı kaydedilince ilk sürüm oluşur." />
-        ) : (
-          <ul className="row-list">
-            {revisions.map((r, i) => (
-              <li key={r.id}>
-                <div className="row">
-                  <span className="grow"><strong>{r.label}</strong></span>
-                  <span className="helper tabular">Sürüm {revisions.length - i}</span>
-                  <span className="helper tabular">{formatDate(r.createdAt)}</span>
                 </div>
               </li>
             ))}

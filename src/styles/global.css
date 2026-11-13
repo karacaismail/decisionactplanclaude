@@ -68,10 +68,24 @@ html[data-focus-mode='keyboard'] .hero :focus-visible::before { background: var(
 /* ------------------------------------------------------------------ */
 /* Ant Design düzeltmeleri                                             */
 /* ------------------------------------------------------------------ */
-.ant-table-wrapper { overflow-x: auto; max-width: 100%; scrollbar-width: thin; scrollbar-color: var(--color-border-strong) transparent; }
-.ant-table-wrapper::-webkit-scrollbar { height: 8px; }
-.ant-table-wrapper::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
-.ant-table-wrapper::-webkit-scrollbar-track { background: transparent; }
+/* Tablo kabında kayar. Kenarlarda kaydırma gölgesi, altta her zaman görünür 8 px çubuk. */
+.ant-table-wrapper, .ant-table-content {
+  overflow-x: auto; max-width: 100%; scrollbar-width: auto; scrollbar-color: var(--color-border-strong) transparent;
+  background:
+    linear-gradient(to right, var(--color-surface-work) 40%, transparent) 0 0 / 48px 100%,
+    linear-gradient(to left, var(--color-surface-work) 40%, transparent) 100% 0 / 48px 100%,
+    linear-gradient(to right, var(--color-shadow), transparent) 0 0 / 24px 100%,
+    linear-gradient(to left, var(--color-shadow), transparent) 100% 0 / 24px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+.ant-table, .ant-table-container, .ant-table-content, .ant-table-tbody > tr > td, .ant-table-thead > tr > th { background: transparent !important; }
+.ant-table-tbody > tr:hover > td { background: var(--color-surface-context) !important; }
+@media (hover: none) { .ant-table-tbody > tr:hover > td { background: transparent !important; } }
+.ant-table-wrapper::-webkit-scrollbar, .ant-table-content::-webkit-scrollbar { height: 8px; }
+.ant-table-wrapper::-webkit-scrollbar-thumb, .ant-table-content::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
+.ant-table-wrapper::-webkit-scrollbar-track, .ant-table-content::-webkit-scrollbar-track { background: transparent; }
+.ant-table-measure-row, .ant-table-measure-row * { font-weight: 400 !important; }
 .ant-table-cell { word-break: normal; overflow-wrap: normal; }
 .ant-table-thead > tr > th { font-size: 14px !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.04em; height: 36px; padding-top: 6px !important; padding-bottom: 6px !important; color: var(--color-text-secondary) !important; background: transparent !important; }
 .ant-table-thead > tr > th::before { display: none; }
@@ -87,6 +101,13 @@ textarea.ant-input { resize: none; }
   .print-only { display: block; }
   body { background: #fff; }
 }
+
+/* Onay kutusu ve radyo: çevre rengi nötr; seçili dolgu eylem rengi. Çevreleyen halka yok. */
+/* antd 6: kutu öğesi .ant-checkbox ve .ant-radio'nun kendisidir. */
+.ant-checkbox-wrapper:hover .ant-checkbox:not(.ant-checkbox-checked), .ant-checkbox:not(.ant-checkbox-checked):hover, .ant-checkbox:has(.ant-checkbox-input:focus-visible):not(.ant-checkbox-checked),
+.ant-checkbox-wrapper:hover .ant-checkbox-inner, .ant-checkbox-input:focus-visible + .ant-checkbox-inner,
+.ant-radio-wrapper:hover .ant-radio:not(.ant-radio-checked), .ant-radio:not(.ant-radio-checked):hover, .ant-radio:has(.ant-radio-input:focus-visible):not(.ant-radio-checked),
+.ant-radio-wrapper:hover .ant-radio-inner, .ant-radio-input:focus-visible + .ant-radio-inner { border-color: var(--color-border-strong) !important; box-shadow: none !important; }
 
 /* ------------------------------------------------------------------ */
 /* Kabuk                                                               */
@@ -277,7 +298,7 @@ textarea.ant-input { resize: none; }
 .choice-desc { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
 
 /* Boş durum */
-.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 8px; padding: 24px 0; border-top: 1px dashed var(--color-border); border-bottom: 1px dashed var(--color-border); }
+.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 6px; padding: 16px 0; border-top: 1px solid var(--color-border); }
 .empty-state h2 { margin: 0; font-size: 16px; font-weight: 600; }
 .empty-state p { margin: 0; font-size: 14px; color: var(--color-text-secondary); max-width: 52ch; line-height: 1.5; }
 .empty-state .empty-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
@@ -294,6 +315,11 @@ textarea.ant-input { resize: none; }
 .action-bar { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-height: 64px; margin: 0 -16px -96px; padding: 12px 16px; background: var(--color-surface-page); border-top: 1px solid var(--color-border); box-sizing: border-box; }
 @media (min-width: 992px) { .action-bar { margin: 0 -32px -96px; padding: 12px 32px; } }
 .action-bar .spacer { flex: 1 1 auto; }
+@media (max-width: 599px) {
+  .action-bar { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-auto-rows: min-content; align-items: center; gap: 8px; max-height: 112px; }
+  .action-bar .spacer { display: none; }
+  .action-bar .ant-btn-primary { grid-column: 2 / 4; }
+}
 
 /* Form bölümleri */
 .form-section { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }

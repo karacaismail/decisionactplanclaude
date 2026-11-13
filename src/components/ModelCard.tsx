@@ -1,7 +1,5 @@
-import { useState } from 'react'
-import { Button } from 'antd'
 import { Link } from 'react-router'
-import { ArrowSquareOut, CaretDown, CaretUp } from '@phosphor-icons/react'
+import { ArrowSquareOut } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-rapor.css'
 
@@ -26,61 +24,43 @@ export function modelLink(m: ModelEntry): string {
 }
 
 /**
- * Tek yöntem kartı. Başlık, bölüm ve sıra, soru, "Kısaca", "Günlük Hayattan" ve kullanıldığı adımlar.
- * "Kısaca" ve "Günlük Hayattan" renkli kutu değildir. Düz alt bölüm olarak yazılır.
+ * Tek yöntem kartı. En çok dört yazı stili: başlık 16/600, meta 14/400 gri, gövde 16/400 ve etiket.
+ * Meta satırı bölümü, sırayı ve soruyu birlikte verir. "Kısaca" ilk gövde paragrafıdır.
+ * Günlük hayattan örnek ikinci paragraftır. Akordeon ve ara başlık yoktur.
  * 1 ile 128 arası genel sıra tek başına gösterilmez.
  */
 export function ModelCard({ model, steps, linkSteps }: { model: ModelEntry; steps: StepDef[]; linkSteps: boolean }) {
-  const [open, setOpen] = useState(false)
-  const exampleId = `ornek-${model.slug}`
   return (
-    <article className="surface-card" aria-labelledby={`yontem-${model.slug}`}>
-      <div className="surface-card-head">
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 2, minWidth: 0 }}>
-          <h3 id={`yontem-${model.slug}`}>{model.title}</h3>
-          <span className="helper">{model.section}, {model.no}. yöntem</span>
-        </div>
+    <article className="surface-card method-card" aria-labelledby={`yontem-${model.slug}`}>
+      <div className="method-head">
+        <h3 id={`yontem-${model.slug}`}>{model.title}</h3>
+        <p className="helper">
+          {model.section}, {model.no}. yöntem. Soru: {model.question}
+        </p>
       </div>
-      <p className="method-question">Soru: {model.question}</p>
-      <div className="method-sub">
-        <h4>Kısaca</h4>
-        <p>{model.simple ?? model.summary}</p>
-      </div>
+      <p className="method-body">{model.simple ?? model.summary}</p>
       {model.example ? (
-        <>
-          <Button type="text" size="small" onClick={() => setOpen((s) => !s)} aria-expanded={open} aria-controls={exampleId} icon={open ? <CaretUp size={16} /> : <CaretDown size={16} />} iconPlacement="end" style={{ justifySelf: 'start', paddingInline: 0 }}>
-            {open ? 'Örneği gizle' : 'Günlük hayattan örneği göster'}
-          </Button>
-          {open ? (
-            <div id={exampleId} className="method-sub">
-              <h4>Günlük Hayattan</h4>
-              <p>
-                <strong>{model.example.title}.</strong> {model.example.text}
-              </p>
-            </div>
-          ) : null}
-        </>
+        <p className="method-body">
+          Günlük hayattan örnek: {model.example.title}. {model.example.text}
+        </p>
       ) : null}
-      <div className="method-sub">
-        <h4>{steps.length ? 'Kullanıldığı adımlar' : 'Adımlarda kullanımı'}</h4>
-        {steps.length ? (
-          <div className="method-tags">
-            {steps.map((s) =>
-              linkSteps ? (
-                <Link key={s.id} className="tag" to={`/karar/${s.decision}/adim/${s.id}`} title={s.title}>
-                  Adım {s.id}
-                </Link>
-              ) : (
-                <span key={s.id} className="tag" title={s.title}>
-                  Adım {s.id}
-                </span>
-              ),
-            )}
-          </div>
-        ) : (
-          <p className="helper">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
-        )}
-      </div>
+      {steps.length ? (
+        <div className="method-tags" aria-label="Kullanıldığı adımlar">
+          {steps.map((s) =>
+            linkSteps ? (
+              <Link key={s.id} className="tag" to={`/karar/${s.decision}/adim/${s.id}`} title={s.title}>
+                Adım {s.id}
+              </Link>
+            ) : (
+              <span key={s.id} className="tag" title={s.title}>
+                Adım {s.id}
+              </span>
+            ),
+          )}
+        </div>
+      ) : (
+        <p className="helper">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
+      )}
       <a className="text-link" href={modelLink(model)} target="_blank" rel="noreferrer">
         Karar Kitabı'nda aç
         <ArrowSquareOut size={16} aria-hidden />

@@ -1,9 +1,12 @@
 import { useRef, useState, type ChangeEvent, type KeyboardEvent, type MouseEvent } from 'react'
 import { App as AntApp, Button, Dropdown, Input, Modal, Popconfirm } from 'antd'
-import { Plus, DotsThree, CaretDown, UploadSimple, Sparkle, Trash } from '@phosphor-icons/react'
-import { Link, useNavigate } from 'react-router'
+import { Plus, DotsThree, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash } from '@phosphor-icons/react'
+import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
+import { downloadJson, safeFileName } from '@/engine/sync'
+import { gatePassed } from '@/engine/gate'
+import { DECISIONS } from '@/data/decisions'
 import { buildDemoPlan } from '@/data/demo'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
@@ -105,10 +108,11 @@ export function PlansScreen() {
           }
         />
       ) : (
-        <div className="card-grid">
+        <ul className="plan-list" aria-label="Planlar">
           {list.map((p) => {
             const to = p.lastLocation ?? '/ozet'
-            const onCardKey = (e: KeyboardEvent<HTMLElement>) => {
+            const passed = DECISIONS.filter((d) => gatePassed(p, d.n)).length
+            const onRowKey = (e: KeyboardEvent<HTMLElement>) => {
               if (e.target !== e.currentTarget) return
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
@@ -117,17 +121,16 @@ export function PlansScreen() {
             }
             const stop = (e: MouseEvent) => e.stopPropagation()
             return (
-              <article
-                key={p.id}
-                className="surface-card is-link"
-                aria-label={p.name}
-                tabIndex={0}
-                onClick={() => openPlan(p.id, to)}
-                onKeyDown={onCardKey}
-              >
-                <div className="surface-card-head">
-                  <h3>{p.name}</h3>
-                  <span onClick={stop} onKeyDown={(e) => e.stopPropagation()}>
+              <li key={p.id}>
+                <div className="plan-row" role="link" aria-label={`${p.name} planını aç`} tabIndex={0} onClick={() => openPlan(p.id, to)} onKeyDown={onRowKey}>
+                  <span className="plan-row-text">
+                    <span className="plan-row-name">{p.name}</span>
+                    <span className="plan-row-sub tabular">
+                      Son değişiklik {formatDate(p.updatedAt)} · Sürüm {p.revision} · {passed} karar geçti
+                    </span>
+                  </span>
+                  {p.example ? <span className="tag">Örnek</span> : null}
+                  <span className="plan-row-menu" onClick={stop} onKeyDown={(e) => e.stopPropagation()}>
                     <Popconfirm
                       title="Plan silinsin mi?"
                       description="Bu işlem geri alınamaz."
@@ -145,8 +148,12 @@ export function PlansScreen() {
                       <Dropdown
                         trigger={['click']}
                         menu={{
-                          items: [{ key: 'delete', label: 'Planı sil', icon: <Trash size={16} />, danger: true }],
+                          items: [
+                            { key: 'json', label: 'JSON indir', icon: <DownloadSimple size={16} /> },
+                            { key: 'delete', label: 'Sil', icon: <Trash size={16} />, danger: true },
+                          ],
                           onClick: ({ key }) => {
+                            if (key === 'json') downloadJson(`${safeFileName(p.name)}.json`, p)
                             if (key === 'delete') setConfirmId(p.id)
                           },
                         }}
@@ -156,27 +163,10 @@ export function PlansScreen() {
                     </Popconfirm>
                   </span>
                 </div>
-                {p.example ? <span className="tag is-hold">Örnek</span> : null}
-                <div className="meta">
-                  <span>Son değişiklik {formatDate(p.updatedAt)}</span>
-                  <span className="tabular">
-                    Sürüm {p.revision}. {p.decisions.length} karar kaydı.
-                  </span>
-                </div>
-                <Link
-                  className="card-link"
-                  to={to}
-                  onClick={(e) => {
-                    e.stopPropagation()
-                    selectPlan(p.id)
-                  }}
-                >
-                  Aç
-                </Link>
-              </article>
+              </li>
             )
           })}
-        </div>
+        </ul>
       )}
 
       <Callout tone="ipucu" title="Veri nerede durur?">

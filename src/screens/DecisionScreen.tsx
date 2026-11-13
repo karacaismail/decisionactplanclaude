@@ -24,7 +24,7 @@ export function DecisionScreen() {
   const locked = d.n > 1 && !gatePassed(plan, d.n - 1)
   const last = lastDecision(plan, d.n)
   const isOpen = (id: string) => plan.steps[id]?.status !== 'tamam' && plan.steps[id]?.status !== 'atlandi'
-  const firstOpen = steps.find((s) => stepApplies(s.mandatory, plan) !== 'gizli' && isOpen(s.id)) ?? steps[0]
+  const firstOpen = steps.find((s) => stepApplies(s.mandatory, plan) !== 'gizli' && isOpen(s.id))
   const visible = steps.filter((s) => stepApplies(s.mandatory, plan) !== 'gizli')
   const done = visible.filter((s) => !isOpen(s.id)).length
 
@@ -40,7 +40,10 @@ export function DecisionScreen() {
           </>
         }
         actions={
-          <Button onClick={() => nav(`/karar/${d.n}/adim/${firstOpen.id}`)}>Adımlara başla</Button>
+          <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(`/karar/${d.n}/kapi`)}>
+            Kapı {d.n}
+            {GATE_SUFFIX[d.n] ?? "'e"} git
+          </Button>
         }
       />
       {locked ? (
@@ -61,7 +64,7 @@ export function DecisionScreen() {
         </Callout>
       </div>
       <section className="section" aria-labelledby="adimlar-title">
-        <SectionHead title="Bu kararda ne var?" description={`${done} / ${visible.length} adım tamamlandı. Satıra basınca adım açılır.`} />
+        <SectionHead title="Bu kararda ne var?" description={`${done} / ${visible.length} adım tamamlandı. Satıra basınca adım açılır.${firstOpen ? ` Sıradaki adım ${firstOpen.id}.` : ''}`} />
         <ol className="step-list">
           {steps.map((s) => {
             const a = stepApplies(s.mandatory, plan)
@@ -79,10 +82,12 @@ export function DecisionScreen() {
                   <span className="route-dot" aria-hidden>
                     {s.id}
                   </span>
-                  <span className="step-title">{s.title}</span>
-                  <span className="step-tags" aria-hidden>
-                    <span className="tag">{need}</span>
-                    {state ? <span className={state === 'Tamam' ? 'tag is-ok' : 'tag is-muted'}>{state}</span> : null}
+                  <span className="step-body">
+                    {/* Satır başına tek etiket: tamamsa durum, değilse gereklilik. */}
+                    <span className={state === 'Tamam' ? 'tag is-ok' : state === 'Atlandı' ? 'tag is-muted' : 'tag'} aria-hidden>
+                      {state ?? need}
+                    </span>
+                    <span className="step-title">{s.title}</span>
                   </span>
                 </button>
               </li>
@@ -90,12 +95,6 @@ export function DecisionScreen() {
           })}
         </ol>
       </section>
-      <div className="action-row">
-        <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(`/karar/${d.n}/kapi`)}>
-          Kapı {d.n}
-          {GATE_SUFFIX[d.n] ?? "'e"} git
-        </Button>
-      </div>
     </div>
   )
 }

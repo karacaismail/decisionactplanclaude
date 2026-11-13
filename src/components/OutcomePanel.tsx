@@ -51,6 +51,14 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving, plan, 
   const condOk = d.chosen !== 'kosulluIlerle' || (d.conditional?.scope && d.conditional?.deadline && d.conditional?.owner && d.conditional?.closingEvidence)
   const errors = plan && def ? validateDecision(def, plan, evaluation, d, { harm }) : []
   const canSave = d.reason.trim().length > 0 && d.decidedBy.trim().length > 0 && condOk && (!needsSecond || d.secondOpinion.trim().length > 0) && errors.length === 0
+  /** Düğme kapalıyken nedenini tek cümleyle söyler. Kural engeli varsa engel listesi görünür, bu metin görünmez. */
+  const lockHint = (() => {
+    if (canSave || errors.length > 0) return null
+    if (!d.reason.trim() || !d.decidedBy.trim()) return 'Gerekçe ve karar sahibi yazılınca düğme açılır.'
+    if (!condOk) return 'Koşullu izin alanları dolunca düğme açılır.'
+    if (needsSecond && !d.secondOpinion.trim()) return 'İkinci görüş yazılınca düğme açılır.'
+    return null
+  })()
   const setCond = (patch: Partial<NonNullable<OutcomeDraft['conditional']>>) => setD({ ...d, conditional: { ...(d.conditional ?? EMPTY_COND), ...patch } })
 
   return (
@@ -73,7 +81,7 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving, plan, 
                 <span className="choice-body">
                   <span className="choice-title">
                     {OUTCOME_LABEL[o]}
-                    {o === evaluation.suggested ? <span className="tag is-open">Öneri</span> : blocked ? <span className="tag is-muted">Kapalı</span> : null}
+                    {o === evaluation.suggested ? <span className="tag">Öneri</span> : blocked ? <span className="tag is-muted">Kapalı</span> : null}
                   </span>
                   <span className="choice-desc">{HELP[o]}</span>
                 </span>
@@ -127,7 +135,7 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving, plan, 
           </div>
           <div className="field">
             <label className="field-label" htmlFor={id('yeniden')}>Yeniden açılma koşulu</label>
-            <Input id={id('yeniden')} value={d.reopenWhen} onChange={(e) => setD({ ...d, reopenWhen: e.target.value })} placeholder="Hangi olayda yeniden açılır?" />
+            <Input id={id('yeniden')} value={d.reopenWhen} onChange={(e) => setD({ ...d, reopenWhen: e.target.value })} placeholder="Hangi olayda?" />
           </div>
         </div>
       </div>
@@ -150,12 +158,11 @@ export function OutcomePanel({ evaluation, onSave, singleFounder, saving, plan, 
         </Callout>
       ) : null}
 
-      <div className="toolbar" style={{ justifyContent: 'flex-end' }}>
-        <div className="toolbar-group">
-          <Button type="primary" size="large" disabled={!canSave} loading={saving} aria-describedby={errors.length ? 'karar-engel' : undefined} onClick={() => onSave(d)}>
-            Kararı kaydet
-          </Button>
-        </div>
+      <div className="save-row">
+        <Button type="primary" size="large" disabled={!canSave} loading={saving} aria-describedby={errors.length ? 'karar-engel' : lockHint ? id('kilit') : undefined} onClick={() => onSave(d)}>
+          Kararı kaydet
+        </Button>
+        {lockHint ? <span className="helper" id={id('kilit')}>{lockHint}</span> : null}
       </div>
     </div>
   )

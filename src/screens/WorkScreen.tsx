@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Collapse, Grid, Input, Modal, Table, App as AntApp } from 'antd'
-import { useNavigate, useParams } from 'react-router'
+import { Button, Collapse, Dropdown, Grid, Input, Modal, Table, App as AntApp } from 'antd'
+import { DotsThree } from '@phosphor-icons/react'
+import { Link, useNavigate, useParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { STEPS, nextStepId, prevStepId, decisionOf } from '@/data/registry'
 import { stepApplies } from '@/engine/conditions'
@@ -16,7 +17,9 @@ const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBu
 
 /**
  * Adım ekranı. Üstte sayfa başlığı ve tek satır durum. Ortada form ve yardım sütunu.
- * Altta 64 px yapışkan işlem şeridi. Ekranda tek dolu düğme vardır: "Adımı tamamla".
+ * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
+ * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
+ * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
  */
 export function WorkScreen() {
   const bp = Grid.useBreakpoint()
@@ -103,7 +106,7 @@ export function WorkScreen() {
       <div className="work-grid">
         <div className="work-main">
           {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
-          {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için "Bu adımı atla" düğmesini kullanın.</Callout> : null}
+          {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için alt şeritteki "Daha fazla" menüsünden "Bu adımı atla" seçeneğini kullanın.</Callout> : null}
           {step.intro ? <p className="work-intro">{step.intro}</p> : null}
           {!wide && step.howTo ? (
             <Collapse
@@ -142,17 +145,21 @@ export function WorkScreen() {
       </div>
 
       <div className="action-bar step-actions no-print">
-        <Button type="text" disabled={!prev} onClick={() => prev && nav(`/karar/${STEPS[prev].decision}/adim/${prev}`)}>Geri</Button>
+        {prev ? <Link className="bar-link" to={`/karar/${STEPS[prev].decision}/adim/${prev}`}>Geri</Link> : null}
         <span className="spacer" />
-        <Button type="text" onClick={() => setSkipOpen(true)}>Bu adımı atla</Button>
-        <div className="action-main">
-          {nextInDecision ? (
-            <Button onClick={() => { persist(values); nav(`/karar/${n}/adim/${nextInDecision}`) }}>Taslak bırak, ilerle</Button>
-          ) : (
-            <Button onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
-          )}
-          <Button type="primary" onClick={complete}>Adımı tamamla</Button>
-        </div>
+        <Dropdown
+          trigger={['click']}
+          placement="topRight"
+          menu={{ items: [{ key: 'atla', label: 'Bu adımı atla' }], onClick: ({ key }) => { if (key === 'atla') setSkipOpen(true) } }}
+        >
+          <Button type="text" className="bar-more" aria-label="Daha fazla" icon={<DotsThree size={20} weight="bold" />} />
+        </Dropdown>
+        {nextInDecision ? (
+          <Button className="bar-draft" onClick={() => { persist(values); nav(`/karar/${n}/adim/${nextInDecision}`) }}>Taslak bırak, ilerle</Button>
+        ) : (
+          <Button className="bar-draft" onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
+        )}
+        <Button type="primary" onClick={complete}>Adımı tamamla</Button>
       </div>
 
       <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(`/karar/${STEPS[next].decision}/adim/${next}`) }}>

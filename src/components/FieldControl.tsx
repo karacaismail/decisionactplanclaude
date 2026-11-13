@@ -20,6 +20,7 @@ const RATE_DEFAULT = ['1', '2', '3', '4', '5']
 /**
  * Tek form alanı. Etiket `.field-label`, yardım `.field-help`.
  * `compact` tablo hücresi içindir: etiket çizilmez, girişe aria-label verilir, giriş kenarlıksızdır.
+ * Hücre girişi `.cell-input` sınıfı alır: alt çizgi düzenlenebilir olduğunu gösterir. Boş hücrede etiket yer tutucu olur.
  */
 export function FieldControl({ field, value, onChange, plan, values, compact, idPrefix }: {
   field: Field
@@ -33,7 +34,10 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
   if (!evalCondition(field.when, plan, undefined, values)) return null
   const id = `${idPrefix}-${field.key}`
   const variant = compact ? ('borderless' as const) : undefined
+  const cellClass = compact ? 'cell-input' : undefined
   const ariaLabel = compact ? field.label : undefined
+  /* Boş hücrede yer tutucu: alanın kendi metni, yoksa etiketi. */
+  const cellPlaceholder = (own?: string) => own ?? (compact ? field.label : undefined)
   const help = (t?: string) => (t && !compact ? <div className="field-help">{t}</div> : null)
   const wrap = (control: React.ReactNode, extra?: React.ReactNode, labelAs: 'label' | 'span' = 'label') => (
     <div className="field">
@@ -58,17 +62,19 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
 
   switch (field.type) {
     case 'text':
-      return wrap(<Input id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
+      return wrap(<Input id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />)
     case 'textarea':
-      return wrap(<Input.TextArea id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} rows={field.rows ?? 3} maxLength={field.maxLength} showCount={Boolean(field.maxLength) && !compact} onChange={(e) => onChange(e.target.value)} placeholder={field.placeholder} aria-required={field.required} />)
+      return wrap(<Input.TextArea id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} rows={compact ? 1 : field.rows ?? 3} autoSize={compact ? { minRows: 1, maxRows: 3 } : undefined} maxLength={field.maxLength} showCount={Boolean(field.maxLength) && !compact} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />)
     case 'number':
-      return wrap(<InputNumber id={id} variant={variant} aria-label={ariaLabel} value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} addonAfter={field.unit} onChange={(v) => onChange(v ?? null)} />)
+      return wrap(<InputNumber id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} addonAfter={field.unit} placeholder={compact ? 'Sayı' : undefined} onChange={(v) => onChange(v ?? null)} />)
     case 'money':
       return wrap(
         <InputNumber
           id={id}
+          className={cellClass}
           variant={variant}
           aria-label={ariaLabel}
+          placeholder={compact ? '0' : undefined}
           value={typeof value === 'number' ? value / 100 : undefined}
           min={0}
           step={100}
@@ -82,11 +88,11 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
       )
     case 'date':
       return wrap(
-        <DatePicker id={id} variant={variant} aria-label={ariaLabel} value={value ? dayjs(value as string) : null} format="DD.MM.YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün.Ay.Yıl" />,
+        <DatePicker id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={value ? dayjs(value as string) : null} format="DD.MM.YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün.Ay.Yıl" />,
         value && !compact ? <span className="field-help">{formatDate(value as string)}</span> : null,
       )
     case 'select':
-      return wrap(<Select id={id} variant={variant} aria-label={ariaLabel} value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" />)
+      return wrap(<Select id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" />)
     case 'segmented':
       return wrap(
         <Radio.Group
@@ -146,7 +152,7 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
     }
     case 'evidenceLadder':
       if (compact) {
-        return wrap(<Select id={id} variant="borderless" aria-label={ariaLabel} value={(value as number) ?? undefined} onChange={onChange} placeholder="Basamak seçin" options={LADDER.map((l) => ({ value: l.level, label: `${l.level}. ${l.label}` }))} />)
+        return wrap(<Select id={id} className="cell-input" variant="borderless" aria-label={ariaLabel} value={(value as number) ?? undefined} onChange={onChange} placeholder="Basamak seçin" options={LADDER.map((l) => ({ value: l.level, label: `${l.level}. ${l.label}` }))} />)
       }
       return wrap(<EvidenceLadderPicker id={id} value={value as number} onChange={onChange} />, undefined, 'span')
     case 'threshold':

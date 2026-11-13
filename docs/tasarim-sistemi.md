@@ -61,7 +61,7 @@ Tek bileşen vardır: `Callout` (`.note`). Solda 3 px düz çizgi durur. Çizgin
 
 ## Grafik
 
-Çubuk 24 px, aralık 16 px, desen yok. Tamamlanan koyu mürekkep, kalan açık gri. Eksen yazısı 14 px. Kategori adı metin olur, sayı olmaz. Yükseklik 240 px.
+Çubuk 32 px, aralık 24 px, desen yok. Telefonda sekiz çubuk kısa adla sığar, kaydırıcı yoktur. Tamamlanan koyu mürekkep, kalan açık gri. Eksen yazısı 14 px. Kategori adı metin olur, sayı olmaz. Yükseklik 240 px.
 
 ## Kabuk
 

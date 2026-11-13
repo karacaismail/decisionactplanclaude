@@ -9,9 +9,9 @@
 .decision-badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 4px; border: 1px solid transparent; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; box-sizing: border-box; }
 .decision-badge svg { flex-shrink: 0; }
 .decision-badge.is-ilerle { color: var(--color-status-ok); background: var(--color-status-ok-bg); }
-.decision-badge.is-kosulluIlerle { color: var(--color-status-ok); background: transparent; border-color: var(--color-status-ok); }
-.decision-badge.is-yenidenDene { color: var(--color-status-info); background: var(--color-status-info-bg); }
-.decision-badge.is-yonDegistir { color: var(--color-tone-purple); background: var(--color-tone-purple-bg); }
+.decision-badge.is-kosulluIlerle { color: var(--color-status-ok); background: var(--color-status-ok-bg); border-color: var(--color-status-ok); }
+.decision-badge.is-yenidenDene { color: var(--color-text-secondary); background: transparent; border-color: var(--color-border-strong); }
+.decision-badge.is-yonDegistir { color: var(--color-text-secondary); background: transparent; border-color: var(--color-border-strong); }
 .decision-badge.is-beklet { color: var(--color-status-hold); background: var(--color-status-hold-bg); }
 .decision-badge.is-durdur { color: var(--color-status-harm); background: var(--color-status-harm-bg); }
 
@@ -22,7 +22,7 @@
 .kapi-main, .kapi-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
 @media (min-width: 1100px) {
   .kapi-grid { grid-template-columns: minmax(0, 3fr) minmax(320px, 2fr); }
-  .kapi-aside { position: sticky; top: 72px; }
+  .kapi-aside { position: sticky; top: 72px; padding-bottom: var(--space-8); }
   .kapi-aside > .section { border-top: 0; padding-top: 0; }
 }
 .kapi-grid .kapi-aside > .section:first-child { border-top: 1px solid var(--color-border); padding-top: var(--space-8); }
@@ -34,7 +34,7 @@
 
 /* Ölçüt listesi: 1 px çizgiyle ayrılmış satırlar, solda 16 px ikon */
 .criteria-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
-.criterion { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 12px; align-items: start; padding: 12px 0; border-bottom: 1px solid var(--color-border); min-width: 0; }
+.criterion { display: grid; grid-template-columns: 16px minmax(0, 1fr) auto; gap: 12px; align-items: start; min-height: 44px; padding: 10px 0; border-bottom: 1px solid var(--color-border); min-width: 0; }
 .criteria-list li:last-child .criterion { border-bottom: 0; }
 .criterion-icon { display: inline-flex; margin-top: 4px; }
 .criterion-icon.is-ok { color: var(--color-status-ok); }
@@ -51,6 +51,30 @@
 .table-scroll .ant-table-tbody > tr.is-matched > td { background: var(--color-selected-bg); }
 .table-scroll .ant-table-tbody > tr.is-link { cursor: pointer; }
 .table-scroll .ant-table-row-cell { font-size: 16px; }
+/* Sabit ilk sütun: tablo kabı kayarken ilk sütun yerinde durur. antd `fixed` kullanılmaz; ölçüm satırı eklemez. */
+.table-scroll .ant-table-cell.is-sticky-col { position: sticky; left: 0; z-index: 2; background: var(--color-surface-page) !important; box-shadow: inset -1px 0 0 var(--color-border); }
+.table-scroll .ant-table-tbody > tr:hover > td.is-sticky-col { background: var(--color-surface-context) !important; }
+@media (hover: none) { .table-scroll .ant-table-tbody > tr:hover > td.is-sticky-col { background: var(--color-surface-page) !important; } }
+
+/* Koşula göre sonuç: masaüstünde 3 sütunlu tablo, telefonda satır listesi */
+.outcome-table { min-width: 0; }
+.outcome-table .ant-table-cell .decision-badge { max-width: 100%; }
+.outcome-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+.outcome-list li { border-bottom: 1px solid var(--color-border); min-width: 0; }
+.outcome-list li:last-child { border-bottom: 0; }
+.outcome-row { min-width: 0; }
+.outcome-row > summary { display: grid; grid-template-columns: minmax(0, 1fr) auto 16px; gap: 8px; align-items: center; min-height: 44px; padding: 8px 0; list-style: none; cursor: pointer; min-width: 0; box-sizing: border-box; }
+.outcome-row > summary::-webkit-details-marker { display: none; }
+.outcome-row.is-matched > summary { background: var(--color-selected-bg); margin: 0 -8px; padding-left: 8px; padding-right: 8px; }
+.outcome-row.is-matched .outcome-condition { font-weight: 600; }
+.outcome-condition { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; font-size: 14px; line-height: 1.4; min-width: 0; overflow-wrap: break-word; }
+.outcome-row[open] .outcome-condition { display: block; -webkit-line-clamp: unset; overflow: visible; }
+.outcome-row > summary .decision-badge { justify-self: end; flex-shrink: 0; }
+.outcome-caret { display: inline-flex; color: var(--color-text-secondary); transition: transform var(--motion-small) var(--motion-ease); }
+.outcome-row[open] .outcome-caret { transform: rotate(180deg); }
+@media (prefers-reduced-motion: reduce) { .outcome-caret { transition: none; } }
+.outcome-note { margin: 0; padding: 0 0 10px 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.outcome-row.is-matched .outcome-note { padding-left: 0; }
 
 /* Satır listesi (telefon tabloları, sürümler): 44 px satır, 1 px çizgi */
 .row-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
@@ -64,6 +88,12 @@
 .cell-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
 .cell-stack .cell-title { font-size: 16px; font-weight: 600; line-height: 1.4; overflow-wrap: break-word; }
 .cell-stack .cell-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.cell-stack .cell-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 8px; align-items: start; min-width: 0; }
+.cell-stack .cell-head .tag, .cell-stack .cell-head .ant-select { justify-self: end; }
+.cell-stack .cell-line { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); min-width: 0; }
+.cell-stack .cell-line > span { overflow-wrap: break-word; min-width: 0; }
+/* Dokunmatikte satır zemini değişmez; tıklanabilirlik imleçle kalır. */
+@media (hover: none) { .table-scroll .ant-table-tbody > tr.is-link:hover > td { background: transparent !important; } }
 
 /* ------------------------------------------------------------------ */
 /* Sonuç paneli                                                        */
@@ -73,13 +103,18 @@
 
 /* Seçenek satırı antd Radio ile çizilir. Radio sarmalayıcısı ızgaraya girer. */
 .choice-list.ant-radio-group { display: grid; }
-.choice.ant-radio-wrapper { margin: 0; font-size: 16px; }
+.choice.ant-radio-wrapper { margin: 0; padding: 8px 12px; font-size: 16px; }
 .choice.ant-radio-wrapper::after { display: none; }
 .choice.ant-radio-wrapper > .ant-radio { margin-top: 3px; }
 .choice.ant-radio-wrapper > span:not(.ant-radio) { padding: 0; min-width: 0; }
 .choice.ant-radio-wrapper-disabled { cursor: not-allowed; color: var(--color-text-secondary); }
 .choice.ant-radio-wrapper-disabled:hover { background: var(--color-surface-work); }
 .choice-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+.choice-body .choice-desc { font-size: 14px; line-height: 1.5; }
+.choice-body .choice-title { line-height: 1.5; }
+/* Kayıt satırı: düğme ve neden kapalı olduğunu söyleyen yardımcı metin */
+.save-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: end; min-width: 0; }
+.save-row .helper { text-align: right; max-width: 100%; }
 
 /* Alan grubu */
 .field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }

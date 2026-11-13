@@ -61,7 +61,7 @@ export function TasksScreen() {
   )
 
   const wideColumns = [
-    { title: 'İş', dataIndex: 'action', width: 320 },
+    { title: 'İş', dataIndex: 'action', width: 320, className: 'is-sticky-col' },
     { title: 'Sorumlu', dataIndex: 'owner', width: 160, render: (o?: string) => o ?? <span className="tag is-muted">Eksik</span> },
     { title: 'Son tarih', dataIndex: 'dueDate', width: 160, render: (d?: string) => (d ? <span className="tabular">{formatDate(d, false)}</span> : <span className="tag is-muted">Tarih yok</span>) },
     { title: 'Durum', dataIndex: 'status', width: 160, render: (_: TaskStatus, t: Task) => statusSelect(t) },
@@ -73,13 +73,15 @@ export function TasksScreen() {
       dataIndex: 'action',
       render: (_: string, t: Task) => (
         <div className="cell-stack">
-          <span className="cell-title">{t.action}</span>
-          <span className="cell-meta">
+          <span className="cell-head">
+            <span className="cell-title">{t.action}</span>
             {statusSelect(t)}
-            <span className="helper">{t.owner ?? 'Sorumlu eksik'}</span>
-            <span className="helper tabular">{t.dueDate ? formatDate(t.dueDate, false) : 'Tarih yok'}</span>
           </span>
-          {sourceLabel(t.sourceDecisionId) ? <span className="helper">{sourceLabel(t.sourceDecisionId)}</span> : null}
+          <span className="cell-line">{t.owner ?? 'Sorumlu eksik'}</span>
+          <span className="cell-line">
+            <span className="tabular">{t.dueDate ? formatDate(t.dueDate, false) : 'Tarih yok'}</span>
+            {sourceLabel(t.sourceDecisionId) ? <span>{sourceLabel(t.sourceDecisionId)}</span> : null}
+          </span>
         </div>
       ),
     },

@@ -1,17 +1,16 @@
 import { Button, Switch } from 'antd'
 import { Link, useNavigate } from 'react-router'
-import { ArrowRight, ArrowUpRight, BookOpenText, CheckSquare, FileText, Flag, Notebook, Path } from '@phosphor-icons/react'
+import { ArrowRight, ArrowUpRight, BookOpenText, CheckSquare, FileText, Gauge, Notebook, Path } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
 import { gatePassed, effectiveOutcome } from '@/engine/gate'
 import { stepApplies } from '@/engine/conditions'
-import { LimitsBar } from '@/components/LimitsBar'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader, SectionHead } from '@/components/PageHeader'
 import { CompassArt } from '@/components/CompassArt'
 import { KpiStrip, StatTile } from '@/components/StatTile'
-import { formatDate } from '@/engine/format'
+import { formatDate, formatMoney } from '@/engine/format'
 import type { PlanDoc } from '@/data/types'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-pano.css'
@@ -42,6 +41,14 @@ export function OverviewScreen() {
   const openTasks = plan.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
   const recent = [...plan.decisions].slice(-3).reverse()
   const resumeTo = plan.lastLocation && plan.lastLocation !== '/ozet' ? plan.lastLocation : null
+  const { budgetKurus, deadline, retriesPerDecision, monthlyBurnKurus, cashKurus } = plan.limits
+  const runway = monthlyBurnKurus && cashKurus ? Math.floor(cashKurus / monthlyBurnKurus) : null
+  /* Pist KPI şeridinde durur; meta satırı üç sınırla tek satıra sığar. */
+  const limits = [
+    { label: 'Toplam harcama sınırı', value: budgetKurus ? formatMoney(budgetKurus) : 'Yazılmadı' },
+    { label: 'Bitiş tarihi', value: deadline ? formatDate(deadline, false) : 'Yazılmadı' },
+    { label: 'Kalan deneme hakkı', value: retriesPerDecision ? `${retriesPerDecision} / karar` : 'Yazılmadı' },
+  ]
 
   return (
     <div className="page">
@@ -50,13 +57,6 @@ export function OverviewScreen() {
         documentTitle="Plan özeti"
         kicker="Plan özeti"
         description={<>Son değişiklik {formatDate(plan.updatedAt)}. Sürüm {plan.revision}.</>}
-        actions={
-          resumeTo ? (
-            <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(resumeTo)}>
-              Kaldığım yerden devam et
-            </Button>
-          ) : null
-        }
       />
 
       <section className="hero" aria-labelledby="hero-title">
@@ -71,8 +71,8 @@ export function OverviewScreen() {
           <h2 id="hero-title">{current.title}</h2>
           <p className="hero-question">{current.question}</p>
           <div className="hero-actions">
-            <Button className="hero-button" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(`/karar/${current.n}`)}>
-              Kararı incele
+            <Button type="primary" className="hero-button" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(resumeTo ?? `/karar/${current.n}`)}>
+              {resumeTo ? 'Kaldığım yerden devam et' : 'Kararı incele'}
             </Button>
           </div>
         </div>
@@ -82,14 +82,20 @@ export function OverviewScreen() {
       </section>
 
       <KpiStrip>
-        <StatTile icon={<Flag size={16} />} label="Onaylanan karar" value={passed.length} unit={`/ ${DECISIONS.length}`} to={`/karar/${current.n}`} />
+        <StatTile icon={<Gauge size={16} />} label="Pist" value={runway !== null ? runway : 'Hesaplanmadı'} unit={runway !== null ? 'ay' : undefined} />
         <StatTile icon={<Path size={16} />} label="Tamamlanan adım" value={doneSteps} unit={`/ ${allSteps.length}`} to={`/karar/${current.n}`} />
         <StatTile icon={<Notebook size={16} />} label="Kanıt" value={plan.evidence.length} unit="kayıt" to="/kanitlar" />
         <StatTile icon={<CheckSquare size={16} />} label="Açık iş" value={openTasks.length} unit="iş" to="/isler" />
       </KpiStrip>
 
-      <div className="limits-row">
-        <LimitsBar plan={plan} compact />
+      <div className="meta-stack">
+        <div className="limits-line" role="group" aria-label="Sınırlar">
+          {limits.map((i) => (
+            <span key={i.label}>
+              {i.label}: <strong>{i.value}</strong>
+            </span>
+          ))}
+        </div>
         <div className="toggle-row">
           <Switch checked={plan.shortPath} onChange={(v) => update((p) => (p.shortPath = v))} id="kisa-yol" />
           <label htmlFor="kisa-yol">En kısa yol. Yalnız zorunlu adımlar görünür.</label>

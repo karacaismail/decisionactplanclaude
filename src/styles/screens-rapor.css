@@ -15,11 +15,6 @@
 /* Karar Kitabı: yöntem kartları. */
 .method-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 @media (min-width: 720px) { .method-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-.method-question { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
-.method-sub { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
-.method-sub h4 { margin: 0; font-size: 14px; line-height: 1.4; font-weight: 600; color: var(--color-text-secondary); }
-.method-sub p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
-.method-sub p.helper { font-size: 14px; color: var(--color-text-secondary); }
 .method-tags { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
 .method-tags a.tag { text-decoration: none; cursor: pointer; transition: border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 .method-tags a.tag:hover { border-color: var(--color-text-secondary); color: var(--color-text-primary); }
@@ -39,6 +34,13 @@
 .report-tabs.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; }
 .report-toolbar { padding-top: 12px; }
 .report-toolbar .filter-field { flex: 1 1 240px; }
+/* Telefonda araç çubuğu tek sütundur. Seçici ve iki düğme aynı genişliktedir. Sağ kenar düz biter. */
+@media (max-width: 599px) {
+  .report-toolbar { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .report-toolbar > * { width: 100%; max-width: none; }
+  .report-toolbar .toolbar-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .report-toolbar .toolbar-group > * { width: 100%; }
+}
 .report-wrap { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .report { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; width: 100%; max-width: 760px; margin: 0 auto; padding: 24px 16px; box-sizing: border-box; min-width: 0; background: var(--color-surface-work); border: 1px solid var(--color-border); border-radius: var(--radius-panel); }
 @media (min-width: 720px) { .report { padding: 40px 48px; } }
@@ -49,6 +51,8 @@
 .report-section h3 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
 .report-section p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 .report .ant-table-wrapper { overflow-x: auto; max-width: 100%; }
+/* Tablo belge genişliğini kullanır. Sütunlar kalan alanı paylaşır. Dar ekranda kendi kabında kayar. */
+.report .ant-table table { width: 100%; min-width: 100%; }
 .report .ant-table-cell { white-space: normal; min-width: 120px; }
 .report .ant-table-cell:first-child { min-width: 160px; }
 
@@ -57,3 +61,19 @@
 .version-list li { display: flex; flex-wrap: wrap; gap: 4px 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--color-border); font-size: 16px; }
 .version-list li:last-child { border-bottom: 0; }
 .version-list .version-date { font-size: 14px; color: var(--color-text-secondary); }
+
+/* Telefonda rapor bölümleri akordeondur. Başlık 20 px ve 600, gövde bölüm biçimindedir. Kenarlık ve dolgu yoktur. */
+.report-collapse.ant-collapse { border: 0; background: transparent; border-radius: 0; }
+.report-collapse.ant-collapse > .ant-collapse-item { border-bottom: 1px solid var(--color-border); border-radius: 0; }
+.report-collapse.ant-collapse > .ant-collapse-item:last-child { border-bottom: 0; }
+.report-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 12px 0; align-items: center; color: var(--color-text-primary); }
+.report-collapse .report-collapse-title { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
+.report-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; color: var(--color-text-primary); }
+.report-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 0 16px; }
+
+/* Karar Kitabı kartı: başlık, meta ve gövde arası boşluk. */
+.method-card { gap: 12px; }
+.method-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+.method-card p.helper { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.surface-card p.method-body { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.method-more { align-items: start; }

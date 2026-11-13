@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Input, Select } from 'antd'
+import { Button, Input, Select } from 'antd'
 import { MagnifyingGlass } from '@phosphor-icons/react'
 import models from '@/data/models.json'
 import { STEP_LIST } from '@/data/steps'
@@ -21,18 +21,41 @@ for (const step of STEP_LIST) for (const g of step.models) (STEPS_BY_MODEL[g] ??
 
 const lower = (s: string) => s.toLocaleLowerCase('tr')
 
-/** Karar Kitabı. 128 yöntem. Arama, bölüm süzgeci ve bölüm başlıklı liste. */
+/** Bir sayfada gösterilen yöntem sayısı. "24 yöntem daha göster" düğmesi bu kadar ekler. */
+export const PAGE = 24
+
+/**
+ * Sayının iyelik eki: 24'ü, 48'i, 72'si, 96'sı, 128'i. Ek son okunan rakama ya da basamağa göre seçilir.
+ */
+export function possessive(n: number): string {
+  if (n === 0) return 'ı'
+  const ones = n % 10
+  const tens = Math.floor((n % 100) / 10)
+  if (ones !== 0) return ['', 'i', 'si', 'ü', 'ü', 'i', 'sı', 'si', 'i', 'u'][ones]
+  if (tens !== 0) return ['', 'u', 'si', 'u', 'ı', 'si', 'ı', 'i', 'i', 'ı'][tens]
+  const hundreds = Math.floor((n % 1000) / 100)
+  return hundreds !== 0 ? 'ü' : 'i'
+}
+
+/** Karar Kitabı. 128 yöntem. Arama, bölüm süzgeci ve bölüm başlıklı liste. İlk 24 kart görünür. */
 export function MethodsScreen() {
   const plan = useCurrentPlan()
-  const [query, setQuery] = useState('')
-  const [section, setSection] = useState<string>(TUMU)
+  const [query, setQueryState] = useState('')
+  const [section, setSectionState] = useState<string>(TUMU)
+  const [shown, setShown] = useState(PAGE)
+  /* Arama ya da bölüm değişince sayfalama başa döner. */
+  const setQuery = (q: string) => { setQueryState(q); setShown(PAGE) }
+  const setSection = (sec: string) => { setSectionState(sec); setShown(PAGE) }
 
   const filtered = useMemo(() => {
     const q = lower(query.trim())
     return ALL.filter((m) => (section === TUMU || m.section === section) && (!q || lower(`${m.title} ${m.question} ${m.summary} ${m.simple ?? ''}`).includes(q)))
   }, [query, section])
 
-  const grouped = useMemo(() => SECTIONS.map((s) => ({ ...s, items: filtered.filter((m) => m.section === s.section).sort((a, b) => a.no - b.no) })).filter((s) => s.items.length > 0), [filtered])
+  const sorted = useMemo(() => [...filtered].sort((a, b) => a.sectionNo - b.sectionNo || a.no - b.no), [filtered])
+  const visible = useMemo(() => sorted.slice(0, shown), [sorted, shown])
+  const remaining = sorted.length - visible.length
+  const grouped = useMemo(() => SECTIONS.map((s) => ({ ...s, items: visible.filter((m) => m.section === s.section) })).filter((s) => s.items.length > 0), [visible])
 
   return (
     <div className="page">
@@ -56,7 +79,9 @@ export function MethodsScreen() {
           </div>
         </div>
         <span className="helper tabular" role="status">
-          {filtered.length === ALL.length ? `${ALL.length} yöntemin hepsi görünüyor.` : `${ALL.length} yöntemden ${filtered.length} tanesi görünüyor.`}
+          {filtered.length === ALL.length
+            ? `${ALL.length} yöntemden ${visible.length}'${possessive(visible.length)} görünüyor.`
+            : `${filtered.length} yöntem bulundu. ${visible.length}'${possessive(visible.length)} görünüyor.`}
         </span>
         {grouped.length === 0 ? (
           <div className="empty-state" role="status">
@@ -74,6 +99,12 @@ export function MethodsScreen() {
           </div>
         </section>
       ))}
+
+      {remaining > 0 ? (
+        <section className="section method-more" aria-label="Daha fazla yöntem">
+          <Button onClick={() => setShown((n) => n + PAGE)}>{Math.min(PAGE, remaining)} yöntem daha göster</Button>
+        </section>
+      ) : null}
     </div>
   )
 }

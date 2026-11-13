@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
-import { Button, Checkbox, Input, Table, App as AntApp } from 'antd'
+import { Button, Checkbox, Grid, Input, Table, App as AntApp } from 'antd'
 import { useNavigate, useParams } from 'react-router'
-import { CheckCircle, XCircle, Question } from '@phosphor-icons/react'
+import { CheckCircle, XCircle, Question, CaretDown } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { decisionOf } from '@/data/registry'
 import { evaluateGate, lastDecision, effectiveOutcome } from '@/engine/gate'
@@ -21,6 +21,8 @@ export function ReviewScreen() {
   const { n } = useParams()
   const nav = useNavigate()
   const { message } = AntApp.useApp()
+  const bp = Grid.useBreakpoint()
+  const narrow = bp.md === false
   const plan = useCurrentPlan()
   const recordDecision = usePlanStore((s) => s.recordDecision)
   const addTask = usePlanStore((s) => s.addTask)
@@ -173,7 +175,7 @@ export function ReviewScreen() {
                         <span>{c.label}</span>
                         {c.hint ? <span className="helper">{c.hint}</span> : null}
                       </div>
-                      {v === null ? <span className="tag is-muted">Ölçülmedi</span> : <span />}
+                      {v === null ? <span className="tag">Ölçülmedi</span> : <span />}
                     </div>
                   </li>
                 )
@@ -184,22 +186,43 @@ export function ReviewScreen() {
 
           <section className="section" aria-label="Koşula göre sonuç">
             <SectionHead title="Koşula göre sonuç" />
-            <div className="table-scroll">
-              <Table<RuleRow>
-                size="small"
-                pagination={false}
-                rowKey={(r) => r.condition}
-                dataSource={rows}
-                style={{ minWidth: 560 }}
-                rowClassName={(r) => (matched(r) ? 'is-matched' : '')}
-                columns={[
-                  { title: 'Durum', dataIndex: 'condition', width: '40%', render: (t: string, r) => <span className="history-meta" style={{ fontWeight: matched(r) ? 600 : 400 }}>{t}{matched(r) ? <span className="tag">Uyuyor</span> : null}</span> },
-                  { title: 'Sonuç', dataIndex: 'outcome', width: 160, render: (o: Outcome) => <DecisionBadge outcome={o} /> },
-                  { title: 'Not', dataIndex: 'note' },
-                ]}
-              />
-            </div>
-            <span className="helper">Üstteki satır önce gelir.</span>
+            {narrow ? (
+              <div className="outcome-table">
+                <ul className="outcome-list">
+                  {rows.map((r) => (
+                    <li key={r.condition}>
+                      <details className={`outcome-row${matched(r) ? ' is-matched' : ''}`}>
+                        <summary>
+                          <span className="outcome-condition">{r.condition}</span>
+                          <DecisionBadge outcome={r.outcome} />
+                          <span className="outcome-caret" aria-hidden><CaretDown size={16} /></span>
+                        </summary>
+                        <p className="outcome-note">{r.note ?? 'Bu satır için ek not yok.'}</p>
+                      </details>
+                    </li>
+                  ))}
+                </ul>
+                <span className="helper">Satıra dokununca not açılır. Üstteki satır önce gelir.</span>
+              </div>
+            ) : (
+              <div className="outcome-table">
+                <div className="table-scroll">
+                  <Table<RuleRow>
+                    size="small"
+                    pagination={false}
+                    rowKey={(r) => r.condition}
+                    dataSource={rows}
+                    rowClassName={(r) => (matched(r) ? 'is-matched' : '')}
+                    columns={[
+                      { title: 'Durum', dataIndex: 'condition', width: '40%', render: (t: string, r) => <span className="history-meta" style={{ fontWeight: matched(r) ? 600 : 400 }}>{t}{matched(r) ? <span className="tag">Uyuyor</span> : null}</span> },
+                      { title: 'Sonuç', dataIndex: 'outcome', width: 160, render: (o: Outcome) => <DecisionBadge outcome={o} /> },
+                      { title: 'Not', dataIndex: 'note', render: (t?: string) => t ?? <span className="helper">Ek not yok.</span> },
+                    ]}
+                  />
+                </div>
+                <span className="helper">Üstteki satır önce gelir.</span>
+              </div>
+            )}
           </section>
         </div>
 
