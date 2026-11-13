@@ -144,6 +144,8 @@ test('ölçüt 14: renkli dolgulu bilgi kutusu yok, not bloğu düz sol çizgili
 test('ölçüt 16 ve 17: 320 özet ilk ekranda içerik, sayfa en çok 2400px', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) > 400, 'Yalnız telefon')
   await openDemo(page)
+  await expect(page.locator('.hero')).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, 0))
   const r = await page.evaluate(() => {
     const inFold = (sel: string) => { const el = document.querySelector(sel); if (!el) return false; const b = el.getBoundingClientRect(); return b.top < window.innerHeight && b.bottom > 0 }
     return { h1: inFold('h1'), primary: inFold('main .ant-btn-primary'), kpi: inFold('.kpi-strip'), hero: inFold('.hero'), height: document.documentElement.scrollHeight }
