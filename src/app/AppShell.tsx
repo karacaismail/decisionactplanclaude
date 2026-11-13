@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { Button, Drawer, Grid, Layout, Menu, Space, Tag, Typography, theme } from 'antd'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost } from '@phosphor-icons/react'
+import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
 import { gatePassed } from '@/engine/gate'
+import { SaveStatus } from '@/components/SaveStatus'
 
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
@@ -52,8 +53,10 @@ export function AppShell() {
           { key: '/isler', icon: <CheckSquare size={20} />, label: <Link to="/isler">İşler</Link> },
           { key: '/ciktilar', icon: <FileText size={20} />, label: <Link to="/ciktilar">Çıktılar</Link> },
           { key: '/gecmis', icon: <ClockCounterClockwise size={20} />, label: <Link to="/gecmis">Geçmiş</Link> },
+          { key: '/gostergeler', icon: <ChartBar size={20} />, label: <Link to="/gostergeler">Göstergeler</Link> },
         ]
       : []),
+    { key: '/yontemler', icon: <BookOpenText size={20} />, label: <Link to="/yontemler">Karar Kitabı</Link> },
   ]
   const selected = loc.pathname.startsWith('/karar/') ? `/karar/${loc.pathname.split('/')[2]}` : loc.pathname
   const menu = <Menu mode="inline" items={items} selectedKeys={[selected]} onClick={() => setOpen(false)} style={{ border: 0, background: 'transparent', fontSize: 16 }} />
@@ -75,7 +78,9 @@ export function AppShell() {
           <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'baseline', gap: 8, overflow: 'hidden' }}>
             <Typography.Text strong style={{ fontSize: 16, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{plan?.name ?? 'Plan seçilmedi'}</Typography.Text>
             {plan ? <Tag style={{ fontSize: 14, margin: 0 }} className="tabular">Sürüm {plan.revision}</Tag> : null}
+            {plan?.example ? <Tag color="warning" style={{ fontSize: 14, margin: 0 }}>Örnek plan</Tag> : null}
           </div>
+          {plan ? <SaveStatus /> : null}
           <Space>
             <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={22} /> : <Moon size={22} />} onClick={() => setTheme(nextTheme)} />
           </Space>

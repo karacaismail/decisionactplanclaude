@@ -100,6 +100,22 @@ export interface Decision {
   decidedAt: string
   reopenWhen?: string
   revision: number
+  /** Dayandığı veri sonradan değiştiyse karar yeniden incelenmeyi bekler. */
+  stale?: boolean
+}
+
+/** Sınır ve eşik değişiklikleri kayda geçer. Tek kurucuda artış ikinci görüş ister. */
+export interface ChangeRecord {
+  id: string
+  step: string
+  key: string
+  label: string
+  before: unknown
+  after: unknown
+  at: string
+  needsReview: boolean
+  reviewer?: string
+  reviewedAt?: string
 }
 
 export type TaskStatus = 'taslak' | 'acik' | 'bitti' | 'iptal'
@@ -173,6 +189,9 @@ export interface PlanDoc {
   revisions: Revision[]
   outputs: OutputVersion[]
   takeover?: Record<string, unknown>
+  /** Örnek plan: ekranları tanıtır, raporda "Örnek" damgası taşır. */
+  example?: boolean
+  changes?: ChangeRecord[]
 }
 
 export function emptyPlan(id: string, name: string): PlanDoc {
@@ -194,5 +213,6 @@ export function emptyPlan(id: string, name: string): PlanDoc {
     tasks: [],
     revisions: [],
     outputs: [],
+    changes: [],
   }
 }

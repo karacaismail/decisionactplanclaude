@@ -7,6 +7,9 @@ interface PlanState {
   plans: Record<string, PlanDoc>
   currentId?: string
   theme: 'light' | 'dark' | 'system'
+  /** Kayıt durumu. Başlıkta gösterilir. */
+  saveState: 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
+  setSaveState: (s: PlanState['saveState']) => void
   createPlan: (name: string) => string
   deletePlan: (id: string) => void
   selectPlan: (id: string) => void
@@ -36,6 +39,8 @@ export const usePlanStore = create<PlanState>()(
       plans: {},
       currentId: undefined,
       theme: 'system',
+      saveState: 'kaydedildi',
+      setSaveState: (saveState) => set({ saveState }),
       createPlan: (name) => {
         const id = uid('plan')
         set((s) => ({ plans: { ...s.plans, [id]: emptyPlan(id, name) }, currentId: id }))
@@ -111,7 +116,7 @@ export const usePlanStore = create<PlanState>()(
           p.revisions.push({ id: uid('surum'), label, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
         }),
     }),
-    { name: 'decisionactplan-v1' },
+    { name: 'decisionactplan-v1', partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme }) as unknown as PlanState },
   ),
 )
 

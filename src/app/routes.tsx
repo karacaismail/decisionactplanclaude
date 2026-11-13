@@ -11,6 +11,8 @@ import { TasksScreen } from '@/screens/TasksScreen'
 import { OutputsScreen } from '@/screens/OutputsScreen'
 import { HistoryScreen } from '@/screens/HistoryScreen'
 import { TakeoverScreen } from '@/screens/TakeoverScreen'
+import { InsightsScreen } from '@/screens/InsightsScreen'
+import { MethodsScreen } from '@/screens/MethodsScreen'
 import { useCurrentPlan } from '@/store/planStore'
 
 function RequirePlan({ children }: { children: React.ReactNode }) {
@@ -34,6 +36,8 @@ export function AppRoutes() {
         <Route path="/isler" element={<RequirePlan><TasksScreen /></RequirePlan>} />
         <Route path="/ciktilar" element={<RequirePlan><OutputsScreen /></RequirePlan>} />
         <Route path="/gecmis" element={<RequirePlan><HistoryScreen /></RequirePlan>} />
+        <Route path="/gostergeler" element={<RequirePlan><InsightsScreen /></RequirePlan>} />
+        <Route path="/yontemler" element={<MethodsScreen />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
