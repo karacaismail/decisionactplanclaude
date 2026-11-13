@@ -1,0 +1,198 @@
+/**
+ * Veri sözleşmesi. Tek JSON belgesi tarayıcıda saklanır.
+ * Tutarlar kuruş cinsinden tam sayıdır. Tarihler ISO metnidir.
+ */
+
+export type Customer = 'tuketici' | 'isletme' | 'kamu' | 'pazarYeri'
+export type Offering = 'dijital' | 'fiziksel' | 'hizmet' | 'donanim'
+export type Regulation = 'dusuk' | 'yuksek'
+export type Team = 'tekKurucu' | 'ekip'
+export type Funding = 'kendi' | 'dis'
+export type Market = 'varOlan' | 'yeni'
+export type Start = 'sifirdan' | 'devralma'
+export type Entry = 'yeni' | 'devralma' | 'acil'
+
+export interface Profile {
+  customer?: Customer
+  marketplaceSeller?: 'tuketici' | 'isletme'
+  marketplaceBuyer?: 'tuketici' | 'isletme'
+  offering?: Offering
+  regulation?: Regulation
+  team?: Team
+  teamSize?: number
+  funding?: Funding
+  market?: Market
+  start?: Start
+  needsPremises?: boolean
+  paid?: boolean
+  smallReversible?: boolean
+  description?: string
+}
+
+export type Outcome = 'durdur' | 'beklet' | 'yenidenDene' | 'yonDegistir' | 'kosulluIlerle' | 'ilerle'
+
+export const OUTCOME_LABEL: Record<Outcome, string> = {
+  durdur: 'Durdur',
+  beklet: 'Beklet',
+  yenidenDene: 'Yeniden dene',
+  yonDegistir: 'Yön değiştir',
+  kosulluIlerle: 'Koşullu ilerle',
+  ilerle: 'İlerle',
+}
+
+export type EvidenceKind = 'gozlem' | 'tahmin' | 'varsayim'
+export type ValueStatus = 'olculdu' | 'bilinmiyor' | 'uygulanmiyor'
+
+export interface Evidence {
+  id: string
+  title: string
+  kind: EvidenceKind
+  /** Kanıt merdiveni basamağı 1 (ödeme) ile 7 (kurucu kanaati). */
+  ladder: number
+  date?: string
+  source?: string
+  group?: string
+  counterFinding?: string
+  attachmentName?: string
+  linkedSteps: string[]
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Measure {
+  name: string
+  unit: string
+  period?: string
+  baseline?: number | null
+  threshold?: number | null
+  basis?: string
+  isGuess?: boolean
+  status: ValueStatus
+  value?: number | null
+  naReason?: string
+  numerator?: number | null
+  denominator?: number | null
+}
+
+export interface ConditionalPermit {
+  scope: string
+  amountKurus: number
+  deadline: string
+  owner: string
+  closingEvidence: string
+  issuedAt: string
+  closedAt?: string
+}
+
+export interface Decision {
+  id: string
+  gate: number
+  scope: string
+  criteria: { id: string; label: string; met: boolean | null; note?: string }[]
+  suggested: Outcome
+  chosen: Outcome
+  reason: string
+  counterView?: string
+  secondOpinion?: string
+  conditional?: ConditionalPermit
+  retriesLeft: number
+  decidedBy: string
+  decidedAt: string
+  reopenWhen?: string
+  revision: number
+}
+
+export type TaskStatus = 'taslak' | 'acik' | 'bitti' | 'iptal'
+
+export interface Task {
+  id: string
+  action: string
+  sourceDecisionId?: string
+  sourceStep?: string
+  owner?: string
+  dueDate?: string
+  dependsOn?: string[]
+  acceptance?: string
+  status: TaskStatus
+  reopenEvent?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface Limits {
+  successSentence?: string
+  stopRules?: { rule: string }[]
+  monthlyBurnKurus?: number | null
+  cashKurus?: number | null
+  budgetKurus?: number | null
+  deadline?: string
+  retriesPerDecision?: number | null
+  hoursPerWeek?: number | null
+}
+
+export type StepValues = Record<string, unknown>
+
+export interface StepRecord {
+  values: StepValues
+  status: 'bos' | 'taslak' | 'tamam' | 'atlandi'
+  skipReason?: string
+  updatedAt: string
+}
+
+export interface Revision {
+  id: string
+  label: string
+  createdAt: string
+  snapshot: string
+}
+
+export interface OutputVersion {
+  id: string
+  kind: 'yonetici' | 'aksiyon'
+  revision: number
+  createdAt: string
+}
+
+export interface PlanDoc {
+  schemaVersion: '1.0'
+  id: string
+  name: string
+  currency: 'TRY'
+  entry?: Entry
+  shortPath: boolean
+  revision: number
+  createdAt: string
+  updatedAt: string
+  lastLocation?: string
+  profile: Profile
+  limits: Limits
+  steps: Record<string, StepRecord>
+  evidence: Evidence[]
+  decisions: Decision[]
+  tasks: Task[]
+  revisions: Revision[]
+  outputs: OutputVersion[]
+  takeover?: Record<string, unknown>
+}
+
+export function emptyPlan(id: string, name: string): PlanDoc {
+  const now = new Date().toISOString()
+  return {
+    schemaVersion: '1.0',
+    id,
+    name,
+    currency: 'TRY',
+    shortPath: false,
+    revision: 0,
+    createdAt: now,
+    updatedAt: now,
+    profile: {},
+    limits: {},
+    steps: {},
+    evidence: [],
+    decisions: [],
+    tasks: [],
+    revisions: [],
+    outputs: [],
+  }
+}

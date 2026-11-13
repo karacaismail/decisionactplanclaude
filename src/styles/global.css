@@ -1,0 +1,64 @@
+@import '@fontsource/outfit/400.css';
+@import '@fontsource/outfit/500.css';
+@import '@fontsource/outfit/600.css';
+
+:root {
+  /* Hareket sözleşmesi: tek eğri, pozitif ve iki yönlü süreler. */
+  --motion-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --motion-micro: 120ms;
+  --motion-small: 160ms;
+  --motion-panel: 220ms;
+  --motion-page: 320ms;
+  /* Dokunma hedefi görünür boyuttan ayrı yönetilir. */
+  --target-touch: 44px;
+  --focus-marker: var(--color-action-primary, #8f2812);
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; min-width: 320px; font-size: 16px; }
+:lang(tr) { -webkit-locale: 'tr'; }
+
+/* Çevreleyen odak halkası yasaktır. Gösterge öğenin sol dışında duran işarettir. */
+*:focus { outline: none; }
+*:focus-visible { outline: none; box-shadow: none; }
+html[data-focus-mode='keyboard'] :focus-visible { position: relative; }
+html[data-focus-mode='keyboard'] :focus-visible::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 2px;
+  bottom: 2px;
+  width: 3px;
+  background: var(--focus-marker);
+  pointer-events: none;
+}
+html[data-focus-mode='keyboard'] a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; }
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] :focus-visible { outline: 2px solid CanvasText; }
+  html[data-focus-mode='keyboard'] :focus-visible::before { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* Ant Design odak çerçevesini kapat; kendi göstergemiz çalışır. */
+.ant-btn:focus-visible, .ant-input:focus, .ant-input-focused, .ant-select-focused .ant-select-selector,
+.ant-input-number-focused, .ant-picker-focused, .ant-segmented-item-input:focus + .ant-segmented-item-label,
+.ant-radio-input:focus-visible + .ant-radio-inner, .ant-checkbox-input:focus-visible + .ant-checkbox-inner,
+.ant-switch:focus-visible, .ant-slider:focus-visible, .ant-rate:focus-visible, .ant-tabs-tab-btn:focus-visible,
+.ant-menu-item:focus-visible, .ant-collapse-header:focus-visible, .ant-card:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Tablo sayfayı taşırmaz, kendi alanında kayar. */
+.ant-table-wrapper { overflow-x: auto; }
+.ant-table-cell:first-child { word-break: normal; overflow-wrap: normal; }
+.tabular { font-variant-numeric: tabular-nums; }
+.print-only { display: none; }
+@media print {
+  .no-print { display: none !important; }
+  .print-only { display: block; }
+  body { background: #fff; }
+}
