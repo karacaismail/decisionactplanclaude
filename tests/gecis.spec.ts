@@ -45,9 +45,13 @@ async function fillConditional(page: Page) {
   await page.getByLabel('Planlanacak konu').fill('Yalnız sabah saatleri ve aylık kart.')
   await page.getByLabel('Açık soru').fill('Günde 40 sipariş tutar mı?')
   await page.getByLabel('Sorumlu', { exact: true }).fill('Kurucu')
-  await page.getByLabel('Son tarih').click()
-  await page.locator('.ant-picker-dropdown .ant-picker-cell-in-view:not(.ant-picker-cell-disabled)').first().click()
-  await expect(page.getByLabel('Son tarih')).not.toHaveValue('')
+  /* Takvim açılırken yapılan tıklama yük altında kaçabilir. Değer yazılana kadar yeniden denenir. */
+  await expect(async () => {
+    const cell = page.locator('.ant-picker-dropdown:visible .ant-picker-cell-in-view:not(.ant-picker-cell-disabled)').first()
+    if (!(await cell.isVisible())) await page.getByLabel('Son tarih').click()
+    await cell.click({ timeout: 2000 })
+    await expect(page.getByLabel('Son tarih')).not.toHaveValue('', { timeout: 1500 })
+  }).toPass({ timeout: 20_000 })
 }
 
 async function fillCommon(page: Page) {
