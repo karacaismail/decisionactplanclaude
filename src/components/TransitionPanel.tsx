@@ -231,9 +231,13 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
         <Input id={id('ikinci')} prefix={<Users size={16} />} value={secondReader} onChange={(e) => { touch(); onSecondReaderChange(e.target.value) }} aria-required={overriding} />
       </Form.Item>
       <Form.Item>
-        <Checkbox id={id('inceledim')} className="gecis-check" checked={reviewed} onChange={(e) => { touch(); setReviewed(e.target.checked) }}>
-          Dayanakları inceledim.
-        </Checkbox>
+        <div className="gecis-check-row">
+          <Checkbox id={id('inceledim')} className="gecis-check" checked={reviewed} onChange={(e) => { touch(); setReviewed(e.target.checked) }}>
+            Strateje devir raporunu okudum.
+          </Checkbox>
+          {/* Yeni sekmede açılır. Aynı sekmede açılırsa yarım doldurulan karar formu silinir. */}
+          <a href="#/devir" target="_blank" rel="noopener noreferrer">Raporu yeni sekmede aç</a>
+        </div>
       </Form.Item>
 
       {dirty && errors.length > 0 ? (

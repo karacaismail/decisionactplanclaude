@@ -176,7 +176,7 @@ export function validateTransition(plan: PlanDoc, evaluation: ReadinessEvaluatio
   const errors: string[] = []
   if (!draft.reason.trim()) errors.push('Gerekçeyi yazın.')
   if (!draft.decidedBy.trim()) errors.push('Karar sahibini yazın.')
-  if (!draft.reviewed) errors.push('"Dayanakları inceledim" kutusunu işaretleyin.')
+  if (!draft.reviewed) errors.push('"Strateje devir raporunu okudum" kutusunu işaretleyin.')
   if (evaluation.suggested === 'degil' && draft.outcome !== 'degil') errors.push('Zorunlu ölçüt eksikken yalnız "Henüz hazır değil" kaydedilir.')
   if (evaluation.suggested === 'kosullu' && draft.outcome === 'hazir') {
     if (!draft.secondOpinion?.trim()) errors.push('Öneriyi aşmak için ikinci görüş sahibini yazın.')

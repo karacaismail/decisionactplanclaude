@@ -430,7 +430,6 @@ export const KARAR5: StepDef[] = [
     sections: [
       {
         title: 'Seçim',
-        description: 'Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.',
         fields: [
           { key: 'chosenPath', type: 'text', label: 'Seçilen yol', required: true, maxLength: 160, help: 'Yol adaylarından birinin adını yazın ya da yeni bir yol yazın.' },
           { key: 'choiceReason', type: 'textarea', label: 'Seçimin gerekçesi', required: true, rows: 3, placeholder: 'Bu yolu hangi kanıta dayanarak seçtiniz? Öteki yollar neden elendi?' },

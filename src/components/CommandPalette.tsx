@@ -36,6 +36,7 @@ const MAX_RESULTS = 12
 const SCREENS: { title: string; to: string; subtitle: string }[] = [
   { title: 'Planlar', to: '/', subtitle: 'Bütün planlar' },
   { title: 'Plan özeti', to: '/ozet', subtitle: 'Sıradaki iş, yol ve kapılar' },
+  { title: 'Strateje devir raporu', to: '/devir', subtitle: 'Stratej bu raporla başlar' },
   { title: 'Geçiş kapısı', to: '/gecis', subtitle: 'Dayanak yeterli mi? Geçiş kararı' },
   { title: 'Strateji çalışması', to: '/strateji', subtitle: 'Adım 18, 19 ve 20' },
   { title: 'Temel taşları', to: '/temel', subtitle: 'Yirmi temel taşı ve kanıt gücü' },
@@ -44,7 +45,7 @@ const SCREENS: { title: string; to: string; subtitle: string }[] = [
   { title: 'Kanıtlar', to: '/kanitlar', subtitle: 'Gözlem, tahmin ve varsayımlar' },
   { title: 'İşler', to: '/isler', subtitle: 'Açık işler ve sorumlular' },
   { title: 'Göstergeler', to: '/gostergeler', subtitle: 'Grafikler ve ölçüler' },
-  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Temel belgesi, yönetici raporu ve aksiyon planı' },
+  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Devir raporu özeti, yönetici raporu ve aksiyon planı' },
   { title: 'Geçmiş', to: '/gecmis', subtitle: 'Karar, geçiş ve değişiklik kaydı' },
   { title: 'Karar Kitabı', to: '/yontemler', subtitle: '128 yöntem' },
 ]

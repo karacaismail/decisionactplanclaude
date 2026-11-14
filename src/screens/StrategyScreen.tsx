@@ -10,18 +10,18 @@ import { TRANSITION_LABEL, type PlanDoc, type TransitionOutcome } from '@/data/t
 import { decisionLocked, lockReason } from '@/engine/gate'
 import { effectiveTransition, lastTransition } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
-import { buildFoundationDoc } from '@/reports/foundation'
+import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
-import { FoundationSummary } from '@/components/FoundationSummary'
 import { PageHeader } from '@/components/PageHeader'
+import { PathCompare } from '@/components/PathCompare'
 import '@/styles/screens-karar.css'
 import '@/styles/screens-strateji.css'
 
 type StepState = 'tamam' | 'taslak' | 'atlandi' | 'bos'
 const STATE_LABEL: Record<StepState, string> = { tamam: 'Tamam', taslak: 'Taslak', atlandi: 'Atlandı', bos: 'Boş' }
 const OUTCOME_COLOR: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
-/** "Adım 18'i aç", "Adım 19'u aç", "Adım 20'yi aç" gibi doğru ek. */
-const OPEN_SUFFIX: Record<string, string> = { '18': "'i", '19': "'u", '20': "'yi" }
+/** "Adım 19'u aç", "Adım 20'yi aç" gibi doğru ek. */
+const OPEN_SUFFIX: Record<string, string> = { '19': "'u", '20': "'yi" }
 
 function stateOf(plan: PlanDoc, id: string): StepState {
   const s = plan.steps[id]?.status
@@ -29,16 +29,19 @@ function stateOf(plan: PlanDoc, id: string): StepState {
 }
 
 /**
- * Strateji çalışması. Adım 18, 19 ve 20 bu gruptadır. Grup, geçiş kapısı kararı olmadan kilitlidir.
- * Telefonda tek sütun: geçiş kararı, adımlar, dayanak özeti. Masaüstünde iki sütun: solda adımlar ve dayanak, sağda geçiş kararı.
+ * Strateji çalışması. Adım 19 ve 20 bu gruptadır. Adım listesi `stepsOf` ile veriden gelir.
+ * Grup, geçiş kapısı kararı olmadan kilitlidir.
+ * Ekran stratej'in okuma sırasıyla dizilir: önündeki karar, ilk günü, yol adayları, adımlar.
+ * Telefonda tek sütundur ve geçiş kararı en üsttedir. Masaüstünde geçiş kararı sağ sütundadır.
  * Ekranda en çok bir dolu düğme vardır: sıradaki adımı açar. Kilitliyken dolu düğme yoktur.
+ * Yazılım yol seçmez. Yol adayları tablosu hiçbir yolu öne çıkarmaz.
  */
 export function StrategyScreen() {
   const plan = useCurrentPlan()
   const nav = useNavigate()
   const bp = Grid.useBreakpoint()
-  const doc = useMemo(() => (plan ? buildFoundationDoc(plan) : null), [plan])
-  if (!plan || !doc) return null
+  const report = useMemo(() => (plan ? buildHandoffReport(plan) : null), [plan])
+  if (!plan || !report) return null
 
   const locked = decisionLocked(plan, STRATEGY_N)
   const reason = lockReason(plan, STRATEGY_N)
@@ -123,11 +126,29 @@ export function StrategyScreen() {
                 className="strateji-result"
                 icon={<CheckCircle size={56} weight="fill" aria-hidden />}
                 title="Strateji çalışması tamam"
-                subTitle="Üç adım tamamlandı. Şimdi uygulama aşamasına geçebilirsiniz."
+                subTitle="Adımların hepsi tamamlandı. Şimdi uygulama aşamasına geçebilirsiniz."
                 extra={<Button onClick={() => nav('/karar/6')}>Uygulama aşamasına geç</Button>}
               />
             </Card>
           ) : null}
+
+          <Card title="Stratej'in önündeki karar" extra={<Link to="/devir">Devir raporunu aç</Link>}>
+            <p className="strateji-question">{report.question}</p>
+            {report.scope ? <p className="strateji-scope">Kapsam sınırı: ekip yalnız şu konuyu planlar. {report.scope}</p> : null}
+            <p className="helper">Kararı stratej verir. Dayanaklar, sınırlar ve eksik bilgi devir raporundadır.</p>
+          </Card>
+
+          <Card title="Stratej'in ilk günü" extra={<span>{report.firstDay.length} adım</span>}>
+            <ol className="strateji-firstday">
+              {report.firstDay.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ol>
+          </Card>
+
+          <Card title="Yol adayları" extra={<span>{report.paths.length} yol</span>}>
+            <PathCompare paths={report.paths} />
+          </Card>
 
           <Card title="Adımlar" extra={<span className="karar-step-count">{done} / {steps.length} tamam</span>}>
             <Steps
@@ -194,10 +215,6 @@ export function StrategyScreen() {
                 { title: 'Eylem', key: 'ac', width: 72, render: (_, s) => <Link to={stepPath(s.id)}>{locked ? 'İncele' : 'Aç'}</Link> },
               ]}
             />
-          </Card>
-
-          <Card title="Dayanak özeti" extra={<Link to="/ciktilar?belge=temel">Temel belgesini aç</Link>}>
-            <FoundationSummary doc={doc} compact columns={2} />
           </Card>
         </div>
       </div>

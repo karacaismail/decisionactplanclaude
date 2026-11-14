@@ -8,6 +8,7 @@ import { STEPS, stepPath } from '@/data/registry'
 import { TRANSITION_LABEL, type PlanDoc, type TransitionRecord } from '@/data/types'
 import { LEVELS, SUPPORTING_MIN, effectiveTransition, evaluateReadiness, lastTransition, transitionPassed, type ReadinessCriterion } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
+import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { TransitionPanel, TransitionTag } from '@/components/TransitionPanel'
@@ -32,8 +33,9 @@ const dotClass = (t: TransitionRecord) => (t.stale || expired(t) ? 'is-hold' : t
 const evidenceCount = (plan: PlanDoc, step: string) => plan.evidence.filter((e) => e.linkedSteps.includes(step)).length
 
 /**
- * Geçiş kapısı. Yazılım 9 zorunlu ve 6 destekleyici ölçüte bakar, öneri üretir.
- * Karar sahibi dayanakları inceler ve kararı sağdaki panelden kaydeder.
+ * Geçiş kapısı. Yazılım zorunlu ve destekleyici ölçütlere bakar, öneri üretir. Ölçüt sayıları motordan gelir.
+ * Karar sahibi strateje devir raporunu okur ve kararı sağdaki panelden kaydeder.
+ * Üstteki "Devir raporu" kartı raporun kaç başlığının dolu olduğunu gösterir. Sayı rapor ekranıyla aynıdır.
  */
 export function TransitionScreen() {
   const plan = useCurrentPlan()
@@ -41,13 +43,16 @@ export function TransitionScreen() {
   const narrow = bp.md === false
   const [secondReader, setSecondReader] = useState('')
   const evaluation = useMemo(() => (plan ? evaluateReadiness(plan, { secondReader }) : null), [plan, secondReader])
-  if (!plan || !evaluation) return null
+  const report = useMemo(() => (plan ? buildHandoffReport(plan) : null), [plan])
+  if (!plan || !evaluation || !report) return null
 
   const mandatoryTotal = evaluation.mandatory.length
   const supportingTotal = evaluation.supporting.length
   const mandatoryMissing = mandatoryTotal - evaluation.mandatoryMet
   const percent = Math.round((evaluation.mandatoryMet / mandatoryTotal) * 100)
   const level = LEVELS[evaluation.level] ?? LEVELS[0]
+  const coverageTotal = report.coverage.length
+  const coveragePercent = coverageTotal ? Math.round((report.coverageFilled / coverageTotal) * 100) : 0
   const last = lastTransition(plan)
   const history = [...(plan.transitions ?? [])].reverse()
 
@@ -161,6 +166,13 @@ export function TransitionScreen() {
           <Progress percent={evaluation.level * 20} showInfo={false} size="small" aria-label={`Doğrulama seviyesi 5 üzerinden ${evaluation.level}`} />
           <span className="stat-note">{level.title}</span>
         </Card>
+        <Card className="k-card stat-card" variant="borderless">
+          <Statistic title="Devir raporu" value={report.coverageFilled} suffix={`/ ${coverageTotal}`} />
+          <Progress percent={coveragePercent} showInfo={false} size="small" aria-label={`Devir raporunun ${coverageTotal} başlığından ${report.coverageFilled} tanesi dolu`} />
+          <span className="stat-note">
+            <span className="tabular">{report.coverageFilled} / {coverageTotal} başlık dolu.</span> <Link to="/devir">Raporu aç</Link>
+          </span>
+        </Card>
         <Card className="k-card ring-card" variant="borderless">
           <div className="ring-copy">
             <strong>Zorunlu ölçüt yüzdesi</strong>
@@ -210,7 +222,11 @@ export function TransitionScreen() {
         </div>
 
         <div className="gecis-aside">
-          <Card className="k-card" variant="borderless" title="Kararı kaydedin" extra={<span>Dayanakları inceleyin, sonra sonucu seçin.</span>}>
+          <p className="gecis-question">
+            <span className="gecis-question-label">Stratej'in önündeki karar:</span>
+            <span className="gecis-question-text">{report.question}</span>
+          </p>
+          <Card className="k-card" variant="borderless" title="Kararı kaydedin" extra={<span>Raporu okuyun, sonra sonucu seçin.</span>}>
             <TransitionPanel plan={plan} evaluation={evaluation} secondReader={secondReader} onSecondReaderChange={setSecondReader} />
           </Card>
         </div>

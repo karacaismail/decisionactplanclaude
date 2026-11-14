@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 /**
  * Geçiş kapısı (/gecis) akışı. Yazılım öneri üretir, karar sahibi kaydeder.
  * Kabul ölçütleri docs/uygulama-plani-on-yuz.md Adım 3 ve 6.5'tedir.
+ * Rapora bağlanan kısım docs/strateje-devir-uygulama-plani.md Adım 5'tedir.
  */
 
 async function noHorizontalOverflow(page: Page, label = '') {
@@ -33,6 +34,9 @@ async function openGate(page: Page) {
   await expect(page.getByText('Yazılımın önerisi')).toBeVisible()
 }
 
+/** Onay kutusunun etiketi. Karar sahibi strateje devir raporunu okuduğunu bildirir. */
+const REPORT_READ = 'Strateje devir raporunu okudum.'
+
 const suggestion = async (page: Page) => (await page.locator('.suggestion-line .ant-tag').innerText()).trim()
 const saveButton = (page: Page) => page.getByRole('button', { name: 'Geçiş kararını kaydet' })
 
@@ -49,7 +53,7 @@ async function fillConditional(page: Page) {
 async function fillCommon(page: Page) {
   await page.getByLabel('Gerekçe').fill('Dokuz zorunlu ölçüt kanıtla karşılandı. Dayanakları tek tek okudum.')
   await page.getByLabel('Karar sahibi').fill('Kurucu')
-  await page.getByLabel('Dayanakları inceledim.').check()
+  await page.getByLabel(REPORT_READ).check()
 }
 
 test('örnek planda öneri görünür, karar kaydedilir ve strateji çalışması açılır', async ({ page }) => {
@@ -70,7 +74,7 @@ test('örnek planda öneri görünür, karar kaydedilir ve strateji çalışmas�
   await expect(save).toBeDisabled()
   await page.getByLabel('Karar sahibi').fill('Kurucu')
   await expect(save).toBeDisabled()
-  await page.getByLabel('Dayanakları inceledim.').check()
+  await page.getByLabel(REPORT_READ).check()
   await expect(save).toBeEnabled()
   await save.click()
 
@@ -128,6 +132,81 @@ test('"Henüz hazır değil" kaydı strateji çalışmasını açmaz ve eksik ö
   await expect(page.getByRole('button', { name: 'Strateji çalışmasını aç' })).toHaveCount(0)
   await page.getByRole('button', { name: 'Eksik ölçütlere dön' }).click()
   await expect(page).toHaveURL(/#\/karar\/\d\/adim\/\d\d/)
+})
+
+test('kapı devir raporuna bağlıdır: doluluk kartı, karar sorusu ve onay kutusu', async ({ page }) => {
+  await openDemo(page)
+  await openGate(page)
+
+  // Dördüncü kart raporun doluluğunu gösterir. Sayı rapor motorundan gelir.
+  const card = page.locator('.gecis-stats .stat-card').filter({ hasText: 'Devir raporu' })
+  await expect(card).toBeVisible()
+  await expect(card).toContainText(/\d+ \/ 14 başlık dolu\./)
+  await expect(card.getByRole('progressbar')).toHaveCount(1)
+  await expect(card.getByRole('link', { name: 'Raporu aç' })).toHaveAttribute('href', '#/devir')
+  const filled = Number((await card.locator('.ant-statistic-content-value').innerText()).trim())
+  await expect(card.locator('.stat-note')).toContainText(`${filled} / 14 başlık dolu.`)
+
+  // Ölçüt sayıları motordan gelir. Destekleyici ölçüt yedi tanedir, zorunlu ölçüt dokuz tanedir.
+  await expect(page.locator('.gecis-stats .stat-card').filter({ hasText: 'Destekleyici ölçüt' }).locator('.ant-statistic-content')).toContainText('/ 7')
+  await expect(page.locator('.gecis-stats .stat-card').filter({ hasText: 'Zorunlu ölçüt' }).locator('.ant-statistic-content')).toContainText('/ 9')
+  await expect(page.getByRole('table', { name: 'Destekleyici ölçütler' }).locator('tbody > tr.ant-table-row')).toHaveCount(7)
+  await expect(page.locator('.ant-table-row').filter({ hasText: 'Kritik belirsizlikler ve senaryolar yazıldı.' })).toHaveCount(1)
+
+  // Karar panelinin üstünde stratej'in önündeki karar sorusu yazar.
+  const question = page.locator('.gecis-aside .gecis-question')
+  await expect(question).toContainText("Stratej'in önündeki karar:")
+  await expect(question.locator('.gecis-question-text')).toHaveText(/\S/)
+  await expect(question.locator('.gecis-question-text')).not.toHaveText('Yol adayı henüz yazılmadı.')
+  const before = await page.evaluate(() => {
+    const q = document.querySelector('.gecis-question')
+    const form = document.querySelector('.gecis-form')
+    return q && form ? Boolean(q.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING) : null
+  })
+  expect(before, 'soru karar panelinden önce gelir').toBe(true)
+
+  // Onay kutusu raporu anar. Eski etiket yoktur. Yanındaki bağlantı raporu açar.
+  await expect(page.getByLabel(REPORT_READ)).not.toBeChecked()
+  await expect(page.getByLabel('Dayanakları inceledim.')).toHaveCount(0)
+  const row = page.locator('.gecis-check-row')
+  const reportLink = row.getByRole('link', { name: 'Raporu yeni sekmede aç' })
+  await expect(reportLink).toHaveAttribute('href', '#/devir')
+  // Yeni sekmede açılır. Yarım doldurulan karar formu silinmez.
+  await expect(reportLink).toHaveAttribute('target', '_blank')
+  // Bağlantı kutunun etiketi içinde değildir. Bağlantıya basmak kutuyu işaretlemez.
+  await expect(row.locator('label a')).toHaveCount(0)
+
+  // Kutu işaretlenmeden kayıt olmaz.
+  if ((await suggestion(page)) === 'Koşullu hazır') await fillConditional(page)
+  await page.getByLabel('Gerekçe').fill('Dokuz zorunlu ölçüt kanıtla karşılandı. Devir raporunu baştan sona okudum.')
+  await page.getByLabel('Karar sahibi').fill('Kurucu')
+  await expect(saveButton(page)).toBeDisabled()
+  await page.getByLabel(REPORT_READ).check()
+  await expect(saveButton(page)).toBeEnabled()
+  await noHorizontalOverflow(page, 'devir bağlantıları')
+
+  // Bağlantı yeni sekme açar. Bu sekmedeki form yerinde kalır.
+  const [popup] = await Promise.all([page.waitForEvent('popup'), reportLink.click()])
+  await expect(popup).toHaveURL(/#\/devir/)
+  await popup.close()
+  await expect(page.getByLabel('Karar sahibi')).toHaveValue('Kurucu')
+})
+
+test('kaydedilen kararda ölçüt toplamları motordaki sayılardır', async ({ page }) => {
+  await openDemo(page)
+  await openGate(page)
+  await page.getByRole('radio', { name: /Henüz hazır değil/ }).check()
+  await fillCommon(page)
+  await saveButton(page).click()
+  await expect(page.getByRole('button', { name: 'Eksik ölçütlere dön' })).toBeVisible()
+  const last = await page.evaluate(() => {
+    const raw = JSON.parse(localStorage.getItem('decisionactplan-v1') ?? '{}')
+    const plan = raw.state.plans[raw.state.currentId]
+    return plan.transitions[plan.transitions.length - 1]
+  })
+  expect(last.mandatoryTotal).toBe(9)
+  expect(last.supportingTotal).toBe(7)
+  await expect(page.locator('.gecis-timeline')).toContainText(`Destekleyici ölçüt ${last.supportingMet} / 7.`)
 })
 
 test('ikinci okur yazılınca destekleyici ölçüt karşılanır', async ({ page }) => {

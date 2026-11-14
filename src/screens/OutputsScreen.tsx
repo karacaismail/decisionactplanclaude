@@ -1,21 +1,24 @@
 import { useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
-import { useSearchParams } from 'react-router'
+import { Link, useSearchParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { buildActionPlan, buildExecutiveReport, factOf, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
-import { buildFoundationDoc, foundationToMarkdown, type FoundationDoc } from '@/reports/foundation'
+import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
+import { buildHandoffReport, handoffToMarkdown, type HandoffReport } from '@/reports/handoff'
 import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
-import { FoundationSummary } from '@/components/FoundationSummary'
 import '@/styles/screens-rapor.css'
 import '@/styles/screens-strateji.css'
+import '@/styles/screens-devir.css'
 import '@/styles/print.css'
 
+/** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje devir raporunun özetidir. */
 type Kind = 'temel' | 'yonetici' | 'aksiyon'
-const KIND_LABEL: Record<Kind, string> = { temel: 'Temel belgesi', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
+const KIND_LABEL: Record<Kind, string> = { temel: 'Strateje devir raporu', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
+/** Adresteki `?belge=` değeri. Eski "temel" ve yeni "devir" aynı sekmeyi açar. */
+const HANDOFF_PARAMS = ['temel', 'devir']
 /** Güncel taslağın seçici değeri. Sürüm kimlikleri "surum-" ile başlar, çakışmaz. */
 const CURRENT = 'guncel'
 
@@ -77,46 +80,42 @@ function SectionBody({ s }: { s: ReportSection }) {
 }
 
 /**
- * Temel belgesinin gövdesi: altı soru, kaynak satırları, altta geçiş kararı ve açık kalanlar.
- * Bölümler telefonda da açık durur. Belge tek sayfaya yakın basılır (print.css, `.report-foundation`).
+ * Strateje devir raporunun kısa özeti: karar sorusu, kapsam ve raporun bağlantısı.
+ * Raporun tamamı /devir ekranındadır. Markdown indirme raporun tamamını verir.
  */
-function FoundationBody({ doc, state }: { doc: FoundationDoc; state: string }) {
-  /* "Geçiş kararı" bölümü kararın yokluğunu zaten söyler. Aynı cümle "Açık kalanlar" altında yinelenmez. */
-  const openItems = doc.transition ? doc.openItems : doc.openItems.filter((l) => l !== 'Geçiş kararı henüz kaydedilmedi.')
+function HandoffSummary({ report, state, current }: { report: HandoffReport; state: string; current: boolean }) {
+  const options = report.paths.filter((p) => !p.baseline).length
   return (
-    <article className="report report-foundation">
+    <article className="report devir-summary">
       <header className="report-head">
-        {doc.stamp ? <Callout tone="uyari" title="Örnek">{doc.stamp}</Callout> : null}
-        <h2 className="report-title">{doc.title}</h2>
-        <FactList facts={doc.meta.map(factOf)} />
+        {report.stamp ? <Callout tone="uyari" title="Örnek">{report.stamp}</Callout> : null}
+        <h2 className="report-title">{report.title}</h2>
         <p className="helper report-state">{state}</p>
       </header>
-      <FoundationSummary doc={doc} />
-      <section className="report-section foundation-closing" aria-labelledby="temel-gecis-karari">
-        <h3 id="temel-gecis-karari" className="foundation-heading">Geçiş kararı</h3>
-        {doc.transition ? (
-          <ul className="foundation-lines">
-            {doc.transition.lines.map((l, i) => <li key={i}>{l}</li>)}
-          </ul>
-        ) : (
-          <p className="foundation-source">Geçiş kararı henüz kaydedilmedi. Karar, geçiş kapısında kaydedilir.</p>
-        )}
+      <section className="report-section" aria-labelledby="devir-ozet-soru">
+        <h3 id="devir-ozet-soru">Stratej bugün hangi kararı verecek?</h3>
+        <p className="devir-question">{report.question}</p>
       </section>
-      {openItems.length ? (
-        <section className="report-section" aria-labelledby="temel-acik-kalanlar">
-          <h3 id="temel-acik-kalanlar" className="foundation-heading">Açık kalanlar</h3>
-          <ul className="foundation-lines">
-            {openItems.map((l, i) => <li key={i}>{l}</li>)}
-          </ul>
-        </section>
-      ) : null}
+      <FactList
+        columns={2}
+        facts={[
+          { title: 'Kapsam', value: `${report.coverageFilled} / ${report.coverage.length} başlık dolu` },
+          { title: 'Yol adayı', value: options > 0 ? `${options} yol ve bugünkü durum` : 'Henüz yazılmadı' },
+          { title: 'Açık karar', value: report.openDecisions.length > 0 ? `${report.openDecisions.length} karar` : 'Henüz yazılmadı' },
+          { title: 'Açık varsayım', value: report.assumptions.length > 0 ? `${report.assumptions.length} varsayım` : 'Yok' },
+        ]}
+      />
+      <p className="report-line no-print">
+        Rapor seçim yapmaz. Dayanakları, sınırları ve yolları gösterir. <Link to="/devir">Raporu aç</Link>
+      </p>
+      {current ? null : <p className="helper no-print">Rapor ekranı güncel taslağı gösterir. Bu özet seçili sürümden üretildi.</p>}
     </article>
   )
 }
 
 /**
- * Çıktılar. Üç belge aynı veriden üretilir: temel belgesi, yönetici raporu ve girişimci aksiyon planı.
- * Varsayılan sekme yönetici raporudur. Adres `?belge=temel` taşırsa temel belgesi açılır. Masaüstünde iki sütun:
+ * Çıktılar. Üç belge aynı veriden üretilir: strateje devir raporu, yönetici raporu ve girişimci aksiyon planı.
+ * Varsayılan sekme yönetici raporudur. Adres `?belge=devir` ya da eski `?belge=temel` taşırsa devir raporunun özeti açılır. Masaüstünde iki sütun:
  * solda belge kartı (sekmeler, içindekiler, belge), sağda "Sürümler" ve "Dışa aktar" kartları.
  * Telefonda tek sütun; rapor bölümleri akordeondur ve ilk bölüm açık gelir. Yazdırmada yalnız belge kalır.
  */
@@ -127,7 +126,7 @@ export function OutputsScreen() {
   const bp = Grid.useBreakpoint()
   const wide = Boolean(bp.md)
   const [params] = useSearchParams()
-  const [kind, setKind] = useState<Kind>(params.get('belge') === 'temel' ? 'temel' : 'yonetici')
+  const [kind, setKind] = useState<Kind>(HANDOFF_PARAMS.includes(params.get('belge') ?? '') ? 'temel' : 'yonetici')
   const [versionId, setVersionId] = useState<string>(CURRENT)
   const [pinLabel, setPinLabel] = useState('')
 
@@ -144,14 +143,14 @@ export function OutputsScreen() {
     const base = kind === 'yonetici' ? buildExecutiveReport(viewed) : buildActionPlan(viewed)
     return revision ? { ...base, meta: [...base.meta, `Sürüm kaydı: ${formatDate(revision.createdAt)}`] } : base
   }, [viewed, kind, revision])
-  const foundation: FoundationDoc | null = useMemo(() => {
+  const handoff: HandoffReport | null = useMemo(() => {
     if (!viewed || kind !== 'temel') return null
-    const base = buildFoundationDoc(viewed)
+    const base = buildHandoffReport(viewed)
     return revision ? { ...base, meta: [...base.meta, `Sürüm kaydı: ${formatDate(revision.createdAt)}`] } : base
   }, [viewed, kind, revision])
 
   if (!plan) return null
-  const hasDoc = kind === 'temel' ? Boolean(foundation) : Boolean(report)
+  const hasDoc = kind === 'temel' ? Boolean(handoff) : Boolean(report)
 
   const versionOptions = [
     { value: CURRENT, label: 'Güncel taslak' },
@@ -160,7 +159,7 @@ export function OutputsScreen() {
   const versionSlug = revision ? `surum-${versionIndex + 1}` : `taslak-surum-${plan.revision}`
   const slug = slugify(plan.name)
   const isCurrent = !revision
-  /* Yayım kaydı yalnız iki rapor içindir. Temel belgesi yayım listesine yazılmaz. */
+  /* Yayım kaydı yalnız iki rapor içindir. Strateje devir raporu yayım listesine yazılmaz. */
   const publish = (k: 'yonetici' | 'aksiyon') => update((p) => p.outputs.push({ id: uid('cikti'), kind: k, revision: viewed?.revision ?? p.revision, createdAt: new Date().toISOString() }))
   const pin = () => {
     const label = pinLabel.trim() || `${KIND_LABEL[kind]} çıktısı`
@@ -172,7 +171,7 @@ export function OutputsScreen() {
   }
   const downloadMarkdown = () => {
     if (kind === 'temel') {
-      if (foundation) download(`${slug}-temel-belgesi-${versionSlug}.md`, foundationToMarkdown(foundation), 'text/markdown')
+      if (handoff) download(`${slug}-strateje-devir-raporu-${versionSlug}.md`, handoffToMarkdown(handoff), 'text/markdown')
       return
     }
     if (!report) return
@@ -234,8 +233,8 @@ export function OutputsScreen() {
           onTabChange={(k) => setKind(k as Kind)}
           tabProps={{ rootClassName: 'report-tabs report-tabs-wrap', size: 'middle' }}
         >
-          {kind === 'temel' && foundation ? (
-            <FoundationBody doc={foundation} state={stateText} />
+          {kind === 'temel' && handoff ? (
+            <HandoffSummary report={handoff} state={stateText} current={isCurrent} />
           ) : !report || !viewed ? (
             <Callout tone="uyari" danger title="Bu sürüm okunamadı">Kayıtlı sürüm verisi bozuk. Güncel taslağı seçin ya da başka bir sürüm deneyin.</Callout>
           ) : (

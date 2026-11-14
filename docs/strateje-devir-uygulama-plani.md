@@ -4,6 +4,39 @@ Bu belgeyi Claude 14 Kasım 2026 Cumartesi günü hazırladı. Plan, Codex'in yo
 
 **Stratej kimdir?** Stratej, stratejiyi geliştiren kişinin unvanıdır. Tanım Erol Mütercimler'e aittir.
 
+## Durum
+
+Bu bölüm 14 Kasım 2026 Cumartesi günü güncellendi. Sekiz adımın hepsi uygulandı.
+
+| Adım | Konu | Durum |
+|---|---|---|
+| 1 | Yol adayları kapının önüne alındı | Bitti |
+| 2 | Eksik üç alan eklendi | Bitti |
+| 3 | Rapor motoru | Bitti |
+| 4 | Rapor ekranı | Bitti |
+| 5 | Geçiş kapısı rapora bağlandı | Bitti |
+| 6 | Strateji çalışması düzeltildi | Bitti |
+| 7 | Örnek plan güncellendi | Bitti |
+| 8 | Test ve yayın | Bitti. 130 birim testi ve 285 tarayıcı testi geçiyor. |
+
+### Plandan sapmalar
+
+1. **Yazdırılan rapor iki sayfaya sığmıyor.** Örnek plan altı sayfa basılıyor. Nedeni 40 dayanak cümlesidir. Cümleler gizlenmedi. Ekranda her grubun ilk üç cümlesi açık gelir, kalanı düğmeyle açılır.
+2. **Senaryo ölçütü yalnız destekleyicidir.** Planda ağır yatırımda zorunlu olacaktı. Zorunlu ölçüt sayısı dokuzda bırakıldı.
+3. **"Seçilen yol" serbest metin alanıdır.** Planda adaylar arasından seçim listesi olacaktı. Stratej yeni bir yol da yazabilsin diye alan serbest bırakıldı.
+4. **Geçiş kapısındaki rapor bağlantısı yeni sekmede açılır.** Aynı sekmede açılınca yarım doldurulan karar formu siliniyordu.
+
+### Özel bir belgeden alınan dört yöntem
+
+Kullanıcının gizli bir stratejik eylem planı incelendi. İçeriği bu depoya alınmadı. Yalnız dört yöntemi alındı.
+
+| Yöntem | Raporda karşılığı |
+|---|---|
+| Her sayı dört etiketten birini taşır: kaynaklı, hesap, karar, varsayım. | Raporun her cümlesinde tür ve güven etiketi var. |
+| Her kararın dönüş bedeli ve geri alınabilirliği yazılır. | Açık karar defterinde ve yol adaylarında iki alan var. |
+| Tek sayı değişince sonucun nasıl değiştiği gösterilir. | Para hesabı kötü, orta ve iyi durumda verilir. |
+| Kapanmış kararlar ayrı listelenir. | Raporda "Verilmiş kararlar" bölümü var. |
+
 ## 1. Codex haklı mı?
 
 Büyük ölçüde haklı. Sekiz tespitinin altısına katılıyorum. İkisine ek getiriyorum.

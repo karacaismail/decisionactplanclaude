@@ -85,7 +85,7 @@ test('35 adımın hepsi hatasız açılır', async ({ page }) => {
   await createPlan(page)
   const ids = Array.from({ length: 35 }, (_, i) => String(i).padStart(2, '0'))
   for (const id of ids) {
-    const n = id === '00' ? 1 : Number(id) <= 4 ? 1 : Number(id) <= 8 ? 2 : Number(id) <= 12 ? 3 : Number(id) <= 15 ? 4 : Number(id) <= 20 ? 5 : Number(id) <= 25 ? 6 : Number(id) <= 32 ? 7 : 8
+    const n = id === '00' ? 1 : Number(id) <= 4 ? 1 : Number(id) <= 8 ? 2 : Number(id) <= 12 ? 3 : Number(id) <= 15 ? 4 : Number(id) <= 18 ? 5 : Number(id) <= 20 ? 9 : Number(id) <= 25 ? 6 : Number(id) <= 32 ? 7 : 8
     await page.goto(`/#/karar/${n}/adim/${id}`)
     await expect(page.getByRole('heading', { name: new RegExp(`Adım ${id}\\.`) })).toBeVisible()
     await noHorizontalOverflow(page, `adım ${id}`)

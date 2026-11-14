@@ -1,12 +1,15 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Strateji çalışması, adım kilidi, ön doldurma önerileri ve temel belgesi.
- * Kabul ölçütleri docs/uygulama-plani-on-yuz.md dosyasının 5. adımındadır.
+ * Strateji çalışması ekranı (/strateji), Adım 19 kilidi, yol adayları tablosu ve öneriler.
+ * Kabul ölçütleri docs/strateje-devir-uygulama-plani.md dosyasının 6. adımındadır.
+ * Strateje devir raporu ekranı (/devir) bu dosyada sınanmaz.
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
-const QUESTIONS = ['Kim, hangi sorunu yaşıyor?', 'Müşteri hangi somut adımı attı?', 'Hangi yollar açık?', 'Hesap hangi koşulda tutuyor?', 'Neyi hâlâ bilmiyoruz?', 'Kararı kim verecek?']
+const MEASURES = ['Kime ve nereden?', 'Neyle kazanılır?', 'Neyden vazgeçilir?', 'Destekleyen kanıt', 'Bedeli ve süresi', 'Geri alınabilir mi?', 'Puan']
+const NOTE_18 = 'Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.'
+const HELPER_19 = 'Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.'
 
 async function noHorizontalOverflow(page: Page, label = '') {
   const r = await page.evaluate(() => {
@@ -68,11 +71,34 @@ async function recordTransition(page: Page) {
     const raw = JSON.parse(localStorage.getItem(key) ?? '{}')
     const plan = raw.state.plans[raw.state.currentId]
     plan.transitions = [
-      { id: 'gecis-deneme', outcome: 'hazir', suggested: 'hazir', reason: 'Dayanaklar incelendi. Zorunlu ölçütler tamam.', decidedBy: 'Kurucu', decidedAt: new Date().toISOString(), reviewed: true, mandatoryMet: 9, mandatoryTotal: 9, supportingMet: 4, supportingTotal: 6, level: 5, revision: plan.revision },
+      { id: 'gecis-deneme', outcome: 'hazir', suggested: 'hazir', reason: 'Dayanaklar incelendi. Zorunlu ölçütler tamam.', decidedBy: 'Kurucu', decidedAt: new Date().toISOString(), reviewed: true, mandatoryMet: 9, mandatoryTotal: 9, supportingMet: 5, supportingTotal: 7, level: 5, revision: plan.revision },
     ]
     localStorage.setItem(key, JSON.stringify(raw))
   }, STORAGE_KEY)
   await page.reload()
+}
+
+/** Kayıtlı plandaki bir adım alanı. Alan yoksa null döner. */
+const storedValue = (page: Page, step: string, field: string) =>
+  page.evaluate(([key, st, f]) => { const raw = JSON.parse(localStorage.getItem(key) ?? '{}'); return raw.state.plans[raw.state.currentId].steps[st]?.values?.[f] ?? null }, [STORAGE_KEY, step, field])
+
+/** Yol adayları tablosu: kayan kap, yol sütunları, yedi ölçü. Hiçbir yol önerilmez. */
+async function expectPathCompare(page: Page, label: string) {
+  const region = page.getByRole('region', { name: 'Yol adayları karşılaştırması' })
+  await expect(region).toBeVisible()
+  for (const name of ['Bugünkü durumu sürdürmek', 'Durakta kahve arabası']) await expect(region.getByRole('columnheader', { name })).toHaveCount(1)
+  // Ölçü adı geniş ekranda satır başlığıdır, dar ekranda her hücrenin üstünde yazar.
+  for (const m of MEASURES) await expect(region.getByText(m, { exact: true }).first()).toBeAttached()
+  await expect(region.locator('.ant-table-tbody > tr')).toHaveCount(MEASURES.length)
+  await expect(page.locator('.path-compare')).not.toContainText(/önerilen/i)
+  await expect(region.locator('.ant-tag')).toHaveCount(0)
+  // Tablo kendi kabında kayar. Sayfa taşmaz. Hücre kelime ortasından bölünmez.
+  const box = await region.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, overflowX: getComputedStyle(el).overflowX }))
+  expect(box.overflowX, `${label}: kap yatay kayar`).toBe('auto')
+  if ((page.viewportSize()?.width ?? 0) < 600) expect(box.sw, `${label}: dar ekranda tablo kabından geniş`).toBeGreaterThan(box.cw)
+  const breaks = await region.locator('.ant-table-cell').evaluateAll((els) => els.filter((e) => ['break-all', 'anywhere'].includes(getComputedStyle(e).wordBreak) || getComputedStyle(e).overflowWrap === 'anywhere').length)
+  expect(breaks, `${label}: kelime ortasından bölünen hücre`).toBe(0)
+  await noHorizontalOverflow(page, label)
 }
 
 test('geçiş kararı yokken strateji çalışması kilitli görünür', async ({ page }) => {
@@ -84,31 +110,47 @@ test('geçiş kararı yokken strateji çalışması kilitli görünür', async (
   await expect(lock).toBeVisible()
   await expect(lock).toContainText('Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
   await expect(page.getByRole('button', { name: 'Geçiş kapısına git' })).toBeVisible()
-  // Üç adım listelenir ve her biri kilitli görünür. Kilitliyken dolu düğme yoktur.
-  for (const id of ['18', '19', '20']) await expect(page.getByText(`Adım ${id}`, { exact: true }).first()).toBeVisible()
-  await expect(page.locator('.karar-table .ant-tag', { hasText: 'Kilitli' })).toHaveCount(3)
+  // İki adım listelenir: 19 ve 20. Adım 18 bu grupta değildir. Kilitliyken dolu düğme yoktur.
+  await expect(page.locator('.karar-table .ant-table-tbody > tr.ant-table-row')).toHaveCount(2)
+  await expect(page.locator('.karar-table .route-dot')).toHaveText(['19', '20'])
+  await expect(page.locator('.karar-table').getByRole('link', { name: 'Seçim, hedefler ve 90 günlük yol' })).toHaveAttribute('href', '#/karar/9/adim/19')
+  await expect(page.locator('.karar-table .ant-tag', { hasText: 'Kilitli' })).toHaveCount(2)
+  await expect(page.getByText('Adım 18', { exact: true })).toHaveCount(0)
+  await expect(page.locator('.karar-step-count')).toHaveText('0 / 2 tamam')
   expect(await filledButtons(page)).toBe(0)
-  await expect(page.getByRole('heading', { name: QUESTIONS[0] })).toBeVisible()
+
+  // Dayanak özeti yerine stratej'in sorusu, ilk günü ve yol adayları durur.
+  await expect(page.getByText('Dayanak özeti', { exact: true })).toHaveCount(0)
+  const question = page.locator('.ant-card').filter({ hasText: "Stratej'in önündeki karar" })
+  await expect(question.locator('.strateji-question')).toHaveText(/\S/)
+  await expect(question.locator('.strateji-question')).not.toHaveText('Yol adayı henüz yazılmadı.')
+  expect(Number.parseFloat(await question.locator('.strateji-question').evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(20)
+  await expect(question.getByRole('link', { name: 'Devir raporunu aç' })).toHaveAttribute('href', '#/devir')
+  const firstDay = page.locator('.ant-card').filter({ hasText: "Stratej'in ilk günü" })
+  await expect(firstDay.locator('ol > li')).toHaveCount(4)
+  await expect(firstDay.locator('ol > li').first()).toContainText('Raporu sorgulayın.')
+  await expectPathCompare(page, 'strateji kilitli')
   await designRules(page, 'strateji kilitli')
 
   await page.getByRole('button', { name: 'Geçiş kapısına git' }).click()
   await expect(page).toHaveURL(/#\/gecis/)
 })
 
-test('kilitli Adım 18 salt okunur açılır ve kayıt düğmeleri kapalıdır', async ({ page }) => {
+test('kilitli Adım 19 salt okunur açılır ve kayıt düğmeleri kapalıdır', async ({ page }) => {
   await openDemo(page)
-  await page.goto('/#/karar/9/adim/18')
-  await expect(page.getByRole('heading', { name: /Adım 18\./ })).toBeVisible()
+  await page.goto('/#/karar/9/adim/19')
+  await expect(page.getByRole('heading', { name: /Adım 19\./ })).toBeVisible()
   await expect(page.locator('.page-kicker')).toHaveText('Strateji çalışması')
   await expect(page.getByRole('alert').filter({ hasText: 'Bu adım kilitli' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Taslak bırak, ilerle' })).toBeDisabled()
-  await expect(page.locator('#a18-chosenPath')).toBeDisabled()
-  // Kilitliyken öneri kartı ve dayanak özeti açılmaz. Yazma yolu yoktur.
+  for (const key of ['chosenPath', 'choiceReason', 'givenUp']) await expect(page.locator(`#a19-${key}`)).toBeDisabled()
+  // Kilitliyken öneri kartı, yol adayları kartı ve dayanak özeti açılmaz. Yazma yolu yoktur.
   await expect(page.getByText('Temelden gelen öneriler')).toHaveCount(0)
+  await expect(page.locator('.path-compare')).toHaveCount(0)
   const bar = page.locator('.action-bar')
   expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
-  await designRules(page, 'adım 18 kilitli')
+  await designRules(page, 'adım 19 kilitli')
 
   await page.getByRole('link', { name: 'Geçiş kapısına git' }).click()
   await expect(page).toHaveURL(/#\/gecis/)
@@ -121,78 +163,98 @@ test('kilitli Adım 18 salt okunur açılır ve kayıt düğmeleri kapalıdır',
   await expect(page).toHaveURL(/#\/strateji/)
 })
 
-test('çıktılar ekranında "Temel belgesi" sekmesi altı soruyu gösterir', async ({ page }) => {
+test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kapı 5\'e gider', async ({ page }) => {
   await openDemo(page)
-  await page.goto('/#/ciktilar')
-  // Varsayılan sekme yönetici raporudur.
-  await expect(page.getByRole('heading', { name: 'Yönetici raporu' })).toBeVisible()
-  await page.getByText('Temel belgesi', { exact: true }).click()
-  await expect(page.getByRole('heading', { name: 'Stratejik planlama temel belgesi' })).toBeVisible()
-  for (const q of QUESTIONS) await expect(page.getByRole('heading', { name: q })).toBeVisible()
-  await expect(page.getByRole('heading', { name: 'Geçiş kararı' })).toBeVisible()
-  await expect(page.getByText('Örnek plan. Gerçek veri değildir.')).toBeVisible()
-  // Kaynak satırı kanıt defterinden gelir: başlık, tarih ve basamak.
-  await expect(page.getByText(/^Kaynak: 7 kişi aylık kahve kartına ödeme yaptı, .+ günü\. Kanıt basamağı 1\.$/).first()).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Markdown indir' })).toBeEnabled()
-  await noHorizontalOverflow(page, 'temel belgesi')
-  expect(await smallText(page), 'temel belgesi: 14 piksel altı yazı').toEqual([])
-  expect(await page.locator('.ant-card .ant-card').count()).toBe(0)
+  // Geçiş kararı yok. Adım 18 yine de açıktır.
+  await page.goto('/#/karar/5/adim/18')
+  await expect(page.getByRole('heading', { name: 'Adım 18. Yol adayları' })).toBeVisible()
+  await expect(page.locator('.page-kicker')).toHaveText(/^Karar 5\./)
+  await expect(page.getByRole('alert').filter({ hasText: 'Bu adım kilitli' })).toHaveCount(0)
+  const note = page.getByRole('note').filter({ hasText: NOTE_18 })
+  await expect(note).toBeVisible()
+  // Not nötrdür: uyarı ya da bilgi rengi taşımaz.
+  await expect(note).not.toHaveClass(/is-warn|is-info|is-danger/)
+  // Bu adımda seçim alanı ve öneri kartı yoktur.
+  await expect(page.locator('#a18-chosenPath')).toHaveCount(0)
+  await expect(page.getByText('Temelden gelen öneriler')).toHaveCount(0)
+  await expect(page.getByText('Bugünkü durumu sürdürmek').first()).toBeAttached()
+  const bar = page.locator('.action-bar')
+  expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
+  await expect(page.getByRole('button', { name: 'Kapıya git' })).toBeVisible()
+  await designRules(page, 'adım 18')
 
-  // Üç sekme de görünür kalır. Dar ekranda sekmeler alt satıra sarılır.
-  for (const name of ['Temel belgesi', 'Yönetici raporu', 'Girişimci aksiyon planı']) await expect(page.getByRole('tab', { name })).toBeInViewport()
-
-  // Yazdırma görünümünde temel belgesi kalır, yazı 14 pikselin altına inmez.
-  await page.emulateMedia({ media: 'print' })
-  await expect(page.getByRole('heading', { name: QUESTIONS[0] })).toBeVisible()
-  await expect(page.getByRole('button', { name: 'Markdown indir' })).toBeHidden()
-  const printSize = await page.locator('.report-foundation .foundation-lines').first().evaluate((el) => getComputedStyle(el).fontSize)
-  expect(Number.parseFloat(printSize)).toBe(14)
-  await page.emulateMedia({ media: 'screen' })
+  // Eski strateji adresi de aynı adımı kilitsiz açar.
+  await page.goto('/#/karar/9/adim/18')
+  await expect(page.getByRole('heading', { name: 'Adım 18. Yol adayları' })).toBeVisible()
+  const complete = page.getByRole('button', { name: 'Adımı tamamla' })
+  await expect(complete).toBeEnabled()
+  await complete.click()
+  await expect(page).toHaveURL(/#\/karar\/5\/kapi/)
 })
 
-test('boş planda temel belgesi "Henüz yazılmadı." yazar', async ({ page }) => {
+test('boş planda yol adayları boş durumu Adım 18\'e götürür', async ({ page }) => {
   await page.goto('/')
   await page.getByRole('button', { name: 'Yeni plan' }).first().click()
   await page.getByPlaceholder('Örneğin Mahalle kafesi').fill('Boş deneme')
   await page.getByRole('button', { name: 'Oluştur' }).click()
   await expect(page).toHaveURL(/#\/baslangic/)
-  await page.goto('/#/ciktilar?belge=temel')
-  await expect(page.getByRole('heading', { name: QUESTIONS[0] })).toBeVisible()
-  await expect(page.locator('.report-foundation .foundation-lines.is-empty')).toHaveCount(6)
-  await expect(page.locator('.report-foundation .foundation-lines.is-empty').first()).toHaveText('Henüz yazılmadı.')
-  await expect(page.getByText('Geçiş kararı henüz kaydedilmedi. Karar, geçiş kapısında kaydedilir.')).toBeVisible()
-  await noHorizontalOverflow(page, 'boş temel belgesi')
+  await page.goto('/#/strateji')
+  await expect(page.locator('.strateji-question')).toHaveText('Yol adayı henüz yazılmadı.')
+  const empty = page.locator('.path-compare-empty')
+  await expect(empty).toContainText('Yol adayı henüz yazılmadı.')
+  await expect(page.getByRole('region', { name: 'Yol adayları karşılaştırması' })).toHaveCount(0)
+  await designRules(page, 'boş strateji')
+  await empty.getByRole('link', { name: /Adım 18/ }).click()
+  await expect(page).toHaveURL(/#\/karar\/5\/adim\/18/)
 })
 
-test('geçiş kararından sonra adımlar açılır ve öneri yalnız onayla alana yazılır', async ({ page }) => {
+test('geçiş kararından sonra Adım 19 açılır, yazılım yolu seçmez, öneri yalnız onayla yazılır', async ({ page }) => {
   await openDemo(page)
   await recordTransition(page)
   await page.goto('/#/strateji')
   await expect(page.getByRole('alert').filter({ hasText: 'Strateji çalışması kilitli' })).toHaveCount(0)
   await expect(page.locator('.strateji-outcome .ant-tag')).toHaveText('Planlamaya hazır')
   await expect(page.getByText('Dayanaklar incelendi. Zorunlu ölçütler tamam.')).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Temel belgesini aç' })).toBeVisible()
-  const open = page.getByRole('button', { name: "Adım 18'i aç" })
+  await expect(page.getByRole('link', { name: 'Devir raporunu aç' })).toBeVisible()
+  // Tek dolu düğme sıradaki adımı açar.
+  const open = page.getByRole('button', { name: "Adım 19'u aç" })
   await expect(open).toBeVisible()
   expect(await filledButtons(page)).toBe(1)
   await designRules(page, 'strateji açık')
 
   await open.click()
-  await expect(page).toHaveURL(/#\/karar\/9\/adim\/18/)
+  await expect(page).toHaveURL(/#\/karar\/9\/adim\/19/)
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeEnabled()
-  await expect(page.getByText('Dayanak özeti', { exact: true })).toBeVisible()
-  await expect(page.getByText('Temelden gelen öneriler')).toBeVisible()
-  // Öneri gösterilir ama kayda yazılmaz. Alan boş kalır.
-  const chosen = page.locator('#a18-chosenPath')
-  await expect(chosen).toHaveValue('')
-  const stored = () => page.evaluate((key) => { const raw = JSON.parse(localStorage.getItem(key) ?? '{}'); return raw.state.plans[raw.state.currentId].steps['18']?.values?.chosenPath ?? null }, STORAGE_KEY)
-  expect(await stored()).toBeNull()
-  await designRules(page, 'adım 18 açık')
+  // Yol adayları formun üstünde salt okunur durur.
+  const card = page.locator('.ant-card').filter({ has: page.locator('.path-compare') })
+  await expect(card.locator('.ant-card-head-title')).toHaveText('Yol adayları')
+  await expect(card).toContainText(HELPER_19)
+  await expect(card.locator('input, textarea, button')).toHaveCount(0)
+  await expectPathCompare(page, 'adım 19 açık')
+  const order = await page.evaluate(() => {
+    const table = document.querySelector('.path-compare')
+    const field = document.querySelector('#a19-chosenPath')
+    return table && field ? Boolean(table.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING) : null
+  })
+  expect(order, 'yol adayları tablosu seçim alanından önce gelir').toBe(true)
 
-  // "Alana yaz" kullanıcının onayıdır. Öneri alana yazılır ve öneri satırı kalkar.
-  await page.getByRole('button', { name: 'Alana yaz: Seçilen yol' }).click()
-  await expect(chosen).toHaveValue('Küçük kafe. 25 kişilik salon.')
-  await expect(page.getByRole('button', { name: 'Alana yaz: Seçilen yol' })).toHaveCount(0)
-  await expect.poll(stored).toBe('Küçük kafe. 25 kişilik salon.')
-  await noHorizontalOverflow(page, 'adım 18 öneri sonrası')
+  // Yazılım seçimi önceden yapmaz. Üç seçim alanı boş gelir ve bu alanlar için öneri yoktur.
+  const chosen = page.locator('#a19-chosenPath')
+  for (const key of ['chosenPath', 'choiceReason', 'givenUp']) await expect(page.locator(`#a19-${key}`)).toHaveValue('')
+  expect(await storedValue(page, '19', 'chosenPath')).toBeNull()
+  await expect(page.getByText('Temelden gelen öneriler')).toBeVisible()
+  for (const name of ['Seçilen yol', 'Seçimin gerekçesi', 'Vazgeçilenler']) await expect(page.getByRole('button', { name: `Alana yaz: ${name}` })).toHaveCount(0)
+  await designRules(page, 'adım 19 açık')
+
+  // Hedef önerisi kalır. "Alana yaz" kullanıcının onayıdır. Öneri alana yazılır ve öneri satırı kalkar.
+  const objective = page.locator('#a19-objective')
+  await expect(objective).toHaveValue('')
+  await page.getByRole('button', { name: 'Alana yaz: Hedef' }).click()
+  await expect(objective).toHaveValue('12 ay içinde 300 düzenli müşteri. Ayda en az 30.000 TL katkı.')
+  await expect(page.getByRole('button', { name: 'Alana yaz: Hedef' })).toHaveCount(0)
+  await expect.poll(() => storedValue(page, '19', 'objective')).toBe('12 ay içinde 300 düzenli müşteri. Ayda en az 30.000 TL katkı.')
+  // Öneri seçim alanına dokunmaz.
+  await expect(chosen).toHaveValue('')
+  expect(await storedValue(page, '19', 'chosenPath')).toBeNull()
+  await noHorizontalOverflow(page, 'adım 19 öneri sonrası')
 })

@@ -14,6 +14,8 @@ import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
 import { FoundationSummary } from '@/components/FoundationSummary'
+import { PathCompare } from '@/components/PathCompare'
+import { buildHandoffReport } from '@/reports/handoff'
 import { ChartFrame } from '@/charts/ChartFrame'
 import type { StepDef } from '@/data/schema'
 import type { Limits, PlanDoc } from '@/data/types'
@@ -29,7 +31,7 @@ interface Suggestion {
   label: string
   /** Ekranda gösterilen öneri metni. */
   display: string
-  /** Önerinin geldiği yer. Örneğin "Adım 11, denenecek birinci yol". */
+  /** Önerinin geldiği yer. Örneğin "Adım 02, başarı cümlesi". */
   source: string
   /** Alana yazılacak değeri üretir. Satır kimliği yazma anında verilir. */
   build: () => unknown
@@ -38,32 +40,20 @@ interface Suggestion {
 const filledText = (x: unknown): string | null => (typeof x === 'string' && x.trim() ? x.trim() : null)
 const hasRows = (x: unknown, keys: string[]): boolean => Array.isArray(x) && x.some((r) => keys.some((k) => filledText((r as Record<string, unknown>)?.[k])))
 
+/** Yol adaylarının yazıldığı adım. Bu adım Karar 5'tedir ve kilitli değildir. */
+const PATHS_STEP = '18'
+/** Stratej'in seçim yaptığı adım. Yol adayları tablosu bu adımın üstünde salt okunur durur. */
+const CHOICE_STEP = '19'
+
 /**
- * Adım 18 ve Adım 19 için öneriler. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
- * Örnek: Adım 11'deki "birinci yol", Adım 18'deki "Seçilen yol" alanı için önerilir.
+ * Adım 19 için hedef ve iş önerileri. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
+ * "Seçilen yol", "Seçimin gerekçesi" ve "Vazgeçilenler" için öneri ÜRETİLMEZ. Seçimi stratej yapar.
+ * Örnek: Adım 02'deki başarı cümlesi, Adım 19'daki "Hedef" alanı için önerilir.
  */
 function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<string, unknown>): Suggestion[] {
   const from = (step: string, key: string): unknown => plan.steps[step]?.values?.[key]
   const out: Suggestion[] = []
-  if (stepId === '18') {
-    const firstPath = filledText(from('11', 'testOption1'))
-    if (firstPath && !isFilled(values.chosenPath)) {
-      out.push({ key: 'chosenPath', label: 'Seçilen yol', display: firstPath, source: 'Adım 11, denenecek birinci yol', build: () => firstPath })
-    }
-    const segment = filledText(from('08', 'segmentName'))
-    const channel = filledText(from('08', 'accessChannel')) ?? filledText(from('08', 'accessPath'))
-    if (segment && !hasRows(values.paths, ['name', 'where', 'how'])) {
-      const where = [segment, channel].filter(Boolean).map((x) => String(x).replace(/\.+$/, '')).join('. ') + '.'
-      out.push({
-        key: 'paths',
-        label: 'Olası yollar, ilk satır',
-        display: `Hedef müşteri ve kanal: ${where}${firstPath ? ` Yolun adı: ${firstPath}` : ''}`,
-        source: 'Adım 08, ilk müşteri grubu ve ulaşma yolu',
-        build: () => [{ _id: uid('satir'), name: firstPath ?? '', where }],
-      })
-    }
-  }
-  if (stepId === '19') {
+  if (stepId === CHOICE_STEP) {
     const success = filledText(plan.limits.successSentence)
     if (success && !isFilled(values.objective)) {
       out.push({ key: 'objective', label: 'Hedef', display: success, source: 'Adım 02, başarı cümlesi', build: () => success })
@@ -89,7 +79,9 @@ function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<str
  * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
  * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
  * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
- * Adım 18, 19 ve 20 strateji çalışmasıdır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
+ * Adım 19 ve 20 strateji çalışmasıdır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
+ * Adım 18 "Yol adayları" Karar 5'tedir ve kilitli değildir. Bu adımda yol seçilmez.
+ * Adım 19 açıkken üstte yol adayları tablosu salt okunur durur. Yazılım "Seçilen yol" alanını doldurmaz.
  * Adresler adımın kendi grubundan üretilir (`stepPath`). Adresteki karar numarası okunmaz.
  */
 export function WorkScreen() {
@@ -118,6 +110,10 @@ export function WorkScreen() {
   useEffect(() => {
     if (step) setLocation(stepPath(step.id))
   }, [step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Yol adayları yalnız seçim adımında gösterilir. Başka adımda rapor hesaplanmaz. */
+  const showPaths = step?.id === CHOICE_STEP
+  const paths = useMemo(() => (plan && showPaths ? buildHandoffReport(plan).paths : []), [plan, showPaths])
 
   if (!plan || !step) return null
   const decision = decisionOf(step.decision)
@@ -198,6 +194,17 @@ export function WorkScreen() {
                 <Link to="/strateji">Strateji özetine dön</Link>
               </span>
             </Callout>
+          ) : null}
+          {step.id === PATHS_STEP ? (
+            <Callout tone="ipucu" title="Bu adımda seçim yok">
+              Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.
+            </Callout>
+          ) : null}
+          {showPaths && !locked ? (
+            <Card className="step-card" variant="borderless" title="Yol adayları" extra={<Link to={stepPath(PATHS_STEP)}>Adım 18'i aç</Link>}>
+              <p className="card-desc">Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.</p>
+              <PathCompare paths={paths} />
+            </Card>
           ) : null}
           {isStrategy && !locked ? (
             <Collapse

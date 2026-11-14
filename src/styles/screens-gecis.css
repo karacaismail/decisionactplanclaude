@@ -4,15 +4,19 @@
   Sabit renk yoktur; yalnız --color-* değişkenleri okunur.
 */
 
-/* Üst özet: telefonda tek sütun, 560 px üstünde üç sayı yan yana, 1280 px üstünde halka da aynı satırda. */
+/* Üst özet: telefonda tek sütun, 560 px üstünde dört sayı ikişer, 900 px üstünde dördü yan yana, 1280 px üstünde halka da aynı satırda. */
 .gecis-stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 .gecis-stats > .ant-card { min-width: 0; }
+.gecis-stats .stat-note a { text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 @media (min-width: 560px) {
-  .gecis-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .gecis-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gecis-stats > .ring-card { grid-column: 1 / -1; }
 }
+@media (min-width: 900px) {
+  .gecis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
 @media (min-width: 1280px) {
-  .gecis-stats { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(200px, 1fr); }
+  .gecis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(180px, 1fr); }
   .gecis-stats > .ring-card { grid-column: auto; }
 }
 
@@ -35,7 +39,14 @@
 .gecis-criterion-phone .criterion-icon { margin-top: 2px; }
 .gecis-criterion .ant-tag { justify-self: start; }
 
+/* Karar panelinin üstündeki soru: stratej'in vereceği karar. Kart değildir, panelin üstünde düz yazıdır. */
+.gecis-question { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin: 0; min-width: 0; }
+.gecis-question-label { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--color-text-secondary); }
+.gecis-question-text { font-size: 18px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+
 /* Karar formu */
+.gecis-check-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; min-width: 0; }
+.gecis-check-row > a { font-size: 16px; line-height: 1.5; text-decoration: underline; text-underline-offset: 2px; }
 .gecis-check.ant-checkbox-wrapper { font-size: 16px; line-height: 1.5; align-items: flex-start; }
 .gecis-check .ant-checkbox { margin-top: 4px; }
 .gecis-errors { margin: 0; padding-left: 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
