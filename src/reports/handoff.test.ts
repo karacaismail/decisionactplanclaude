@@ -10,7 +10,10 @@ describe('buildHandoffReport', () => {
     expect(r.paths).toEqual([])
     expect(r.coverageFilled).toBe(0)
     expect(r.coverage).toHaveLength(14)
-    expect(r.groups).toHaveLength(6)
+    expect(r.groups).toHaveLength(7)
+    expect(r.crux).toBeNull()
+    expect(r.conditions).toEqual([])
+    expect(r.links).toEqual([])
     expect(r.groups.every((g) => g.claims.length === 0)).toBe(true)
     expect(handoffToMarkdown(r)).toContain('Henüz yazılmadı.')
   })
@@ -81,5 +84,46 @@ describe('confidenceOf', () => {
     expect(confidenceOf(4)).toBe('orta')
     expect(confidenceOf(6)).toBe('dusuk')
     expect(confidenceOf(null)).toBe('kanitsiz')
+  })
+
+  it('asıl engeli, başarı koşullarını ve yol bağlarını raporun başına koyar', () => {
+    const r = buildHandoffReport(buildDemoPlan())
+    expect(r.crux?.text).toBe('Aylık kart ilgisi, gideri karşılayan günlük satışa dönüşecek mi?')
+    expect(r.crux?.support).toEqual(['7 kişi aylık kahve kartına ödeme yaptı'])
+    expect(r.crux?.counter).toEqual(['Üç kişi fiyatı yüksek buldu.'])
+    expect(r.conditions.map((c) => c.status)).toEqual(['sinanmadi', 'celiski', 'destek'])
+    expect(r.conditions.map((c) => c.baseline)).toEqual(['Bilinmiyor', "14 teklifin 7'si", '0'])
+    expect(r.links.filter((l) => l.relation === 'celisiyor')).toHaveLength(1)
+    const md = handoffToMarkdown(r)
+    expect(md.indexOf('### Asıl engel')).toBeGreaterThan(md.indexOf('## 1. Stratej bugün hangi kararı verecek?'))
+    expect(md.indexOf('### Başarı neye bağlı?')).toBeLessThan(md.indexOf('## 2. Dayanaklar'))
+    expect(md).toContain('Bulgular çelişiyor')
+    expect(md).toContain('Yol bağları:')
+  })
+
+  it('serbest bütçeyi ve darboğazı sınırlara ekler', () => {
+    const r = buildHandoffReport(buildDemoPlan())
+    const free = r.limits.find((l) => l.label === 'Serbest bütçe')
+    expect(free?.value).toContain('100.000')
+    expect(r.limits.find((l) => l.label === 'Darboğaz')?.value).toBe('Tek barista sabah kuyruğuna yetişmez. Bugünkü sınır: Saatte 40 kahve')
+  })
+
+  it('kanıt silinince eksik bağlantıyı bildirir, uydurmaz', () => {
+    const p = buildDemoPlan()
+    p.evidence = p.evidence.filter((e) => e.id !== 'kanit-4')
+    const r = buildHandoffReport(p)
+    expect(r.crux?.support).toEqual([])
+    expect(r.crux?.missing).toBe(1)
+    expect(r.conditions[1].status).toBe('sinanmadi')
+    expect(handoffToMarkdown(r)).toContain('1 bağlı kanıt silinmiş.')
+  })
+
+  it('iş türüne özgü bilgi yalnız ilgili profilde görünür', () => {
+    const p = buildDemoPlan()
+    expect(buildHandoffReport(p).groups.some((g) => g.title === 'İş türüne özgü bilgi')).toBe(false)
+    p.profile.customer = 'pazarYeri'
+    p.steps['15'].values = { ...p.steps['15'].values, validRequests: 20, matchedRequests: 8, registeredSellers: 60, activeSellers: 12 }
+    const g = buildHandoffReport(p).groups.find((x) => x.title === 'İş türüne özgü bilgi')
+    expect(g?.claims.map((c) => c.text)).toEqual(['20 geçerli talebin 8 tanesi uygun teklif aldı. Eşleşme oranı yüzde 40.', '60 kayıtlı satıcının 12 tanesi gerçek talebe cevap verdi.'])
   })
 })

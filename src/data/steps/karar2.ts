@@ -103,7 +103,7 @@ export const KARAR2: StepDef[] = [
       },
     ],
     output: 'Bir cümlelik problem tanımı. Bugünkü çözüm. Bedel tahmini.',
-    models: [97, 122],
+    models: [122],
     completeWhen: ['problemWho', 'problemWhen', 'problemJob', 'problemBlocker', 'currentSolution', 'lossKind'],
   },
   {
@@ -232,6 +232,7 @@ export const KARAR2: StepDef[] = [
         title: 'Üç kanıt ölçüsü',
         description: 'Kapı 2 bu üç ölçüyü okur. Her ölçüde gerçek sayı olmalı.',
         fields: [
+          { key: 'cruxHint', type: 'info', label: 'Asıl engel', tone: 'ipucu', text: 'Buradaki kayıp ve gözlem, işin asıl engelini gösterebilir. Asıl engeli Adım 18\'de yazarsınız. Kanıtı orada yeniden yazmazsınız, defterden seçersiniz.' },
           { key: 'repeatMeasure', type: 'measure', label: 'Tekrar. Problem ne sıklıkla yaşanıyor?', defaultName: 'Problemin tekrarı', defaultUnit: 'kez', help: 'Örneğin haftada kaç kez yaşanıyor. Görüşmelerden sayın.' },
           { key: 'effortMeasure', type: 'measure', label: 'Çaba. Müşteri bugün ne harcıyor?', defaultName: 'Bugün harcanan çaba', defaultUnit: 'saat', help: 'Bugünkü çözüme giden zaman, para veya kişi.' },
           { key: 'lossMeasure', type: 'measure', label: 'Kayıp. Çözmemek neye mal oluyor?', defaultName: 'Çözmemenin kaybı', defaultUnit: 'TL', help: 'Para, zaman veya kaybedilen müşteri.' },

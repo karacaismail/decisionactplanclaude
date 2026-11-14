@@ -26,6 +26,8 @@ export interface Profile {
   needsPremises?: boolean
   paid?: boolean
   smallReversible?: boolean
+  /** İş bir gruba ya da holdinge bağlı mı? Yalnız ilgili soruları açar. */
+  group?: boolean
   description?: string
 }
 

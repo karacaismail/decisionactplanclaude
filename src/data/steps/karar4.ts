@@ -1,4 +1,5 @@
 import type { Condition, StepDef } from '../schema'
+import { matchRate } from '@/engine/crux'
 
 type Row = Record<string, unknown> & { _id: string }
 
@@ -210,6 +211,34 @@ export const KARAR4: StepDef[] = [
         ],
       },
       {
+        title: 'Pazar yeri eşleşmesi',
+        description: 'Kayıtlı satıcı ile cevap veren satıcıyı ayrı sayın. Eşleşme ile tamamlanan işi ayrı sayın.',
+        when: { profile: { customer: ['pazarYeri'] } },
+        fields: [
+          { key: 'validRequests', type: 'number', label: 'Geçerli talep sayısı', help: 'Ölçmediyseniz boş bırakın. Ölçtünüz ve hiç talep gelmediyse 0 yazın.', min: 0, unit: 'talep', span: 12 },
+          { key: 'matchedRequests', type: 'number', label: 'Uygun teklif alan talep sayısı', min: 0, unit: 'talep', span: 12 },
+          { key: 'matchCalc', type: 'calc', label: 'Eşleşme oranı', emptyText: 'İki sayıyı yazınca oran burada görünür.', compute: (v) => {
+            const r = matchRate(v.validRequests, v.matchedRequests)
+            if (r.state === 'yok') return null
+            if (r.state === 'sifir') return { value: 'Hesaplanamaz', lines: ['Geçerli talep sayısı sıfır. Bu yüzden oran hesaplanmaz.'] }
+            return { value: `Yüzde ${r.percent}`, lines: [`${v.validRequests} geçerli talebin ${v.matchedRequests} tanesi uygun teklif aldı.`] }
+          } },
+          { key: 'registeredSellers', type: 'number', label: 'Kayıtlı satıcı sayısı', min: 0, unit: 'satıcı', span: 12 },
+          { key: 'activeSellers', type: 'number', label: 'Gerçek talebe cevap veren satıcı sayısı', min: 0, unit: 'satıcı', span: 12 },
+          { key: 'matchHours', type: 'number', label: 'Uygun teklif kaç saatte geliyor?', min: 0, unit: 'saat', span: 12 },
+        ],
+      },
+      {
+        title: 'Fayda',
+        description: 'Ücretsiz hizmette katılanı, yararlananı ve bütçeyi vereni ayrı yazın.',
+        when: { profile: { paid: [false] } },
+        fields: [
+          { key: 'participants', type: 'number', label: 'Kaç kişi katıldı?', min: 0, unit: 'kişi', span: 12 },
+          { key: 'beneficiaries', type: 'number', label: 'Kaç kişi gerçekten yararlandı?', min: 0, unit: 'kişi', span: 12 },
+          { key: 'benefitNote', type: 'textarea', label: 'Yararlanan kişide ne değişti?', rows: 2, maxLength: 300, placeholder: 'Örneğin 12 kişi başvurusunu yardımsız tamamladı.' },
+        ],
+      },
+      {
         title: 'Sonuç',
         fields: [
           { key: 'resultNote', type: 'textarea', label: 'Sonuç ne oldu? Eşik geçildi mi? Kanıt hangi basamakta?', rows: 3, maxLength: 500, placeholder: '12 bakkala teklif sundum. 4\'ü ön ödeme yaptı. Eşik 3 idi. Kanıt 1. basamakta.' },
@@ -226,7 +255,7 @@ export const KARAR4: StepDef[] = [
       { condition: 'Eşik geçilmedi, problem var ama çözüm ilgi görmedi', result: 'Adım 11\'deki ikinci yolu test edin.' },
       { condition: 'Her iki yol da ilgi görmedi', result: 'Adım 05\'e dönün. Problem acı vermiyor olabilir.' },
     ],
-    models: [116, 15],
+    models: [15],
     completeWhen: ['method', 'threshold', 'offers'],
     chart: {
       kind: 'funnel',

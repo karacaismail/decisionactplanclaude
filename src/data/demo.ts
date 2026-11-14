@@ -155,9 +155,9 @@ export function buildDemoPlan(): PlanDoc {
     '04': done({
       factors: ['ekonomi', 'toplum', 'hukuk'],
       factorNotes: [
-        row('etken-1', { factor: 'Ekonomi', change: 'Kahve çekirdeği fiyatı yılda yüzde 40 arttı.', action: 'İki tedarikçiden fiyat alırım. Fiyatı 3 ayda bir gözden geçiririm.' }),
-        row('etken-2', { factor: 'Toplum', change: 'Evden çalışan sayısı artıyor.', action: 'Priz ve sabit masa koyarım.' }),
-        row('etken-3', { factor: 'Hukuk', change: 'İşyeri açma ruhsatı belediyeden alınır.', action: 'Ruhsat başvurusunu kira sözleşmesiyle aynı hafta yaparım.' }),
+        row('etken-1', { factor: 'Ekonomi', change: 'Kahve çekirdeği fiyatı yılda yüzde 40 arttı.', effect: 'tehdit', action: 'İki tedarikçiden fiyat alırım. Fiyatı 3 ayda bir gözden geçiririm.' }),
+        row('etken-2', { factor: 'Toplum', change: 'Evden çalışan sayısı artıyor.', effect: 'firsat', action: 'Priz ve sabit masa koyarım.' }),
+        row('etken-3', { factor: 'Hukuk', change: 'İşyeri açma ruhsatı belediyeden alınır.', effect: 'tehdit', action: 'Ruhsat başvurusunu kira sözleşmesiyle aynı hafta yaparım.' }),
       ],
       forceNew: 3,
       forceSub: 3,
@@ -239,7 +239,7 @@ export function buildDemoPlan(): PlanDoc {
     }, 44),
     '10': done({
       assumptions: [
-        row('varsayim-1', { assumption: 'Evden çalışanlar aylık kart için önden ödeme yapar.', area: 'istek', impact: 5, evidence: 2, testMethod: 'Açılıştan önce aylık kart satmak.', falsifyThreshold: '30 kişiden 10’u almazsa yanlış.', fallback: 'Tek seferlik fiyatla başlarım.' }),
+        row('varsayim-1', { affectsPath: 'Ön siparişle aylık kart', assumption: 'Evden çalışanlar aylık kart için önden ödeme yapar.', area: 'istek', impact: 5, evidence: 2, testMethod: 'Açılıştan önce aylık kart satmak.', falsifyThreshold: '30 kişiden 10’u almazsa yanlış.', fallback: 'Tek seferlik fiyatla başlarım.' }),
         row('varsayim-2', { assumption: 'Sabah 7’de açılmak günde 20 ek müşteri getirir.', area: 'para', impact: 4, evidence: 3, testMethod: 'İlk ay sabah sayımı.', falsifyThreshold: 'Günde 10 altıysa yanlış.', fallback: 'Açılışı 8’e alırım.' }),
         row('varsayim-3', { assumption: 'Ruhsat 1 ayda çıkar.', area: 'hukuk', impact: 4, evidence: 3, testMethod: 'Belediyeye sormak.', falsifyThreshold: '2 ayı geçerse yanlış.', fallback: 'Geçici satış noktası planlarım.' }),
         row('varsayim-4', { assumption: 'Kafe günde 40 sipariş alır.', area: 'para', impact: 5, evidence: 2, testMethod: 'İlk ay her gün sipariş saymak.', falsifyThreshold: 'İlk ay günde 25 altıysa yanlış.', fallback: 'Öğle saatine uygun fiyatlı menü eklerim.' }),
@@ -274,6 +274,14 @@ export function buildDemoPlan(): PlanDoc {
         row('beceri-2', { skill: 'Ön muhasebe ve fatura', plan: 'satinAl', partnerConfirmed: false, costNote: 'Muhasebeci. Ayda 2.500 TL.' }),
         row('beceri-3', { skill: 'Sosyal medya duyurusu', plan: 'yap', partnerConfirmed: false, costNote: 'Haftada 2 saat.' }),
       ],
+      strengths: [
+        row('guc-1', { name: '8 yıllık barista deneyimi', valuable: 'evet', rare: 'evet', hardToCopy: 'evet', organized: 'hayir', basis: 'Mahalledeki 3 kafede deneyimli barista yok. Bilgi tek kişide.' }),
+        row('guc-2', { name: 'Durağa 40 metre uzaklık', valuable: 'evet', rare: 'evet', hardToCopy: 'hayir', basis: 'Sabah sayımı. Durağa bu kadar yakın başka satış noktası yok.' }),
+        row('guc-3', { name: 'Güler yüzlü hizmet', valuable: 'evet', rare: 'hayir' }),
+      ],
+      bottleneck: 'Tek barista sabah kuyruğuna yetişmez.',
+      bottleneckLimit: 'Saatte 40 kahve',
+      bottleneckAlt: 'Sabah 7 ile 9 arası için yarım gün yardımcı.',
       location: 'Mahalle meydanına bakan 45 metrekare dükkân',
       rentKurus: tl(18_000),
       leaseMonths: 24,
@@ -321,6 +329,9 @@ export function buildDemoPlan(): PlanDoc {
       priceAcceptedCount: 7,
     }, 8),
     '16': done({
+      commitmentsKnown: 'var',
+      spentKurus: tl(12_000),
+      commitments: [row('taahhut-1', { what: 'Kahve makinesi kaporası sonrası kalan borç', amountKurus: tl(38_000), dueDate: '2026-12-15', basis: 'Satıcıyla imzalı sipariş formu' })],
       problem: 'Mahallede sabah erken açık ve sakin bir kafe yok. İnsanlar zincir kafeye 20 dakika yürüyor.',
       segment: 'Evden çalışanlar. Sabah 8 ile 11 arası çalışacak yer arıyorlar.',
       valueProp: 'Yürüme süresi 20 dakikadan 5 dakikaya iner. Sabah 7’de masa ve kahve hazır olur.',
@@ -373,11 +384,31 @@ export function buildDemoPlan(): PlanDoc {
       irreversibleNote: 'Kira sözleşmesine 6. ayda çıkış hakkı yazdırırım. Makineyi ikinci el alırım.',
     }, 3),
     '18': done({
+      crossSO: 'Barista deneyimi ve durağa yakınlıkla sabah 7 boşluğunu doldururuz.',
+      crux: 'Aylık kart ilgisi, gideri karşılayan günlük satışa dönüşecek mi?',
+      cruxWhy: 'Sabit gideri günde 40 sipariş karşılar. 7 kart bu sayıyı tek başına göstermez.',
+      cruxPaths: 'Bütün yollar',
+      cruxAlt: 'Belki talep vardır ama 600 TL fiyat yüksektir.',
+      cruxSplit: 'Bir sabah iki fiyatla satış yapmak. Teklifi ve ücretli satışı ayrı saymak.',
+      cruxEvidence: ['kanit-4'],
+      cruxCounter: [],
+      successConditions: [
+        row('kosul-1', { condition: 'Sabah talebi günlük sabit gideri karşılar.', paths: 'Bütün yollar', measure: 'Günlük ücretli sipariş', baseline: '', threshold: 'Günde 40 sipariş', thresholdWhen: 'once', owner: 'Kurucu', support: [], counter: [] }),
+        row('kosul-2', { condition: 'Müşteri aylık kart için önden öder.', paths: 'Ön siparişle aylık kart', measure: 'Ödenen aylık kart sayısı', baseline: '14 teklifin 7\'si', threshold: '30 kart', thresholdWhen: 'once', owner: 'Kurucu', support: ['kanit-4'], counter: [] }),
+        row('kosul-3', { condition: 'Sabah 7 ile 9 arasında durakta yeterli yaya geçer.', paths: 'Durakta kahve arabası', measure: 'Sabah yaya sayısı', baseline: '0', threshold: '', owner: 'Kurucu', support: ['kanit-1'], counter: [] }),
+      ],
+      pathLinks: [
+        row('bag-1', { path: 'Küçük kafe salonu', a: 'Sabah 6.30 açılış sözü', b: 'Tek barista', relation: 'celisiyor', reason: 'Tek kişi her gün 6.30 açılışı sürdüremez.' }),
+        row('bag-2', { path: 'Ön siparişle aylık kart', a: 'Önden ödeme', b: 'Çekirdek alımı', relation: 'destekliyor', reason: 'Önden gelen para çekirdek alımını karşılar.' }),
+      ],
+      crossWO: 'Muhasebeyi dışarıdan alırız. Aylık kart satışı böylece düzenli kayda girer.',
+      crossST: 'Durağa yakınlık, zincir kafenin indirimine karşı bizi korur.',
+      crossWT: 'Kira sıçrarsa ve bilgi tek kişide kalırsa salon açmayız. Kahve arabasıyla kalırız.',
       paths: [
         row('yol-0', { name: 'Bugünkü durumu sürdürmek', where: 'Müşteri evde kahve yapar ya da zincir kafeye yürür.', how: 'Hiçbir şey yapmayız. Para harcanmaz.', giveUp: 'Sabah müşterisinden ve 7 ön ödemeden vazgeçeriz.', evidence: '13 kişi sabah kahve bulamadığını söyledi.', cost: '0 TL', reversible: 'ciftYonlu' }),
-        row('yol-1', { name: 'Durakta kahve arabası', where: 'Sabah işe gidenler. Otobüs durağı. Doğrudan satış.', how: 'Hız ve konum. Müşteri yolundan çıkmaz.', giveUp: 'Oturma alanından ve evden çalışanlardan vazgeçeriz.', evidence: 'Sabah 6.30 ile 9 arası yürüyüş sayımı.', cost: '60.000 TL ve 3 hafta', reversible: 'ciftYonlu' }),
-        row('yol-2', { name: 'Ön siparişle aylık kart', where: 'Evden çalışanlar ve öğrenciler. Mahalle grubu. Aylık kart.', how: 'Güven ve düzen. Para önden gelir.', giveUp: 'Gelip geçen müşteriden vazgeçeriz.', evidence: '7 kişi aylık karta ön ödeme yaptı.', cost: '150.000 TL ve 8 hafta', reversible: 'tekYonlu' }),
-        row('yol-3', { name: 'Küçük kafe salonu', where: 'Mahalle sakinleri. 25 kişilik salon. Gelip geçen ve kartlı müşteri.', how: 'Yer ve süreklilik. Sabah 6.30 açılış.', giveUp: 'Düşük giderden ve hızlı çıkıştan vazgeçeriz.', evidence: 'Mahallede sabah 9\'dan önce açık kafe yok.', cost: '150.000 TL ve 10 hafta', reversible: 'tekYonlu' }),
+        row('yol-1', { origin: 'so', name: 'Durakta kahve arabası', where: 'Sabah işe gidenler. Otobüs durağı. Doğrudan satış.', how: 'Hız ve konum. Müşteri yolundan çıkmaz.', giveUp: 'Oturma alanından ve evden çalışanlardan vazgeçeriz.', evidence: 'Sabah 6.30 ile 9 arası yürüyüş sayımı.', cost: '60.000 TL ve 3 hafta', reversible: 'ciftYonlu' }),
+        row('yol-2', { origin: 'wo', name: 'Ön siparişle aylık kart', where: 'Evden çalışanlar ve öğrenciler. Mahalle grubu. Aylık kart.', how: 'Güven ve düzen. Para önden gelir.', giveUp: 'Gelip geçen müşteriden vazgeçeriz.', evidence: '7 kişi aylık karta ön ödeme yaptı.', cost: '150.000 TL ve 8 hafta', reversible: 'tekYonlu' }),
+        row('yol-3', { origin: 'baska', name: 'Küçük kafe salonu', where: 'Mahalle sakinleri. 25 kişilik salon. Gelip geçen ve kartlı müşteri.', how: 'Yer ve süreklilik. Sabah 6.30 açılış.', giveUp: 'Düşük giderden ve hızlı çıkıştan vazgeçeriz.', evidence: 'Mahallede sabah 9\'dan önce açık kafe yok.', cost: '150.000 TL ve 10 hafta', reversible: 'tekYonlu' }),
       ],
       pathScores: {
         weights: { customerEvidence: 3, marketAppeal: 2, difference: 2, skillFit: 2, moneyLogic: 3, risk: 2, reversibility: 2 },

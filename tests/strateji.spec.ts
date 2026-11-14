@@ -7,7 +7,7 @@ import { expect, test, type Page } from '@playwright/test'
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
-const MEASURES = ['Kime ve nereden?', 'Neyle kazanılır?', 'Neyden vazgeçilir?', 'Destekleyen kanıt', 'Bedeli ve süresi', 'Geri alınabilir mi?', 'Puan']
+const MEASURES = ['Kime ve nereden?', 'Neyle kazanılır?', 'Neyden vazgeçilir?', 'Destekleyen kanıt', 'Hangi sorudan çıktı?', 'Bedeli ve süresi', 'Geri alınabilir mi?', 'Puan']
 const NOTE_18 = 'Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.'
 const HELPER_19 = 'Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.'
 

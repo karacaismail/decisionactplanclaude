@@ -17,6 +17,7 @@ const ROWS: CompareRow[] = [
   { key: 'how', label: 'Neyle kazanılır?', pick: (p) => p.how },
   { key: 'giveUp', label: 'Neyden vazgeçilir?', pick: (p) => p.giveUp },
   { key: 'evidence', label: 'Destekleyen kanıt', pick: (p) => p.evidence },
+  { key: 'origin', label: 'Hangi sorudan çıktı?', pick: (p) => p.origin },
   { key: 'cost', label: 'Bedeli ve süresi', pick: (p) => p.cost },
   { key: 'reversible', label: 'Geri alınabilir mi?', pick: (p) => (p.reversible ? DOOR_LABEL[p.reversible] : null) },
   { key: 'score', label: 'Puan', pick: (p) => (p.score !== null ? p.score.toLocaleString('tr-TR') : null) },

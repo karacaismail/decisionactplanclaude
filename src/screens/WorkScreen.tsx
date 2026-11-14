@@ -14,6 +14,7 @@ import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
 import { FoundationSummary } from '@/components/FoundationSummary'
+import { SituationSummary } from '@/components/SituationSummary'
 import { PathCompare } from '@/components/PathCompare'
 import { buildHandoffReport } from '@/reports/handoff'
 import { ChartFrame } from '@/charts/ChartFrame'
@@ -148,6 +149,11 @@ export function WorkScreen() {
       message.warning(`Eksik alan var: ${missing.length}. Zorunlu alanları doldurun.`)
       return
     }
+    const issues = step.validate?.(values, plan) ?? []
+    if (issues.length) {
+      message.warning(issues[0])
+      return
+    }
     persist(values, 'tamam')
     message.success('Adım tamamlandı.')
     const nx = nextStepId(step.id)
@@ -199,6 +205,12 @@ export function WorkScreen() {
             <Callout tone="ipucu" title="Bu adımda seçim yok">
               Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.
             </Callout>
+          ) : null}
+          {step.id === PATHS_STEP ? (
+            <Card className="step-card" variant="borderless" title="Durum özeti">
+              <p className="card-desc">Yazılım bu dört listeyi önceki adımlardan toplar. Listeyi burada değiştiremezsiniz. Bir maddeyi kaynak adımında düzeltirsiniz. Yazılım yol önermez.</p>
+              <SituationSummary plan={plan} />
+            </Card>
           ) : null}
           {showPaths && !locked ? (
             <Card className="step-card" variant="borderless" title="Yol adayları" extra={<Link to={stepPath(PATHS_STEP)}>Adım 18'i aç</Link>}>

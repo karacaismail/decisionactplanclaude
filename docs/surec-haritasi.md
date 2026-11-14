@@ -90,14 +90,50 @@ Yazılım yalnız öneri üretir. Kararı karar sahibi kaydeder. Karar sahibi ö
 
 Devir raporu Adım 19 ve Adım 20'yi okumaz. Yönetici raporu ve aksiyon planı seçimi Adım 19'dan okur.
 
-## 6. Yazılım neyi yapmaz?
+## 6. Karar Kitabı'ndan gelen üç yardım
+
+Bu üç yardım süreci değiştirmez. Adım sayısı, kilitler ve geçiş kapısının ölçütleri aynı kalır.
+
+| Yardım | Nerede? | Yazılım ne yapar? | Kullanıcı ne yapar? |
+|---|---|---|---|
+| Güç süzgeci | Adım 12 | Dört cevaptan sonucu hesaplar. | Her güç için dört soruyu cevaplar. |
+| Durum özeti | Adım 18 | Dört listeyi önceki adımlardan toplar. | Dört çapraz soruyu cevaplar. |
+| Yöntem yardımı | Yöntem paneli | "Nasıl uygulanır" adımlarını gösterir. | Yöntemi ekrandan çıkmadan uygular. |
+
+Güç süzgecinin iki kuralı vardır:
+
+1. Kullanıcı bir güce "rakiplerin çoğunda yok" derse dayanak yazar. Dayanak yoksa Adım 12 tamamlanmaz.
+2. Ağır yatırımda kullanıcı en az bir güç yazar. Küçük ve geri alınabilir işte güç yazmak zorunlu değildir.
+
+Durum özeti yalnız Adım 00 ile Adım 18 arasını okur. Çapraz sorular isteğe bağlıdır. Kapı 5'in ölçütü değişmez.
+
+Planın tamamı [karar-kitabi-firsatlari-plani.md](karar-kitabi-firsatlari-plani.md) dosyasındadır.
+
+### Devir raporunu güçlendiren kayıtlar
+
+Bu kayıtlar isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü değildir.
+
+| Kayıt | Nerede yazılır? | Raporda nerede görünür? |
+|---|---|---|
+| Asıl engel | Adım 18 | 1. bölüm, karar sorusunun altı |
+| Başarı koşulları | Adım 18 | 1. bölüm, karar sorusunun altı |
+| Yol bağları ve çelişkiler | Adım 18 | 4. bölüm |
+| Serbest bütçe | Adım 16 | 3. bölüm |
+| Darboğaz | Adım 12 | 3. bölüm |
+| İş türüne özgü bilgi | Adım 12 ve Adım 15 | 2. bölüm |
+
+Kuralların tamamı [codex-onerileri-uygulama-notu.md](codex-onerileri-uygulama-notu.md) dosyasındadır.
+
+## 7. Yazılım neyi yapmaz?
 
 - Yazılım yol seçmez. Yolu stratej seçer.
+- Yazılım yol önermez. Durum özeti yalnız listeyi toplar ve soruyu sorar.
+- Yazılım bir gücün gerçek olup olmadığına karar vermez. Dört soruyu kullanıcı cevaplar.
 - Yazılım geçiş kararını vermez. Yazılım yalnız öneri üretir.
 - Yazılım eksik bilgiyi uydurmaz. Eksik alan raporda "Henüz yazılmadı." diye görünür.
 - Yazılım kanıtın doğru olduğunu denetlemez. Kanıtı karar sahibi girer.
 
-## 7. Kaynak plandan farklar
+## 8. Kaynak plandan farklar
 
 Kaynak plan [act_plan_v5_final-claude.md](act_plan_v5_final-claude.md) dosyasıdır. Uygulama dört yerde kaynak plandan ayrılır.
 
@@ -108,7 +144,7 @@ Kaynak plan [act_plan_v5_final-claude.md](act_plan_v5_final-claude.md) dosyasıd
 | Karar 5'in adımları | 16, 17, 18, 19 ve 20 | 16, 17 ve 18 | Adım 19 ve 20 strateji çalışmasına taşındı. |
 | Geçiş kapısı | Yoktur. | Karar 5 ile strateji çalışması arasındadır. | Dayanak, seçimden önce incelenir. |
 
-## 8. Kurallar kodda nerede?
+## 9. Kurallar kodda nerede?
 
 Her kuralın tek bir kaynağı vardır. Ekranlar kuralı yeniden yazmaz, kaynaktan okur.
 
@@ -121,6 +157,10 @@ Her kuralın tek bir kaynağı vardır. Ekranlar kuralı yeniden yazmaz, kaynakt
 | Planın yoldaki yeri | `src/engine/position.ts` |
 | Eskime | `src/engine/changes.ts` |
 | Geçiş kapısının ölçütleri ve önerisi | `src/engine/readiness.ts` |
+| Güç süzgeci | `src/engine/strengths.ts` |
+| Durum özeti ve çapraz sorular | `src/engine/situation.ts` |
+| Asıl engel, başarı koşulları, serbest bütçe | `src/engine/crux.ts` |
+| Yöntem yardımı verisi | `src/data/models-howto.json` |
 | Devir raporu | `src/reports/handoff.ts` |
 
 Bu belgedeki kuralları `src/engine/consistency.test.ts` dosyası sınar. Test şunlara bakar:

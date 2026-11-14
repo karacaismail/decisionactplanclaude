@@ -22,6 +22,7 @@ import {
   type PathColumn,
   type SensitivityRow,
 } from '@/reports/handoff'
+import { CONDITION_LABEL, RELATION_LABEL, type ConditionStatus } from '@/engine/crux'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
@@ -109,6 +110,7 @@ function Missing({ step, text = 'Henüz yazılmadı.' }: { step: string; text?: 
 }
 
 const doorTag = (d: Door | null): ReactNode => (d ? <Tag color={d === 'ciftYonlu' ? 'success' : 'error'}>{DOOR_LABEL[d]}</Tag> : <span className="devir-none">Yazılmadı</span>)
+const CONDITION_COLOR: Record<ConditionStatus, string | undefined> = { sinanmadi: undefined, destek: 'success', karsi: 'error', celiski: 'warning' }
 const orNone = (x: string | null | undefined): ReactNode => (x ? x : <span className="devir-none">Yazılmadı</span>)
 const sourceText = (c: Claim): string | null => (c.source ? `${c.source}${c.date ? `, ${c.date}` : ''}` : null)
 
@@ -158,6 +160,7 @@ const MEASURES: Measure[] = [
   { label: 'Neyle kazanılır?', render: (p) => orNone(p.how) },
   { label: 'Neyden vazgeçilir?', render: (p) => orNone(p.giveUp) },
   { label: 'Destekleyen kanıt', render: (p) => orNone(p.evidence) },
+  { label: 'Hangi sorudan çıktı?', render: (p) => orNone(p.origin) },
   { label: 'Bedeli ve süresi', render: (p) => orNone(p.cost) },
   { label: 'Geri alınabilir mi?', render: (p) => doorTag(p.reversible) },
   { label: 'Puan', render: (p, top) => (p.score === null ? orNone(null) : <span className={`tabular${p.score === top ? ' devir-score-top' : ''}`}>{p.score.toLocaleString('tr-TR')}</span>) },
@@ -366,6 +369,50 @@ export function HandoffScreen() {
               {report.meta.map((m) => <li key={m}>{m}</li>)}
             </ul>
 
+            {report.crux ? (
+              <div className="devir-block devir-crux">
+                <h3 className="devir-sub">Asıl engel</h3>
+                <p className="devir-line devir-crux-text">{report.crux.text}</p>
+                <dl className="devir-pairs">
+                  {report.crux.why ? <div><dt>Neden önce incelenmeli?</dt><dd>{report.crux.why}</dd></div> : null}
+                  {report.crux.paths ? <div><dt>Etkilediği yol</dt><dd>{report.crux.paths}</dd></div> : null}
+                  {report.crux.alternative ? <div><dt>Başka açıklama</dt><dd>{report.crux.alternative}</dd></div> : null}
+                  {report.crux.split ? <div><dt>İki açıklamayı ayıran bulgu</dt><dd>{report.crux.split}</dd></div> : null}
+                  <div><dt>Destekleyen kanıt</dt><dd>{report.crux.support.length ? report.crux.support.join('. ') : <span className="devir-none">Bağlanmadı</span>}</dd></div>
+                  <div><dt>Karşı bulgu</dt><dd>{report.crux.counter.length ? report.crux.counter.join(' ') : <span className="devir-none">Bağlanmadı</span>}</dd></div>
+                </dl>
+                {report.crux.missing ? <span className="devir-source">{report.crux.missing} bağlı kanıt silinmiş. <StepLink step="18" /></span> : null}
+              </div>
+            ) : null}
+
+            {report.conditions.length ? (
+              <div className="devir-block">
+                <h3 className="devir-sub">Başarı neye bağlı?</h3>
+                <ul className="devir-conditions">
+                  {report.conditions.map((c) => (
+                    <li key={c.id} className="devir-condition">
+                      <span className="devir-tags">
+                        <Tag color={CONDITION_COLOR[c.status]}>{CONDITION_LABEL[c.status]}</Tag>
+                        {c.thresholdLate ? <Tag color="warning">Sınır sonradan belirlendi</Tag> : null}
+                      </span>
+                      <span className="devir-line">{c.condition}</span>
+                      <dl className="devir-pairs">
+                        {c.paths ? <div><dt>Etkilediği yol</dt><dd>{c.paths}</dd></div> : null}
+                        {c.measure ? <div><dt>Ölçü</dt><dd>{c.measure}</dd></div> : null}
+                        <div><dt>Başlangıç</dt><dd>{c.baseline}</dd></div>
+                        {c.threshold ? <div><dt>Sınır</dt><dd>{c.threshold}</dd></div> : null}
+                        {c.owner ? <div><dt>Sorumlu</dt><dd>{c.owner}</dd></div> : null}
+                        {c.support.length ? <div><dt>Destekleyen kanıt</dt><dd>{c.support.join('. ')}</dd></div> : null}
+                        {c.counter.length ? <div><dt>Karşı bulgu</dt><dd>{c.counter.join(' ')}</dd></div> : null}
+                        {c.comment ? <div><dt>Karar sahibinin yorumu</dt><dd>{c.comment}</dd></div> : null}
+                      </dl>
+                      {c.missing ? <span className="devir-source">{c.missing} bağlı kanıt silinmiş. <StepLink step="18" /></span> : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
+
             <div className="devir-block">
               <h3 className="devir-sub">Geçiş kararı</h3>
               {t ? (
@@ -438,6 +485,35 @@ export function HandoffScreen() {
               <>
                 <p className="helper">Yollar yan yana durur. Rapor yol seçmez. Seçimi stratej yapar.</p>
                 <PathCompare paths={report.paths} narrow={narrow} />
+                {report.crosses.length ? (
+                  <div className="devir-block">
+                    <h3 className="devir-sub">Yollar hangi sorulardan çıktı?</h3>
+                    <dl className="devir-pairs">
+                      {report.crosses.map((c) => (
+                        <div key={c.question}>
+                          <dt>{c.question}</dt>
+                          <dd>{c.text}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                ) : null}
+                {report.links.length ? (
+                  <div className="devir-block">
+                    <h3 className="devir-sub">Bu yollar neden çalışabilir?</h3>
+                    <ul className="devir-list">
+                      {report.links.map((l, i) => (
+                        <li key={i}>
+                          {l.path ? `${l.path}. ` : ''}{l.a} ile {l.b}.
+                          <span className="devir-source devir-tags">
+                            <Tag color={l.relation === 'celisiyor' ? 'error' : l.relation === 'destekliyor' ? 'success' : undefined}>{RELATION_LABEL[l.relation]}</Tag>
+                            {l.reason ? <span>{l.reason}</span> : null}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
                 <div className="devir-block">
                   <h3 className="devir-sub">Rakip karşı hamlesi</h3>
                   {report.counterMove ? <p className="devir-line">{report.counterMove}</p> : <Missing step="18" />}
@@ -470,6 +546,7 @@ export function HandoffScreen() {
                         <span className="tabular">Etki {a.impact} / 5.</span>
                         {a.state === 'curudu' ? <Tag color="error">Çürüdü</Tag> : null}
                         <span>{a.test ? `Test: ${a.test}` : 'Test yöntemi yazılmadı.'}</span>
+                        {a.affects ? <span>Yanlış çıkarsa değişen yol: {a.affects}.</span> : null}
                       </span>
                     </li>
                   ))}

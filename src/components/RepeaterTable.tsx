@@ -7,7 +7,7 @@ import { uid } from '@/engine/format'
 
 export type Row = Record<string, unknown> & { _id: string }
 
-const WIDE_TYPES = new Set(['text', 'textarea', 'select'])
+const WIDE_TYPES = new Set(['text', 'textarea', 'select', 'evidenceLink'])
 
 /**
  * Satır ekleyip silinen tablo. Geniş ekranda `Table size="middle"`; hücre girişleri `.cell-input` ile alt çizgilidir.

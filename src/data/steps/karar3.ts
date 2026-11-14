@@ -1,6 +1,8 @@
 import { marketCalc } from '@/engine/calc'
+import { strengthIssues, strengthsCalc } from '@/engine/strengths'
 import type { StepDef } from '../schema'
 
+const YES_NO = [{ value: 'evet', label: 'Evet' }, { value: 'hayir', label: 'Hayır' }]
 const IMPACT5 = ['Çok küçük', 'Küçük', 'Orta', 'Büyük', 'Çok büyük']
 const EVIDENCE5 = ['Hiç kanıt yok', 'Zayıf kanıt', 'Orta kanıt', 'İyi kanıt', 'Güçlü kanıt']
 
@@ -173,6 +175,7 @@ export const KARAR3: StepDef[] = [
             { key: 'testMethod', type: 'text', label: 'Test yöntemi', placeholder: 'Görüşme, sahte kapı, ön sipariş' },
             { key: 'falsifyThreshold', type: 'text', label: 'Şu olursa yanlış sayarım', placeholder: '10 bakkaldan 2\'den azı öderse' },
             { key: 'fallback', type: 'text', label: 'Yanlış çıkarsa ne yaparım?', placeholder: 'Fiyatı düşürürüm veya segmenti değiştiririm' },
+            { key: 'affectsPath', type: 'text', label: 'Yanlış çıkarsa hangi yol değişir?', help: 'Yol adını Adım 18\'den yazın. Bilmiyorsanız boş bırakın.', placeholder: 'Örneğin ön siparişle aylık kart' },
             /* Boş değer "Denenmedi" sayılır. Varsayımlar ekranı bu iki alanı okur ve yazar. */
             { key: 'status', type: 'select', label: 'Durum', placeholder: 'Denenmedi', options: [
               { value: 'denenmedi', label: 'Denenmedi' },
@@ -185,7 +188,7 @@ export const KARAR3: StepDef[] = [
       },
     ],
     output: 'Varsayım tablosu. Önce test edilecek kritik varsayımlar.',
-    models: [32, 21],
+    models: [32, 21, 120],
     completeWhen: ['assumptions'],
     chart: {
       kind: 'scatter',
@@ -329,6 +332,7 @@ export const KARAR3: StepDef[] = [
       'Fiziksel üründe tedarik, üretim, stok ve kargo maliyetini yazın. En küçük sipariş miktarını öğrenin.',
       'Mekân gerekiyorsa konum ve kira ayrı bir karardır. Uzun kira imzalamadan önce geçici satış noktasıyla test edin.',
       'Gereken parayı ve süreyi pistle karşılaştırın. Pist, para bitene kadar kalan ay sayısıdır.',
+      'Güçlerinizi yazın. Her gücü dört soruyla sınayın. Ağır yatırımda en az bir güç yazın.',
     ],
     sections: [
       {
@@ -386,6 +390,47 @@ export const KARAR3: StepDef[] = [
         ],
       },
       {
+        title: 'Güçlü yönler',
+        description: 'Elinizdeki her gücü dört soruyla sınayın. Soruları sırayla cevaplayın. Bir soruya "Hayır" derseniz sonraki soruları boş bırakabilirsiniz.',
+        fields: [
+          { key: 'strengthsNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Güler yüz, kalite ve tecrübe size eşsiz görünür. Rakipler de kendilerinde aynı şeyi görür. Gücün nadir olup olmadığını müşteriye sorun.' },
+          { key: 'strengths', type: 'repeater', label: 'Güçleriniz', help: 'Elle tutulanları ve tutulmayanları yazın. Örneğin dükkân, usta, tarif, müşteri ilişkisi.', addLabel: 'Güç ekle', maxRows: 15, columns: [
+            { key: 'name', type: 'text', label: 'Güç', placeholder: 'Örneğin 8 yıllık barista deneyimi', maxLength: 80 },
+            { key: 'valuable', type: 'select', label: 'İşe yarıyor mu?', help: 'Bu güç bir fırsatı yakalatıyor ya da bir tehdidi önlüyor mu?', options: YES_NO },
+            { key: 'rare', type: 'select', label: 'Rakiplerin çoğunda yok mu?', options: YES_NO },
+            { key: 'hardToCopy', type: 'select', label: 'Rakip zor mu kopyalar?', help: 'Kopyalamak pahalıysa ya da yıllar alıyorsa "Evet" deyin.', options: YES_NO },
+            { key: 'organized', type: 'select', label: 'Kullanacak düzeniniz var mı?', help: 'Güç tek kişinin aklındaysa "Hayır" deyin.', options: YES_NO },
+            { key: 'basis', type: 'text', label: 'Dayanak', placeholder: 'Bunu nereden biliyorsunuz?', maxLength: 160 },
+          ] },
+          { key: 'strengthsResult', type: 'calc', label: 'Süzgeç sonucu', emptyText: 'Bir güç yazınca sonuç burada görünür.', compute: (v) => strengthsCalc(v) },
+        ],
+      },
+      {
+        title: 'Darboğaz',
+        description: 'Talep artarsa ilk hangi iş aksar? Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'bottleneck', type: 'text', label: 'Talep artarsa ilk hangi iş aksar?', help: 'Sınırı belirleyen kişiyi, makineyi ya da ortağı yazın.', placeholder: 'Örneğin tek barista sabah kuyruğuna yetişmez', maxLength: 160, span: 12 },
+          { key: 'bottleneckLimit', type: 'text', label: 'Bu işin bugünkü sınırı nedir?', placeholder: 'Örneğin saatte 40 kahve', maxLength: 120, span: 12 },
+          { key: 'bottleneckAlt', type: 'text', label: 'Sınırı nasıl aşarsınız?', placeholder: 'Örneğin sabah için yarım gün yardımcı', maxLength: 160, span: 12 },
+        ],
+      },
+      {
+        title: 'Grup katkısı',
+        description: 'İşiniz bir gruba bağlı. Grubun size verdiğini ve sizden beklediğini ayrı yazın.',
+        when: { profile: { group: [true] } },
+        fields: [
+          { key: 'groupResource', type: 'text', label: 'Grubun size verdiği ortak kaynak nedir?', placeholder: 'Örneğin depo, satış ekibi, marka', maxLength: 160, span: 12 },
+          { key: 'groupTerms', type: 'text', label: 'Bu kaynağı hangi koşulla kullanırsınız?', placeholder: 'Örneğin ayda 20 saat, bedelsiz', maxLength: 160, span: 12 },
+          { key: 'groupDecider', type: 'text', label: 'Kaynağın kullanımına kim karar verir?', maxLength: 80, span: 12 },
+          { key: 'groupDemand', type: 'segmented', label: 'Talep nereden geliyor?', help: 'Grup içi talep, bağımsız dış talebin kanıtı değildir.', options: [
+            { value: 'grupIci', label: 'Grup içinden' },
+            { value: 'dis', label: 'Dışarıdan' },
+            { value: 'ikisi', label: 'İkisinden de' },
+          ] },
+          { key: 'groupBasis', type: 'text', label: 'Grup katkısının dayanağı nedir?', placeholder: 'Örneğin yönetim kurulu kararı', maxLength: 160, span: 12 },
+        ],
+      },
+      {
         title: 'Pistle karşılaştırma',
         fields: [
           { key: 'neededMoneyKurus', type: 'money', label: 'Bu yol için gereken toplam para', span: 12 },
@@ -394,13 +439,14 @@ export const KARAR3: StepDef[] = [
         ],
       },
     ],
-    output: 'Beceri tablosu. Yap, satın al veya ortak ol kararları. Teknik ön kanıt planı.',
+    output: 'Beceri tablosu. Yap, satın al veya ortak ol kararları. Teknik ön kanıt planı. Dört soruyla sınanmış güç listesi.',
     outcomeTable: [
       { condition: 'Kritik beceri yok ve edinilemiyor', result: 'Adım 11\'e dönün. Başka yol seçin.' },
       { condition: 'Teknik ön kanıt 3 aydan uzun sürüyor', result: 'Bu süre Karar 6\'ya eklenir. Pist yetmiyorsa Kapı 4\'te beklet.' },
       { condition: 'En küçük sipariş miktarı pisti aşıyor', result: 'Ön sipariş sayısını artırın. Ya da ürünü elle yapın.' },
     ],
-    models: [67, 80, 49],
+    models: [67, 80, 49, 110, 101],
     completeWhen: ['skills'],
+    validate: (values, plan) => strengthIssues(values, plan),
   },
 ]

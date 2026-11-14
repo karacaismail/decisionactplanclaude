@@ -1,6 +1,6 @@
 import { Link } from 'react-router'
 import { Badge, Card, Popover, Typography } from 'antd'
-import { ArrowSquareOut } from '@phosphor-icons/react'
+import { ArrowSquareOut, ListNumbers } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-rapor.css'
 
@@ -15,6 +15,8 @@ export interface ModelEntry {
   no: number
   simple: string | null
   example: { title: string; text: string } | null
+  /** Bu yöntemin "Nasıl uygulanır" yardımı var mı? Yardım ayrı dosyadan gelir. */
+  help?: boolean
 }
 
 const KARAR_KITABI = 'https://karacaismail.github.io/karar/'
@@ -26,10 +28,10 @@ export function modelLink(m: ModelEntry): string {
 
 /**
  * Tek yöntem kartı (`Card hoverable`). Başlık, meta satırı (bölüm, sıra, soru), "Kısaca" paragrafı.
- * Alt eylemler: "Karar Kitabı'nda aç" ve "Adımlarda kullanımı" (sayı rozeti; açılır pencerede adım bağlantıları).
+ * Alt eylemler: yardımı varsa "Nasıl uygulanır", "Karar Kitabı'nda aç" ve "Adımlarda kullanımı" (sayı rozeti; açılır pencerede adım bağlantıları).
  * 1 ile 128 arası genel sıra tek başına gösterilmez.
  */
-export function ModelCard({ model, steps, linkSteps }: { model: ModelEntry; steps: StepDef[]; linkSteps: boolean }) {
+export function ModelCard({ model, steps, linkSteps, onHelp }: { model: ModelEntry; steps: StepDef[]; linkSteps: boolean; onHelp?: (m: ModelEntry) => void }) {
   const titleId = `yontem-${model.slug}`
   const usage = steps.length ? (
     <ul className="method-steps" aria-label="Kullanıldığı adımlar">
@@ -48,6 +50,14 @@ export function ModelCard({ model, steps, linkSteps }: { model: ModelEntry; step
       className="method-card"
       title={<span id={titleId}>{model.title}</span>}
       actions={[
+        ...(model.help && onHelp
+          ? [
+              <button key="yardim" type="button" className="method-action method-help" aria-haspopup="dialog" onClick={() => onHelp(model)}>
+                <ListNumbers size={16} aria-hidden />
+                Nasıl uygulanır
+              </button>,
+            ]
+          : []),
         <a key="kitap" className="method-action" href={modelLink(model)} target="_blank" rel="noreferrer">
           <ArrowSquareOut size={16} aria-hidden />
           Karar Kitabı'nda aç

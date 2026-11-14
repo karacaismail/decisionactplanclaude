@@ -48,6 +48,13 @@ const QUESTIONS: { key: string; label: string; tooltip: string; extra: string; p
     extra: 'Her sözü ayrı satıra yazın. Vaat, kime verildi, durumu.',
     placeholder: 'Örnek: Nisan teslimi, Ahmet Bey, gecikti.',
   },
+  {
+    key: 'oldDecisions',
+    label: 'Hangi eski karar bugün yeniden sınanmalı?',
+    tooltip: 'Geçmişte işe yarayan uygulama bugün işe yaramayabilir.',
+    extra: 'Eski kararı ve o günden beri değişen koşulu yazın.',
+    placeholder: 'Örnek: Yalnız toptan satış kararı. Müşteriler artık küçük parti istiyor.',
+  },
 ]
 
 export function TakeoverScreen() {
@@ -81,7 +88,7 @@ export function TakeoverScreen() {
       </Callout>
 
       <div className="devralma-grid">
-        <Card title="İlk iki haftada üç soru" extra={<span>{answered} / {QUESTIONS.length} cevaplandı</span>}>
+        <Card title="İlk iki haftanın soruları" extra={<span>{answered} / {QUESTIONS.length} cevaplandı</span>}>
           <Form layout="vertical" className="devralma-form" requiredMark={false} onFinish={() => nav('/karar/1/adim/00')}>
             {QUESTIONS.map((q) => (
               <Form.Item key={q.key} label={q.label} tooltip={q.tooltip} extra={q.extra}>

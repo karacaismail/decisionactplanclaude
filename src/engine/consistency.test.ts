@@ -117,6 +117,25 @@ describe('geçiş kapısı ve devir raporu yalnız temel adımlarını okur', ()
   })
 })
 
+describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
+  it('asıl engel, başarı koşulu, yol bağı, güç ve taahhüt silinince öneri aynı kalır', () => {
+    const full = buildDemoPlan()
+    const bare = buildDemoPlan()
+    for (const key of ['crux', 'cruxWhy', 'cruxPaths', 'cruxAlt', 'cruxSplit', 'cruxEvidence', 'cruxCounter', 'successConditions', 'pathLinks', 'crossSO', 'crossWO', 'crossST', 'crossWT']) delete bare.steps['18'].values[key]
+    for (const key of ['commitmentsKnown', 'spentKurus', 'commitments']) delete bare.steps['16'].values[key]
+    for (const key of ['strengths', 'bottleneck', 'bottleneckLimit', 'bottleneckAlt']) delete bare.steps['12'].values[key]
+    const a = evaluateReadiness(full, { secondReader: 'Ayşe' })
+    const b = evaluateReadiness(bare, { secondReader: 'Ayşe' })
+    expect(a.suggested).toBe(b.suggested)
+    expect(a.mandatory.map((c) => c.met)).toEqual(b.mandatory.map((c) => c.met))
+    expect(a.supporting.map((c) => c.met)).toEqual(b.supporting.map((c) => c.met))
+    for (const n of FOUNDATION_DECISIONS) {
+      const gate = DECISIONS.find((d) => d.n === n)!.gate
+      expect(gate.criteria.map((c) => c.check(full))).toEqual(gate.criteria.map((c) => c.check(bare)))
+    }
+  })
+})
+
 describe('raporlar seçimi strateji çalışmasından okur', () => {
   it('seçilen yol Adım 19\'dan gelir, Adım 18\'deki eski alan kullanılmaz', () => {
     const p = buildDemoPlan()
@@ -241,8 +260,8 @@ describe('metinler eski süreci anlatmaz', () => {
   it('güncel dosyalarda eski ifade yoktur', () => {
     const hits: string[] = []
     for (const file of current) {
-      /* Süreç haritasının 7. bölümü eski adları bilerek anar. O bölüm taranmaz. */
-      const text = readFileSync(file, 'utf8').replace(/## 7\. Kaynak plandan farklar[\s\S]*?(?=\n## )/, '')
+      /* Süreç haritasının 8. bölümü eski adları bilerek anar. O bölüm taranmaz. */
+      const text = readFileSync(file, 'utf8').replace(/## 8\. Kaynak plandan farklar[\s\S]*?(?=\n## )/, '')
       for (const [re, why] of stale) if (re.test(text)) hits.push(`${file.replace(root, '')}: ${why}`)
     }
     expect(hits).toEqual([])

@@ -5,6 +5,7 @@ import { STEP_LIST } from '@/data/steps'
 import type { StepDef } from '@/data/schema'
 import { useCurrentPlan } from '@/store/planStore'
 import { ModelCard, type ModelEntry } from '@/components/ModelCard'
+import { ModelDrawer } from '@/components/ModelDrawer'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-rapor.css'
 
@@ -57,6 +58,7 @@ export function MethodsScreen() {
   const [section, setSectionState] = useState<string>(TUMU)
   const [pageNo, setPageNo] = useState(1)
   const listRef = useRef<HTMLDivElement>(null)
+  const [helpModel, setHelpModel] = useState<ModelEntry | null>(null)
   /* Arama ya da bölüm değişince sayfalama başa döner. */
   const setQuery = (q: string) => { setQueryState(q); setPageNo(1) }
   const setSection = (sec: string) => { setSectionState(sec); setPageNo(1) }
@@ -107,9 +109,11 @@ export function MethodsScreen() {
         <Empty description={<span className="insight-empty-text">Bu arama için yöntem yok. Başka bir kelime deneyin ya da “Hepsi” sekmesine dönün.</span>} />
       ) : (
         <section className="method-grid" aria-label="Yöntem listesi">
-          {visible.map((m) => <ModelCard key={m.g} model={m} steps={STEPS_BY_MODEL[m.g] ?? []} linkSteps={Boolean(plan)} />)}
+          {visible.map((m) => <ModelCard key={m.g} model={m} steps={STEPS_BY_MODEL[m.g] ?? []} linkSteps={Boolean(plan)} onHelp={setHelpModel} />)}
         </section>
       )}
+
+      <ModelDrawer model={helpModel} onClose={() => setHelpModel(null)} />
 
       {sorted.length > PAGE ? (
         <nav className="method-pagination" aria-label="Sayfalar">

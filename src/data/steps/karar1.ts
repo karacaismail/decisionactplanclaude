@@ -50,6 +50,7 @@ export const KARAR1: StepDef[] = [
           ] },
           { key: 'paid', type: 'toggle', label: 'Müşteriden para alacak mısınız?', onLabel: 'Evet, ücretli', offLabel: 'Hayır, ücretsiz veya kamu bütçesiyle' },
           { key: 'smallReversible', type: 'toggle', label: 'Bu küçük ve geri alınabilir bir iş mi?', help: 'Küçük işte bugünkü yöntem ile bir alternatif yeter. Ağır yatırımda üç yol aranır.', onLabel: 'Evet, küçük ve geri alınabilir', offLabel: 'Hayır, ağır yatırım' },
+          { key: 'group', type: 'toggle', label: 'İşiniz bir gruba ya da holdinge bağlı mı?', help: 'Bağlıysa Adım 12\'de grup katkısını sorarız. Büyük yatırım tek başına grup bağı değildir.', onLabel: 'Evet, bağlı', offLabel: 'Hayır, bağımsız' },
           { key: 'description', type: 'textarea', label: 'İşinizi kendi sözlerinizle yazın', rows: 3, maxLength: 400, placeholder: 'Örneğin: Dükkânlara tamir hizmeti veriyorum. Tek başıma çalışıyorum. İlk müşterimi arıyorum.' },
         ],
       },
@@ -265,6 +266,10 @@ export const KARAR1: StepDef[] = [
           { key: 'factorNotes', type: 'repeater', label: 'Her etken için soru ve eylem', addLabel: 'Etken ekle', columns: [
             { key: 'factor', type: 'text', label: 'Etken' },
             { key: 'change', type: 'text', label: 'Önümüzdeki 12 ayda ne değişiyor?' },
+            { key: 'effect', type: 'select', label: 'Bu değişim size ne getirir?', help: 'Seçiminiz Adım 18\'deki durum özetine gider.', options: [
+              { value: 'firsat', label: 'Fırsat' },
+              { value: 'tehdit', label: 'Tehdit' },
+            ] },
             { key: 'action', type: 'text', label: 'Yapılacak eylem' },
           ] },
         ],

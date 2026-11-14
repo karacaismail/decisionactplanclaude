@@ -1,4 +1,7 @@
 import { breakEvenCalc } from '@/engine/calc'
+import { ADVANTAGE_LEVELS, STRENGTH_LABEL, strengthsOf } from '@/engine/strengths'
+import { CROSS_QUESTIONS, ORIGIN_OPTIONS } from '@/engine/situation'
+import { conditionsCalc, freeBudget, RELATION_OPTIONS } from '@/engine/crux'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
 
@@ -54,6 +57,22 @@ export const KARAR5: StepDef[] = [
           { key: 'cost', type: 'textarea', label: 'Maliyet', help: 'Sabit giderler ve satışa bağlı giderler.', rows: 2, span: 12 },
           { key: 'metrics', type: 'textarea', label: 'Ana göstergeler', help: 'Her hafta hangi sayılara bakacaksınız?', rows: 2, span: 12 },
           { key: 'unfairAdvantage', type: 'textarea', label: 'Haksız avantaj', help: 'Haksız avantaj, rakibin kolayca kopyalayamadığı şeydir. Boş kalabilir.', rows: 2, span: 12 },
+          {
+            key: 'strengthsHint',
+            type: 'calc',
+            label: 'Adım 12\'de sınadığınız güçler',
+            emptyText: 'Adım 12\'de güç yazınca liste burada görünür. Yazılım bu kutuyu sizin yerinize doldurmaz.',
+            compute: (_v, plan) => {
+              const tested = strengthsOf(plan).filter((s) => s.level !== 'bos')
+              if (tested.length === 0) return null
+              const advantages = tested.filter((s) => ADVANTAGE_LEVELS.includes(s.level))
+              return {
+                value: `${advantages.length} avantaj`,
+                lines: tested.map((s) => `${s.name}: ${STRENGTH_LABEL[s.level]}.`),
+                warn: advantages.length === 0 ? 'Süzgeçten geçen avantaj yok. "Haksız avantaj" kutusunu boş bırakabilirsiniz.' : undefined,
+              }
+            },
+          },
         ],
       },
       {
@@ -91,6 +110,45 @@ export const KARAR5: StepDef[] = [
             { key: 'balanceAfterKurus', type: 'money', label: 'O gün sonunda kasada kalan' },
           ] },
           { key: 'cashDaysNote', type: 'textarea', label: 'Kasa notu', help: 'Kasanın en düşük olduğu günü ve nedenini yazın.', rows: 2 },
+        ],
+      },
+      {
+        title: 'Serbest bütçe',
+        description: 'Toplam bütçe, harcayabileceğiniz parayı tek başına göstermez. Harcananı ve ödenmemiş taahhüdü düşün.',
+        fields: [
+          { key: 'commitmentsKnown', type: 'segmented', label: 'Ödenmemiş bağlayıcı taahhüdünüz var mı?', help: 'Bağlayıcı taahhüt, vazgeçseniz de ödeyeceğiniz paradır. Örneğin imzalı kira sözleşmesi.', options: [
+            { value: 'var', label: 'Var' },
+            { value: 'yok', label: 'Yok' },
+            { value: 'bilinmiyor', label: 'Bilmiyorum' },
+          ] },
+          { key: 'spentKurus', type: 'money', label: 'Bugüne kadar harcanan tutar', help: 'Koşullu izinle harcadığınız parayı buraya yazmayın. O tutar ayrıca düşülür.', span: 12 },
+          { key: 'commitments', type: 'repeater', label: 'Ödenmemiş taahhütler', addLabel: 'Taahhüt ekle', maxRows: 8, when: { field: { key: 'commitmentsKnown', equals: 'var' } }, columns: [
+            { key: 'what', type: 'text', label: 'Ne için?', placeholder: 'Örneğin 24 aylık kira' },
+            { key: 'amountKurus', type: 'money', label: 'Ödenmemiş tutar' },
+            { key: 'dueDate', type: 'date', label: 'Vade' },
+            { key: 'basis', type: 'text', label: 'Dayanak', placeholder: 'Örneğin imzalı sözleşme' },
+          ] },
+          {
+            key: 'freeBudgetCalc',
+            type: 'calc',
+            label: 'Serbest bütçe',
+            emptyText: 'Soruyu cevaplayınca hesap burada görünür. Harcama sınırı Adım 02\'de yazılır.',
+            compute: (v, plan) => {
+              const r = freeBudget(plan, v)
+              if (r.state === 'yok') return null
+              if (r.state === 'bilinmiyor') return { value: 'Bilinmiyor', lines: ['Taahhüt bilinmiyor. Bu yüzden kesin tutar yazılmaz.', 'Önce sözleşmelerinizi kontrol edin.'] }
+              return {
+                value: formatMoney(r.freeKurus),
+                lines: [
+                  `Harcama sınırı ${formatMoney(r.budgetKurus)}.`,
+                  `Harcanan tutar ${formatMoney(r.spentKurus)}.`,
+                  ...(r.permitsKurus > 0 ? [`Koşullu izinlere bağlı tutar ${formatMoney(r.permitsKurus)}.`] : []),
+                  `Ödenmemiş taahhüt ${formatMoney(r.unpaidKurus)}.`,
+                ],
+                warn: r.freeKurus < 0 ? 'Serbest bütçe eksiye düştü. Yeni harcama yapmadan önce sınırı gözden geçirin.' : undefined,
+              }
+            },
+          },
         ],
       },
       {
@@ -262,7 +320,7 @@ export const KARAR5: StepDef[] = [
       { condition: 'Bir riskin önlemi yok ve etkisi işi bitiriyor', result: 'Bu riski durdurma kuralı yapın. Ya da önce koruyucu bir deney tasarlayın.' },
       { condition: 'Geri dönülemez bir karar strateji çalışmasından önce gerekiyor', result: 'Kararı küçültün. Kısa kira, küçük stok ve deneme ortaklığı seçin.' },
     ],
-    models: [41, 33, 93],
+    models: [41, 33],
     completeWhen: ['premortem', 'risks'],
     chart: {
       kind: 'heatmap',
@@ -305,14 +363,22 @@ export const KARAR5: StepDef[] = [
     shortPath: true,
     intro: 'Bu adım strateji seçmez. Strateji için adayları hazırlar. Stratej bu adayları yan yana görür ve aralarından seçer. Adım 11\'de bir çözümü denemek için seçtiniz. Bu adımda işin bütün yolunu yazarsınız: hangi müşteri, hangi kanal, neyle kazanma.',
     howTo: [
+      'Önce durum özetini okuyun. Özet güçlü yönleri, zayıf yönleri, fırsatları ve tehditleri gösterir.',
+      'Dört çapraz soruyu cevaplayın. Örneğin: "Hangi güçlü yönle hangi fırsatı yakalarız?"',
       'İlk satır hazırdır: "Bugünkü durumu sürdürmek". Bu satırı da doldurun.',
       'En az iki gerçekten farklı yol daha yazın. Ağır yatırımda en az üç yol yazın.',
       'Her yol için müşteriyi, bölgeyi ve kanalı yazın. Neyle kazanacağınızı yazın.',
       'Her yol için neyden vazgeçeceğinizi yazın. Bedelini ve geri alınıp alınamayacağını yazın.',
       'Puanlamadan önce ölçütlerin ağırlığını yazın. Ağırlıkları kilitleyin. Sonra her yolu puanlayın.',
+      'İsterseniz asıl engeli ve başarı koşullarını yazın. Kanıtı defterden seçin.',
       'Yol seçmeyin. Stratej\'in vereceği açık kararları listeye yazın.',
     ],
     sections: [
+      {
+        title: 'Çapraz sorular',
+        description: 'Üstteki durum özetine bakın. Dört soruyu cevaplayın. Cevaplar yol adayı bulmanıza yardım eder. Sorular isteğe bağlıdır.',
+        fields: CROSS_QUESTIONS.map((q) => ({ key: q.key, type: 'textarea' as const, label: q.label, placeholder: q.placeholder, rows: 2, maxLength: 400, span: 12 as const })),
+      },
       {
         title: 'Yollar',
         fields: [
@@ -323,6 +389,7 @@ export const KARAR5: StepDef[] = [
             { key: 'how', type: 'text', label: 'Neyle kazanırız?', placeholder: 'Fiyat, farklılık, hız, güven veya uzmanlık' },
             { key: 'giveUp', type: 'text', label: 'Neyden vazgeçeriz?' },
             { key: 'evidence', type: 'text', label: 'Destekleyen kanıt' },
+            { key: 'origin', type: 'select', label: 'Hangi sorudan çıktı?', help: 'Yol hangi çapraz sorunun cevabından çıktı? Boş kalabilir.', options: ORIGIN_OPTIONS },
             { key: 'cost', type: 'text', label: 'Bedeli ve süresi', placeholder: '60.000 TL ve 3 hafta' },
             { key: 'reversible', type: 'select', label: 'Geri alınabilir mi?', options: [
               { value: 'ciftYonlu', label: 'Evet, geri alınır' },
@@ -353,6 +420,55 @@ export const KARAR5: StepDef[] = [
         ],
       },
       {
+        title: 'Bu yol neden çalışabilir?',
+        description: 'Bir yolun iki işi birbirini destekleyebilir ya da birbiriyle çelişebilir. Bulduğunuz bağları yazın. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'similarTip', type: 'info', label: 'Yollar birbirine benziyorsa', tone: 'ipucu', text: 'Dört soru sorun. Hangi işi kaldırabiliriz? Hangi işi azaltabiliriz? Hangi işi güçlendirebiliriz? Hangi yeni işi ekleyebiliriz? Çıkan yolu üstteki tabloya yazın.' },
+          { key: 'pathLinks', type: 'repeater', label: 'Yol bağları', addLabel: 'Bağ ekle', maxRows: 10, columns: [
+            { key: 'path', type: 'text', label: 'Hangi yol?', placeholder: 'Yolun adı' },
+            { key: 'a', type: 'text', label: 'Birinci iş ya da söz', placeholder: 'Örneğin hızlı teslim sözü' },
+            { key: 'b', type: 'text', label: 'İkinci iş ya da söz', placeholder: 'Örneğin stoku azaltmak' },
+            { key: 'relation', type: 'select', label: 'İkisi nasıl ilişkili?', options: RELATION_OPTIONS },
+            { key: 'reason', type: 'text', label: 'Neden?', placeholder: 'Örneğin hızlı teslim yedek stok ister' },
+          ] },
+        ],
+      },
+      {
+        title: 'Asıl engel',
+        description: 'Asıl engel, önce çözülmesi gereken en önemli güçlüktür. Çözülebilir bir güçlük yazın. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'crux', type: 'textarea', label: 'Bu işin önündeki asıl engel nedir?', rows: 2, maxLength: 300, placeholder: 'Örneğin: Yazılı ilgi, gideri karşılayan günlük satışa dönüşecek mi?' },
+          { key: 'cruxWhy', type: 'textarea', label: 'Bu engel neden önce incelenmeli?', rows: 2, maxLength: 300 },
+          { key: 'cruxPaths', type: 'text', label: 'Bu engel hangi yolu etkiler?', placeholder: 'Bütün yollar ya da yolun adı', maxLength: 160, span: 12 },
+          { key: 'cruxAlt', type: 'textarea', label: 'Aynı durumu başka nasıl açıklarsınız?', help: 'İkinci bir açıklama yazın. Tek açıklama sizi yanıltabilir.', rows: 2, maxLength: 300 },
+          { key: 'cruxSplit', type: 'text', label: 'İki açıklamayı hangi bulgu ayırır?', placeholder: 'Örneğin iki fiyatla bir sabah satışı', maxLength: 200, span: 12 },
+          { key: 'cruxEvidence', type: 'evidenceLink', label: 'Destekleyen kanıt', help: 'Kanıtı defterden seçin. Yeniden yazmayın.' },
+          { key: 'cruxCounter', type: 'evidenceLink', label: 'Karşı bulgu' },
+        ],
+      },
+      {
+        title: 'Başarı neye bağlı?',
+        description: 'İşin yürümesi için gerçekleşmesi gereken koşulları yazın. Her koşul bir iddiadır. Kanıt bağlayınca durumu değişir. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'successConditions', type: 'repeater', label: 'Başarı koşulları', addLabel: 'Koşul ekle', maxRows: 8, columns: [
+            { key: 'condition', type: 'text', label: 'Koşul', placeholder: 'Örneğin sabah talebi günlük gideri karşılar' },
+            { key: 'paths', type: 'text', label: 'Hangi yolu etkiler?', placeholder: 'Bütün yollar ya da yolun adı' },
+            { key: 'measure', type: 'text', label: 'Ölçü ve dönem', placeholder: 'Örneğin günlük ücretli satış' },
+            { key: 'baseline', type: 'text', label: 'Başlangıç değeri', help: 'Ölçmediyseniz boş bırakın. Ölçtünüz ve sıfır çıktıysa 0 yazın.', placeholder: 'Örneğin 20 talebin 8\'i' },
+            { key: 'threshold', type: 'text', label: 'Sınır', placeholder: 'Örneğin günde 40 satış' },
+            { key: 'thresholdWhen', type: 'select', label: 'Sınırı ne zaman seçtiniz?', options: [
+              { value: 'once', label: 'Denemeden önce' },
+              { value: 'sonra', label: 'Denemeden sonra' },
+            ] },
+            { key: 'owner', type: 'text', label: 'Sorumlu' },
+            { key: 'support', type: 'evidenceLink', label: 'Destekleyen kanıt' },
+            { key: 'counter', type: 'evidenceLink', label: 'Karşı bulgu' },
+            { key: 'comment', type: 'text', label: 'Karar sahibinin yorumu' },
+          ] },
+          { key: 'conditionsResult', type: 'calc', label: 'Koşulların durumu', emptyText: 'Bir koşul yazınca durumu burada görünür.', compute: (v, plan) => conditionsCalc(v, plan) },
+        ],
+      },
+      {
         title: 'Açık kararlar',
         description: 'Stratej\'in vereceği kararları yazın. Kararı siz vermeyin. Seçenekleri ve dayanağı yazın.',
         fields: [
@@ -377,7 +493,7 @@ export const KARAR5: StepDef[] = [
       { condition: 'Hiçbir yol vazgeçiş içermiyor', result: 'Yollar gerçekten farklı değildir. Müşteriyi, kanalı ya da kazanma nedenini değiştirin.' },
       { condition: 'Bir yol geri alınmaz ve kanıtı zayıf', result: 'Bu yolu açık karar defterine yazın. Önce küçük bir deneme tarif edin.' },
     ],
-    models: [78, 99, 44, 109],
+    models: [2, 109, 78, 99, 44, 10, 68],
     completeWhen: ['paths'],
     chart: {
       kind: 'bar',

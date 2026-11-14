@@ -29,13 +29,15 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 
 - Güncel süreç, kilitler ve eskime kuralları: [docs/surec-haritasi.md](docs/surec-haritasi.md)
 - Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
+- Karar Kitabı'ndan alınan üç yardımın planı: [docs/karar-kitabi-firsatlari-plani.md](docs/karar-kitabi-firsatlari-plani.md)
+- Codex önerilerinin uygulama notu: [docs/codex-onerileri-uygulama-notu.md](docs/codex-onerileri-uygulama-notu.md)
 - Strateje devir raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
 - Amaç ve ilk boşluk analizi: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)
 - İlk ön yüz uygulama planı: [docs/uygulama-plani-on-yuz.md](docs/uygulama-plani-on-yuz.md)
 - Uzlaşmış ön yüz planı: [docs/act_components_uzlasma.md](docs/act_components_uzlasma.md)
 - Claude ön yüz planı: [docs/act_components_claude.md](docs/act_components_claude.md)
 - Codex ön yüz planı: [docs/act_components_codex.md](docs/act_components_codex.md)
-- Kaynak plan, Claude sürümü: [docs/act_plan_v5_final-claude.md](docs/act_plan_v5_final-claude.md). Uygulamanın bu plandan ayrıldığı yerler süreç haritasının 7. bölümündedir.
+- Kaynak plan, Claude sürümü: [docs/act_plan_v5_final-claude.md](docs/act_plan_v5_final-claude.md). Uygulamanın bu plandan ayrıldığı yerler süreç haritasının 8. bölümündedir.
 - Kaynak plan, Codex sürümü: [docs/act_plan_v5_final-codex.md](docs/act_plan_v5_final-codex.md)
 
 ## Çalıştırma

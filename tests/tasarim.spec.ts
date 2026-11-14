@@ -288,5 +288,6 @@ test('2. tur 8: 320 çıktılar araç çubuğu tam genişlik, sayfa en çok 2800
   const widths = await page.locator('.report-toolbar > *').evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().width)))
   const max = Math.max(...widths)
   for (const w of widths) expect(w, 'araç çubuğu öğeleri aynı genişlikte').toBeGreaterThanOrEqual(max - 2)
-  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(2800)
+  /* Yazı tipi yüklenene kadar sayfa bir an daha uzun ölçülür. Sınır aynıdır, ölçüm yerleşim oturunca yapılır. */
+  await expect.poll(() => page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(2800)
 })

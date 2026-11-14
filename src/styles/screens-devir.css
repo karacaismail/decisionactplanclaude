@@ -138,3 +138,11 @@
 @media print {
   .devir-group .devir-more-row { display: revert !important; }
 }
+
+/* Asıl engel ve başarı koşulları. Raporun ilk bölümünde, karar sorusunun altında durur. */
+.devir-crux-text { font-size: 18px; line-height: 1.4; font-weight: 600; }
+.devir-conditions { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+.devir-condition { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-width: 0; padding: var(--space-4); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+@media (min-width: 768px) {
+  .devir-conditions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

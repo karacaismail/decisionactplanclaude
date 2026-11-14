@@ -64,7 +64,7 @@ export function FormRenderer({ step, plan, values, onChange }: { step: StepDef; 
                   const result = f.compute(values, plan)
                   return (
                     <div key={f.key} className="field-cell">
-                      <CalcField label={f.label} result={result} current={result?.apply ? values[result.apply.key] : undefined} onApply={(key, v) => onChange(key, v)} />
+                      <CalcField label={f.label} result={result} emptyText={f.emptyText} current={result?.apply ? values[result.apply.key] : undefined} onApply={(key, v) => onChange(key, v)} />
                     </div>
                   )
                 }

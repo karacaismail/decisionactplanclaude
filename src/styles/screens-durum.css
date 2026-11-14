@@ -1,0 +1,20 @@
+/*
+  Durum özeti: dört liste. Adım 18'in başında durur.
+  Ayrım boşluk ve yüzey tonuyla kurulur. Blokların kenar çizgisi yoktur.
+*/
+.durum { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+.durum-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+@media (min-width: 768px) {
+  .durum-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+.durum-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); align-content: start; min-width: 0; padding: var(--space-4); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+.durum-title { margin: 0; display: flex; align-items: center; gap: var(--space-2); font-size: 16px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); min-width: 0; }
+.durum-title > span:first-of-type { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.durum-count.ant-tag { margin: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+.durum-list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-width: 0; }
+.durum-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+.durum-text { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.durum-meta { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.durum-meta a { display: inline-flex; align-items: center; gap: 2px; min-height: 24px; }
+.durum-empty { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.durum-hint { margin: 0; }

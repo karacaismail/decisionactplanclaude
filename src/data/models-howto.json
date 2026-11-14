@@ -1,0 +1,1115 @@
+[
+ {
+  "g": 2,
+  "steps": [
+   {
+    "title": "Konuyu daraltın",
+    "text": "“Şirketimizin SWOT'u” çok geniş bir konudur. Tek bir karar seçin. Örneğin “bu ürünün bu pazardaki SWOT'u” üzerinde çalışın."
+   },
+   {
+    "title": "Kanıt isteyin",
+    "text": "Her maddede “Bunu hangi bilgiyle söylüyoruz?” diye sorun. Kanıtsız güçlü yön çoğu zaman şirket içinde anlatılan bir masaldır."
+   },
+   {
+    "title": "Kutuları eşleştirin",
+    "text": "Dört sorunun cevabını dört kutuya yazdıktan sonra asıl işe geçin. Güçlü yanı fırsatla ve tehditle eşleştirin. Zayıf yanı da fırsatla ve tehditle eşleştirin. Her eşleşmeden en az bir iş çıkarın."
+   },
+   {
+    "title": "Tek karara bağlayın",
+    "text": "Bu çalışmanın sonucu bir sunum değildir. Sonuç bir karardır. Neyi yapacağınızı ve neyi bırakacağınızı yazın."
+   }
+  ],
+  "warn": [
+   "Zayıf yanları yumuşatmayın. “Gelişime açık alanlarımız” gibi sözler çalışmayı kör eder. Zayıf yanı açıkça yazın. Açık yazmazsanız zayıf yanı tehditle eşleştiremezsiniz."
+  ],
+  "tip": []
+ },
+ {
+  "g": 10,
+  "steps": [
+   {
+    "title": "Seçenek sınırı koyun",
+    "text": "Her kararda en fazla 3 ile 5 aday değerlendirin. Bu sınıra baştan karar verin. Bu kural iş başvurusunda, satıcı ve tatil yeri seçiminde geçerlidir. Bu kural bilgisayar programı seçimi gibi kararlarda da geçerlidir."
+   },
+   {
+    "title": "Ölçütleri önce yazın",
+    "text": "Seçeneklere bakmadan önce “yeterince iyi” olanı tanımlayın. Sonra yeterli olan ilk adayı seçin. En iyi adayı aramayın. Size yeten adayı seçin."
+   },
+   {
+    "title": "Karardan sonra aramayı bırakın",
+    "text": "Karar verdikten sonra diğer seçenekleri incelemeyin. Karşılaştırmaya devam etmek kararı iyileştirmez. Karşılaştırmaya devam etmek yalnız pişmanlığı artırır."
+   },
+   {
+    "title": "Başkalarına az seçenek sunun",
+    "text": "Müşteriye, ekibe ya da yöneticiye az seçenek sunun. 2 ya da 3 net seçenek verin. 10 seçenekli sunum karar getirmez. Böyle bir sunum kararı erteletir."
+   }
+  ],
+  "warn": [
+   "Hiç seçenek olmaması da insanı mutsuz eder. Amaç seçeneği sıfıra indirmek değildir. Amaç, kafayı en az karıştıran orta sayıyı bulmaktır."
+  ],
+  "tip": []
+ },
+ {
+  "g": 11,
+  "steps": [
+   {
+    "title": "Üç ölçüt seçin",
+    "text": "Pazarınızı ayıran üç ölçüt belirleyin. Örneğin fiyat, kolay ulaşma, çok bilinme, kalite ve hız birer ölçüttür. Müşterinin gerçekten önem verdiği ölçütleri seçin."
+   },
+   {
+    "title": "Rakipleri haritaya koyun",
+    "text": "Bütün önemli rakiplere üç ölçütte puan verin. Rakipleri puanlarına göre haritaya yerleştirin. Harita ne kadar dürüstse boşluklar o kadar gerçektir."
+   },
+   {
+    "title": "Boşlukları inceleyin",
+    "text": "Boş yerleri tek tek inceleyin. “Burada neden kimse yok?” diye sorun. Belki bu yeri henüz kimse fark etmemiştir. Belki de isteyen müşteri olmadığı için herkes bu yeri bırakmıştır."
+   },
+   {
+    "title": "Yerinizi seçin",
+    "text": "İki sağlam yol vardır. Boş ve müşterisi olan bir yere yerleşebilirsiniz. Dolu bir yere ise ancak rakipleri silecek kadar güçlü bir işle girebilirsiniz. İki yolun ortasında kalıp “biraz farklıyız” demek en zayıf yerdir."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Boş yerde müşteri olup olmadığını büyük para harcamadan deneyin. Ön satış yapabilir, bekleme listesi açabilir ya da tek günlük geçici dükkan kurabilirsiniz. Boşluğun gerçek olduğunu ancak müşteri para ödeyince anlarsınız."
+  ]
+ },
+ {
+  "g": 12,
+  "steps": [
+   {
+    "title": "Parçaları listeleyin",
+    "text": "Ürünü ya da sorunu parçalarına ayırın. Örneğin tasarım, motor, hedef müşteri, malzeme ve satış yolu birer parçadır. Tablonun her satırına bir parça yazın."
+   },
+   {
+    "title": "Her parçaya özellik yazın",
+    "text": "Her parça için olabildiğince çok farklı özellik yazın. Bu aşama bilgi ve hayal gücü ister. Aklınıza gelen hiçbir özelliği elemeyin. Hepsini yazın."
+   },
+   {
+    "title": "Birleşim çizin",
+    "text": "Önce şartlarınızı belirleyin. Örneğin ürün hem verimli hem ucuz olsun. Her satırdan bir özellik seçin ve seçtiklerinizi çizgiyle bağlayın. Her çizgi bir aday tasarımdır."
+   },
+   {
+    "title": "SCAMPER sorularını sorun",
+    "text": "SCAMPER, fikri geliştiren yedi sorunun adıdır. Seçtiğiniz adaya bu soruları sorun. Örneğin neyin yerine başka bir şey koyabilirsiniz? Neyi birleştirebilir, neyi çıkarabilir, neyi ters çevirebilirsiniz?"
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Bu yöntemin ana fikrine göre yeni fikir boş sayfadan değil, dolu tablodan çıkar. Örneğin 7 parça ve her parçada 6 özellik çok fazla birleşim verir. İnsan bu kadar birleşimi aklından tek başına tarayamaz. Tablo bu birleşimleri sırayla gezmenizi sağlar."
+  ]
+ },
+ {
+  "g": 15,
+  "steps": [
+   {
+    "title": "İki çizgiyi çizin",
+    "text": "Projenizdeki iki çizgiyi hatırlayın. Bilgi zamanla artar. Kararların etkisi zamanla azalır. Bugün bulunduğunuz yeri işaretleyin."
+   },
+   {
+    "title": "Erken kararları belirleyin",
+    "text": "En geniş sonucu doğuracak kararları bulun. Bu kararları listeleyin. Bu kararları bilerek öne alın. Kusursuz bilgiyi beklemeyin."
+   },
+   {
+    "title": "En az bilgiyi belirleyin",
+    "text": "“Karar için hangi bilgi gerçekten şart?” diye sorun. Şart olan bilgi elinizdeyse karar verin. Hâlâ bilmediğiniz şeyleri takip edilecek risk olarak yazın."
+   },
+   {
+    "title": "Ertelemeyi açıkça duyurun",
+    "text": "Bir kararı bilerek erteliyorsanız bir tarih koyun. Bunu ekibe duyurun. Kararı hangi bilgi gelince vereceğinizi söyleyin. Kararı en geç hangi tarihte vereceğinizi de söyleyin."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Ertelediğiniz kararı ekibe söylemezseniz herkes farklı bir tahminle ilerler. Bu, yöntemin en işe yarar dersidir. Bir kararı erteleyebilirsiniz. Bir kararı sessizce ertelemeyin."
+  ]
+ },
+ {
+  "g": 17,
+  "steps": [
+   {
+    "title": "Riskli işi seçin",
+    "text": "Devam etme ya da durma kararını duyguyla verdiğiniz işleri bulun. Yatırım, proje, pazarlık ve işe alım böyle işlerdir. Bir tartışma bile böyle bir iş olabilir."
+   },
+   {
+    "title": "Sınırı önceden yazın",
+    "text": "İşe girmeden önce, sakin kafayla sınırı belirleyin. Sınır bir kayıp yüzdesi, bir tarih ya da bir deneme sayısı olabilir. Sınır ölçülebilir olmalı. Sınır tartışmaya yer bırakmamalı."
+   },
+   {
+    "title": "Sınır türünü seçin",
+    "text": "Sınırın kesin mi esnek mi olacağına karar verin. Esnek sınır seçerseniz uzatma şartını da baştan yazın. O an pazarlık yapmaya yer bırakmayın."
+   },
+   {
+    "title": "Sınır aşılınca uygulayın",
+    "text": "Sınır aşılınca kuralı soru sormadan uygulayın. Kural sizi o anki duygularınızdan korur. Kuralı sonradan tartışırsanız bu korumayı kaybedersiniz."
+   }
+  ],
+  "warn": [
+   "Durma Kuralı, en çok karşı koyacağınız anda işe yarar. O anda “bu kadar yatırdık, biraz daha devam edelim” dersiniz. Bu cümle bir hastalıktır. Durma Kuralı bu hastalığın ilacıdır."
+  ],
+  "tip": []
+ },
+ {
+  "g": 21,
+  "steps": [
+   {
+    "title": "Çelişkiyi yakalayın",
+    "text": "Çelişki, yaptığınız ile inandığınızın birbirine uymamasıdır. Kendinizde “ama”, “aslında” ve “istisna” ile başlayan savunmaları izleyin. Bu sözler çelişkiyi susturur."
+   },
+   {
+    "title": "İnancı ya da davranışı değiştirin",
+    "text": "Çelişkiyi çözmenin iki dürüst yolu vardır. Davranışınızı değiştirebilirsiniz. İnancınızı gerçekten yenileyebilirsiniz. Bahane üretmek üçüncü yoldur ve çözüm değildir."
+   },
+   {
+    "title": "Karardan önce not alın",
+    "text": "Büyük kararlardan önce “Hangi kanıt gelirse fikrimi değiştiririm?” sorusunu cevaplayın. Cevabı yazın. Çelişki geldiğinde bu not sizi hikâye uydurmaktan korur."
+   },
+   {
+    "title": "Karşı görüş görevi verin",
+    "text": "Toplantıda bir kişiye resmî bir görev verin. Bu kişi karara karşı en güçlü savunmayı yapsın. Bu göreve “şeytanın avukatlığı” denir."
+   }
+  ],
+  "warn": [],
+  "tip": []
+ },
+ {
+  "g": 30,
+  "steps": [
+   {
+    "title": "Çapayı sorgulayın",
+    "text": "Her pazarlıkta ve değerlendirmede iki soru sorun. Hangi sayıya göre düşünüyorsunuz ve bu sayıyı kim söyledi? Bu ilk sayıya çapa denir. İlk sayıyı siz söylemediyseniz çapayı karşı taraf atmıştır."
+   },
+   {
+    "title": "Karşı kanıt arayın",
+    "text": "Karardan önce kendinize bir görev verin. Görüşünüzü çürütecek en güçlü üç nedeni yazın. Üç neden bulamıyorsanız araştırmanız bitmemiştir."
+   },
+   {
+    "title": "Tanıdık hikâyesini bilgiden ayırın",
+    "text": "“Bir tanıdığım” diye başlayan her gerekçeyi işaretleyin. Bu gerekçenin yerine ölçülmüş bilgi koymaya çalışın."
+   },
+   {
+    "title": "Yavaş düşünmeye zaman ayırın",
+    "text": "Önemli mesajlarda ve kararlarda araya zaman koyun. Mesajı göndermeden önce bir kez daha okuyun. İmza atmadan önce bir gece bekleyin."
+   }
+  ],
+  "warn": [
+   "En tehlikeli önyargı, önyargının yalnız başkalarında olduğuna inanmaktır. Bu listeyi ekibe değil, önce kendi son üç kararınıza uygulayın."
+  ],
+  "tip": []
+ },
+ {
+  "g": 31,
+  "steps": [
+   {
+    "title": "Beş soruyu yazın",
+    "text": "Beş soruyu tek başınıza ya da iyi bir arkadaşınızla cevaplayın. Cevapları anahtar kelimelerle, yani birkaç önemli kelimeyle yazın. Nereden geldiniz, sizin için ne önemli ve kimler önemli? Sizi ne engelliyor ve neden korkuyorsunuz?"
+   },
+   {
+    "title": "Notlarınıza dışarıdan bakın",
+    "text": "Yazdıklarınıza bakın ve neyin eksik olduğunu bulun. Anahtar kelimeler bugünkü halinize nasıl geldiğinizi anlatıyor mu? Gerekirse yeni kelimeler ekleyin."
+   },
+   {
+    "title": "Altı yolu tek tek düşünün",
+    "text": "Her yolu ciddiye alın ve o yolda yürüdüğünüzü hayal edin. Geriye giden yol da çılgın hayal de geçerli bir seçenektir. Hangi yolda içinizin ferahladığına bakın."
+   },
+   {
+    "title": "Yolu siz seçin",
+    "text": "Bu yöntem size cevabı vermez. Yöntem bütün seçenekleri eksiksiz gösterir. En akla yatkın yol ile sizi çeken yol farklı olabilir. Kararı bu farkı bilerek verin."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Kitap, soruları iyi bir arkadaşla birlikte cevaplamanızı önerir. Kendi hikâyenizi yüksek sesle anlatın. Yazarken göremediğiniz tekrar eden şeyleri anlatırken fark edersiniz."
+  ]
+ },
+ {
+  "g": 32,
+  "steps": [
+   {
+    "title": "Dört listeyi ayrı yapın",
+    "text": "Projeye başlarken dört kutuyu ayrı ayrı doldurun. Bir kutuya, bilmediğinizi bildiğiniz şeyleri yazarsınız. Bu kutunun adı “bilinen bilinmeyenler” listesidir. Bu liste sizin araştırma planınız olur."
+   },
+   {
+    "title": "Söylenmeyen riskleri bulun",
+    "text": "Ekibe “Herkesin bildiği ama hiç söylenmeyen risk ne?” diye sorun. Soruyu isim istemeden sorun. Cevaplar dördüncü kutuyu doldurur. Bu kutunun adı “bilinmeyen bilinenler” kutusudur."
+   },
+   {
+    "title": "Göremediğiniz riskler için yedek ayırın",
+    "text": "Önceden göremediğiniz şeyler için plan yapamazsınız. Bu şeylere “bilinmeyen bilinmeyenler” denir. Ama bu şeyler için yedek ayırabilirsiniz. Yedek olarak zaman, para ve geri dönüş yolu ayırın."
+   },
+   {
+    "title": "İşaretleri düzenli izleyin",
+    "text": "Proje boyunca kutular arasındaki geçişi izleyin. Dün bilmediğiniz şeyi bugün bilmelisiniz. Bu olmuyorsa öğrenme durmuştur."
+   }
+  ],
+  "warn": [],
+  "tip": []
+ },
+ {
+  "g": 33,
+  "steps": [
+   {
+    "title": "Korumaları listeleyin",
+    "text": "En önemli işinizdeki korumaları sırayla listeleyin. Eğitim, yazılı kural, kontrol listesi, otomatik sistem ve denetim birer korumadır."
+   },
+   {
+    "title": "Delikleri bulun",
+    "text": "Her koruma için “Bu koruma hangi durumda çalışmaz?” diye sorun. Koruma yorgunlukta, acele işte ya da yeni çalışanda çalışmayabilir."
+   },
+   {
+    "title": "Ramak kala olayları yazın",
+    "text": "Bazen delikler üst üste gelir ama kaza olmaz. Bu olaylara “ramak kala” denir. Bu olayları yazın ve yazan kişiyi ödüllendirin. Bu olaylar bedava uyarıdır."
+   },
+   {
+    "title": "Bağımsız koruma ekleyin",
+    "text": "Yeni korumayı eski korumalardan farklı kurun. Yeni koruma, eskilerle aynı durumda delinmemeli. Aynı anda delinen iki koruma tek koruma sayılır."
+   }
+  ],
+  "warn": [],
+  "tip": []
+ },
+ {
+  "g": 35,
+  "steps": [
+   {
+    "title": "Kendinizi yerleştirin",
+    "text": "İki çizgi çizin. Birinci çizgi toplumdaki yeri, ikinci çizgi hayata bakışı gösterir. Kendinizi, ailenizin geldiği yeri ve olmak istediğiniz yeri işaretleyin. Üç nokta arasındaki uzaklık, kim olduğunuzun hikâyesidir."
+   },
+   {
+    "title": "Müşteriyi yaşam ortamıyla tanımlayın",
+    "text": "Müşterinizi yaş ve gelirle tanımlamayın. Müşterinizi yaşam ortamıyla tanımlayın. Bu yaşam ortamına “milieu” denir. Müşteri neye değer verir, neyle vakit geçirir ve kime benzemek ister?"
+   },
+   {
+    "title": "Bourdieu testi yapın",
+    "text": "Bourdieu testi, ürününüzün ya da mesajınızın kime seslendiğine bakar. Kullandığınız dile, resimlere ve verdiğiniz örneklere bakın. Bunlar hangi para ve kültür birikimine sahip insanlara sesleniyor? Bunlar hedef aldığınız yaşam ortamına uyuyor mu?"
+   },
+   {
+    "title": "Alışkanlığı hesaba katın",
+    "text": "Yeni ürününüz bir grubun yerleşik alışkanlığını değiştirmeye çalışabilir. O zaman “daha iyi” olmak yetmez. Müşterinin yeni ürüne geçme zahmetini ve masrafını azaltmalısınız."
+   }
+  ],
+  "warn": [
+   "Bir yaşam ortamındaki herkesi aynı saymayın. Bu yöntem kesin bilgi vermez, yalnız neyin olası olduğunu gösterir. İnsanlar tek tek kutulara sığmaz. Grubu plan için kullanın, insanı yargılamak için kullanmayın."
+  ],
+  "tip": []
+ },
+ {
+  "g": 40,
+  "steps": [
+   {
+    "title": "Tepkinizi tanıyın",
+    "text": "Süren bir çatışmada kendinize dürüstçe sorun. Şu anda altı tepkiden hangisini veriyorsunuz? Kaçıyor musunuz, savaşıyor musunuz, işi başkasına mı bırakıyorsunuz?"
+   },
+   {
+    "title": "Karşı tarafı tanıyın",
+    "text": "Karşı tarafın hangi tepkiyi verdiğini de belirleyin. Savaşan birine boyun eğmek çatışmayı çözmez. Boyun eğerseniz bir sonraki çatışmada ödeyeceğiniz bedeli belirlemiş olursunuz."
+   },
+   {
+    "title": "Duygudan akla geçin",
+    "text": "Kaçmak, savaşmak ve boyun eğmek kalıcı çözüm getirmez. Konuşmayı ortada buluşmaya ya da ortak karara taşıyın. Örneğin “İkimizin de kabul edebileceği bir çözüm arıyoruz” deyin."
+   },
+   {
+    "title": "Üçüncü yolu arayın",
+    "text": "Ortada buluşmakla yetinmeyin. İki tarafın ihtiyacını birlikte karşılayan yeni bir seçenek arayın. Bu seçenek iki isteğin ortası değildir. Ortak karar bir pazarlık değildir, birlikte kurulan yeni bir çözümdür."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Bir ekip çatışmalarını sürekli yöneticiye taşıyorsa dördüncü tepki alışkanlık olmuştur. Dördüncü tepki, sorumluluğu başkasına bırakmaktır. Her seferinde karar veren yönetici kısa sürede hız kazanır. Ama yönetici zamanla ekibin çatışma çözme gücünü zayıflatır."
+  ]
+ },
+ {
+  "g": 41,
+  "steps": [
+   {
+    "title": "Hep sürer sandıklarınızı bulun",
+    "text": "Bir şey uzun süredir aynı gidince hep böyle gidecek sanırsınız. Bu şeyleri listeleyin. En büyük müşterinizi ve mal aldığınız tek firmayı yazın. Sağlam sandığınız geliri de yazın."
+   },
+   {
+    "title": "Göreceğiniz zararı ölçün",
+    "text": "“Bu olayın olma ihtimali ne?” diye sormayın. “Bu olay olursa bana ne olur?” diye sorun. Siyah kuğunun ihtimalini kimse hesaplayamaz. Siz kendi göreceğiniz zararı hesaplayabilirsiniz."
+   },
+   {
+    "title": "Yedek kurun",
+    "text": "Kenara nakit para ayırın. Yedek bir satıcı firma bulun ve geri dönüş planı yapın. Bu fazlalıklar gereksiz görünür. Ama beklenmedik günde sizi bu fazlalıklar ayakta tutar."
+   },
+   {
+    "title": "Geçmişi kanıt saymayın",
+    "text": "“Bugüne kadar hiç olmadı” cümlesini güvence saymayın. Bu cümleyi bir uyarı olarak okuyun. Russell'ın hikâyesindeki tavuk için de her şey kesim gününe kadar yolundaydı."
+   }
+  ],
+  "warn": [
+   "Siyah kuğuyu tahmin etmeye çalışmayın. Bu yöntemin özü tam tersidir. Önceden görülemeyen bir olayı önceden göremezsiniz. Yapabileceğiniz tek şey, sürprize dayanıklı bir düzen kurmaktır."
+  ],
+  "tip": []
+ },
+ {
+  "g": 44,
+  "steps": [
+   {
+    "title": "İlişkinin türünü belirleyin",
+    "text": "İlişkinin tek seferlik mi, tekrarlı mı olduğuna bakın. Tek seferlik pazarlıkta aldatılma riski yüksektir. Tekrarlı ilişkide iyi adınız sizin sermayenizdir."
+   },
+   {
+    "title": "İlişkiyi tekrarlı hale getirin",
+    "text": "Güven kurmak istiyorsanız ilişkinin geleceğini büyütün. Uzun süreli sözleşme, aşamalı teslimat ya da ortak yatırım yapın. İlişkinin yarını yoksa bugün aldatmak ucuza gelir."
+   },
+   {
+    "title": "Kısasa kısas uygulayın",
+    "text": "Önce iş birliğiyle başlayın. Karşı taraf sizi aldatırsa açık ve ölçülü bir karşılık verin. Karşı taraf düzelince siz de düzelin. Kin tutan yöntem turnuvayı kaybeder."
+   },
+   {
+    "title": "İletişimi açın",
+    "text": "İkilem, iki yol arasında kalmaktır. İkilem gücünü tarafların konuşmamasından alır. Sözleşme, hakem ve açıklık gibi yollar tarafların niyetini bağlayıcı biçimde gösterir. Bu yolların her biri ikilemi zayıflatır."
+   }
+  ],
+  "warn": [],
+  "tip": []
+ },
+ {
+  "g": 45,
+  "steps": [
+   {
+    "title": "Önce işe bakın",
+    "text": "Önce projenin gerektirdiği en önemli becerileri yazın. Beceri sayısı 4 ile 6 arasında olsun. Ekibe ancak bundan sonra bakın. Sırayı ters çevirirseniz eldeki ekibi haklı çıkarmaya çalışırsınız."
+   },
+   {
+    "title": "Alt sınırı belirleyin",
+    "text": "Her beceri için bir alt sınır belirleyin. Ekip bu sınırın altına inmemelidir. Her beceride 10 puan aramıyorsunuz. Sınırın üstünde kalmak yeterlidir."
+   },
+   {
+    "title": "Puanlayın ve çizin",
+    "text": "Her üyeye her beceri için puan verin. Üyelerin puan çizgilerini aynı kâğıda üst üste çizin. Alt sınırın altında kalan yerler ekibin gerçek riskidir."
+   },
+   {
+    "title": "Üyelerin kendi puanıyla karşılaştırın",
+    "text": "Üyelerden kendilerine de aynı şekilde puan vermelerini isteyin. Sizin puanınız ile üyenin kendi puanı arasındaki farka bakın. Asıl konuşmanız gereken konu bu farktır."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Bir eksik bulunca ilk iş olarak yeni eleman aramayın. Eğitim, dışarıdan danışmanlık ya da işi daraltmak eksiği çoğu zaman daha hızlı kapatır."
+  ]
+ },
+ {
+  "g": 47,
+  "steps": [
+   {
+    "title": "Şapka sırasını planlayın",
+    "text": "Her şapka konuya ayrı bir bakış biçimidir. Toplantıdan önce şapka sırasını konuya göre belirleyin. Örnek bir sıra beyaz, yeşil, sarı, siyah, kırmızı ve mavidir. Herkes aynı anda aynı şapkayı takar."
+   },
+   {
+    "title": "Toplantıya yönetici seçin",
+    "text": "Toplantıyı mutlaka bir kişi yönetmelidir. Bu kişi üyelerin rollerinden çıkmasını önler. Üyeler siyah şapka turunda iyimser konuşamaz. Üyeler sarı şapka turunda eleştiri yapamaz."
+   },
+   {
+    "title": "Belbin rol listesini çıkarın",
+    "text": "Belbin listesi, ekipteki doğal rolleri gösteren bir listedir. Ekibinizdeki doğal rolleri bu listede işaretleyin. İki kişide olan rolleri ve boş kalan rolleri bulun. Boş rolün bakış açısı toplantılarda hiç konuşulmaz."
+   },
+   {
+    "title": "Fikri ekibe sahiplendirin",
+    "text": "Kitap şu yolu önerir. İyi fikrinize karşı çıkılmasından korkuyorsanız tartışmayı farklı yönetin. Diğerleri fikri kendileri bulmuş gibi hissetmelidir. İnsanlar kendi bulduğunu sandığı fikir için savaşır."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Altı şapkayı tek başınıza da kullanabilirsiniz. Zor bir karara altı şapkayı sırayla takarak bakın. Böylece konuyu tek yönden görme hatasından kurtulursunuz."
+  ]
+ },
+ {
+  "g": 49,
+  "steps": [
+   {
+    "title": "Üç köşeyi sıraya dizin",
+    "text": "Üçgenin üç köşesi hız, ucuzluk ve kalitedir. İşin başında ilgili kişilerle bu köşeleri önem sırasına dizin. Sabit kalacak, esneyebilecek ve vazgeçilebilecek köşeyi belirleyin."
+   },
+   {
+    "title": "Sabit köşeyi koruyun",
+    "text": "Sabit köşe, değişmeyen köşedir. Örneğin yasal bir tarih sabit köşe olabilir. Sabit köşe değişmezse her yeni isteğin bedeli diğer iki köşeden ödenir. Bunu herkesin gördüğü bir kural yapın."
+   },
+   {
+    "title": "Her yeni isteği üçgenle sınayın",
+    "text": "Biri işe yeni bir şey eklemek isterse tek soru sorun. “Bunun bedelini hangi köşeden ödüyoruz?” diye sorun. Bedel tarihten, bütçeden ya da işin başka bir parçasından ödenir."
+   },
+   {
+    "title": "Vazgeçeceğiniz şeyi baştan seçin",
+    "text": "Vazgeçeceğiniz şeyi işin başında seçin. Bunu işin sonunda itiraf etmek zorunda kalmayın. Bilerek vazgeçmek ucuzdur. Mecbur kalıp vazgeçmek pahalıdır."
+   }
+  ],
+  "warn": [],
+  "tip": []
+ },
+ {
+  "g": 51,
+  "steps": [
+   {
+    "title": "Beklentinizi yazın",
+    "text": "Karar bir iş teklifi, ortaklık, ev ya da ilişki olabilir. Bu karardan beklediklerinizi madde madde yazın. Yazılmamış beklentiyi ölçemezsiniz."
+   },
+   {
+    "title": "Şartları ve tercihleri ayırın",
+    "text": "Listeyi vazgeçilmezler ve tercihler diye ikiye bölün. Vazgeçilmez karşılanmazsa cevabınız hayır olur. Tercih güzel olur ama şart değildir. Hayal kırıklığının çoğu, tercihi vazgeçilmez sanmaktan doğar."
+   },
+   {
+    "title": "Beklentinin ölçüsünü sınayın",
+    "text": "Kendinize şu soruyu sorun. Bu beklentilerin hepsi gerçek hayatta kaç adayda birlikte bulunur? Cevap “hiçbirinde” ise ölçüyü siz kaçırmışsınızdır."
+   },
+   {
+    "title": "Beklentileri karşı tarafla konuşun",
+    "text": "İki taraflı ilişkide beklentilerinizi birbirinize açıkça söyleyin. Söylenmemiş beklenti karşı taraf için görünmeyen bir sınavdır. Çoğu insan girmediği sınavdan kalır."
+   }
+  ],
+  "warn": [],
+  "tip": [
+   "Bu yöntem tersinden de çalışır. Hiç beklenti olmadan girilen iş ya da ilişki ilgisizlik doğurur. Amaç beklentisiz olmak değildir. Amaç beklentiyi bilerek ayarlamaktır."
+  ]
+ },
+ {
+  "g": 55,
+  "steps": [
+   {
+    "title": "Konuyu kendi elinizle yapın",
+    "text": "Öğrenmek istediğiniz şeyi kaynağa bakmadan çizin, yazın ya da anlatın. Bu şey bir işin çizimi, bir makinenin parçaları ya da bir konunun özeti olabilir. Bakarak okumak yalnız öğrenmiş gibi hissettirir. Asıl öğrenme kendi elinizle yapınca olur."
+   },
+   {
+    "title": "Aslıyla karşılaştırın",
+    "text": "Yaptığınızı kaynakla madde madde karşılaştırın. Farklı çıkan yerleri işaretleyin. Bu fark listesi sizin gerçek eksik listenizdir."
+   },
+   {
+    "title": "Yalnız farkları yeniden çalışın",
+    "text": "Bütün konuyu baştan almayın. Yalnız farklı çıkan bölümlere dönün. Bu adımları farklar sıfıra yaklaşana kadar tekrarlayın."
+   },
+   {
+    "title": "Benzetin ve gözünüzde canlandırın",
+    "text": "Öğrendiğiniz şeyi bildiğiniz başka bir şeye benzetin. Örneğin “elektrik akımı su tesisatı gibidir” deyin. Uyumadan önce öğrendiğinizi ana hatlarıyla gözünüzde canlandırın. Leonardo bu iki çalışmayı bilgiyi kalıcı yapmanın anahtarı sayardı."
+   }
+  ],
+  "warn": [
+   "Karşılaştırma adımını atlarsanız yöntem çalışmaz. Yanlışınızı görmeden tekrar yaparsanız hatayı da ezberlersiniz. Yaptığınız şeyi her zaman doğru bir kaynakla karşılaştırın."
+  ],
+  "tip": [
+   "Leonardo yatakta, karanlıkta, uyku ile uyanıklık arasında bir tekrar yapmayı öğütler. Bu tekrarda gün içinde çalıştığınız biçimleri aklınızdan yeniden geçirin. Leonardo bu tekrarın hafızaya “hiç de küçük olmayan bir fayda” sağladığını söyler. Uyumadan önceki beş dakikalık tekrar bedava bir çalışmadır."
+  ]
+ },
+ {
+  "g": 56,
+  "steps": [
+   {
+    "title": "Fikri aklınızda kurun",
+    "text": "Gözlerinizi kapatın ve tasarımı bütün parçalarıyla aklınızda kurun. Tasarım bir ürün, plan, konuşma ya da iş akışı olabilir. Tesla'nın görüntüsü de başta bulanıktı, bu yüzden bulanık görüntüden korkmayın. Her tekrar görüntüyü daha net yapar."
+   },
+   {
+    "title": "Çalıştırın ve zorlayın",
+    "text": "Kurduğunuz şeyi aklınızda çalıştırın. Örneğin merdivene yük bindirin ya da plana bir aksilik ekleyin. Konuşmada karşı tarafa zor soruyu sordurun. Amaç hayali seyretmek değil, hayalde kusur bulmaktır."
+   },
+   {
+    "title": "Kusuru tasarımda düzeltin",
+    "text": "Bulduğunuz her kusuru aklınızdaki tasarımda düzeltin. Sonra denemeye baştan başlayın. Aklınıza gelen iyileştirmeler bitmeden üretime geçmeyin."
+   },
+   {
+    "title": "Şimdi gerçeğini yapın",
+    "text": "Aklınızda kusursuz olan tasarımı şimdi üretin. Gerçek sonucu aklınızdaki tahminle karşılaştırın. Aradaki farklar, aklınızda kuracağınız sonraki tasarım için derstir."
+   }
+  ],
+  "warn": [
+   "Aklınızdaki tasarım gerçekle bağını koparırsa boş hayale döner. Tesla sınırsız hayal kurardı. Tesla her hayali gerçek gözleme ve hesaba bağlardı. Aklınızda emin olamadığınız önemli tahmini küçük bir gerçek denemeyle sınayın."
+  ],
+  "tip": [
+   "Küçük bir işle başlayın. Yarınki zor telefon görüşmesini bu akşam aklınızda iki kez deneyin. Karşı tarafın itirazlarını hayalinizde dinleyin ve cevabınızı orada düzeltin. Bu deneme, yöntemi çalışmanın en ucuz yoludur."
+  ]
+ },
+ {
+  "g": 57,
+  "steps": [
+   {
+    "title": "İyilikle başlayın",
+    "text": "Yeni bir iş ilişkisinde ilk adımınız iş birliği olsun. Turnuvada üst sıraları hep “kibar” yöntemler aldı. İlk kandıran taraf olmak uzun sürede kaybettirir."
+   },
+   {
+    "title": "Ölçülü karşılık verin",
+    "text": "Biri sizi kandırırsa bunu görmezden gelmeyin. Açık ve ölçülü bir karşılık verin. Karşılıksız iyilik kurnaz yöntemleri besler ve çoğaltır."
+   },
+   {
+    "title": "Affetmeyi bilin",
+    "text": "Karşı taraf düzelince siz de düzelin. Kin tutarsanız “Kin Güden” olursunuz. O zaman tek bir yanlış anlaşılma bütün ilişkiyi bitirir."
+   },
+   {
+    "title": "Yanlış anlaşılmaya pay bırakın",
+    "text": "Kötü görünen bir davranış bilerek ya da kazayla yapılmış olabilir. Karşılık vermeden önce bir kez sorun. Yanlış anlaşılmalara “gürültü” denir. Gürültüyü hesaba katmazsanız iki iyi niyetli taraf bile kavgaya tutuşur."
+   }
+  ],
+  "warn": [
+   "Kısasa kısas, gördüğünüz davranışa aynı ölçüde karşılık vermektir. Kısasa kısası intikam ile karıştırmayın. Karşılık tek seferliktir ve ölçülüdür. Karşılığın amacı cezalandırmak değil, sizi kullanmayı kârsız hale getirmektir."
+  ],
+  "tip": [
+   "Bu yöntem yalnız ilişki tekrarlıysa çalışır. Karşı tarafla bir daha karşılaşmayacaksanız önce ilişkiyi tekrarlı hale getirin. Referans isteyin, aşamalı ödeme yapın ve ortak tanıdık bulun."
+  ]
+ },
+ {
+  "g": 62,
+  "steps": [
+   {
+    "title": "İş alanını dar tanımlayın",
+    "text": "İş alanınıza “gıda sektörü” gibi geniş bir ad vermeyin. “Mahallede paket servis pide” gibi dar bir ad verin. Tanım ne kadar dar olursa cevaplar o kadar doğru olur."
+   },
+   {
+    "title": "Beş gücü tek tek puanlayın",
+    "text": "Her güce zayıf, orta ya da güçlü deyin. Puanı kanıta dayanarak verin. Bunun için sayılabilen şeylere bakın. Rakip sayısı, işe giriş masrafı ve size mal satanların sayısı buna örnektir."
+   },
+   {
+    "title": "En tehlikeli gücü bulun",
+    "text": "Genelde bir ya da iki güç kârın çoğunu yer. Gücünüzü o noktaya verin. Size mal satan güçlüyse ikinci bir satıcı bulun. Müşteri güçlüyse müşterinin size bağlı kalmasını sağlayın."
+   },
+   {
+    "title": "Kararı yazın",
+    "text": "Birinci yol bu işe girmek ya da bu işte kalmaktır. İkinci yol yerinizi güçlendirerek girmektir. Üçüncü yol bu işe girmemektir. Kararı yazmazsanız incelemeyi boşa yapmış olursunuz."
+   }
+  ],
+  "warn": [
+   "Bu yöntem iş alanının ortalamasını anlatır, sizin kaderinizi anlatmaz. Zor iş alanında da yerini iyi seçen kazanır. Kolay iş alanında da yerini kötü seçen batar. Bu inceleme size yön gösterir, yolu siz yürürsünüz."
+  ],
+  "tip": [
+   "Beş gücü yılda bir kez yeniden gözden geçirin. İş alanının yapısı zamanla değişir. Örneğin mahalleye bir zincir mağaza gelebilir. Bu olay tek başına rakip gücünü ve müşteri gücünü birden değiştirir."
+  ]
+ },
+ {
+  "g": 63,
+  "steps": [
+   {
+    "title": "İki üç önemli başlık seçin",
+    "text": "Küçük bir işletme altı başlığın hepsine aynı derinlikte bakamaz. Buna gerek de yoktur. Başlıkları işinize göre seçin. Gıda işinde hukuk ve ekonomi, teknoloji işinde teknoloji ve toplum öne çıkar."
+   },
+   {
+    "title": "Her başlıkta tek soru sorun",
+    "text": "Her başlıkta şu soruyu sorun. “Bu alanda önümüzdeki 12 ile 24 ay arasında beni doğrudan etkileyecek ne değişiyor?” Cevap bir sayfayı geçmesin."
+   },
+   {
+    "title": "Her bulguya iş bağlayın",
+    "text": "Üç sütunlu küçük bir tablo yapın. Sütunlara bulduğunuz şeyi, anlamını ve yapılacak işi yazın. Yapılacak işi olmayan satırı silin."
+   },
+   {
+    "title": "Takvime bağlayın",
+    "text": "Bu incelemeyi yılda bir kez tekrarlayın. İş alanınız hızlı değişiyorsa altı ayda bir tekrarlayın. Beklenmedik bir kural ya da kriz çıkarsa incelemeyi hemen yenileyin."
+   }
+  ],
+  "warn": [
+   "PESTLE'nin en büyük tuzağı ansiklopedi gibi uzun yazmaktır. Yirmi sayfalık genel bir dünya incelemesi hiçbir karar doğurmaz. Üç sayfayı geçen PESTLE bir inceleme değildir. O belge yalnız kararı ertelemeye yarar."
+  ],
+  "tip": [
+   "PESTLE dışarıya bakar. SWOT adlı yöntem içeriye ve dışarıya birlikte bakar. PESTLE'de bulduklarınızı SWOT'un fırsat ve tehdit kutularına yazın. PESTLE en iyi bu şekilde kullanılır."
+  ]
+ },
+ {
+  "g": 67,
+  "steps": [
+   {
+    "title": "Kaynaklarınızı listeleyin",
+    "text": "Elinizdeki kaynaklardan 10 ile 15 tanesini yazın. Makine, dükkan ve para gibi elle tutulan kaynakları yazın. Marka, ustalık, ilişki ve tarif gibi elle tutulmayanları da yazın. En değerli kaynaklar çoğu zaman elle tutulmayan kaynaklardır."
+   },
+   {
+    "title": "Her kaynağa dört soru sorun",
+    "text": "VRIO, dört sorunun İngilizce baş harfleridir. Kaynak değerli mi, nadir mi, kopyalaması zor mu, kullanabiliyor musunuz? Her kaynağa bu soruları sırayla ve kendinizi kandırmadan sorun. Yanına dezavantaj, eşitlik, geçici avantaj ya da kalıcı avantaj yazın."
+   },
+   {
+    "title": "En güçlü kaynağı büyütün",
+    "text": "Yatırımınızın en büyük kısmını dört soruyu da geçen kaynaklara verin. Bu kaynaklar 1 ya da 2 tanedir. Eşitlik seviyesindeki kaynaklarda amaç en iyi olmak değildir. Bu kaynaklarda amaç geride kalmamaktır."
+   },
+   {
+    "title": "O harfini unutmayın",
+    "text": "O harfi, kaynağı düzenli kullanabilmek demektir. İşletmeler en çok bu harfte kaybeder. Eşsiz ustalık tek kişinin kafasındaysa avantaj şirketin değil, o kişinindir. Bu yüzden işi tek ölçüye bağlayın, yazın ve yedekleyin."
+   }
+  ],
+  "warn": [
+   "Kendi kaynağınıza hayran olmayın. Güler yüz, kalite ve tecrübe size eşsiz görünür. Rakipler de çoğu zaman kendilerinde aynı şeyi görür. Kaynağın nadir olup olmadığını kendinize değil, müşteriye ve pazara sorun."
+  ],
+  "tip": [
+   "VRIO, SWOT adlı yöntemdeki “güçlü yönler” kutusunu sınar. SWOT'a yazdığınız her güçlü yönü VRIO sorularından geçirin. Güçlü yönlerin çoğu “eşitlik” çıkacaktır. Böylece listeniz daha gerçekçi olur."
+  ]
+ },
+ {
+  "g": 68,
+  "steps": [
+   {
+    "title": "Yarışılan konuları listeleyin",
+    "text": "İş alanınızda herkesin yarıştığı konuları yazın. Bu konular 6 ile 10 arasında olsun. Fiyat, çeşit, hız, dekor ve hizmet bu konulara örnektir. Bu liste iş alanınızın ezberidir."
+   },
+   {
+    "title": "Strateji tuvalini çizin",
+    "text": "Strateji tuvali, sizi ve rakibi karşılaştıran bir çizimdir. Her konuda kendinize ve sıradan bir rakibe puan verin. Puanları çizgiyle birleştirin. Çizginiz rakibin çizgisine benziyorsa mavi okyanusta değil, kızıl okyanustasınız."
+   },
+   {
+    "title": "Dört soruyu sorun",
+    "text": "Sırayla dört soru sorun. Neyi yok edeceğinizi, azaltacağınızı, artıracağınızı ve yaratacağınızı bulun. Yalnız artırır ve yaratırsanız masrafınız çok artar. Yok etme ve azaltma cesareti bu yöntemin yarısıdır."
+   },
+   {
+    "title": "Müşteriniz olmayanlara bakın",
+    "text": "Mavi okyanusun müşterisi çoğu zaman bugünkü müşteriniz değildir. Bu hizmeti hiç kullanmayanlara “Neden kullanmıyorsunuz?” diye sorun. Cevaplar size neyi yaratacağınızı gösterir."
+   }
+  ],
+  "warn": [
+   "Mavi okyanus sonsuza kadar mavi kalmaz. Başarı taklitçileri çeker ve okyanus zamanla kızıla döner. Bu yöntem tek seferlik bir sihir değildir. Ezberi belirli aralıklarla yeniden bozmanız gerekir."
+  ],
+  "tip": [
+   "“Yok et” sorusuna cevap bulamıyorsanız henüz yeterince cesur düşünmüyorsunuz. İş alanınızda en tartışılmaz görünen şeye bakın. Çoğu zaman yok etmeye en uygun aday odur."
+  ]
+ },
+ {
+  "g": 78,
+  "steps": [
+   {
+    "title": "Kendinize dürüstçe bakın",
+    "text": "Müşterinin bugün size neden geldiğini kendinize sorun. Müşteri en ucuz, farklı ya da yalnız yakın olduğunuz için gelebilir. “Yakınlık” bir kazanma yolu değildir. Yeni bir rakip açılınca yakınlık işe yaramaz."
+   },
+   {
+    "title": "Gücünüzü ölçün, yolunuzu seçin",
+    "text": "En ucuza üretmek büyük iş hacmi ve disiplin ister. Farklı olmak ustalık ve marka ister. Küçük bir gruba odaklanmak müşteriyi iyi tanımayı ister. Yolunuzu hayalinize göre değil, gerçekten güçlü olduğunuz yana göre seçin."
+   },
+   {
+    "title": "Vazgeçeceklerinizi yazın",
+    "text": "Seçtiğiniz yolun bedelini açıkça yazın. Farklı olmayı seçtiyseniz fiyat kırmayı bırakırsınız. En ucuza üretmeyi seçtiyseniz her müşteri kaprisine evet demezsiniz. Vazgeçme listeniz yoksa bir yolunuz da yoktur."
+   },
+   {
+    "title": "Her kararı yolunuzla sınayın",
+    "text": "Yeni ürün, makine ya da eleman alırken tek soru sorun. “Bu harcama beni seçtiğim yolda güçlendiriyor mu?” diye sorun. Cevap hayırsa harcama ne kadar çekici olsa da vazgeçin."
+   }
+  ],
+  "warn": [
+   "Maliyet liderliği “ucuza satmak” demek değildir. Maliyet liderliği “ucuza üretmek” demektir. Masrafınız rakibinizle aynıyken fiyat kırarsanız yalnız para kaybedersiniz. Bu bir kazanma yolu değildir."
+  ],
+  "tip": [
+   "Yolunuzu çalışanınıza tek cümleyle anlatabilmelisiniz. Örneğin “Biz bu mahallenin en ucuzuyuz” diyebilirsiniz. Ya da “Biz düğün pastasında bu şehrin en iyisiyiz” diyebilirsiniz. Çalışan bu cümleyi bilmezse kasada verdiği kararlar yolunuzu her gün bozar."
+  ]
+ },
+ {
+  "g": 80,
+  "steps": [
+   {
+    "title": "Aday becerileri listeleyin",
+    "text": "Müşterilerin sizi överken söylediği cümleleri toplayın. “Sizin şu işiniz başka” gibi cümleler aday listenizdir. Listeye ürün adı değil, beceri adı yazın."
+   },
+   {
+    "title": "Üç sorudan geçirin",
+    "text": "Her aday için üç soru sorun. Müşteri fark ediyor mu, taklidi zor mu, başka ürünlere taşınır mı? Üç soruyu da geçen bir ya da iki beceri kalır. Bu beceri sizin temel yetkinliğiniz, yani ana becerinizdir."
+   },
+   {
+    "title": "Ana becerinizi besleyin",
+    "text": "Zamanınızı ve paranızı önce bu beceriye yatırın. Bu beceriyi taşıyan ustayı kaybetmeyin. Bu beceri için gereken eğitimden ve aletten kaçınmayın."
+   },
+   {
+    "title": "Yeni pazar arayın",
+    "text": "Kendinize şu soruyu sorun. “Bu becerimle bugün hizmet etmediğim kime hizmet edebilirim?” Büyümenin en sağlam yolu sıfırdan yeni beceri kurmak değildir. En sağlam yol, eldeki beceriden yeni işler çıkarmaktır."
+   }
+  ],
+  "warn": [
+   "“Biz her işte iyiyiz” cevabı kötü bir işarettir. Bu cevap hiçbir işte temel yetkinliğiniz olmadığını gösterir. Temel yetkinlik, işletmenin en iyi yaptığı ana beceridir. Bir işletmenin genelde bir, en fazla iki ya da üç temel yetkinliği olur."
+  ],
+  "tip": [
+   "Ters yönden de bakın. Ana becerinizle ilgisi olmayan işleri listeleyin. Bu işleri dışarıdan alabilir ya da bırakabilirsiniz. Böylece gücünüzü yeniden ana becerinize verirsiniz."
+  ]
+ },
+ {
+  "g": 89,
+  "steps": [
+   {
+    "title": "Kavga çıkaran işleri listeleyin",
+    "text": "Her işi yazmayın. Ortada kalan ve kavga çıkaran işleri seçin. Siparişler, onaylar, müşteri şikayetleri ve teslimler bu işlere örnektir. Başlangıç için on ile on beş satır yeter."
+   },
+   {
+    "title": "Satırlara işleri, sütunlara kişileri yazın",
+    "text": "Her hücreye en fazla iki harf yazın. S Sorumlu, O Onaylayan, D Danışılan, B Bilgilendirilen demektir. Bir hücre boş kalabilir. Herkesin her işte harfi olmaması daha sağlıklıdır."
+   },
+   {
+    "title": "Her satırı iki kuralla kontrol edin",
+    "text": "Her satırda tam bir tane O harfi olmalıdır. O harfi yoksa iş sahipsiz kalır, iki tane varsa hesap belirsiz olur. Her satırda en az bir S harfi de olmalıdır. S harfi yoksa işi kimse yapmaz."
+   },
+   {
+    "title": "Tabloyu ilgililerle onaylayın ve asın",
+    "text": "Tabloyu odanızda tek başınıza doldurmayın. Tabloyu masaya koyun ve ilgililerle tartışın. “Bana da danışılmalı” itirazı aradığınız konuşmadır, çünkü gizli beklentileri gösterir. Bitince tabloyu herkesin göreceği yere asın."
+   }
+  ],
+  "warn": [
+   "Bir satırda beş D ve altı B varsa her karar toplantıya döner. Danışılan kişi azaldıkça iş hızlanır. Dolaba kaldırdığınız tablo, hiç yapılmamış tablo gibidir. Yeni kavga çıkınca tablodaki satırı ve harfleri kontrol edin."
+  ],
+  "tip": [
+   "Sütunlara unvan yazmayın, kişi adı yazın. “Üretim birimi” sorumlu olamaz ama Cavit sorumlu olabilir. O harfi iki kişi arasında gidip geliyorsa iş büyük ihtimalle iki ayrı iştir. Satırı bölün ve her parçaya ayrı bir Onaylayan yazın."
+  ]
+ },
+ {
+  "g": 92,
+  "steps": [
+   {
+    "title": "Kıyaslanacak işi ve ölçüyü seçin",
+    "text": "Her şeyi birden kıyaslamayın. En çok şikayet alan veya para kaybettiren tek işi seçin. Teslim süresi, hata oranı veya maliyet böyle bir iş olabilir. Ölçü birimini baştan belirleyin."
+   },
+   {
+    "title": "Önce kendi sayınızı dürüstçe çıkarın",
+    "text": "Kendi durumunuzu ölçmeden kıyaslamaya başlamayın. “Bizde teslim aşağı yukarı hızlıdır” demek yetmez. Son otuz işin gerçek teslim sürelerini sayın."
+   },
+   {
+    "title": "En iyiyi bulun, yöntemini inceleyin",
+    "text": "İşi en iyi yapanı kendi iş kolunuzda veya dışında bulun. Ziyaret edin, izleyin, soru sorun ve iş kolunuzun raporlarını okuyun. Amaç sayıyı öğrenmek değil, o sayıya götüren yöntemi anlamaktır."
+   },
+   {
+    "title": "Uyarlayın, deneyin, yeniden ölçün",
+    "text": "Öğrendiğiniz yöntemin ana fikrini kendi işinizin boyutuna uyarlayın. Küçük bir denemeyle başlayın. Sonucu aynı ölçüyle yeniden sayın ve farkın kapanıp kapanmadığına bakın. Kıyaslamayı tek seferlik gezi değil, düzenli alışkanlık yapın."
+   }
+  ],
+  "warn": [
+   "Yöntemi anlamadan yalnız sayıya bakıp moralinizi bozmayın. Yöntemin ana fikrini anlamadan yöntemi aynen kopyalamayın. Kıyaslama açık kaynaklardan ve dürüst ilişkilerden öğrenmektir. Rakibin gizli bilgisini ele geçirmek kıyaslama değildir, ayıptır ve tehlikelidir."
+  ],
+  "tip": [
+   "En kolay başlangıç kendi içinizde kıyaslamaktır. En iyi ustanızla ortalama ustanızın farkına bakın. En iyi şubenizle ortalama şubenizin farkına da bakın. Dışarı çıkmadan ve izin almadan öğrendiğiniz bu fark çoğu zaman şaşırtacak kadar büyüktür."
+  ]
+ },
+ {
+  "g": 95,
+  "steps": [
+   {
+    "title": "Giderlerinizi ikiye ayırın",
+    "text": "Bir kağıda iki sütun açın. Birinci sütuna satış olmasa da ödenen kira, maaş, sigortayı yazın. İkinci sütuna her satışla doğan malzeme, ambalaj, komisyonu yazın. Bu ayrım başabaş hesabının ve fiyat vermenin temelidir."
+   },
+   {
+    "title": "Başabaşınızı hesaplayın ve ezberleyin",
+    "text": "Satış fiyatından bir ürünün satışla doğan giderini çıkarın. Satış olmasa da ödediğiniz aylık gideri bu kalan paraya bölün. Çıkan sayı sıfır noktanızdır, ayda veya günde bu kadar satış gerekir. Bu sayıyı ezbere bilmeyen işletmeci, kar mı zarar mı ettiğini ancak yıl sonunda öğrenir."
+   },
+   {
+    "title": "Üç aylık nakit tablosu kurun",
+    "text": "Gelecek üç ayın kesin alacak ve ödemelerini tarihleriyle yazın. Her ayın sonunda kasada kalacak parayı hesaplayın. Bir ay eksi çıkıyorsa çözümü bugünden arayın. Örneğin parayı erken isteyin, ödemeye süre isteyin veya harcamayı erteleyin."
+   },
+   {
+    "title": "Her yeni işe iki soru sorun",
+    "text": "Yeni sipariş veya yatırım gelince iki soru sorun. Fiyat, satışla doğan gideri aşıp diğer giderlere pay bırakıyor mu? Ödeme tarihleri kasanızı hangi aylarda zorlar? Karlı görünen iş, geç gelen ödeme yüzünden kasanızı batırabilir."
+   }
+  ],
+  "warn": [
+   "Ciroyu, yani kasadan geçen bütün parayı kar sanmayın. Bu paranın içinde malzemecinin ve verginin payı vardır. Faturasını kestiğiniz ama almadığınız para kira gününde işe yaramaz. Sonradan ödemeli satışta kağıttaki karı değil, paranın geleceği tarihi konuşun."
+  ],
+  "tip": [
+   "Başabaşı “ayda 2.400 döner” değil, “günde 80 döner” diye söyleyin. Günde 80 döner, öğlen ikiye kadar tezgahın yarısı demektir. Günlük sayıyı bilen esnaf, kara geçtiği günü takvimde işaretler. O güne kadar gider ödersiniz, o günden sonra kazanırsınız."
+  ]
+ },
+ {
+  "g": 97,
+  "steps": [
+   {
+    "title": "Bilgiyi müşterinin kendisinden alın",
+    "text": "İşleri, dertleri ve kazançları masa başında tahmin etmeyin. Beş ile on müşteriyle konuşun. Onlara “Bu işi yaparken en çok neye sinirleniyorsunuz?” diye sorun. Bu soru en pahalı pazar araştırmasından çok şey öğretir."
+   },
+   {
+    "title": "Dertleri ve kazançları önem sırasına dizin",
+    "text": "Her dert eşit değildir. Müşterinin uykusunu kaçıran derdi küçük rahatsızlıktan ayırın. En baştaki bir iki derde odaklanın. Her derde çare olmaya çalışan ürün, hiçbir derde tam çare olamaz."
+   },
+   {
+    "title": "Özellikleri tek tek eşleştirin",
+    "text": "Her özelliğin karşısına giderdiği derdi veya getirdiği kazancı yazın. Karşısı boş kalan özelliği atın veya ucuzlatın. Karşılıksız kalan büyük bir dert, yeni özelliğin veya yeni ürünün yerini gösterir."
+   },
+   {
+    "title": "Reklamı bu eşleşmeden yazın",
+    "text": "Vitrin yazınız, broşürünüz ve sosyal medya mesajınız kendi hünerinizi anlatmasın. Bu yazılar müşterinin derdini ve kazancını söylesin. “Elli yıllık tezgah” yerine “Sabah ütü derdine son” yazın."
+   }
+  ],
+  "warn": [
+   "“Böyle bir ürün olsa alır mısınız?” diye sormayın, çünkü herkes kibarlıktan evet der. Müşteriye bu derdi en son ne zaman yaşadığını sorun. Ne yaptığını ve kaç para harcadığını da sorun. Gerçek davranış, niyetten çok daha doğru bilgi verir."
+  ],
+  "tip": [
+   "Dertleri bulmanın kısa yolu şikayetlerdir. İade sebeplerine, kasada söylenen sitemlere ve rakibe gidenlerin gerekçelerine bakın. Şikayet defteri bu çalışmanın ham maddesidir."
+  ]
+ },
+ {
+  "g": 99,
+  "steps": [
+   {
+    "title": "Seçenekleri ve kriterleri yazın",
+    "text": "Ciddi adayları satırlara veya sütunlara yazın. “Bu seçimde neye bakıyorum?” diye sorun. Fiyat, kalite, hız, güven gibi 3 ile 6 kriter yazın. Herkesin aklındaki gizli kriteri de ortaya çıkarın."
+   },
+   {
+    "title": "Her kritere ağırlık verin",
+    "text": "Puan vermeden önce her kritere önem ağırlığı verin. Ağırlık 1 ile 3 veya 1 ile 5 arasında olur. Kendinize “İki kriter çatışırsa hangisinden vazgeçerim?” diye sorun. Vazgeçemediğiniz kriter en yüksek ağırlığı alır."
+   },
+   {
+    "title": "Her seçeneği her kriterde puanlayın",
+    "text": "Kutu kutu ilerleyin. Her seçeneğe her kriterden 1 ile 5 arası puan verin. Mümkünse tahmin yerine bilgi kullanın. Fiyatı sorun, yakıta katalogdan bakın, yedek parçayı sanayiye sorun."
+   },
+   {
+    "title": "Çarpın, toplayın ve sağlamasını yapın",
+    "text": "Her kutuda puanı ağırlıkla çarpın ve her seçenek için toplayın. En yüksek toplam öndedir. Sonuç içinize sinmezse sizi rahatsız eden ağırlığı veya puanı bulun. Bunu dürüstçe düzeltin ve yeniden toplayın."
+   }
+  ],
+  "warn": [
+   "Gönlünüzdeki aday kazansın diye ağırlıkları sonradan değiştirmeyin. Ağırlıkları puanlardan önce, gerekçesiyle yazın ve sonra dokunmayın. Toplamlar 31 ve 30 ise iki aday başa baştır, bu fark kararı belirlemez. O zaman yeni bilgi toplayın."
+  ],
+  "tip": [
+   "Bütçe tavanı gibi olmazsa olmaz bir sınırınız olabilir. Bu kriteri puanlamayın, eleme şartı yapın. Şartı geçemeyen adayı tabloya hiç almayın. Puanlama, şartı geçen adaylar arasındaki ince farkı ölçer."
+  ]
+ },
+ {
+  "g": 101,
+  "steps": [
+   {
+    "title": "Hedefi ve eksiğinizi netleştirin",
+    "text": "Önce “Tek başıma neye ulaşamıyorum?” sorusunu cevaplayın. Eksiğiniz ucuz malzeme, yeni müşteri, bilgi veya para olabilir. Eksiğini bilmeyen kişi yanlış ortakla anlaşır."
+   },
+   {
+    "title": "Ortağı üç soruyla eleyin",
+    "text": "Aday ortak için üç soru sorun. Eksiğinizi tamamlıyor mu, sizinle aynı şeyi istiyor mu, sözünde duruyor mu? Bu sorular güç uyumunu, hedef uyumunu ve güveni ölçer. Biri zayıfsa ortağı küçük bir işle deneyin, büyük işe girmeyin."
+   },
+   {
+    "title": "Kuralları baştan yazın",
+    "text": "Kimin ne katacağını, kazanç paylaşımını ve kararın nasıl alınacağını yazın. Anlaşmazlığın nasıl çözüleceğini ve ayrılık şartlarını da yazın. Yazılı kural güvensizlik işareti değildir. Yazılı kural dostluğu para kavgasından korur."
+   },
+   {
+    "title": "Küçük başlayın ve düzenli gözden geçirin",
+    "text": "İlk iş bir ortak sipariş veya bir ortak stant olsun. İş yürüdükçe işi büyütün. Düzenli olarak “İki taraf da kazanıyor mu?” diye sorun. Yalnız bir tarafın kazandığı ittifak aslında bitmiştir."
+   }
+  ],
+  "warn": [
+   "İttifak, rakibe her şeyinizi açmak değildir. Özel tarif, müşteri listesi, fiyat hesabı gibi saklayacaklarınızı baştan belirleyin. Bütün işinizi tek ortağa bağlarsanız ittifak bitince işiniz de biter. İttifak size güç katmalı, sizi kimseye bağımlı yapmamalı."
+  ],
+  "tip": [
+   "İyi ittifakta iki taraf da “Bu işten ben karlı çıkıyorum” diye düşünür. Bunda bir terslik yoktur, çünkü taraflar farklı şeylere değer verir. Siz ucuz malzemeye, ortağınız garanti müşteriye değer verebilir. O zaman ikiniz de aynı anda kazanırsınız."
+  ]
+ },
+ {
+  "g": 109,
+  "steps": [
+   {
+    "title": "Önce dürüst bir SWOT çıkarın",
+    "text": "TOWS'un ham maddesi SWOT listesidir. SWOT sayfasındaki yöntemle her başlığa en az üç madde yazın. Maddeler genel söz değil, kanıtlı gözlem olsun. “Kalitemiz iyi” yerine “İade oranımız binde beş, piyasa ortalaması yüzde iki” yazın."
+   },
+   {
+    "title": "Dört hücreli tabloyu kurun",
+    "text": "Kağıdı SO, WO, ST, WT adlı dört hücreye bölün. S güç, W zayıflık, O fırsat, T tehdit demektir. Güçlü ve zayıf yönleri fırsat ve tehditlerle tek tek eşleştirin. Her eşleşmede ne yapmanız gerektiğini sorun, her hamleyi hücreye yazın."
+   },
+   {
+    "title": "Hücre başına en çok iki plan",
+    "text": "Hücreler dolunca eleme yapın. Her hücreden en güçlü bir veya iki planı seçin. En az masrafla en büyük farkı yaratan planı arayın. Planı gerçekten yapacak gücünüz olup olmadığına da bakın."
+   },
+   {
+    "title": "Sorumlu, tarih ve ilk adım yazın",
+    "text": "Her planın karşısına bir sorumlu ve bir başlangıç tarihi yazın. Yirmi dört saat içinde atılacak bir ilk adım da yazın. Üç ayda bir tabloya dönün. Yeni tehdit veya yeni fırsat çıktıysa eşleştirmeyi yenileyin."
+   }
+  ],
+  "warn": [
+   "Her hücreyi doldurmak zorunda değilsiniz, bazı eşleşmelerden anlamlı plan çıkmaz. WT hücresini, yani zayıflık ve tehdit hücresini atlamayın. Kimse küçülmeyi ve çekilmeyi konuşmak istemez, bu yüzden en önemli hücre çoğu toplantıda boş kalır. Zayıf ve tehditli alanı yazmayan TOWS yarım kalır."
+  ],
+  "tip": [
+   "En verimli hücre çoğu zaman WO hücresidir, yani zayıflık ve fırsat hücresidir. Fırsat kapıdayken görülen zayıflık en kolay kapanır, çünkü masrafın karşılığı bellidir. “İnternetten sipariş alamıyorum” sözüyle kimse uğraşmaz. “Siteler sipariş vermek istiyor ama alamıyorum” sözü ise yatırımın gerekçesini kendisi gösterir."
+  ]
+ },
+ {
+  "g": 110,
+  "steps": [
+   {
+    "title": "Bir ürünün yolunu halka halka yazın",
+    "text": "En çok sattığınız ürünü seçin. Ham madde girişinden müşterinin memnun ayrılışına kadar adımları sırayla yazın. Alım, üretim, teslimat, satış ve servis adlı beş halkayı kullanın. Uymayan halkanın adını değiştirin, örneğin lokantada teslimata servis deyin."
+   },
+   {
+    "title": "Her halkanın maliyetini ve süresini yazın",
+    "text": "Aylık maliyeti halkalara kabaca paylaştırın. Alım, işçilik, nakliye, reklam ve servis için ayrı sayı yazın. Kesin rakam şart değildir, halkaların birbirine oranı yeter. Çoğu kişi paranın hangi halkada eridiğini ilk kez burada görür."
+   },
+   {
+    "title": "Halkalara müşteri gözüyle puan verin",
+    "text": "Aynı halkalara müşterinin gözüyle bakın. Müşteri hangi halkanın farkını hissediyor ve hangisine para ödemeye razı? Servet'in ücretsiz montaj ayarı gibi en değerli halka çoğu zaman en az masraflıdır. En masraflı halka ise müşterinin hiç umursamadığı halka olabilir."
+   },
+   {
+    "title": "Uyumsuz halkalarda karar alın",
+    "text": "Pahalı ama müşteriye değersiz halkayı kısın, sadeleştirin veya dışarıya verin. Ucuz ama müşteriye değerli halkayı büyütün ve tanıtımın merkezine koyun. Her karardan sonra zinciri yeniden çizin. Halkalar birbirine bağlıdır, birindeki değişiklik komşu halkayı etkiler."
+   }
+  ],
+  "warn": [
+   "Maliyeti her halkada birden kısmayın. Müşterinin sizi seçme sebebi olan halkayı kısmak size büyük zarar verir. Servet ücretsiz montaj ayarını kaldırsaydı en ucuz halkayla en değerli reklamını da kesmiş olurdu. Önce sizi sattıran halkayı öğrenin, sonra diğer halkaları kısın."
+  ],
+  "tip": [
+   "Zinciri dükkanınızın dışına da uzatın. Sizin alım halkanız, toptancınızın teslimat halkasıdır. Toptancınızla teslim gününü ve ambalajı konuşmak, depo büyütmekten çok daha ucuza aynı rahatlığı verebilir. En ucuz iyileştirmeler çoğu zaman iki zincirin birbirine değdiği yerdedir."
+  ]
+ },
+ {
+  "g": 115,
+  "steps": [
+   {
+    "title": "Sorunu net ve açık yazın",
+    "text": "“İşler kötü” diye başlamayın. “Salı günü üç müşteri siparişini geç aldı” diye başlayın. Sorunu yeri, zamanı ve ölçüsüyle tek cümlede yazın. Bulanık soruna sorulan “neden?” sorusu bulanık cevap getirir."
+   },
+   {
+    "title": "İlgili kişilere, mümkünse olay yerinde sorun",
+    "text": "Soruları masada değil, tezgah başında veya deponun içinde sorun. Sorunu yaşayan kişileri de aranıza alın. Amaç suçlu bulmak değil, zinciri birlikte görmektir. Suçlanacağını düşünen insan gerçeği anlatmaz."
+   },
+   {
+    "title": "“Neden?” diye sorun, cevabı kontrol edin",
+    "text": "Her cevaptan sonra yeniden “neden?” diye sorun ve zinciri yazın. Her halkayı kanıtla kontrol edin. “Termostat geç kapatıyor” deniyorsa ölçün ve doğruluğuna bakın. Tahmine dayanan zincir sizi yanlış nedene götürür."
+   },
+   {
+    "title": "Asıl nedeni düzeltin, sonucu izleyin",
+    "text": "Zincirin sonundaki nedene kalıcı bir önlem alın. Örneğin düzen kurun, görev yazın veya aleti değiştirin. Sonra bir süre izleyin, sorun tekrar ederse zinciri yeniden kurun. Tekrar eden sorunda ya derine inilmemiştir ya da birden fazla neden vardır."
+   }
+  ],
+  "warn": [
+   "Bazı sorunların birden fazla asıl nedeni olur. Sorun azalır ama bitmezse öbür nedeni de araştırın. Masa başında kurulan “Bence şundandır” zinciri mantıklı görünür ama yanıltır. Her halkayı yerinde kontrol edin."
+  ],
+  "tip": [
+   "Zincir bir insanı suçlayarak bitmesin. Bir kişiye ulaşınca “Hatayı önleyen düzen neden yoktu?” diye sorun. İnsanlar değişir ama düzen kalır. Kalıcı çözüm hep düzende bulunur."
+  ]
+ },
+ {
+  "g": 118,
+  "steps": [
+   {
+    "title": "Hesabı ve tahminleri açıkça yazın",
+    "text": "Önce gelir, gider, kar veya geri dönüş süresi hesabını kurun. Sonra hesaptaki her tahmini listeleyin. Satış adedi, fiyat, ham madde, kira, işçilik ve ödeme süresi birer tahmindir. Yazmadığınız tahmini deneyemezsiniz."
+   },
+   {
+    "title": "Her tahmine makul bir aralık verin",
+    "text": "Her kalem için bir kötü ve bir iyi değer belirleyin. Örneğin “Satış 160 ile 240 arasında olabilir” deyin. Aralığı hayalden değil, geçmiş yıllardan, iş kolunuzdan ve toptancınızdan öğrenin. Abartılı aralıklar analizi korku filmine çevirir."
+   },
+   {
+    "title": "Tahminleri teker teker değiştirin, etkiyi yazın",
+    "text": "Bir tahmini kötü ve iyi değerine çekin, gerisini sabit tutun. Sonucun ne kadar değiştiğini yazın ve sıradaki tahmine geçin. Sonunda etkileri büyükten küçüğe sıralayın, bu sıraya tornado tablosu denir. En üstteki bir iki kalem planınızın kaderini belirler."
+   },
+   {
+    "title": "Önlem alın, kararı ona göre verin",
+    "text": "En etkili tahminleri ön anlaşma veya deneme satışıyla sağlamlaştırın. Sabit fiyatlı sözleşme veya yedek toptancı gibi önlemler alın. “Satış 140'ın altına inerse planı durdurun” gibi bir sınır yazın. Kararı iyimser tabloya değil, kötü durumdaki sonuca göre verin."
+   }
+  ],
+  "warn": [
+   "Tahminler gerçek hayatta birlikte değişir, krizde hem satış düşer hem ödeme süresi uzar. En önemli iki üç tahmini birlikte kötüleştirip sonuca da bakın. Çıkan sayıya bağlanmayın. Amaç kesin rakam bulmak değil, planın kırılacağı yeri bilip önlem almaktır."
+  ],
+  "tip": [
+   "Hep “Bu planın batması için ne gerekir?” diye sorun. Bu soru duyarlılık analizinin en yalın halidir. Cevap “Satışın yüzde 40 düşmesi gerekir” ise planınız sağlamdır. Cevap “Satışın yüzde 10 düşmesi yeter” ise yazdığınız şey plan değil, dilektir."
+  ]
+ },
+ {
+  "g": 120,
+  "steps": [
+   {
+    "title": "Sorun ve müşteri kutusuyla başlayın",
+    "text": "En çok üç büyük müşteri derdini ve derdi çekeni yazın. “Herkes” bir müşteri grubu değildir. İlk müşteriniz olacak dar ve ulaşabileceğiniz grubu ayrıca yazın. Bu iki kutu zayıfsa diğer kutuları doldurmak boşunadır."
+   },
+   {
+    "title": "Değer önerisini ve çözümü yazın",
+    "text": "Değer önerisi, farkınızı müşterinin diliyle anlatan tek cümledir. Bu cümle farkınızın müşterinin hangi derdini bitirdiğini söyler. Çözüm kutusuna her sorun için en yalın çözümü yazın. Özellik listesi yazmayın, derdin ilacını yazın."
+   },
+   {
+    "title": "Para ve ulaşım kutularını doldurun",
+    "text": "Müşteriye hangi yoldan ulaşacağınızı ve paranın nereden geleceğini yazın. En büyük giderleri ve işin yürüdüğünü gösteren birkaç sayıyı yazın. Haksız avantaj kutusunda dürüst olun, bu kutu kopyalanamayan üstünlüğünüz içindir. Çoğu fikrin başta böyle bir üstünlüğü yoktur, boş kutu yalandan iyidir."
+   },
+   {
+    "title": "En riskli tahmini ucuza deneyin",
+    "text": "“Hangi kutu yanlışsa iş batar, hangisinden en az eminim?” diye sorun. Tahmini müşteri görüşmesi, ön satış veya deneme teklifiyle ucuza deneyin. Öğrendiğinizi kanvasa yazın ve sıradaki riske geçin. Kanvası ayda bir değil, her yeni bilgide güncelleyin."
+   }
+  ],
+  "warn": [
+   "Kanvası bir kez doldurup duvara asmayın. Denenmeyen kanvas, kırk sayfalık planın tek sayfalık halidir. İnsan kutulara kendi çözümünü haklı çıkaran cevaplar yazmaya yatkındır. Sırayı bozmayın, önce sorunu ve müşteriyi doğrulayın, çözüme sonra geçin."
+  ],
+  "tip": [
+   "Kanvası doldurunca sorun kutusundaki dertleri beş hedef müşteriye sorun. Fikrinizi anlatmayın, “Bu konuda en son ne zaman zorlandınız?” deyin. Dert müşterinin ağzından kendiliğinden çıkmıyorsa çözümünüzü anlatmayın. Bu durumda sorun kutunuz yanlıştır."
+  ]
+ },
+ {
+  "g": 122,
+  "steps": [
+   {
+    "title": "Müşteriyi ve durumu seçin",
+    "text": "Tek haritada bütün müşterileri anlatmaya çalışmayın. İlk kez gelen ev hanımı gibi bir müşteri tipi seçin. Koltuk yeniletme gibi tek bir durum seçin. Gerekirse ikinci ve üçüncü haritayı sonra çizin."
+   },
+   {
+    "title": "Yolculuğu müşteriden dinleyin",
+    "text": "Beş ile on müşteriyle kısa görüşme yapın. Nereden duyduklarını, ne yaşadıklarını ve en çok nerede zorlandıklarını sorun. Telefon, şikayet ve yarım kalan sipariş kayıtlarına da bakın. Dükkanınızı bir müşteri gibi kendiniz de arayın."
+   },
+   {
+    "title": "Aşamaları ve duyguları haritaya çizin",
+    "text": "Bir şerit üzerinde aşamaları soldan sağa dizin. Her aşamaya müşterinin sizinle karşılaştığı yeri ve duygusunu yazın. Süslü araç gerekmez, duvara yapıştırılmış kağıtlar yeter. Amaç güzellik değil, çukurları ve tepeleri görmektir."
+   },
+   {
+    "title": "En derin çukurdan başlayıp iyileştirin",
+    "text": "Çukurları kaybettirdiği müşteri sayısına göre sıralayın. En derin çukur için açık bir iyileştirme yapın. Birkaç hafta sonra aynı soruları sorup düzelme olup olmadığına bakın. Haritayı her büyük değişiklikten sonra güncelleyin."
+   }
+  ],
+  "warn": [
+   "Haritaya sizin ne yaptığınızı değil, müşterinin ne yaşadığını çizin. Haritayı toplantı süsü yapmayın. Çukuru bulup doldurmadığınız harita, müşterinin derdini yalnız duvara asar. Her haritadan sorumlusu belli birkaç açık iyileştirme çıkarın."
+  ],
+  "tip": [
+   "Yolculuğun sonuna özel önem verin. Teslim anı, hesap anı ve veda cümlesi yolculuğun sonudur. İnsanlar yaşadıklarını çoğunlukla en güzel anla ve son anla hatırlar. Sona eklediğiniz arama, not veya küçük ikram bütün yolculuğun hatırasını güzelleştirir."
+  ]
+ },
+ {
+  "g": 124,
+  "steps": [
+   {
+    "title": "Gerçek müşterileri izleyin ve dinleyin",
+    "text": "Bir iki hafta müşterileri izleyin, mümkünse beş on kişiyle konuşun. Neden geldiklerini, ne istediklerini ve en çok neye takıldıklarını öğrenin. Kayıtlardan en çok satılanı ve şikayetlerin toplandığı yeri bulun. Persona hayalden değil, bu bilgilerden yapılır."
+   },
+   {
+    "title": "Tipleri bulun, en önemlilerini seçin",
+    "text": "Gözlemlerinizde tekrar eden tipleri bulun. Aynı tipin amacı, sıkıntısı ve karar ölçüsü benzerdir. İşinizin geleceği için en önemli bir ile üç tipi seçin. Diğer tipleri silmeyin ama onlara kart yazmayın."
+   },
+   {
+    "title": "Her tipe tek sayfalık kart yazın",
+    "text": "Karta “Servis Şoförü Selçuk” gibi akılda kalan bir ad yazın. Kişinin amacını, bulunduğu durumu, sıkıntısını ve karar ölçüsünü yazın. Onun ağzından tek bir gerçek cümle ekleyin, kartın ruhu budur. Bir sayfayı aşan kart okunmaz."
+   },
+   {
+    "title": "Kartı kararlarda kullanın ve yenileyin",
+    "text": "Kartları görünür bir yere asın. Her kararda “Bu, Selçuk'un hayatını kolaylaştırıyor mu?” diye sorun. Menü, tabela, mesaj ve çalışma saati bu sorudan geçsin. Kartı yılda bir kez gerçek müşteriyle karşılaştırıp yenileyin, eski kart yanıltır."
+   }
+  ],
+  "warn": [
+   "Masa başında yazılan “genç, dinamik, teknolojiye meraklı Ayşe” gerçek gözleme dayanmaz. Böyle bir persona yanlış kararları haklı gösterir. Kartı hazırlayıp sunumda gösterdikten sonra bir kenara bırakmayın. Personanın işe yaradığının tek kanıtı, bir kararı değiştirmiş olmasıdır."
+  ],
+  "tip": [
+   "Karta personanın ağzından gerçek bir cümle yazın. Mümkünse bir müşterinizin gerçekten söylediği cümleyi seçin. “Lezzet güzel de benim 15 dakikam var” cümlesi iki sayfalık listeden çok karar yönlendirir. İnsan listeyi unutur ama kişiyi ve sesini unutmaz."
+  ]
+ },
+ {
+  "g": 126,
+  "steps": [
+   {
+    "title": "Soruyu ve süreyi belirleyin",
+    "text": "Senaryo boş bir gelecek sohbeti değildir, bir karara hizmet eder. Soruyu “Önümüzdeki 5 yılda depo yatırımı yapmalı mıyım?” gibi yazın. Büyük yatırım için 5 ile 10 yıl ileriye bakın. İşi yapma biçiminiz için 3 ile 5 yıl ileriye bakın."
+   },
+   {
+    "title": "Dış güçleri yazın ve ayırın",
+    "text": "Ekonomi, teknoloji, alışkanlıklar, kurallar ve rakipler gibi dış güçleri yazın. Her gücün etkisi büyük mü, yönü bilinmez mi diye sorun. Etkisi büyük, yönü belli güçleri her senaryonun zeminine yazın. Etkisi büyük, yönü bilinmez güçlerden en önemli ikisini seçin."
+   },
+   {
+    "title": "Dört senaryoyu yazın ve adlandırın",
+    "text": "İki gücü eşleştirip dört geleceği birkaç paragraflık hikaye olarak yazın. Her hikayede müşterinin, rakibin ve işinizin durumunu inandırıcı biçimde anlatın. Her senaryoya akılda kalan bir ad verin. Biri bugünün devamı, biri rahatsız edici olsun, hepsi pembe olmasın."
+   },
+   {
+    "title": "Sağlam hamleleri ve uyarı işaretlerini bulun",
+    "text": "Kararınızın hangi senaryoda işe yaradığına, hangisinde batırdığına bakın. Dört senaryoda da makul kalan hamleleri bugünden yapın. Esneklik, düşük aylık gider ve beceri yatırımı böyle hamlelerdir. Erken uyarı işaretlerini belirleyip izleyin, planınızı gidişe göre değiştirin."
+   }
+  ],
+  "warn": [
+   "Bir senaryoyu gizlice “asıl tahminimiz” ilan etmeyin, yoksa tek tahmine dönersiniz. İyi, orta ve kötü diye üç senaryo yazmayın, çünkü herkes ortadakini seçer. Senaryoları yazıp rafa kaldırmayın. Erken uyarı işaretleri izlenmeyen senaryo çalışması pahalı bir hikaye kitabıdır."
+  ],
+  "tip": [
+   "En az bir senaryo sizi gerçekten rahatsız etsin, en değerli senaryo odur. İşinize gelen gelecek zaten planlarınızda vardır. İşinize gelmeyen geleceği ise ancak senaryoda güvenle düşünürsünüz. “Zor kış gelirse ilk üç ayda ne yaparım?” sorusunu bugünden cevaplamak asıl kazançtır."
+  ]
+ },
+ {
+  "g": 128,
+  "steps": [
+   {
+    "title": "CAC sayınızı hesaplayın",
+    "text": "Son üç ile altı ayın müşteri kazanma harcamalarını toplayın. Reklam, broşür, tabela, komisyon ve bu işin mesaisi bu harcamalardır. Toplamı aynı dönemde gelen yeni müşteri sayısına bölün. Mümkünse broşür, internet gibi her geliş yolunu ayrı hesaplayın, fark çoğu zaman şaşırtır."
+   },
+   {
+    "title": "CLV sayınızı hesaplayın",
+    "text": "Alışveriş başına karı, yıllık alışveriş sayısını, müşterinin kaldığı yılı bulun. Satış tutarını değil, karı alın. Kayıtlardan bulduğunuz bu üç ortalamayı çarpın. Emin olmadığınız yerde iyimser değil, temkinli sayıyı seçin."
+   },
+   {
+    "title": "Oranı ve geri ödeme süresini bulun",
+    "text": "CLV'yi CAC'a bölün ve paranın kaçıncı ayda geri döndüğünü bulun. Abonelik işlerinde yaygın kurala göre oran 3 civarı veya üstü olmalıdır. Para bir yılı aşmadan dönmelidir, bunu iş kolunuza göre yorumlayın. Oran 1'in altındaysa büyümüyorsunuz, zarara koşuyorsunuz."
+   },
+   {
+    "title": "İki koldan iyileştirin ve izleyin",
+    "text": "CAC için pahalı reklam yolunu kısın, ucuz ve iyisini büyütün. Bir de tavsiye düzeni kurun. CLV için müşteriyi hatırlatma, bakım ve sadakatle tutun. Alışveriş sıklığını ve tutarını artıran teklifler yapın. İki sayıyı üç ayda bir hesaplayın, bozulmayı satış tablosundan aylar önce görürsünüz."
+   }
+  ],
+  "warn": [
+   "CLV'yi satış tutarıyla hesaplamayın, çünkü müşteri size yalnız kar bırakır. “Müşteri on yıl kalır” gibi iyimser tahminler hesabı süsler ama kasayı kurtarmaz. Ortalama kar gösterirken bir geliş yolu veya müşteri tipi sessizce zarar edebilir. Hesabı her geliş yolu için ayrı da yapın."
+  ],
+  "tip": [
+   "CLV'yi en ucuza büyüten şey genellikle müşterinin kalma süresidir. Müşteri kaybını biraz azaltmak, bütün müşterilerin süresini ve değerini birden artırır. Reklamı artırmadan önce “Aynı parayla müşterilerimi bir yıl daha tutabilir miyim?” diye sorun. Cevap çoğu zaman evettir ve bu yol daha karlıdır."
+  ]
+ }
+]
