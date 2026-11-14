@@ -1,3 +1,4 @@
+import { marketCalc } from '@/engine/calc'
 import type { StepDef } from '../schema'
 
 const IMPACT5 = ['Çok küçük', 'Küçük', 'Orta', 'Büyük', 'Çok büyük']
@@ -55,6 +56,7 @@ export const KARAR3: StepDef[] = [
           { key: 'reachableCustomers', type: 'number', label: 'Bugün ulaşabileceğiniz müşteri sayısı', required: true, unit: 'müşteri', min: 0, help: 'Adım 08\'deki ulaşma yoluyla gerçekten ulaşabildiğiniz kişi sayısı.', span: 12 },
           { key: 'salesCapacity', type: 'number', label: 'Bir yılda kaç müşteriye satış yapabilirsiniz?', required: true, unit: 'müşteri', min: 0, help: 'Teslim gücünüz ve zamanınız kaç müşteriye yeter?', span: 12 },
           { key: 'somCustomers', type: 'number', label: 'Gerçekçi pazar. Bir yılda kazanabileceğiniz müşteri sayısı', required: true, unit: 'müşteri', min: 0, help: 'Ulaşabildiğiniz sayı ile satış kapasitenizden küçük olanı yazın.', span: 12 },
+          { key: 'somCalc', type: 'calc', label: 'Gerçekçi pazar hesabı', compute: (values) => marketCalc(values) },
           { key: 'targetCustomers', type: 'number', label: 'Başarı cümlesindeki müşteri hedefi', required: true, unit: 'müşteri', min: 0, help: 'Adım 02\'de yazdığınız başarı cümlesindeki sayı.', span: 12 },
           { key: 'reachNotes', type: 'textarea', label: 'Ulaşma yolu ve maliyeti. Bu sayılara nasıl ulaştınız?', required: true, rows: 3, maxLength: 500, placeholder: 'Dernek listesinde 120 bakkal var. 40\'ını tanıyorum. Haftada 3 ziyaret yapabilirim.' },
         ],

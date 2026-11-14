@@ -124,6 +124,8 @@ export function OverviewScreen() {
   const executionPassed = EXECUTION_DECISIONS.filter((n) => gatePassed(plan, n)).length
   const transitionOk = transitionPassed(plan)
   const transitionStale = Boolean(lastTransition(plan)?.stale)
+  const lastT = lastTransition(plan)
+  const transitionExpired = Boolean(lastT && !lastT.stale && lastT.outcome === 'kosullu' && effectiveTransition(lastT) === 'degil')
   const gecisText = transitionText(plan)
   const strategyLocked = decisionLocked(plan, STRATEGY_N)
   /* Sıradaki karar. Geçiş ve strateji bölümünde ilk uygulama kararıdır. */
@@ -324,6 +326,11 @@ export function OverviewScreen() {
         description={<>Son değişiklik {formatDate(plan.updatedAt)}. Sürüm {plan.revision}.</>}
       />
 
+      {transitionExpired ? (
+        <Callout tone="uyari" danger title="Koşullu geçiş kararının süresi doldu">
+          Açık soru son tarihe kadar kapanmadı. Strateji çalışması yeniden kilitlendi. <Link to="/gecis">Geçiş kapısında yeni karar kaydedin.</Link>
+        </Callout>
+      ) : null}
       {transitionStale ? (
         <Callout tone="uyari" title="Geçiş kararı inceleme bekliyor">
           Temel verisi değişti. Geçiş kararı yeniden inceleme ister. <Link to="/gecis">Geçiş kapısını açın.</Link>

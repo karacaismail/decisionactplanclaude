@@ -151,6 +151,11 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
         <ul className="suggestion-reasons helper">
           {evaluation.reasons.map((r) => <li key={r}>{r}</li>)}
         </ul>
+        {evaluation.warnings.length > 0 ? (
+          <Callout tone="uyari" title="Varsayım uyarısı">
+            {evaluation.warnings.map((w) => <span key={w} style={{ display: 'block' }}>{w}</span>)}
+          </Callout>
+        ) : null}
       </Form.Item>
 
       <Form.Item label={<span id={id('sonuc')}>Sonucu seçin</span>}>

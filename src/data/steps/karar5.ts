@@ -1,3 +1,4 @@
+import { breakEvenCalc } from '@/engine/calc'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
 
@@ -75,6 +76,7 @@ export const KARAR5: StepDef[] = [
         title: 'Başabaş sayısı',
         fields: [
           { key: 'breakEvenInfo', type: 'info', label: 'Başabaş sayısı nasıl hesaplanır?', tone: 'bilgi', text: 'Dönemin sabit giderini bir siparişin katkısına bölün. Kesirli sonucu üst tam sayıya yuvarlayın. Katkı sıfır veya eksiyse sipariş sayısını artırmak sabit gideri karşılamaz.' },
+          { key: 'breakEvenCalc', type: 'calc', label: 'Başabaş hesabı', compute: (values, plan) => breakEvenCalc(values, plan) },
           { key: 'breakEvenCount', type: 'number', label: 'Aylık kaç sipariş sabit gideri karşılar?', unit: 'sipariş', min: 0, span: 12 },
         ],
       },

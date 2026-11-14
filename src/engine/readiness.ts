@@ -24,6 +24,8 @@ export interface ReadinessEvaluation {
   supportingMet: number
   suggested: TransitionOutcome
   reasons: string[]
+  /** Kararı etkileyen uyarılar. Örneğin çürüyen varsayım. */
+  warnings: string[]
   level: number
 }
 
@@ -43,12 +45,26 @@ const both = (...xs: (boolean | null)[]): boolean | null => (xs.some((x) => x ==
 export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string } = {}): ReadinessEvaluation {
   const strongEvidence = plan.evidence.filter((e) => e.ladder >= 1 && e.ladder <= 3).length
   const assumptions = rows(plan, '10', 'assumptions').filter((a) => filled(a.assumption))
+  const refuted = assumptions.filter((a) => a.status === 'curudu')
+  /** Etkisi yüksek (4 ya da 5) ve çürümüş, karşılığında ne değiştiği yazılmamış varsayım. */
+  const refutedOpen = refuted.filter((a) => Number(a.impact ?? 0) >= 4 && !filled(a.resultNote))
+  const problemEvidence = plan.evidence.filter((e) => e.linkedSteps.some((st) => st === '05' || st === '06' || st === '07')).length
   const gatesOk = [1, 2, 3, 4, 5].every((n) => gatePassed(plan, n))
   const limitsOk = (plan.limits.stopRules?.length ?? 0) >= 3 && Boolean(plan.limits.budgetKurus && plan.limits.deadline && plan.limits.retriesPerDecision)
 
   const mandatory: ReadinessCriterion[] = [
     { id: 'Z1', label: 'Kaynak sınırı ve durdurma kuralları yazılı.', met: plan.steps['02'] || limitsOk ? limitsOk : null, step: '02', hint: 'Bütçe, bitiş tarihi, deneme hakkı ve en az üç durdurma kuralı gerekir.' },
-    { id: 'Z2', label: 'Sorun en az bir ölçüyle doğrulandı.', met: both(crit(plan, 2, 'tanima'), crit(plan, 2, 'kanit')), step: '07', hint: 'Görüşmelerde sorunun tanınması ve tekrar, çaba, kayıp ölçülerinden biri gerekir.' },
+    {
+      id: 'Z2',
+      label: 'Sorun en az bir ölçüyle doğrulandı. Kanıt defterinde kaydı var.',
+      met: (() => {
+        const measured = both(crit(plan, 2, 'tanima'), crit(plan, 2, 'kanit'))
+        if (measured !== true) return measured
+        return problemEvidence > 0
+      })(),
+      step: '07',
+      hint: 'Görüşmelerde sorunun tanınması ve tekrar, çaba, kayıp ölçülerinden biri gerekir. Adım 05, 06 ya da 07\'ye bağlı en az bir kanıt kaydı da gerekir.',
+    },
     { id: 'Z3', label: 'İlk müşteri grubu ve ulaşma yolu yazılı.', met: crit(plan, 2, 'segment'), step: '08', hint: 'Kime, hangi yoldan ulaşacağınızı yazın.' },
     { id: 'Z4', label: 'Ulaşılabilir pazar başarı hedefini karşılıyor.', met: crit(plan, 3, 'pazar'), step: '09', hint: 'Bir yılda kazanabileceğiniz müşteri sayısı hedefe yetmeli.' },
     { id: 'Z5', label: 'En az iki gerçek seçenek karşılaştırıldı.', met: crit(plan, 3, 'secenek'), step: '11', hint: 'Seçeneklerden biri "bugünkü yöntem"dir.' },
@@ -64,7 +80,13 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
       hint: 'Ödeme, ön sipariş, kapora, imzalı niyet yazısı ya da imzalı deneme sayılır. Kanıt defterinde güçlü bir kayıt da gerekir.',
     },
     { id: 'Z7', label: 'İlk para hesabı yapıldı. Hesabın hangi koşulda tuttuğu yazılı.', met: both(crit(plan, 5, 'plan'), crit(plan, 5, 'kasa'), plan.steps['16'] ? filled(v(plan, '16', 'fragileNumber')) : null), step: '16', hint: 'Katkı payı artı olmalı. Kasa eksiye düşmemeli. İşi batıran sayıyı yazın.' },
-    { id: 'Z8', label: 'Kritik riskler için kural var. Açık varsayımlar listelendi.', met: both(crit(plan, 5, 'risk'), plan.steps['10'] ? assumptions.length >= 3 : null), step: '17', hint: 'Her kritik risk için "şu olursa şunu yaparım" cümlesi ve en az üç varsayım gerekir.' },
+    {
+      id: 'Z8',
+      label: 'Kritik riskler için kural var. Varsayımlar listelendi. Çürüyen kritik varsayım karşılıksız değil.',
+      met: both(crit(plan, 5, 'risk'), plan.steps['10'] ? assumptions.length >= 3 : null, plan.steps['10'] ? refutedOpen.length === 0 : null),
+      step: refutedOpen.length > 0 ? '10' : '17',
+      hint: 'Her kritik risk için "şu olursa şunu yaparım" cümlesi ve en az üç varsayım gerekir. Etkisi yüksek bir varsayım çürüdüyse ne değiştirdiğinizi sonuç notuna yazın.',
+    },
     { id: 'Z9', label: 'İlk beş kapının kararı geçerli. Zarar ya da izin engeli yok.', met: plan.decisions.length === 0 ? null : gatesOk, step: '17', hint: 'Her kapının son kararı "İlerle" ya da süresi dolmamış "Koşullu ilerle" olmalı.' },
   ]
 
@@ -82,6 +104,9 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
   const mandatoryMet = mandatory.filter((c) => c.met === true).length
   const supportingMet = supporting.filter((c) => c.met === true).length
   const reasons: string[] = []
+  const warnings: string[] = []
+  if (refutedOpen.length > 0) warnings.push(`${refutedOpen.length} kritik varsayım çürüdü ve karşılığı yazılmadı. Varsayımlar ekranında sonuç notunu yazın.`)
+  else if (refuted.length > 0) warnings.push(`${refuted.length} varsayım çürüdü. Strateji çalışmasında bu varsayıma dayanmayın.`)
   let suggested: TransitionOutcome
   if (mandatoryMet < mandatory.length) {
     suggested = 'degil'
@@ -94,7 +119,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
     suggested = 'kosullu'
     reasons.push(`Zorunlu ölçütler tamam. Destekleyici ölçütlerin ${supportingMet} tanesi karşılandı, en az ${SUPPORTING_MIN} gerekir.`)
   }
-  return { mandatory, supporting, mandatoryMet, supportingMet, suggested, reasons, level: validationLevel(plan) }
+  return { mandatory, supporting, mandatoryMet, supportingMet, suggested, reasons, warnings, level: validationLevel(plan) }
 }
 
 export const LEVELS = [

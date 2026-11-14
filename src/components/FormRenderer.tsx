@@ -3,6 +3,7 @@ import type { Field, Section, StepDef } from '@/data/schema'
 import type { PlanDoc } from '@/data/types'
 import { evalCondition } from '@/engine/conditions'
 import { FieldControl, isFilled } from './FieldControl'
+import { CalcField } from './CalcField'
 
 export interface SectionStat {
   /** Kart kimliği. Sağ sütundaki bağlantı listesi (Anchor) buraya atlar. */
@@ -16,7 +17,7 @@ export interface SectionStat {
 const FALLBACK_TITLE = 'Sorular'
 
 function visibleFields(sec: Section, plan: PlanDoc, values: Record<string, unknown>): Field[] {
-  return sec.fields.filter((f) => f.type !== 'info' && evalCondition(f.when, plan, undefined, values))
+  return sec.fields.filter((f) => f.type !== 'info' && f.type !== 'calc' && evalCondition(f.when, plan, undefined, values))
 }
 
 /** Görünen bölümler ve her birinin doluluk sayısı. Sağ sütun ve kart başlıkları bu sayıları kullanır. */
@@ -59,6 +60,14 @@ export function FormRenderer({ step, plan, values, onChange }: { step: StepDef; 
             <div className="field-grid">
               {sec.fields.map((f) => {
                 if (!evalCondition(f.when, plan, undefined, values)) return null
+                if (f.type === 'calc') {
+                  const result = f.compute(values, plan)
+                  return (
+                    <div key={f.key} className="field-cell">
+                      <CalcField label={f.label} result={result} current={result?.apply ? values[result.apply.key] : undefined} onApply={(key, v) => onChange(key, v)} />
+                    </div>
+                  )
+                }
                 return (
                   <div key={f.key} className={`field-cell${f.span && f.span < 24 ? ` span-${f.span}` : ''}`}>
                     <FieldControl field={f} value={values[f.key]} onChange={(v) => onChange(f.key, v)} plan={plan} values={values} idPrefix={`a${step.id}`} />

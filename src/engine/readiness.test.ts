@@ -123,3 +123,34 @@ describe('validateTransition', () => {
     expect(validateTransition(empty, ev, draft({ outcome: 'hazir', reason: 'Dört destekleyici ölçüt bu iş için geçerli değil.', secondOpinion: 'Mehmet Yılmaz' }))).toEqual([])
   })
 })
+
+describe('kanıt bağı ve çürüyen varsayım', () => {
+  it('sorun kanıtı silinince sorun ölçütü düşer', () => {
+    const p: PlanDoc = buildDemoPlan()
+    expect(evaluateReadiness(p).mandatory.find((c) => c.id === 'Z2')?.met).toBe(true)
+    p.evidence = p.evidence.filter((e) => !e.linkedSteps.some((st) => ['05', '06', '07'].includes(st)))
+    expect(evaluateReadiness(p).mandatory.find((c) => c.id === 'Z2')?.met).toBe(false)
+  })
+  it('etkisi yüksek varsayım çürüyünce karşılığı yazılana kadar öneri "Henüz hazır değil" olur', () => {
+    const p: PlanDoc = buildDemoPlan()
+    const list = p.steps['10'].values.assumptions as Record<string, unknown>[]
+    list[0] = { ...list[0], impact: 5, status: 'curudu', resultNote: '' }
+    const r = evaluateReadiness(p)
+    expect(r.mandatory.find((c) => c.id === 'Z8')?.met).toBe(false)
+    expect(r.mandatory.find((c) => c.id === 'Z8')?.step).toBe('10')
+    expect(r.suggested).toBe('degil')
+    expect(r.warnings.join(' ')).toContain('kritik varsayım çürüdü')
+    list[0] = { ...list[0], resultNote: 'Öğle menüsünü plandan çıkardım.' }
+    const r2 = evaluateReadiness(p)
+    expect(r2.mandatory.find((c) => c.id === 'Z8')?.met).toBe(true)
+    expect(r2.warnings.join(' ')).toContain('varsayım çürüdü')
+  })
+  it('etkisi düşük varsayım çürüyünce ölçüt düşmez, yalnız uyarı çıkar', () => {
+    const p: PlanDoc = buildDemoPlan()
+    const list = p.steps['10'].values.assumptions as Record<string, unknown>[]
+    list[0] = { ...list[0], impact: 2, status: 'curudu', resultNote: '' }
+    const r = evaluateReadiness(p)
+    expect(r.mandatory.find((c) => c.id === 'Z8')?.met).toBe(true)
+    expect(r.warnings).toHaveLength(1)
+  })
+})

@@ -30,6 +30,16 @@ interface FieldBase {
   span?: 6 | 8 | 12 | 24
 }
 
+export interface CalcResult {
+  /** Büyük yazılan sonuç. Örneğin "1.000 sipariş". */
+  value: string
+  /** Hesabın adımları. Her satır tam cümledir. */
+  lines: string[]
+  /** Sonucu yazacağı alan. */
+  apply?: { key: string; value: number; label: string }
+  warn?: string
+}
+
 export type Field =
   | (FieldBase & { type: 'text'; maxLength?: number })
   | (FieldBase & { type: 'textarea'; rows?: number; maxLength?: number })
@@ -48,6 +58,8 @@ export type Field =
   | (FieldBase & { type: 'scoreMatrix'; rowsFrom: string; rowLabelKey: string; criteria: { key: string; label: string }[] })
   | (FieldBase & { type: 'checklist'; items: Option[] })
   | (FieldBase & { type: 'info'; text: string; tone?: 'bilgi' | 'ipucu' | 'uyari' | 'ornek' })
+  /** Otomatik hesap. Değer saklamaz. "Alana yaz" ile başka bir alanı doldurur. */
+  | (FieldBase & { type: 'calc'; compute: (values: Record<string, unknown>, plan: PlanDoc) => CalcResult | null })
   | (FieldBase & { type: 'evidenceLink' })
 
 export interface Section {

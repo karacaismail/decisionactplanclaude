@@ -17,6 +17,23 @@ Dayanak belge [boşluk analizidir](stratejik-planlama-oncesi-bosluk-ve-eylem-pla
 5. Onay, kanıtın incelendiğini göstermelidir. Kanıt silinince karar eskir.
 6. Temel belgesi altı soruya cevap verir. Her cevapta kaynak ve tarih yazar.
 
+## Durum
+
+Bu bölüm 14 Kasım 2026 Cumartesi günü güncellendi. Planın yedi adımı ve sonradan eklenen sekizinci adım bitti.
+
+| Adım | Konu | Durum |
+|---|---|---|
+| 1 | Çekirdek veri ve motor | Bitti |
+| 2 | Kabuk ve yönlendirme | Bitti. Yan menü yerine üst şerit ve yatay sekmeler kuruldu. Yol dizini yalnız yol ekranlarında durur. |
+| 3 | Geçiş kapısı ekranı | Bitti |
+| 4 | Temel taşları ve varsayım panosu | Bitti |
+| 5 | Strateji çalışması ve temel belgesi | Bitti |
+| 6 | Pano, giriş ve örnek plan | Bitti |
+| 7 | Test ve yayın | Bitti. 117 birim testi ve 223 tarayıcı testi geçiyor. |
+| 8 | İlk turda açık kalan dört iş | Bitti |
+
+Çalıştırılmayan kontroller şunlardır: gerçek telefon, gerçek okur denemesi ve Firefox. Firefox kalıcı karar gereği çalıştırılmaz.
+
 ## Yeni yol
 
 | Aşama | İçerik | Bitiş |
@@ -95,10 +112,28 @@ Her adım bir öncekine dayanır. Aynı adımdaki işler paralel yapılabilir.
 3. Mevcut tasarım testleri yeni ekranlarda da çalışır.
 4. Kapı betiği, tip denetimi ve bütün testler geçince yayın yapılır.
 
+### Adım 8. İlk turda açık kalan dört iş
+
+İlk uygulama turunda dört iş eksik kalmıştı. Bu adım onları kapatır.
+
+| No | İş | Dosya | Kabul ölçütü | Durum |
+|---|---|---|---|---|
+| 8.1 | Çürüyen varsayım geçiş kapısını etkiler. Etkisi 4 ya da 5 olan varsayım çürürse ve sonuç notu boşsa Z8 ölçütü düşer. | `src/engine/readiness.ts`, `src/components/TransitionPanel.tsx` | Öneri "Henüz hazır değil" olur. Sonuç notu yazılınca ölçüt geri gelir. Uyarı panelde görünür. | Bitti |
+| 8.2 | Sorun ölçütü kanıt kaydına bağlanır. Z2 için Adım 05, 06 ya da 07'ye bağlı en az bir kanıt gerekir. | `src/engine/readiness.ts` | Bu kanıt silinince Z2 ölçütü düşer. | Bitti |
+| 8.3 | Ulaşılabilir pazar otomatik hesaplanır. Yeni alan türü `calc` eklendi. | `src/engine/calc.ts`, `src/components/CalcField.tsx`, `src/data/steps/karar3.ts` | Adım 09'da hesap kutusu sonucu gösterir. "Alana yaz" düğmesi "Gerçekçi pazar" alanını doldurur. | Bitti |
+| 8.4 | Başabaş sayısı otomatik hesaplanır. Aylık gider, sipariş katkısına bölünür. | `src/engine/calc.ts`, `src/data/steps/karar5.ts` | Adım 16'da hesap kutusu sonucu gösterir. Katkı artı değilse uyarı çıkar. | Bitti |
+| 8.5 | Süresi dolan koşullu karar panoda uyarı verir. | `src/screens/OverviewScreen.tsx` | Son tarih geçince panoda uyarı ve geçiş kapısı bağlantısı görünür. | Bitti |
+
 ## Kapsam dışı
 
 - Sunucu, kullanıcı girişi ve ekip paylaşımı.
 - Strateji çalışmasının kendisini derinleştirmek. Adım 18 ile 20 bugünkü içeriğiyle kalır.
+
+## Bilinen sınırlar
+
+1. Kanıt bağı iki ölçütte vardır: sorun (Z2) ve bağlılık işareti (Z6). Öteki ölçütler form alanına bakar.
+2. 20 temel taşı kitaplardaki çerçevelerden derlendi. Bir uzman ya da gerçek bir girişimci listeyi sınamadı.
+3. Bir girişimcinin Adım 00'dan geçiş kapısına kadar gidebildiği gerçek kullanıcıyla denenmedi.
 
 ## Denetim notu
 
