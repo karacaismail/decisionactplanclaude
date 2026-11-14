@@ -137,6 +137,7 @@ export function buildDemoPlan(): PlanDoc {
   p.steps = {
     '00': done({ ...p.profile }, 68),
     '01': done({
+      redLines: 'Borçla büyümem. Ruhsatsız satış yapmam.',
       whys: [row('neden-1', { why: 'Mahallede sabah erken açık kafe yok.' }), row('neden-2', { why: 'İnsanlar 20 dakika yürüyüp zincir kafeye gidiyor.' }), row('neden-3', { why: 'Ben 8 yıl kafede çalıştım. İşi biliyorum.' })],
       coreReason: 'Mahalleye yürüme uzaklığında sakin ve erken açılan bir kafe kazandırmak.',
       exitDirection: 'karli',
@@ -168,6 +169,8 @@ export function buildDemoPlan(): PlanDoc {
       scenarios: [
         row('senaryo-1', { name: 'Sakin mahalle', signal: 'Kira artışı yüzde 30 altında kalır.', winCondition: 'Düzenli müşteri 300’ü geçer.' }),
         row('senaryo-2', { name: 'Zincir gelir', signal: 'Yakın sokakta zincir kafe tabelası görülür.', winCondition: 'Sabit müşteri kartı ve erken saat üstünlüğü korunur.' }),
+        row('senaryo-3', { name: 'Kira sıçrar', signal: 'Mal sahibi yüzde 30 üstü artış ister.', winCondition: 'Kahve arabasına dönülür. Kira gideri kalkar.' }),
+        row('senaryo-4', { name: 'Kira sıçrar ve zincir gelir', signal: 'İki işaret aynı yıl görülür.', winCondition: 'Aylık kart sayısı 30\'un üstünde kalırsa iş sürer.' }),
       ],
       permits: [row('izin-1', { permit: 'İşyeri açma ve çalışma ruhsatı', months: 1, beforeStep: 'Açılıştan önce' })],
     }, 64),
@@ -216,6 +219,7 @@ export function buildDemoPlan(): PlanDoc {
       accessCost: tl(15),
     }, 48),
     '09': done({
+      profitPool: 'Zincir kafeler sabah satışından kazanıyor. Mahalle kafeleri öğle menüsünden kazanıyor.',
       reachableCustomers: 600,
       salesCapacity: 350,
       somCustomers: 350,
@@ -368,6 +372,29 @@ export function buildDemoPlan(): PlanDoc {
       irreversible: ['uzunKira', 'buyukAlim'],
       irreversibleNote: 'Kira sözleşmesine 6. ayda çıkış hakkı yazdırırım. Makineyi ikinci el alırım.',
     }, 3),
+    '18': done({
+      paths: [
+        row('yol-0', { name: 'Bugünkü durumu sürdürmek', where: 'Müşteri evde kahve yapar ya da zincir kafeye yürür.', how: 'Hiçbir şey yapmayız. Para harcanmaz.', giveUp: 'Sabah müşterisinden ve 7 ön ödemeden vazgeçeriz.', evidence: '13 kişi sabah kahve bulamadığını söyledi.', cost: '0 TL', reversible: 'ciftYonlu' }),
+        row('yol-1', { name: 'Durakta kahve arabası', where: 'Sabah işe gidenler. Otobüs durağı. Doğrudan satış.', how: 'Hız ve konum. Müşteri yolundan çıkmaz.', giveUp: 'Oturma alanından ve evden çalışanlardan vazgeçeriz.', evidence: 'Sabah 6.30 ile 9 arası yürüyüş sayımı.', cost: '60.000 TL ve 3 hafta', reversible: 'ciftYonlu' }),
+        row('yol-2', { name: 'Ön siparişle aylık kart', where: 'Evden çalışanlar ve öğrenciler. Mahalle grubu. Aylık kart.', how: 'Güven ve düzen. Para önden gelir.', giveUp: 'Gelip geçen müşteriden vazgeçeriz.', evidence: '7 kişi aylık karta ön ödeme yaptı.', cost: '150.000 TL ve 8 hafta', reversible: 'tekYonlu' }),
+        row('yol-3', { name: 'Küçük kafe salonu', where: 'Mahalle sakinleri. 25 kişilik salon. Gelip geçen ve kartlı müşteri.', how: 'Yer ve süreklilik. Sabah 6.30 açılış.', giveUp: 'Düşük giderden ve hızlı çıkıştan vazgeçeriz.', evidence: 'Mahallede sabah 9\'dan önce açık kafe yok.', cost: '150.000 TL ve 10 hafta', reversible: 'tekYonlu' }),
+      ],
+      pathScores: {
+        weights: { customerEvidence: 3, marketAppeal: 2, difference: 2, skillFit: 2, moneyLogic: 3, risk: 2, reversibility: 2 },
+        scores: {
+          'yol-0': { customerEvidence: 1, marketAppeal: 1, difference: 1, skillFit: 5, moneyLogic: 1, risk: 5, reversibility: 5 },
+          'yol-1': { customerEvidence: 3, marketAppeal: 4, difference: 4, skillFit: 4, moneyLogic: 3, risk: 4, reversibility: 5 },
+          'yol-2': { customerEvidence: 5, marketAppeal: 3, difference: 3, skillFit: 3, moneyLogic: 4, risk: 2, reversibility: 2 },
+          'yol-3': { customerEvidence: 3, marketAppeal: 4, difference: 3, skillFit: 3, moneyLogic: 3, risk: 2, reversibility: 1 },
+        },
+        locked: true,
+      },
+      counterMove: 'Zincir kafe sabah indirimi yapabilir. Biz durağa yakınlıkla ve aylık kartla kalırız.',
+      openDecisions: [
+        row('karar-a', { question: 'Durakta mı satalım, ön siparişle mi teslim edelim?', alternatives: 'Durakta kahve arabası. Ön siparişle aylık kart. İkisi birlikte.', basis: '7 kişi karta ön ödeme yaptı. Durak satışı henüz denenmedi.', owner: 'Kurucu', dueDate: iso(14), reversalCost: 'Kira sözleşmesi imzalanırsa 6 aylık kira.', door: 'tekYonlu' }),
+        row('karar-b', { question: 'Hangi fiyat modelini deneyeceğiz?', alternatives: 'Aylık kart 600 TL. Tek kahve 80 TL.', basis: '14 teklifin 7\'si 600 TL\'ye kabul edildi.', owner: 'Kurucu', dueDate: iso(21), reversalCost: 'Bir aylık gelir farkı.', door: 'ciftYonlu' }),
+      ],
+    }, 2),
   }
 
   p.evidence = [

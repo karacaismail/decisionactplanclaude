@@ -93,6 +93,7 @@ export const KARAR3: StepDef[] = [
       {
         title: 'Boşluklar',
         fields: [
+          { key: 'profitPool', type: 'textarea', label: 'Bu pazarda parayı kim kazanıyor?', rows: 2, maxLength: 300, placeholder: 'Zincir kafeler sabah satışından kazanıyor. Küçük kafeler öğle menüsünden.', help: 'Kârın nerede toplandığını yazın. Bilmiyorsanız "Bilinmiyor" yazın.' },
           { key: 'gaps', type: 'repeater', label: 'Rakiplerin olmadığı boşluklar', addLabel: 'Boşluk ekle', maxRows: 3, columns: [
             { key: 'gap', type: 'text', label: 'Boşluk' },
             { key: 'whyEmpty', type: 'text', label: 'Bu boşluk neden boş?' },

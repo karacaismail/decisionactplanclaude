@@ -175,10 +175,35 @@ export const usePlanStore = create<PlanState>()(
     {
       name: STORAGE_KEY,
       storage,
+      version: 2,
+      migrate: (persisted) => {
+        const st = persisted as { plans?: Record<string, PlanDoc> }
+        for (const plan of Object.values(st?.plans ?? {})) migrateChoiceFields(plan)
+        return st as unknown as PlanState
+      },
       partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme }) as unknown as PlanState,
     },
   ),
 )
+
+/**
+ * Sürüm 2 taşıması: "Seçilen yol" ve "Vazgeçilenler" Adım 18'den Adım 19'a geçti.
+ * Adım 19'da değer varsa üstüne yazılmaz. Veri kaybolmaz.
+ */
+export function migrateChoiceFields(plan: PlanDoc): PlanDoc {
+  const from = plan.steps?.['18']?.values
+  if (!from) return plan
+  const moved: Record<string, unknown> = {}
+  for (const key of ['chosenPath', 'givenUp'] as const) {
+    if (from[key] !== undefined && from[key] !== '') moved[key] = from[key]
+    delete from[key]
+  }
+  if (Object.keys(moved).length === 0) return plan
+  const to = plan.steps['19'] ?? { values: {}, status: 'taslak' as const, updatedAt: new Date().toISOString() }
+  to.values = { ...moved, ...to.values }
+  plan.steps['19'] = to
+  return plan
+}
 
 export function useCurrentPlan(): PlanDoc | undefined {
   return usePlanStore((s) => (s.currentId ? s.plans[s.currentId] : undefined))

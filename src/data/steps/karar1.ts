@@ -88,6 +88,7 @@ export const KARAR1: StepDef[] = [
             { value: 'buyume', label: 'Yatırım alıp büyümek veya satılmak' },
             { value: 'olcek', label: 'Çok büyük ölçek' },
           ] },
+          { key: 'redLines', type: 'textarea', label: 'Kırmızı çizgiler. Kazanç için bile yapmayacağınız şey nedir?', rows: 2, maxLength: 300, placeholder: 'Borçla büyümem. Sağlığa zararlı ürün satmam.', help: 'Stratej bu sınırların içinde seçim yapar.' },
           { key: 'exitNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Çok büyük ölçek seçtiniz ama para kaynağınız kendi paranız. Bu bir çelişkidir. Yönü veya para kaynağını yeniden düşünün.', when: { all: [{ field: { key: 'exitDirection', equals: 'olcek' } }, { profile: { funding: ['kendi'] } }] } },
         ],
       },

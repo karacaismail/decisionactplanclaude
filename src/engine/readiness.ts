@@ -67,7 +67,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
     },
     { id: 'Z3', label: 'İlk müşteri grubu ve ulaşma yolu yazılı.', met: crit(plan, 2, 'segment'), step: '08', hint: 'Kime, hangi yoldan ulaşacağınızı yazın.' },
     { id: 'Z4', label: 'Ulaşılabilir pazar başarı hedefini karşılıyor.', met: crit(plan, 3, 'pazar'), step: '09', hint: 'Bir yılda kazanabileceğiniz müşteri sayısı hedefe yetmeli.' },
-    { id: 'Z5', label: 'En az iki gerçek seçenek karşılaştırıldı.', met: crit(plan, 3, 'secenek'), step: '11', hint: 'Seçeneklerden biri "bugünkü yöntem"dir.' },
+    { id: 'Z5', label: 'Yol adayları yan yana yazıldı. Bugünkü durum ve en az iki yol var.', met: crit(plan, 5, 'yol'), step: '18', hint: 'Stratej bu adaylar arasından seçer. Ağır yatırımda en az üç yol gerekir.' },
     {
       id: 'Z6',
       label: 'En az bir bağlılık işareti var. Kanıt 1, 2 ya da 3. basamakta.',
@@ -98,6 +98,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
     { id: 'D3', label: 'İlk kanal bir kez denendi.', met: plan.steps['15'] ? Number(v(plan, '15', 'reached') ?? 0) >= 1 : null, step: '15', hint: 'Kaç kişiye hangi yoldan ulaştığınızı yazın.' },
     { id: 'D4', label: 'Eksik beceriler için plan var.', met: crit(plan, 3, 'beceri'), step: '12', hint: 'Her kritik beceri için "kim yapacak" cevabı gerekir.' },
     { id: 'D5', label: 'Dış çevre taraması yapıldı.', met: plan.steps['04'] ? plan.steps['04'].status === 'tamam' : null, step: '04', hint: 'İzinler ve dışarıdaki değişimler Adım 04\'te yazılır.' },
+    { id: 'D7', label: 'Kritik belirsizlikler ve senaryolar yazıldı.', met: plan.steps['04'] ? filled(v(plan, '04', 'uncertainty1')) && rows(plan, '04', 'scenarios').length >= 2 : null, step: '04', hint: 'İki belirsizlik ve en az iki senaryo yazın. Ağır yatırımda dört senaryo beklenir.' },
     { id: 'D6', label: 'İkinci bir kişi dayanakları okudu.', met: opts.secondReader?.trim() ? true : false, step: '17', hint: 'Okuyan kişinin adını karar panelinde yazın.' },
   ]
 

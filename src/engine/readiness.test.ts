@@ -34,7 +34,7 @@ describe('evaluateReadiness', () => {
     const r = evaluateReadiness(emptyPlan('p', 'Plan'))
     expect(r.suggested).toBe('degil')
     expect(r.mandatory).toHaveLength(9)
-    expect(r.supporting).toHaveLength(6)
+    expect(r.supporting).toHaveLength(7)
     expect(r.mandatoryMet).toBe(0)
   })
   it('ikinci okur yazılınca destekleyici ölçüt karşılanır', () => {

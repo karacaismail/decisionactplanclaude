@@ -191,17 +191,17 @@ export const DECISIONS: DecisionDef[] = [
   },
   {
     n: 5,
-    title: 'Para ve risk',
-    question: 'Para dayanıyor mu? Hangi risk işi bitirir?',
+    title: 'Para, risk ve yollar',
+    question: 'Para dayanıyor mu? Hangi risk işi bitirir? Masada hangi yollar var?',
     icon: 'wallet',
     who: 'Harcama yetkilisi. Teslim sorumlusu kapasiteyi doğrular.',
     time: '1 ile 2 hafta.',
-    intro: 'Bu karar strateji seçmez. İki soruya bakar. Bir satıştan para kalıyor mu? İşi bitirebilecek tehlikeler için kural var mı? Cevaplar geçiş kapısının dayanağı olur.',
+    intro: 'Bu karar strateji seçmez. Üç soruya bakar. Bir satıştan para kalıyor mu? İşi bitirebilecek tehlikeler için kural var mı? Masada hangi yollar var? Cevaplar stratej\'e devir raporunu besler.',
     example: 'Atölye sahibi sipariş başına kalan parayı hesapladı. Sabit gideri 20 sipariş karşılıyor. Kusur oranı sınırı aşarsa sonraki parti açılmaz.',
-    steps: ['16', '17'],
+    steps: ['16', '17', '18'],
     gate: {
       n: 5,
-      title: 'Para mantığı ve risk sınırı uygun mu?',
+      title: 'Para, risk ve yol adayları hazır mı?',
       maxRetries: 1,
       criteria: [
         c('plan', 'Tek sayfalık iş planı dolu. Orta durumda katkı payı artı.', (p) => {
@@ -224,13 +224,20 @@ export const DECISIONS: DecisionDef[] = [
           if (!burn || !cash) return null
           return Math.floor(cash / burn) >= 3
         }),
+        c('yol', 'Yol adayları karşılaştırıldı. Bugünkü durum ve en az iki yol var. Ağır yatırımda en az üç yol.', (p) => {
+          if (!p.steps['18']) return null
+          const named = rows(p, '18', 'paths').filter((r) => filled(r.name) && (filled(r.where) || filled(r.how)))
+          const need = p.profile.smallReversible ? 3 : 4
+          return named.length >= need
+        }),
       ],
       rows: [
-        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Geçiş kapısına gidin. Dayanakları inceleyin.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
+        { condition: '5 ölçüt tamam', outcome: 'ilerle', note: 'Geçiş kapısına gidin. Devir raporunu okuyun.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
         { condition: 'Talep var, para mantığı çalışmıyor', outcome: 'yonDegistir', note: 'Adım 16\'ya dönün. Fiyat ve maliyeti değiştirin.', applies: (_p, cr) => cr.plan === false },
         { condition: 'Kârlı iş ama tahsilat gecikiyor', outcome: 'kosulluIlerle', note: 'Ödeme koşulunu yeniden görüşün. Kasa açığı kapanmadan harcama yapmayın.', applies: (_p, cr) => cr.plan === true && cr.kasa === false },
         { condition: 'Talep var ama kaynak yetmiyor', outcome: 'beklet', note: 'Ortak arayın veya para bulun.', applies: (_p, cr) => cr.pist === false },
         { condition: 'Kritik risk için kural eksik', outcome: 'yenidenDene', note: 'Adım 17\'ye dönün. Tetikleyici olayı ve karşılığı yazın.', applies: (_p, cr) => cr.risk === false },
+        { condition: 'Yol adayı yetersiz', outcome: 'yenidenDene', note: 'Adım 18\'e dönün. En az iki farklı yol yazın.', applies: (_p, cr) => cr.yol === false },
       ],
     },
   },
@@ -368,13 +375,13 @@ export const STRATEGY: DecisionDef = {
   time: '1 ile 2 hafta.',
   intro: 'Bu çalışma geçiş kapısından sonra başlar. Seçimler temel belgesindeki kanıtlara dayanır. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
   example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı.',
-  steps: ['18', '19', '20'],
+  steps: ['19', '20'],
   gate: {
     n: STRATEGY_N,
     title: 'Strateji çalışması tamam mı?',
     maxRetries: 0,
     criteria: [
-      c('yol', 'Saha ve kazanma yolu seçildi.', (p) => (p.steps['18'] ? filled(v(p, '18', 'chosenPath')) : null)),
+      c('yol', 'Yol seçildi. Gerekçe ve vazgeçilenler yazıldı.', (p) => (p.steps['19'] ? filled(v(p, '19', 'chosenPath')) && filled(v(p, '19', 'choiceReason')) && filled(v(p, '19', 'givenUp')) : null)),
       c('hedef', '90 günlük yol yazıldı.', (p) => (p.steps['19'] ? p.steps['19'].status === 'tamam' : null)),
       c('dosya', 'Strateji karar dosyası tam.', (p) => {
         const q = (v(p, '20', 'qualityCheck') as string[]) ?? []

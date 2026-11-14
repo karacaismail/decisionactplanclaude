@@ -71,6 +71,15 @@ export function AppShell() {
           label: 'Geçiş',
           children: [
             {
+              key: '/devir',
+              icon: <FileText size={20} />,
+              label: (
+                <Link to="/devir" aria-label="Strateje devir raporu">
+                  <span className="label">Devir raporu</span>
+                </Link>
+              ),
+            },
+            {
               key: '/gecis',
               icon: <DoorOpen size={20} weight={passedTransition ? 'fill' : 'regular'} />,
               label: (
@@ -99,7 +108,7 @@ export function AppShell() {
   /* Sıradaki iş: "Yol" sekmesi buraya gider. */
   const nextOpen = plan ? stage('temel').decisions.find((n) => !gatePassed(plan, n)) : undefined
   const journeyHome = !plan ? '/' : nextOpen ? `/karar/${nextOpen}` : !passedTransition ? '/gecis' : '/strateji'
-  const isJourney = /^\/(karar|gecis|strateji|baslangic|devralma)/.test(loc.pathname)
+  const isJourney = /^\/(karar|gecis|devir|strateji|baslangic|devralma)/.test(loc.pathname)
   const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean }[] = [
     { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },
     { to: journeyHome, label: 'Yol', Icon: MapTrifold, active: isJourney, needsPlan: true },
