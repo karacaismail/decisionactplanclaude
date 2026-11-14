@@ -191,17 +191,17 @@ export const DECISIONS: DecisionDef[] = [
   },
   {
     n: 5,
-    title: 'Kaynak ve strateji',
-    question: 'Hangi yolu, hangi sınırla seçeceğiz?',
+    title: 'Para ve risk',
+    question: 'Para dayanıyor mu? Hangi risk işi bitirir?',
     icon: 'wallet',
     who: 'Harcama yetkilisi. Teslim sorumlusu kapasiteyi doğrular.',
-    time: '2 ile 3 hafta.',
-    intro: 'Kime, neyi, hangi yolla satacağız? Neyden vazgeçeceğiz? Para dayanıyor mu? Bu karar ilk strateji seçimini yapar. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
-    example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı. Kusurlar sınırı aşarsa sonraki parti açılmaz.',
-    steps: ['16', '17', '18', '19', '20'],
+    time: '1 ile 2 hafta.',
+    intro: 'Bu karar strateji seçmez. İki soruya bakar. Bir satıştan para kalıyor mu? İşi bitirebilecek tehlikeler için kural var mı? Cevaplar geçiş kapısının dayanağı olur.',
+    example: 'Atölye sahibi sipariş başına kalan parayı hesapladı. Sabit gideri 20 sipariş karşılıyor. Kusur oranı sınırı aşarsa sonraki parti açılmaz.',
+    steps: ['16', '17'],
     gate: {
       n: 5,
-      title: 'Yetki, kaynak ve risk sınırı uygun mu?',
+      title: 'Para mantığı ve risk sınırı uygun mu?',
       maxRetries: 1,
       criteria: [
         c('plan', 'Tek sayfalık iş planı dolu. Orta durumda katkı payı artı.', (p) => {
@@ -219,23 +219,18 @@ export const DECISIONS: DecisionDef[] = [
           if (r.length === 0) return null
           return r.filter((x) => Number(x.likelihood ?? 0) * Number(x.impact ?? 0) >= 6).every((x) => filled(x.trigger) && filled(x.response))
         }),
-        c('beceri', 'Kritik beceriler edinilebilir. Pist Karar 6\'yı kapsıyor.', (p) => {
+        c('pist', 'Pist en az 3 ay. Strateji çalışmasını ve ilk denemeyi kapsıyor.', (p) => {
           const burn = p.limits.monthlyBurnKurus, cash = p.limits.cashKurus
           if (!burn || !cash) return null
-          const weeks = Number(v(p, '21', 'buildWeeks') ?? 8)
-          return Math.floor(cash / burn) >= Math.ceil(weeks / 4)
-        }),
-        c('dosya', 'Karar dosyası tam. Kalite kontrolü geçti.', (p) => {
-          const q = (v(p, '20', 'qualityCheck') as string[]) ?? []
-          return q.length === 0 ? null : q.length >= 5 && filled(v(p, '18', 'chosenPath'))
+          return Math.floor(cash / burn) >= 3
         }),
       ],
       rows: [
-        { condition: '5 ölçüt tamam', outcome: 'ilerle', note: 'Karar 6\'ya geçin. Sınırlı ilk teslimi açın.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
+        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Geçiş kapısına gidin. Dayanakları inceleyin.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
         { condition: 'Talep var, para mantığı çalışmıyor', outcome: 'yonDegistir', note: 'Adım 16\'ya dönün. Fiyat ve maliyeti değiştirin.', applies: (_p, cr) => cr.plan === false },
-        { condition: 'Kârlı iş ama tahsilat gecikiyor', outcome: 'kosulluIlerle', note: 'Ödeme koşulunu yeniden görüşün. Kasa açığı kapanmadan teslimi büyütmeyin.', applies: (_p, cr) => cr.plan === true && cr.kasa === false },
-        { condition: 'Talep var ama kaynak yetmiyor', outcome: 'beklet', note: 'Ortak arayın veya para bulun.', applies: (_p, cr) => cr.beceri === false },
-        { condition: 'Bir kritik varsayım ucuz bir testle azaltılabilir', outcome: 'yenidenDene', note: 'Yalnız o testi yapın. En çok 2 hafta.', applies: (_p, cr) => cr.dosya === false },
+        { condition: 'Kârlı iş ama tahsilat gecikiyor', outcome: 'kosulluIlerle', note: 'Ödeme koşulunu yeniden görüşün. Kasa açığı kapanmadan harcama yapmayın.', applies: (_p, cr) => cr.plan === true && cr.kasa === false },
+        { condition: 'Talep var ama kaynak yetmiyor', outcome: 'beklet', note: 'Ortak arayın veya para bulun.', applies: (_p, cr) => cr.pist === false },
+        { condition: 'Kritik risk için kural eksik', outcome: 'yenidenDene', note: 'Adım 17\'ye dönün. Tetikleyici olayı ve karşılığı yazın.', applies: (_p, cr) => cr.risk === false },
       ],
     },
   },
@@ -358,3 +353,34 @@ export const DECISIONS: DecisionDef[] = [
     },
   },
 ]
+
+/**
+ * Strateji çalışması. Sekiz karardan biri değildir, kapısı yoktur.
+ * Geçiş kapısından sonra açılır. Adım 18, 19 ve 20'yi taşır.
+ */
+export const STRATEGY_N = 9
+export const STRATEGY: DecisionDef = {
+  n: STRATEGY_N,
+  title: 'Strateji çalışması',
+  question: 'Hangi müşteriye, hangi yolla, neyle kazanacaksınız?',
+  icon: 'signpost',
+  who: 'Karar sahibi ve ekip. Dayanak özeti masada durur.',
+  time: '1 ile 2 hafta.',
+  intro: 'Bu çalışma geçiş kapısından sonra başlar. Seçimler temel belgesindeki kanıtlara dayanır. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
+  example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı.',
+  steps: ['18', '19', '20'],
+  gate: {
+    n: STRATEGY_N,
+    title: 'Strateji çalışması tamam mı?',
+    maxRetries: 0,
+    criteria: [
+      c('yol', 'Saha ve kazanma yolu seçildi.', (p) => (p.steps['18'] ? filled(v(p, '18', 'chosenPath')) : null)),
+      c('hedef', '90 günlük yol yazıldı.', (p) => (p.steps['19'] ? p.steps['19'].status === 'tamam' : null)),
+      c('dosya', 'Strateji karar dosyası tam.', (p) => {
+        const q = (v(p, '20', 'qualityCheck') as string[]) ?? []
+        return q.length === 0 ? null : q.length >= 5
+      }),
+    ],
+    rows: [],
+  },
+}

@@ -294,7 +294,7 @@ export const KARAR5: StepDef[] = [
   },
   {
     id: '18',
-    decision: 5,
+    decision: 9,
     title: 'Saha ve kazanma yolu',
     question: 'Hangi müşteriye, hangi yolla, neyle kazanacaksınız? Neyden vazgeçeceksiniz?',
     mandatory: true,
@@ -387,7 +387,7 @@ export const KARAR5: StepDef[] = [
   },
   {
     id: '19',
-    decision: 5,
+    decision: 9,
     title: 'Hedefler ve 90 günlük yol',
     question: 'Önümüzdeki 90 günde ne başaracaksınız? Kim, ne zaman yapacak?',
     mandatory: true,
@@ -467,7 +467,7 @@ export const KARAR5: StepDef[] = [
   },
   {
     id: '20',
-    decision: 5,
+    decision: 9,
     title: 'Strateji karar dosyası',
     question: 'Kararınızı iki sayfada anlatabiliyor musunuz?',
     mandatory: true,

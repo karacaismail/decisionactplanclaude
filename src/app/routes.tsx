@@ -13,6 +13,10 @@ import { HistoryScreen } from '@/screens/HistoryScreen'
 import { TakeoverScreen } from '@/screens/TakeoverScreen'
 import { InsightsScreen } from '@/screens/InsightsScreen'
 import { MethodsScreen } from '@/screens/MethodsScreen'
+import { TransitionScreen } from '@/screens/TransitionScreen'
+import { StrategyScreen } from '@/screens/StrategyScreen'
+import { FoundationScreen } from '@/screens/FoundationScreen'
+import { AssumptionsScreen } from '@/screens/AssumptionsScreen'
 import { useCurrentPlan } from '@/store/planStore'
 
 function RequirePlan({ children }: { children: React.ReactNode }) {
@@ -29,6 +33,12 @@ export function AppRoutes() {
         <Route path="/baslangic" element={<RequirePlan><StartScreen /></RequirePlan>} />
         <Route path="/ozet" element={<RequirePlan><OverviewScreen /></RequirePlan>} />
         <Route path="/devralma" element={<RequirePlan><TakeoverScreen /></RequirePlan>} />
+        <Route path="/gecis" element={<RequirePlan><TransitionScreen /></RequirePlan>} />
+        <Route path="/strateji" element={<RequirePlan><StrategyScreen /></RequirePlan>} />
+        <Route path="/temel" element={<RequirePlan><FoundationScreen /></RequirePlan>} />
+        <Route path="/varsayimlar" element={<RequirePlan><AssumptionsScreen /></RequirePlan>} />
+        <Route path="/karar/9" element={<Navigate to="/strateji" replace />} />
+        <Route path="/karar/9/kapi" element={<Navigate to="/strateji" replace />} />
         <Route path="/karar/:n" element={<RequirePlan><DecisionScreen /></RequirePlan>} />
         <Route path="/karar/:n/adim/:id" element={<RequirePlan><WorkScreen /></RequirePlan>} />
         <Route path="/karar/:n/kapi" element={<RequirePlan><ReviewScreen /></RequirePlan>} />

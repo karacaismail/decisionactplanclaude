@@ -1,9 +1,9 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { emptyPlan, type Decision, type Evidence, type PlanDoc, type Profile, type StepValues, type Task, type Limits } from '@/data/types'
+import { emptyPlan, TRANSITION_LABEL, type Decision, type Evidence, type PlanDoc, type Profile, type StepValues, type Task, type Limits, type TransitionRecord } from '@/data/types'
 import { parsePlanImport, prepareImportedPlan, validatePlanDoc } from '@/data/validate'
 import { uid } from '@/engine/format'
-import { applyLimits, applyProfile, applySkip, applyStepValues, markStale, reviewChange as reviewChangeIn } from '@/engine/changes'
+import { applyLimits, applyProfile, applySkip, applyStepValues, gateOfStep, markStale, reviewChange as reviewChangeIn } from '@/engine/changes'
 import { createGuardedStorage, STORAGE_KEY, type SaveResult } from '@/engine/sync'
 
 export type SaveState = 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
@@ -34,6 +34,10 @@ interface PlanState {
   setLocation: (loc: string) => void
   addEvidence: (e: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>) => string
   updateEvidence: (id: string, patch: Partial<Evidence>) => void
+  /** Kanıtı siler. Bağlı adımların kararları ve geçiş kararı eskir. */
+  removeEvidence: (ids: string[]) => void
+  /** Geçiş kapısı kararını kaydeder. Yeni sürüm alınır. */
+  recordTransition: (t: Omit<TransitionRecord, 'id' | 'decidedAt' | 'revision' | 'stale'>) => string
   recordDecision: (d: Omit<Decision, 'id' | 'decidedAt' | 'revision'>, label: string) => string
   /** Sınır değişikliğine ikinci görüş yazar. Sorun varsa Türkçe hata metni döndürür. */
   reviewChange: (id: string, reviewer: string) => string | null
@@ -115,6 +119,24 @@ export const usePlanStore = create<PlanState>()(
           const e = p.evidence.find((x) => x.id === id)
           if (e) Object.assign(e, patch, { updatedAt: new Date().toISOString() })
         }),
+      removeEvidence: (ids) =>
+        get().update((p) => {
+          const gone = p.evidence.filter((e) => ids.includes(e.id))
+          if (gone.length === 0) return
+          p.evidence = p.evidence.filter((e) => !ids.includes(e.id))
+          const gates = gone.flatMap((e) => e.linkedSteps.map((st) => gateOfStep(st)))
+          // Bağlı adım yazılmadıysa kanıt bütün temeli ilgilendirir.
+          markStale(p, gates.length > 0 ? Math.min(...gates) : 1)
+        }),
+      recordTransition: (t) => {
+        const id = uid('gecis')
+        get().update((p) => {
+          p.revision += 1
+          p.transitions = [...(p.transitions ?? []), { ...t, id, decidedAt: new Date().toISOString(), revision: p.revision }]
+          p.revisions.push({ id: uid('surum'), label: `Geçiş kapısı: ${TRANSITION_LABEL[t.outcome]}`, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
+        })
+        return id
+      },
       recordDecision: (d, label) => {
         const id = uid('karar')
         get().update((p) => {

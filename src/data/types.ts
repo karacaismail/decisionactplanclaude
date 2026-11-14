@@ -169,6 +169,35 @@ export interface OutputVersion {
   createdAt: string
 }
 
+export type TransitionOutcome = 'hazir' | 'kosullu' | 'degil'
+export const TRANSITION_LABEL: Record<TransitionOutcome, string> = {
+  hazir: 'Planlamaya hazır',
+  kosullu: 'Koşullu hazır',
+  degil: 'Henüz hazır değil',
+}
+
+/** Geçiş kapısı kaydı. Yazılım önerir, karar sahibi kaydeder. */
+export interface TransitionRecord {
+  id: string
+  outcome: TransitionOutcome
+  suggested: TransitionOutcome
+  reason: string
+  decidedBy: string
+  decidedAt: string
+  /** Karar sahibi dayanakları incelediğini işaretledi. */
+  reviewed: boolean
+  secondOpinion?: string
+  /** Koşullu hazır: yalnız bu konu planlanır. */
+  conditional?: { topic: string; openQuestion: string; owner: string; deadline: string }
+  mandatoryMet: number
+  mandatoryTotal: number
+  supportingMet: number
+  supportingTotal: number
+  level: number
+  revision: number
+  stale?: boolean
+}
+
 export interface PlanDoc {
   schemaVersion: '1.0'
   id: string
@@ -189,6 +218,8 @@ export interface PlanDoc {
   revisions: Revision[]
   outputs: OutputVersion[]
   takeover?: Record<string, unknown>
+  /** Stratejik planlamaya geçiş kararları. Son kayıt geçerlidir. */
+  transitions?: TransitionRecord[]
   /** Örnek plan: ekranları tanıtır, raporda "Örnek" damgası taşır. */
   example?: boolean
   changes?: ChangeRecord[]
@@ -214,5 +245,6 @@ export function emptyPlan(id: string, name: string): PlanDoc {
     revisions: [],
     outputs: [],
     changes: [],
+    transitions: [],
   }
 }

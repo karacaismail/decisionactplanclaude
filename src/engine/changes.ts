@@ -52,6 +52,14 @@ export function isIncrease(key: string, before: unknown, after: unknown): boolea
 /** Verilen kapıya eşit ya da sonraki kapıların son kararları eskir. Eskiyen karar sayısını döndürür. */
 export function markStale(plan: PlanDoc, fromGate: number): number {
   let count = 0
+  // Temel aşaması (Karar 1-5) değişince geçiş kapısının son kararı da eskir.
+  if (fromGate <= 5) {
+    const t = plan.transitions?.[plan.transitions.length - 1]
+    if (t && !t.stale) {
+      t.stale = true
+      count++
+    }
+  }
   const seen = new Set<number>()
   for (let i = plan.decisions.length - 1; i >= 0; i--) {
     const d = plan.decisions[i]

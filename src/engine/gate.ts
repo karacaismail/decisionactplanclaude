@@ -158,7 +158,8 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
     }
   }
 
-  if (advancing && def.n > 1 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
+  if (advancing && def.n === 6 && !transitionOpen(plan)) errors.push('Geçiş kapısı kararı yok. Önce geçiş kapısında karar kaydedin.')
+  else if (advancing && def.n > 1 && def.n !== 6 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
 
   if (advancing) {
     const open = (plan.changes ?? []).filter((c) => c.needsReview && !c.reviewer)
@@ -168,3 +169,27 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
   return errors
 }
 
+/** Geçiş kapısının son kararı strateji çalışmasını açıyor mu? (readiness.ts ile aynı kural; döngüsel içe aktarma olmasın diye burada.) */
+function transitionOpen(plan: PlanDoc, now = new Date()): boolean {
+  const t = plan.transitions?.[plan.transitions.length - 1]
+  if (!t || t.stale) return false
+  if (t.outcome === 'hazir') return true
+  return t.outcome === 'kosullu' && Boolean(t.conditional) && new Date(t.conditional!.deadline) >= now
+}
+
+/**
+ * Bir karar ya da strateji çalışması (9) kilitli mi?
+ * Karar 2-5 önceki kapıya, strateji çalışması ve Karar 6 geçiş kapısına, Karar 7-8 önceki kapıya bağlıdır.
+ */
+export function decisionLocked(plan: PlanDoc, n: number): boolean {
+  if (n <= 1) return false
+  if (n === 9 || n === 6) return !transitionOpen(plan)
+  return !gatePassed(plan, n - 1)
+}
+
+/** Kilidin nedeni. Ekranda aynen gösterilir. */
+export function lockReason(plan: PlanDoc, n: number): string | null {
+  if (!decisionLocked(plan, n)) return null
+  if (n === 9 || n === 6) return 'Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
+  return `Kapı ${n - 1} henüz geçilmedi.`
+}
