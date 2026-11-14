@@ -1,8 +1,10 @@
 # Girişimci Aksiyon Planı
 
-Bu araç stratejik planlamadan önce yapılacak işleri yaptırır. Her iddia için kanıt ister. Sonunda dayanak yeterliyse strateji çalışmasını açar.
+Bu araç stratejik planlamadan önce yapılacak işleri yaptırır. Araç her iddia için kanıt ister. Dayanak yeterliyse araç strateji çalışmasını açar.
 
 Aracın bitiş çizgisi geçiş kapısıdır. Karar sahibi orada şu soruya cevap verir: "Dayanak yeterli mi?" Yazılım öneri üretir. Kararı karar sahibi kaydeder.
+
+Strateji çalışmasını stratej yürütür. Stratej, stratejiyi geliştiren kişinin unvanıdır. Yazılım stratej için "Strateje devir raporu" üretir. Yazılım yol seçmez.
 
 ## Yol
 
@@ -10,12 +12,12 @@ Yol dört bölümdür. Bölümler sırayla açılır.
 
 | Sıra | Bölüm | İçerik | Bitiş |
 |---|---|---|---|
-| 1 | Temel | Karar 1 ile Karar 5 arası. Sorun, talep, para ve risk kanıtla öğrenilir. | Kapı 5 |
-| 2 | Geçiş kapısı | 9 zorunlu ve 6 destekleyici ölçüt. | Geçiş kararı |
-| 3 | Strateji çalışması | Adım 18, 19 ve 20. Geçiş kararı olmadan açılmaz. | Strateji karar dosyası |
-| 4 | Uygulama | Karar 6, 7 ve 8. İlk teslim, tekrar ve işin geleceği. | Kapı 8 |
+| 1 | Temel | Karar 1 ile Karar 5 arası. Adım 00 ile Adım 18 arası. Sorun, talep, para, risk ve yol adayları yazılır. | Kapı 5 |
+| 2 | Geçiş kapısı | 9 zorunlu ve 7 destekleyici ölçüt. Karar sahibi devir raporunu okur. | Geçiş kararı |
+| 3 | Strateji çalışması | Adım 19 ve Adım 20. Geçiş kararı olmadan açılmaz. | Strateji karar dosyası |
+| 4 | Uygulama | Karar 6, 7 ve 8. Adım 21 ile Adım 34 arası. Strateji çalışması bitmeden açılmaz. | Kapı 8 |
 
-Geçiş kapısının üç sonucu vardır: "Planlamaya hazır", "Koşullu hazır" ve "Henüz hazır değil". Temel verisi sonradan değişirse geçiş kararı yeniden inceleme ister.
+Geçiş kapısının üç sonucu vardır: "Planlamaya hazır", "Koşullu hazır" ve "Henüz hazır değil". Temel verisi sonradan değişirse geçiş kararı yeniden inceleme ister. Kilit ve eskime kurallarının tamamı [süreç haritasındadır](docs/surec-haritasi.md).
 
 Uygulama telefon için tasarlanır. Ant Design, ECharts ve Phosphor Icons kullanır. Sunucu yoktur. Veri tarayıcıda durur.
 
@@ -23,13 +25,18 @@ Canlı sürüm: https://karacaismail.github.io/decisionactplanclaude/
 
 ## Belgeler
 
-- Amaç, boşluk analizi ve geçiş kapısı kuralı: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)
-- Ön yüz uygulama planı: [docs/uygulama-plani-on-yuz.md](docs/uygulama-plani-on-yuz.md)
+Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). Aşağıdaki öteki belgeler bir karar anını kaydeder. Bir belge süreç haritasıyla çelişirse süreç haritası geçerlidir.
+
+- Güncel süreç, kilitler ve eskime kuralları: [docs/surec-haritasi.md](docs/surec-haritasi.md)
+- Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
+- Strateje devir raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
+- Amaç ve ilk boşluk analizi: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)
+- İlk ön yüz uygulama planı: [docs/uygulama-plani-on-yuz.md](docs/uygulama-plani-on-yuz.md)
 - Uzlaşmış ön yüz planı: [docs/act_components_uzlasma.md](docs/act_components_uzlasma.md)
 - Claude ön yüz planı: [docs/act_components_claude.md](docs/act_components_claude.md)
 - Codex ön yüz planı: [docs/act_components_codex.md](docs/act_components_codex.md)
-- İş kuralları, Claude sürümü: [docs/act_plan_v5_final-claude.md](docs/act_plan_v5_final-claude.md)
-- İş kuralları, Codex sürümü: [docs/act_plan_v5_final-codex.md](docs/act_plan_v5_final-codex.md)
+- Kaynak plan, Claude sürümü: [docs/act_plan_v5_final-claude.md](docs/act_plan_v5_final-claude.md). Uygulamanın bu plandan ayrıldığı yerler süreç haritasının 7. bölümündedir.
+- Kaynak plan, Codex sürümü: [docs/act_plan_v5_final-codex.md](docs/act_plan_v5_final-codex.md)
 
 ## Çalıştırma
 
@@ -50,7 +57,7 @@ Kapı, kodu denetleyen bir kontroldür. Kapı bir hata bulursa iş durur. Üç k
 
 ## Çıktılar ve sürümler
 
-Çıktılar ekranı üç belge üretir: temel belgesi, yönetici raporu ve girişimci aksiyon planı. Her kapı kararı bir sürüm kaydeder. "Sürüm" seçicisinden eski bir sürümü açabilirsiniz. "Bu sürümü sabitle" düğmesi güncel taslağı yeni sürüm olarak kaydeder. Örnek planda rapor başında "Örnek plan. Gerçek veri değildir." uyarısı görünür.
+Çıktılar ekranı üç belge üretir: strateje devir raporu, yönetici raporu ve girişimci aksiyon planı. Her kapı kararı bir sürüm kaydeder. "Sürüm" seçicisinden eski bir sürümü açabilirsiniz. "Bu sürümü sabitle" düğmesi güncel taslağı yeni sürüm olarak kaydeder. Örnek planda rapor başında "Örnek plan. Gerçek veri değildir." uyarısı görünür.
 
 ## Yazım kuralı
 

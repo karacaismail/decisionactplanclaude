@@ -1,5 +1,6 @@
 /**
- * Stratejik planlama temel belgesi. Tek sayfadır ve altı soruya cevap verir.
+ * Devir raporunun iç kaynağı. Ekranda ayrı bir belge olarak gösterilmez.
+ * Eski adı: stratejik planlama temel belgesi. Tek sayfadır ve altı soruya cevap verir.
  * Her cevap plan verisinden üretilir. Kaynak satırları kanıt defterinden gelir.
  * Eksik bilgi uydurulmaz. Cevabı olmayan soruda "Henüz yazılmadı." yazar.
  * Kural docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md dosyasının 8. bölümündedir.

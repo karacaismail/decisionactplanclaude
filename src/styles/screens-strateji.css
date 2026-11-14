@@ -92,7 +92,7 @@ html[data-focus-mode='keyboard'] .path-compare:has(> .path-compare-scroll:focus-
 .foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }
 .foundation-source, .foundation-more { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
 
-/* Temel belgesi: Çıktılar ekranındaki üçüncü belge. Soru başlıkları rapor başlığı boyundadır. */
+/* Eski temel belgesi kuralları. Devir raporu kendi stil dosyasını kullanır. */
 .report-foundation .foundation-summary { gap: 24px; }
 .report-foundation .foundation-question, .report-foundation .foundation-heading { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
 .report-foundation .foundation-block { scroll-margin-top: 80px; }

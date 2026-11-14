@@ -10,7 +10,7 @@ import { buildDemoPlan } from '@/data/demo'
 import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
-import { planPosition, type PlanPosition } from '@/screens/OverviewScreen'
+import { planPosition, type PlanPosition } from '@/engine/position'
 import '@/styles/screens-pano.css'
 
 /** Doğrulama seviyesinin en üst basamağı. Beş temel kapı geçilince 5 olur. */

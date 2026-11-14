@@ -4,9 +4,10 @@ import { Link, Outlet, useLocation, useNavigate } from 'react-router'
 import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
-import { STAGES } from '@/data/stages'
+import { EXECUTION_DECISIONS, STAGES } from '@/data/stages'
 import { transitionPassed, lastTransition } from '@/engine/readiness'
 import { decisionLocked, gatePassed } from '@/engine/gate'
+import { planPosition } from '@/engine/position'
 import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPalette, CommandPaletteButton } from '@/components/CommandPalette'
 import { cssVariables } from '@/theme/tokens'
@@ -60,15 +61,18 @@ export function AppShell() {
   const passedTransition = plan ? transitionPassed(plan) : false
   const foundationDone = plan ? stage('temel').decisions.every((n) => gatePassed(plan, n)) : false
   const transitionState = passedTransition ? 'Geçti' : foundationDone ? 'Açık' : 'Kilitli'
+  /* Yer tek kaynaktan gelir. Pano, menü ve kilit aynı sırayı kullanır. */
+  const position = plan ? planPosition(plan) : null
+  const strategyState = !passedTransition ? 'Kilitli' : position?.strategyComplete ? 'Tamam' : 'Açık'
 
-  /* Yol dizini: Temel, Geçiş ve Uygulama. Yalnız yol ekranlarında görünür. */
+  /* Yol dizini: Temel, Geçiş ve strateji, Uygulama. Yalnız yol ekranlarında görünür. */
   const journeyItems = plan
     ? [
         { key: '/baslangic', icon: <Compass size={20} />, label: <Link to="/baslangic"><span className="label">Giriş</span></Link> },
         { type: 'group' as const, label: 'Temel', children: stage('temel').decisions.map(decisionItem) },
         {
           type: 'group' as const,
-          label: 'Geçiş',
+          label: 'Geçiş ve strateji',
           children: [
             {
               key: '/devir',
@@ -93,9 +97,9 @@ export function AppShell() {
               key: '/strateji',
               icon: <Strategy size={20} />,
               label: (
-                <Link to="/strateji" aria-label={`Strateji çalışması, ${passedTransition ? 'Açık' : 'Kilitli'}`}>
+                <Link to="/strateji" aria-label={`Strateji çalışması, ${strategyState}`}>
                   <span className="label">Strateji çalışması</span>
-                  <span className={`status-dot ${passedTransition ? 'is-current' : ''}`} aria-hidden />
+                  <span className={`status-dot ${strategyState === 'Tamam' ? 'is-passed' : strategyState === 'Açık' ? 'is-current' : ''}`} aria-hidden />
                 </Link>
               ),
             },
@@ -105,9 +109,14 @@ export function AppShell() {
       ]
     : []
 
-  /* Sıradaki iş: "Yol" sekmesi buraya gider. */
-  const nextOpen = plan ? stage('temel').decisions.find((n) => !gatePassed(plan, n)) : undefined
-  const journeyHome = !plan ? '/' : nextOpen ? `/karar/${nextOpen}` : !passedTransition ? '/gecis' : '/strateji'
+  /* Sıradaki iş: "Yol" sekmesi buraya gider. Sıra: temel kararı, geçiş kapısı, strateji çalışması, uygulama kararı. */
+  const journeyHome = !position
+    ? '/'
+    : position.stage === 'gecis'
+      ? '/gecis'
+      : position.stage === 'strateji'
+        ? '/strateji'
+        : `/karar/${position.decision ?? EXECUTION_DECISIONS[EXECUTION_DECISIONS.length - 1]}`
   const isJourney = /^\/(karar|gecis|devir|strateji|baslangic|devralma)/.test(loc.pathname)
   const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean }[] = [
     { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },

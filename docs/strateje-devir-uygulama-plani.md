@@ -1,5 +1,9 @@
 # Strateje devir: birleşik uygulama planı
 
+> **Güncellik notu, 14 Kasım 2026 Cumartesi günü.** Bu belge bir karar anını kaydeder. Süreç bu belgeden sonra değişti.
+> Güncel süreç [süreç haritasındadır](surec-haritasi.md). İki belge çelişirse süreç haritası geçerlidir.
+> Bu plandaki sekiz adım uygulandı. Sonradan bir kural eklendi. Karar 6, strateji çalışması bitmeden açılmaz.
+
 Bu belgeyi Claude 14 Kasım 2026 Cumartesi günü hazırladı. Plan, Codex'in yorumu ile Claude'un boşluk analizini birleştirir. Plan yalnız ön yüzü kapsar.
 
 **Stratej kimdir?** Stratej, stratejiyi geliştiren kişinin unvanıdır. Tanım Erol Mütercimler'e aittir.

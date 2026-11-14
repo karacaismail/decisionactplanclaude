@@ -1,5 +1,9 @@
 # Ön yüz uygulama planı: stratejik planlamaya geçiş
 
+> **Güncellik notu, 14 Kasım 2026 Cumartesi günü.** Bu belge bir karar anını kaydeder. Süreç bu belgeden sonra değişti.
+> Güncel süreç [süreç haritasındadır](surec-haritasi.md). İki belge çelişirse süreç haritası geçerlidir.
+> Başlıca farklar şunlardır. Adım 18 artık Karar 5'tedir ve adı "Yol adayları"dır. Strateji çalışması Adım 19 ve 20'dir. Destekleyici ölçüt sayısı 7'dir. "Temel belgesi"nin yerini "Strateje devir raporu" aldı.
+
 Bu belgeyi Claude 14 Kasım 2026 Cumartesi günü hazırladı. Plan yalnız ön yüzü kapsar. Sunucu yoktur. Veri tarayıcıda durur.
 
 Dayanak belge [boşluk analizidir](stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md). Codex'in altı önerisi bu plana işlendi.

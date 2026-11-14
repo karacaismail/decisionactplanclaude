@@ -205,8 +205,9 @@ export function buildExecutiveReport(p: PlanDoc): Report {
       {
         title: 'Açık karar ve gelecek',
         lines: [
-          labelled('Seçilen yol', v(p, '18', 'chosenPath')),
-          labelled('Vazgeçilenler', v(p, '18', 'givenUp')),
+          labelled('Seçilen yol', v(p, '19', 'chosenPath')),
+          labelled('Seçimin gerekçesi', v(p, '19', 'choiceReason')),
+          labelled('Vazgeçilenler', v(p, '19', 'givenUp')),
           labelled('İşin yönü', v(p, '33', 'direction'), 'seçilmedi'),
           ...(latest?.counterView ? [`Karşı görüş: ${latest.counterView}`] : []),
           ...(latest?.reopenWhen ? [`Yeniden açılma koşulu: ${latest.reopenWhen}`] : []),
@@ -266,7 +267,7 @@ export function buildActionPlan(p: PlanDoc): Report {
         lines: [
           ...problemLines(p, 'Problem cümlesi'),
           labelled('Değer önerisi', v(p, '13', 'sentence')),
-          labelled('Seçilen yol', v(p, '18', 'chosenPath')),
+          labelled('Seçilen yol', v(p, '19', 'chosenPath')),
           ...DECISIONS.map((d) => { const ld = lastDecision(p, d.n); return `Kapı ${d.n}: ${ld ? OUTCOME_LABEL[effectiveOutcome(ld)] + '. ' + ld.reason : 'karar yok'}` }),
         ],
       },

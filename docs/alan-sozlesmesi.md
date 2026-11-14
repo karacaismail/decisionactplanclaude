@@ -2,6 +2,8 @@
 
 Kapı motoru ve raporlar bu alan adlarını okur. Adım tanımları bu adları aynen kullanır. Başka alan eklenebilir. Bu adlar değiştirilemez.
 
+Bir kapı yalnız kendi adımlarını ve önceki adımları okur. Sıra [süreç haritasındadır](surec-haritasi.md). Geçiş kapısı ve devir raporu yalnız Adım 00 ile Adım 18 arasını okur.
+
 Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Adım 02 özel durumdur. Adım 00 `plan.profile` nesnesine yazar. Adım 02 hem kendi cevaplarına hem `plan.limits` nesnesine yazar.
 
 | Adım | Alan | Tür | Ne için okunur? |
@@ -36,11 +38,13 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | 16 | contributionMid | money | Kapı 5 |
 | 16 | paymentDays | repeater, satır alanları `date, balanceAfterKurus (money)` | Kapı 5, kasa grafiği |
 | 17 | risks | repeater, satır alanları `risk, likelihood (rate 1 ile 3), impact (rate 1 ile 3), trigger, response, owner` | Kapı 5 |
-| 18 | chosenPath | text | Kapı 5, rapor |
-| 18 | givenUp | textarea | Rapor |
+| 18 | paths | repeater, satır alanları `name, where, how, giveUp, evidence, cost, reversible`. İlk satır "Bugünkü durumu sürdürmek"tir. | Kapı 5, geçiş kapısı, devir raporu |
+| 18 | pathScores, counterMove | puanlama ve textarea | Devir raporu |
+| 18 | openDecisions | repeater, satır alanları `question, alternatives, basis, owner, dueDate, reversalCost, door` | Devir raporu |
+| 19 | chosenPath, choiceReason, givenUp | text ve textarea | Strateji çalışmasının bitişi, yönetici raporu, aksiyon planı |
 | 19 | now, next, later | repeater, satır alanları `action, owner, dueDate` | Aksiyon planı |
-| 20 | qualityCheck | checklist, 5 madde | Kapı 5 |
-| 21 | buildWeeks | number | Kapı 5 pist |
+| 20 | qualityCheck | checklist, 5 madde | Strateji çalışmasının bitişi |
+| 21 | buildWeeks | number | Adım 21 uyarısı |
 | 22 | measure1, measure2, measure3, benefitMeasure | measure | Kapı 6 |
 | 22 | harmLimit | text | Rapor |
 | 24 | results | repeater, satır alanları `channel, costKurus (money), reached, tried, paying` | Kapı 7 |

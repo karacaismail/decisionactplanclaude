@@ -1,4 +1,6 @@
 import type { GateDef } from '@/data/schema'
+import { transitionPassed } from './transition'
+import { STRATEGY } from '@/data/decisions'
 import { OUTCOME_LABEL, type Decision, type Outcome, type PlanDoc } from '@/data/types'
 import { formatMoney } from './format'
 
@@ -158,7 +160,7 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
     }
   }
 
-  if (advancing && def.n === 6 && !transitionOpen(plan)) errors.push('Geçiş kapısı kararı yok. Önce geçiş kapısında karar kaydedin.')
+  if (advancing && def.n === 6 && decisionLocked(plan, 6)) errors.push(lockReason(plan, 6) ?? 'Karar 6 kilitli.')
   else if (advancing && def.n > 1 && def.n !== 6 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
 
   if (advancing) {
@@ -169,27 +171,40 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
   return errors
 }
 
-/** Geçiş kapısının son kararı strateji çalışmasını açıyor mu? (readiness.ts ile aynı kural; döngüsel içe aktarma olmasın diye burada.) */
-function transitionOpen(plan: PlanDoc, now = new Date()): boolean {
-  const t = plan.transitions?.[plan.transitions.length - 1]
-  if (!t || t.stale) return false
-  if (t.outcome === 'hazir') return true
-  return t.outcome === 'kosullu' && Boolean(t.conditional) && new Date(t.conditional!.deadline) >= now
+/** Strateji çalışması bitti mi? Yol seçildi, 90 günlük yol yazıldı ve karar dosyası tamam. */
+export function strategyDone(plan: PlanDoc): boolean {
+  return STRATEGY.gate.criteria.every((c) => c.check(plan) === true)
 }
 
 /**
  * Bir karar ya da strateji çalışması (9) kilitli mi?
- * Karar 2-5 önceki kapıya, strateji çalışması ve Karar 6 geçiş kapısına, Karar 7-8 önceki kapıya bağlıdır.
+ * Sıra şudur: Karar 1-5, geçiş kapısı, strateji çalışması, Karar 6-8.
+ * Karar 2-5 önceki kapıya bağlıdır. Strateji çalışması geçiş kapısına bağlıdır.
+ * Karar 6 geçiş kapısına ve biten strateji çalışmasına bağlıdır.
+ * Karar 7-8 önceki kapıya bağlıdır. Karar 6 kilitliyse Karar 7-8 de kilitlidir.
  */
 export function decisionLocked(plan: PlanDoc, n: number): boolean {
   if (n <= 1) return false
-  if (n === 9 || n === 6) return !transitionOpen(plan)
+  if (n === 9) return !transitionPassed(plan)
+  if (n === 6) return !transitionPassed(plan) || !strategyDone(plan)
+  if (n > 6) return decisionLocked(plan, 6) || !gatePassed(plan, n - 1)
   return !gatePassed(plan, n - 1)
+}
+
+/** Kilitli karar hangi işi bekliyor? Ekranlar düğmeyi ve bağlantıyı buradan seçer. */
+export type LockTarget = 'gecis' | 'strateji' | 'kapi'
+export function lockTarget(plan: PlanDoc, n: number): LockTarget | null {
+  if (!decisionLocked(plan, n)) return null
+  if ((n === 9 || n >= 6) && !transitionPassed(plan)) return 'gecis'
+  if (n >= 6 && n !== 9 && !strategyDone(plan)) return 'strateji'
+  return 'kapi'
 }
 
 /** Kilidin nedeni. Ekranda aynen gösterilir. */
 export function lockReason(plan: PlanDoc, n: number): string | null {
-  if (!decisionLocked(plan, n)) return null
-  if (n === 9 || n === 6) return 'Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
+  const target = lockTarget(plan, n)
+  if (!target) return null
+  if (target === 'gecis') return 'Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
+  if (target === 'strateji') return 'Strateji çalışması bitmedi. Adım 19 ve Adım 20 tamamlanmalı.'
   return `Kapı ${n - 1} henüz geçilmedi.`
 }

@@ -108,7 +108,7 @@ export const KARAR5: StepDef[] = [
       { condition: 'Müşteri kazanma gideri 12 aydan geç geri geliyor', result: 'Kanal varsayımını Adım 24\'te ilk test edin.' },
       { condition: 'En kırılgan sayı test edilmemiş bir varsayım', result: 'Adım 10\'daki tabloya "kritik" diye ekleyin.' },
     ],
-    models: [120, 128, 118],
+    models: [120, 128, 118, 95],
     completeWhen: ['problem', 'segment', 'valueProp', 'solution', 'channels', 'revenue', 'cost', 'metrics', 'contributionMid', 'paymentDays', 'fragileNumber'],
     chart: {
       kind: 'line',
@@ -260,7 +260,7 @@ export const KARAR5: StepDef[] = [
     output: 'Ön ölüm listesi. Risk tablosu. Kritik riskler için kural listesi. Geri dönülemez kararlar listesi.',
     outcomeTable: [
       { condition: 'Bir riskin önlemi yok ve etkisi işi bitiriyor', result: 'Bu riski durdurma kuralı yapın. Ya da önce koruyucu bir deney tasarlayın.' },
-      { condition: 'Geri dönülemez bir karar Karar 5\'ten önce gerekiyor', result: 'Kararı küçültün. Kısa kira, küçük stok ve deneme ortaklığı seçin.' },
+      { condition: 'Geri dönülemez bir karar strateji çalışmasından önce gerekiyor', result: 'Kararı küçültün. Kısa kira, küçük stok ve deneme ortaklığı seçin.' },
     ],
     models: [41, 33, 93],
     completeWhen: ['premortem', 'risks'],
@@ -303,7 +303,7 @@ export const KARAR5: StepDef[] = [
     who: 'Kurucu ve ekip. Seçimi bu adımda yapmayın. Seçim stratej\'in işidir.',
     timebox: '2 ile 4 gün.',
     shortPath: true,
-    intro: 'Bu adım strateji seçmez. Strateji için adayları hazırlar. Stratej bu adayları yan yana görür ve aralarından seçer.',
+    intro: 'Bu adım strateji seçmez. Strateji için adayları hazırlar. Stratej bu adayları yan yana görür ve aralarından seçer. Adım 11\'de bir çözümü denemek için seçtiniz. Bu adımda işin bütün yolunu yazarsınız: hangi müşteri, hangi kanal, neyle kazanma.',
     howTo: [
       'İlk satır hazırdır: "Bugünkü durumu sürdürmek". Bu satırı da doldurun.',
       'En az iki gerçekten farklı yol daha yazın. Ağır yatırımda en az üç yol yazın.',
@@ -316,7 +316,7 @@ export const KARAR5: StepDef[] = [
       {
         title: 'Yollar',
         fields: [
-          { key: 'smallInfo', type: 'info', label: 'Küçük iş', tone: 'ipucu', text: 'Küçük ve geri alınabilir işte iki yol yeter. Bugünkü yöntem ile bir alternatif yazın.', when: { profile: { smallReversible: [true] } } },
+          { key: 'smallInfo', type: 'info', label: 'Küçük iş', tone: 'ipucu', text: 'Küçük ve geri alınabilir işte bugünkü durum ve iki yol yeter. Ağır yatırımda bugünkü durum ve üç yol gerekir.', when: { profile: { smallReversible: [true] } } },
           { key: 'paths', type: 'repeater', label: 'Yol adayları', addLabel: 'Yol ekle', minRows: 3, maxRows: 5, fixedFirstRow: { name: 'Bugünkü durumu sürdürmek' }, columns: [
             { key: 'name', type: 'text', label: 'Yolun adı' },
             { key: 'where', type: 'text', label: 'Hangi müşteri, bölge ve kanal?' },
@@ -522,7 +522,7 @@ export const KARAR5: StepDef[] = [
           { key: 'dossier1', type: 'textarea', label: '1. Profil ve niyet', rows: 2, span: 12 },
           { key: 'dossier2', type: 'textarea', label: '2. Problem ve ilk segment', help: 'Kanıt basamağını da yazın.', rows: 2, span: 12 },
           { key: 'dossier3', type: 'textarea', label: '3. Talep testi sonucu', rows: 2, span: 12 },
-          { key: 'dossier4', type: 'textarea', label: '4. Seçilen yol ve vazgeçilenler', rows: 2, span: 12 },
+          { key: 'dossier4', type: 'textarea', label: '4. Seçilen yol ve vazgeçilenler', help: 'Adım 19\'daki seçimi ve gerekçesini yazın.', rows: 2, span: 12 },
           { key: 'dossier5', type: 'textarea', label: '5. Para mantığı', help: 'Üç durumla yazın.', rows: 2, span: 12 },
           { key: 'dossier6', type: 'textarea', label: '6. Kritik varsayımlar ve test planı', rows: 2, span: 12 },
           { key: 'dossier7', type: 'textarea', label: '7. Kritik riskler ve kurallar', rows: 2, span: 12 },
@@ -550,7 +550,7 @@ export const KARAR5: StepDef[] = [
     output: '2 sayfalık karar dosyası.',
     outcomeTable: [
       { condition: 'Dosya eksik ama kurucu geçmek istiyor', result: 'Geçmeyin. Eksiği dış göze gösterin.' },
-      { condition: 'Beş sorudan birine "hayır" diyorsunuz', result: 'O başlığı düzeltin. Sonra Kapı 5\'e gidin.' },
+      { condition: 'Beş sorudan birine "hayır" diyorsunuz', result: 'O başlığı düzeltin. Sonra strateji özetine dönün.' },
     ],
     models: [20],
     completeWhen: ['dossier1', 'dossier2', 'dossier3', 'dossier4', 'dossier5', 'dossier6', 'dossier7', 'dossier8', 'dossier9', 'dossier11', 'qualityCheck', 'counterView'],

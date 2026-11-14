@@ -7,7 +7,7 @@ import { STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { stepPath, stepsOf } from '@/data/registry'
 import type { StepDef } from '@/data/schema'
 import { TRANSITION_LABEL, type PlanDoc, type TransitionOutcome } from '@/data/types'
-import { decisionLocked, lockReason } from '@/engine/gate'
+import { strategyDone, decisionLocked, lockReason } from '@/engine/gate'
 import { effectiveTransition, lastTransition } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
 import { buildHandoffReport } from '@/reports/handoff'
@@ -51,7 +51,10 @@ export function StrategyScreen() {
   const isDone = (id: string) => stateOf(plan, id) === 'tamam' || stateOf(plan, id) === 'atlandi'
   const next = steps.find((s) => !isDone(s.id))
   const done = steps.filter((s) => isDone(s.id)).length
-  const allDone = !locked && steps.length > 0 && !next
+  /* Bitiş kuralı motordadır. Kilit, pano ve bu ekran aynı kurala bakar. */
+  const criteria = STRATEGY.gate.criteria.map((c) => ({ label: c.label, met: c.check(plan) === true }))
+  const allDone = !locked && strategyDone(plan)
+  const missing = criteria.filter((c) => !c.met)
 
   const action = locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/gecis')}>
@@ -120,6 +123,11 @@ export function StrategyScreen() {
         </aside>
 
         <div className="strateji-main">
+          {!locked && !allDone && !next && missing.length > 0 ? (
+            <Callout tone="uyari" title="Strateji çalışması henüz bitmedi">
+              Adımlar tamam görünüyor ama şu koşullar eksik: {missing.map((m) => m.label).join(' ')} Uygulama aşaması bu koşullar tamamlanınca açılır.
+            </Callout>
+          ) : null}
           {allDone ? (
             <Card title="Sonuç">
               <Result

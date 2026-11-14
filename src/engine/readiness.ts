@@ -1,6 +1,10 @@
 import { DECISIONS } from '@/data/decisions'
-import type { PlanDoc, TransitionOutcome, TransitionRecord } from '@/data/types'
+import type { PlanDoc, TransitionOutcome } from '@/data/types'
 import { gatePassed } from './gate'
+import { effectiveTransition, lastTransition, transitionPassed } from './transition'
+
+/* Geçiş kuralının tek kaynağı transition.ts dosyasıdır. Eski içe aktarmalar çalışsın diye buradan da verilir. */
+export { effectiveTransition, lastTransition, transitionPassed }
 
 /**
  * Stratejik planlamaya geçiş motoru.
@@ -98,8 +102,8 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
     { id: 'D3', label: 'İlk kanal bir kez denendi.', met: plan.steps['15'] ? Number(v(plan, '15', 'reached') ?? 0) >= 1 : null, step: '15', hint: 'Kaç kişiye hangi yoldan ulaştığınızı yazın.' },
     { id: 'D4', label: 'Eksik beceriler için plan var.', met: crit(plan, 3, 'beceri'), step: '12', hint: 'Her kritik beceri için "kim yapacak" cevabı gerekir.' },
     { id: 'D5', label: 'Dış çevre taraması yapıldı.', met: plan.steps['04'] ? plan.steps['04'].status === 'tamam' : null, step: '04', hint: 'İzinler ve dışarıdaki değişimler Adım 04\'te yazılır.' },
-    { id: 'D7', label: 'Kritik belirsizlikler ve senaryolar yazıldı.', met: plan.steps['04'] ? filled(v(plan, '04', 'uncertainty1')) && rows(plan, '04', 'scenarios').length >= 2 : null, step: '04', hint: 'İki belirsizlik ve en az iki senaryo yazın. Ağır yatırımda dört senaryo beklenir.' },
     { id: 'D6', label: 'İkinci bir kişi dayanakları okudu.', met: opts.secondReader?.trim() ? true : false, step: '17', hint: 'Okuyan kişinin adını karar panelinde yazın.' },
+    { id: 'D7', label: 'Kritik belirsizlikler ve senaryolar yazıldı.', met: plan.steps['04'] ? filled(v(plan, '04', 'uncertainty1')) && rows(plan, '04', 'scenarios').length >= 2 : null, step: '04', hint: 'İki belirsizlik ve en az iki senaryo yazın. Ağır yatırımda dört senaryo beklenir.' },
   ]
 
   const mandatoryMet = mandatory.filter((c) => c.met === true).length
@@ -129,7 +133,7 @@ export const LEVELS = [
   { level: 2, title: 'Sorun doğrulandı', description: 'Kapı 2 geçildi.' },
   { level: 3, title: 'Yol seçildi', description: 'Kapı 3 geçildi.' },
   { level: 4, title: 'Talep doğrulandı', description: 'Kapı 4 geçildi.' },
-  { level: 5, title: 'Hesap tutuyor', description: 'Kapı 5 geçildi. Para ve risk tamam.' },
+  { level: 5, title: 'Hesap tutuyor', description: 'Kapı 5 geçildi. Para, risk ve yol adayları tamam.' },
 ] as const
 
 /** Doğrulama seviyesi 0 ile 5 arasıdır. Kapılar sırayla geçilmelidir. */
@@ -142,23 +146,6 @@ export function validationLevel(plan: PlanDoc): number {
   return level
 }
 
-export function lastTransition(plan: PlanDoc): TransitionRecord | undefined {
-  return plan.transitions?.[plan.transitions.length - 1]
-}
-
-/** Koşullu hazır kararının son tarihi geçtiyse sonuç "Henüz hazır değil" olur. */
-export function effectiveTransition(t: TransitionRecord, now = new Date()): TransitionOutcome {
-  if (t.outcome === 'kosullu' && t.conditional && new Date(t.conditional.deadline) < now) return 'degil'
-  return t.outcome
-}
-
-/** Strateji çalışması açılabilir mi? */
-export function transitionPassed(plan: PlanDoc, now = new Date()): boolean {
-  const t = lastTransition(plan)
-  if (!t || t.stale) return false
-  const o = effectiveTransition(t, now)
-  return o === 'hazir' || o === 'kosullu'
-}
 
 export interface TransitionDraft {
   outcome: TransitionOutcome

@@ -1,5 +1,9 @@
 # Stratejik planlama öncesi: boşluk analizi ve ön yüz eylem planı
 
+> **Güncellik notu, 14 Kasım 2026 Cumartesi günü.** Bu belge bir karar anını kaydeder. Süreç bu belgeden sonra değişti.
+> Güncel süreç [süreç haritasındadır](surec-haritasi.md). İki belge çelişirse süreç haritası geçerlidir.
+> Başlıca farklar şunlardır. Adım 18 artık Karar 5'tedir ve adı "Yol adayları"dır. Strateji çalışması Adım 19 ve 20'dir. Destekleyici ölçüt sayısı 7'dir. "Temel belgesi"nin yerini "Strateje devir raporu" aldı.
+
 Bu belgeyi Claude 14 Kasım 2026 Cumartesi günü hazırladı. Codex'in aynı konudaki yorumu belgeye işlendi.
 
 ## 1. Amaç neydi?

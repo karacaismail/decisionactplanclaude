@@ -38,7 +38,7 @@ const SCREENS: { title: string; to: string; subtitle: string }[] = [
   { title: 'Plan özeti', to: '/ozet', subtitle: 'Sıradaki iş, yol ve kapılar' },
   { title: 'Strateje devir raporu', to: '/devir', subtitle: 'Stratej bu raporla başlar' },
   { title: 'Geçiş kapısı', to: '/gecis', subtitle: 'Dayanak yeterli mi? Geçiş kararı' },
-  { title: 'Strateji çalışması', to: '/strateji', subtitle: 'Adım 18, 19 ve 20' },
+  { title: 'Strateji çalışması', to: '/strateji', subtitle: 'Adım 19 ve 20' },
   { title: 'Temel taşları', to: '/temel', subtitle: 'Yirmi temel taşı ve kanıt gücü' },
   { title: 'Varsayımlar', to: '/varsayimlar', subtitle: 'Denenmedi, doğrulandı, çürüdü' },
   { title: 'Devralma', to: '/devralma', subtitle: 'Çalışan işi devralma girişi' },
@@ -59,7 +59,7 @@ interface ModelRow {
 function buildItems(): Item[] {
   const out: Item[] = []
   for (const d of DECISIONS) out.push({ id: `karar-${d.n}`, group: 'Kararlar', title: `Karar ${d.n}. ${d.title}`, subtitle: d.question, to: `/karar/${d.n}` })
-  /* Adım 18, 19 ve 20 bir karara değil strateji çalışmasına bağlıdır. Adres kayıt defterinden gelir. */
+  /* Adım 19 ve 20 bir karara değil strateji çalışmasına bağlıdır. Adres kayıt defterinden gelir. */
   for (const s of Object.values(STEPS)) out.push({ id: `adim-${s.id}`, group: 'Adımlar', title: `Adım ${s.id}. ${s.title}`, subtitle: s.decision === STRATEGY_N ? STRATEGY.title : `Karar ${s.decision}`, to: stepPath(s.id) })
   for (const m of models as ModelRow[]) out.push({ id: `yontem-${m.g}`, group: 'Yöntemler', title: m.title, subtitle: m.section, to: '/yontemler' })
   for (const s of SCREENS) out.push({ id: `ekran-${s.to}`, group: 'Ekranlar', title: s.title, subtitle: s.subtitle, to: s.to })

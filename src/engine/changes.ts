@@ -3,7 +3,9 @@
  * Sınır değişiklikleri kayda geçer. Tek kurucuda artış ikinci görüş ister.
  * Bu dosyadaki işlevler planı yerinde değiştirir ve "değişti mi?" döndürür.
  */
+import { STRATEGY_N } from '@/data/decisions'
 import { STEPS } from '@/data/registry'
+import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS } from '@/data/stages'
 import type { ChangeRecord, Limits, PlanDoc, Profile, StepRecord, StepValues } from '@/data/types'
 import { uid } from './format'
 
@@ -33,9 +35,14 @@ function filled(v: unknown): boolean {
   return v !== undefined && v !== null && v !== '' && !(Array.isArray(v) && v.length === 0)
 }
 
-/** Adımın bağlı olduğu karar numarası. Profil ve sınırlar 1. karara bağlıdır. */
+/**
+ * Adım değişince eskiyen ilk kapı. Profil ve sınırlar 1. karara bağlıdır.
+ * Strateji çalışmasının adımları (19 ve 20) süreçte Karar 6'dan önce gelir.
+ * Bu adımlar değişince Kapı 6, 7 ve 8'in kararları eskir. Geçiş kararı eskimez.
+ */
 export function gateOfStep(step: string): number {
-  return STEPS[step]?.decision ?? 1
+  const n = STEPS[step]?.decision ?? 1
+  return n === STRATEGY_N ? EXECUTION_DECISIONS[0] : n
 }
 
 export function isSingleFounder(plan: PlanDoc): boolean {
@@ -49,17 +56,29 @@ export function isIncrease(key: string, before: unknown, after: unknown): boolea
   return false
 }
 
+const LAST_FOUNDATION = FOUNDATION_DECISIONS[FOUNDATION_DECISIONS.length - 1]
+
+/** Geçiş kapısının son kararını eskitir. Eskittiyse 1 döndürür. */
+function staleTransition(plan: PlanDoc): number {
+  const t = plan.transitions?.[plan.transitions.length - 1]
+  if (!t || t.stale) return 0
+  t.stale = true
+  return 1
+}
+
+/**
+ * Bir temel kapısı yeniden karara bağlandı. Ondan sonraki her şey eskir.
+ * Sonraki kapıların kararları eskir. Kapı temel aşamasındaysa geçiş kararı da eskir.
+ */
+export function markStaleAfterGate(plan: PlanDoc, gate: number): number {
+  const transition = gate <= LAST_FOUNDATION ? staleTransition(plan) : 0
+  return transition + markStale(plan, gate + 1)
+}
+
 /** Verilen kapıya eşit ya da sonraki kapıların son kararları eskir. Eskiyen karar sayısını döndürür. */
 export function markStale(plan: PlanDoc, fromGate: number): number {
-  let count = 0
   // Temel aşaması (Karar 1-5) değişince geçiş kapısının son kararı da eskir.
-  if (fromGate <= 5) {
-    const t = plan.transitions?.[plan.transitions.length - 1]
-    if (t && !t.stale) {
-      t.stale = true
-      count++
-    }
-  }
+  let count = fromGate <= LAST_FOUNDATION ? staleTransition(plan) : 0
   const seen = new Set<number>()
   for (let i = plan.decisions.length - 1; i >= 0; i--) {
     const d = plan.decisions[i]

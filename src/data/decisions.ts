@@ -1,5 +1,7 @@
 /**
  * Sekiz karar ve kapıları. Ölçütler adım alanlarını okur.
+ * Sıra: Karar 1-5 (temel), geçiş kapısı, strateji çalışması (Adım 19-20), Karar 6-8 (uygulama).
+ * Kural: bir kapının ölçütü, o karardan sonraki bir adımı okuyamaz.
  * Alan adları docs/alan-sozlesmesi.md dosyasında yazılıdır.
  */
 import type { DecisionDef, GateCriterion } from './schema'
@@ -237,7 +239,7 @@ export const DECISIONS: DecisionDef[] = [
         { condition: 'Kârlı iş ama tahsilat gecikiyor', outcome: 'kosulluIlerle', note: 'Ödeme koşulunu yeniden görüşün. Kasa açığı kapanmadan harcama yapmayın.', applies: (_p, cr) => cr.plan === true && cr.kasa === false },
         { condition: 'Talep var ama kaynak yetmiyor', outcome: 'beklet', note: 'Ortak arayın veya para bulun.', applies: (_p, cr) => cr.pist === false },
         { condition: 'Kritik risk için kural eksik', outcome: 'yenidenDene', note: 'Adım 17\'ye dönün. Tetikleyici olayı ve karşılığı yazın.', applies: (_p, cr) => cr.risk === false },
-        { condition: 'Yol adayı yetersiz', outcome: 'yenidenDene', note: 'Adım 18\'e dönün. En az iki farklı yol yazın.', applies: (_p, cr) => cr.yol === false },
+        { condition: 'Yol adayı yetersiz', outcome: 'yenidenDene', note: 'Adım 18\'e dönün. Bugünkü durumun yanına en az iki yol yazın. Ağır yatırımda en az üç yol yazın.', applies: (_p, cr) => cr.yol === false },
       ],
     },
   },
@@ -313,7 +315,7 @@ export const DECISIONS: DecisionDef[] = [
         }),
       ],
       rows: [
-        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Karar 8\'e geçin. Adım 18\'i gerçek veriyle tekrar yapın.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
+        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Karar 8\'e geçin. Adım 19\'daki seçimi gerçek veriyle yeniden yapın.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
         { condition: 'Yeni sipariş geldikçe gecikme büyüyor', outcome: 'yenidenDene', note: 'Önce darboğazı giderin. Adım 32.', applies: (p) => v(p, '32', 'delayGrowing') === true },
         { condition: 'Satış yükselirken kasa düşüyor', outcome: 'beklet', note: 'Büyümeyi bekletin. Adım 29\'daki tahsilat gününe bakın.', applies: (p) => v(p, '29', 'cashFalling') === true },
         { condition: 'Uyum var, ekonomi çalışmıyor', outcome: 'yenidenDene', note: 'Adım 29\'a odaklanın. 1 döngü daha.', applies: (_p, cr) => cr.uyum === true && cr.oran === false },
@@ -363,7 +365,7 @@ export const DECISIONS: DecisionDef[] = [
 
 /**
  * Strateji çalışması. Sekiz karardan biri değildir, kapısı yoktur.
- * Geçiş kapısından sonra açılır. Adım 18, 19 ve 20'yi taşır.
+ * Geçiş kapısından sonra açılır. Adım 19 ve 20'yi taşır.
  */
 export const STRATEGY_N = 9
 export const STRATEGY: DecisionDef = {
@@ -371,9 +373,9 @@ export const STRATEGY: DecisionDef = {
   title: 'Strateji çalışması',
   question: 'Hangi müşteriye, hangi yolla, neyle kazanacaksınız?',
   icon: 'signpost',
-  who: 'Karar sahibi ve ekip. Dayanak özeti masada durur.',
+  who: 'Stratej, karar sahibi ve ekip. Devir raporu masada durur.',
   time: '1 ile 2 hafta.',
-  intro: 'Bu çalışma geçiş kapısından sonra başlar. Seçimler temel belgesindeki kanıtlara dayanır. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
+  intro: 'Bu çalışma geçiş kapısından sonra başlar. Seçimler devir raporundaki kanıtlara dayanır. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
   example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı.',
   steps: ['19', '20'],
   gate: {

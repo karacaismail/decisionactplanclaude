@@ -7,7 +7,7 @@ import type { StepDef } from '@/data/schema'
 import type { PlanDoc } from '@/data/types'
 import { stepApplies } from '@/engine/conditions'
 import { STAGES, stageOfDecision } from '@/data/stages'
-import { decisionLocked, evaluateGate, gatePassed, lastDecision, lockReason, effectiveOutcome } from '@/engine/gate'
+import { decisionLocked, evaluateGate, gatePassed, lastDecision, lockReason, lockTarget, effectiveOutcome } from '@/engine/gate'
 import { transitionPassed } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
@@ -53,8 +53,10 @@ export function DecisionScreen() {
   const steps = stepsOf(d.n).filter((s) => !plan.shortPath || s.shortPath)
   const locked = decisionLocked(plan, d.n)
   const reason = lockReason(plan, d.n)
-  /* Karar 6 geçiş kapısına bağlıdır. Öteki kararlar bir önceki kapıya bağlıdır. */
-  const lockedByTransition = locked && d.n === 6
+  /* Karar 6 iki işe bağlıdır: geçiş kararı ve strateji çalışması. Öteki kararlar bir önceki kapıya bağlıdır. */
+  const target = lockTarget(plan, d.n)
+  const lockedByTransition = target === 'gecis'
+  const lockedByStrategy = target === 'strateji'
   const stage = STAGES.find((x) => x.key === stageOfDecision(d.n))
   const kicker = stage ? `${stage.title} aşaması, Karar ${d.n}` : `Karar ${d.n}`
   /* Kapı 5 geçildiyse sıradaki iş geçiş kapısıdır. Geçiş kararı geçerliyse not gerekmez. */
@@ -78,6 +80,10 @@ export function DecisionScreen() {
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/gecis')}>
       Geçiş kapısına git
     </Button>
+  ) : lockedByStrategy ? (
+    <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/strateji')}>
+      Strateji çalışmasına git
+    </Button>
   ) : locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav(`/karar/${d.n - 1}/kapi`)}>
       Önceki kapıya git
@@ -96,6 +102,10 @@ export function DecisionScreen() {
       {lockedByTransition ? (
         <Callout tone="uyari" title="Bu karar kilitli">
           {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında kararı kaydedin. <Link to="/gecis">Geçiş kapısını açın.</Link>
+        </Callout>
+      ) : lockedByStrategy ? (
+        <Callout tone="uyari" title="Bu karar kilitli">
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce strateji çalışmasını bitirin. <Link to="/strateji">Strateji çalışmasını açın.</Link>
         </Callout>
       ) : locked ? (
         <Callout tone="uyari" title="Bu karar kilitli">

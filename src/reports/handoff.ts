@@ -214,6 +214,8 @@ function decisionQuestion(paths: PathColumn[], open: OpenDecision[]): string {
   return `Şu yollardan hangisi: ${real.map((n) => `"${n}"`).join(', ')}?`
 }
 
+/** Küçük ve geri alınabilir işte iki yol, ağır yatırımda üç yol gerekir. Kapı 5 ile aynı kural. */
+const plan7Title = (p: PlanDoc): string => (p.profile.smallReversible ? 'Bugünkü durum ve en az iki yol adayı' : 'Bugünkü durum ve en az üç yol adayı')
 const grade = (parts: boolean[]): CoverageStatus => (parts.every(Boolean) ? 'dolu' : parts.some(Boolean) ? 'kismen' : 'bos')
 
 function coverageOf(p: PlanDoc, paths: PathColumn[], open: OpenDecision[], sens: SensitivityRow[]): CoverageItem[] {
@@ -229,7 +231,7 @@ function coverageOf(p: PlanDoc, paths: PathColumn[], open: OpenDecision[], sens:
     item(4, 'Pazar, rakip, kanal ve kâr havuzu', '09', [num(v(p, '09', 'somCustomers')) !== null, rows(p, '09', 'competitors').length >= 2, Boolean(str(v(p, '08', 'accessPath'))), Boolean(str(v(p, '09', 'profitPool')))]),
     item(5, 'Kritik belirsizlikler ve senaryolar', '04', [Boolean(str(v(p, '04', 'uncertainty1'))), Boolean(str(v(p, '04', 'uncertainty2'))), rows(p, '04', 'scenarios').length >= 4]),
     item(6, 'Varsayım haritası ve test sonuçları', '10', [assumptions.length >= 3, assumptions.some((a) => a.status === 'dogrulandi' || a.status === 'curudu')]),
-    item(7, 'En az üç yol adayı', '18', [real.length >= 2, real.length >= 3]),
+    item(7, plan7Title(p), '18', [real.length >= 1, real.length >= (p.profile.smallReversible ? 2 : 3)]),
     item(8, 'Her yol için: nerede oynanır, neyle kazanılır', '18', [real.length > 0 && real.some((x) => x.where && x.how), real.length > 0 && real.every((x) => x.where && x.how)]),
     item(9, 'Yetenek boşlukları ve edinme yolu', '12', [skills.length > 0, skills.length > 0 && skills.every((s) => str(s.plan))]),
     item(10, 'Para aralıkları ve kaynak sınırı', '16', [sens.length >= 1, sens.length === 3, Boolean(p.limits.budgetKurus && p.limits.deadline)]),

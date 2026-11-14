@@ -7,10 +7,11 @@ import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, STAGES, type StageKey } from '@/data/stages'
 import { decisionLocked, gatePassed, effectiveOutcome, lastDecision, retriesLeft } from '@/engine/gate'
-import { LEVELS, effectiveTransition, lastTransition, transitionPassed, validationLevel } from '@/engine/readiness'
+import { LEVELS, effectiveTransition, lastTransition, transitionPassed } from '@/engine/readiness'
 import { stepApplies } from '@/engine/conditions'
 import { Callout } from '@/components/Callout'
 import { DecisionBadge, outcomeColor } from '@/components/DecisionBadge'
+import { planPosition } from '@/engine/position'
 import { PageHeader } from '@/components/PageHeader'
 import { KpiStrip, StatTile } from '@/components/StatTile'
 import { ChartFrame } from '@/charts/ChartFrame'
@@ -33,34 +34,6 @@ function visibleSteps(plan: PlanDoc, n: number): StepDef[] {
 function isDone(plan: PlanDoc, s: StepDef): boolean {
   const st = plan.steps[s.id]?.status
   return st === 'tamam' || st === 'atlandi'
-}
-
-export interface PlanPosition {
-  /** Sıradaki işin bölümü. Bütün kapılar geçildiyse 'bitti'. */
-  stage: StageKey | 'bitti'
-  /** Sıradaki iş bir kararsa numarası. */
-  decision?: number
-  /** Doğrulama seviyesi, 0 ile 5 arası. */
-  level: number
-  strategyDone: number
-  strategyTotal: number
-}
-
-/**
- * Planın yol üzerindeki yeri. Sıra: temel kapıları, geçiş kapısı, strateji çalışması, uygulama kapıları.
- * Plan özeti ve planlar ekranı aynı kuralı kullanır.
- */
-export function planPosition(plan: PlanDoc): PlanPosition {
-  const strategy = visibleSteps(plan, STRATEGY_N)
-  const strategyDone = strategy.filter((s) => isDone(plan, s)).length
-  const base = { level: validationLevel(plan), strategyDone, strategyTotal: strategy.length }
-  const openFoundation = FOUNDATION_DECISIONS.find((n) => !gatePassed(plan, n))
-  if (openFoundation) return { ...base, stage: 'temel', decision: openFoundation }
-  if (!transitionPassed(plan)) return { ...base, stage: 'gecis' }
-  if (strategyDone < strategy.length) return { ...base, stage: 'strateji' }
-  const openExecution = EXECUTION_DECISIONS.find((n) => !gatePassed(plan, n))
-  if (openExecution) return { ...base, stage: 'uygulama', decision: openExecution }
-  return { ...base, stage: 'bitti' }
 }
 
 /** Geçiş kapısının durumu tek cümlede. Karar yoksa "Karar yok". */
@@ -172,7 +145,7 @@ export function OverviewScreen() {
   const stageState: Record<StageKey, { text: string; status: StepStatus }> = {
     temel: { text: `${foundationPassed} / ${FOUNDATION_DECISIONS.length} kapı`, status: foundationDone ? 'finish' : 'process' },
     gecis: { text: gecisText, status: transitionOk ? 'finish' : position.stage === 'gecis' ? 'process' : 'wait' },
-    strateji: { text: `${strategyDone} / ${strategyTotal} adım`, status: !transitionOk ? 'wait' : strategyDone === strategyTotal ? 'finish' : 'process' },
+    strateji: { text: `${strategyDone} / ${strategyTotal} adım`, status: !transitionOk ? 'wait' : position.strategyComplete ? 'finish' : 'process' },
     uygulama: {
       text: decisionLocked(plan, EXECUTION_DECISIONS[0]) ? 'Kilitli' : executionPassed === EXECUTION_DECISIONS.length ? 'Tamamlandı' : 'Açık',
       status: executionPassed === EXECUTION_DECISIONS.length ? 'finish' : position.stage === 'uygulama' ? 'process' : 'wait',
@@ -203,7 +176,7 @@ export function OverviewScreen() {
       summary: gecisText,
       items: [
         { key: 'gecis-kapisi', title: 'Geçiş kapısı', content: gecisText, status: stageState.gecis.status, to: '/gecis' },
-        { key: 'strateji', title: STRATEGY.title, content: `${strategyDone} / ${strategyTotal} adım, ${strategyLocked ? 'Kilitli' : strategyDone === strategyTotal ? 'Tamam' : 'Açık'}`, status: stageState.strateji.status, to: '/strateji' },
+        { key: 'strateji', title: STRATEGY.title, content: `${strategyDone} / ${strategyTotal} adım, ${strategyLocked ? 'Kilitli' : position.strategyComplete ? 'Tamam' : 'Açık'}`, status: stageState.strateji.status, to: '/strateji' },
       ],
     },
     { key: 'uygulama', title: 'Uygulama', summary: stageState.uygulama.text, items: EXECUTION_DECISIONS.map(decisionRoute) },

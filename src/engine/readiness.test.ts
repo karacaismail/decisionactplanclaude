@@ -70,7 +70,8 @@ describe('geçiş kararı', () => {
     p.transitions = [transition()]
     expect(transitionPassed(p)).toBe(true)
     expect(decisionLocked(p, 9)).toBe(false)
-    expect(decisionLocked(p, 6)).toBe(false)
+    // Karar 6 ayrıca biten strateji çalışmasını bekler.
+    expect(decisionLocked(p, 6)).toBe(true)
   })
   it('"Henüz hazır değil" kararı kilidi açmaz', () => {
     const p = emptyPlan('p', 'Plan')

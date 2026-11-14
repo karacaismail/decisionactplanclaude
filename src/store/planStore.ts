@@ -3,7 +3,7 @@ import { createJSONStorage, persist } from 'zustand/middleware'
 import { emptyPlan, TRANSITION_LABEL, type Decision, type Evidence, type PlanDoc, type Profile, type StepValues, type Task, type Limits, type TransitionRecord } from '@/data/types'
 import { parsePlanImport, prepareImportedPlan, validatePlanDoc } from '@/data/validate'
 import { uid } from '@/engine/format'
-import { applyLimits, applyProfile, applySkip, applyStepValues, gateOfStep, markStale, reviewChange as reviewChangeIn } from '@/engine/changes'
+import { applyLimits, applyProfile, applySkip, applyStepValues, gateOfStep, markStale, markStaleAfterGate, reviewChange as reviewChangeIn } from '@/engine/changes'
 import { createGuardedStorage, STORAGE_KEY, type SaveResult } from '@/engine/sync'
 
 export type SaveState = 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
@@ -141,8 +141,8 @@ export const usePlanStore = create<PlanState>()(
         const id = uid('karar')
         get().update((p) => {
           p.revision += 1
-          // Önceki kapı yeniden karara bağlandı. Sonraki kapıların kararları eskir.
-          markStale(p, d.gate + 1)
+          // Kapı yeniden karara bağlandı. Sonraki kapıların kararları ve gerekiyorsa geçiş kararı eskir.
+          markStaleAfterGate(p, d.gate)
           p.decisions.push({ ...d, id, stale: false, decidedAt: new Date().toISOString(), revision: p.revision })
           p.revisions.push({ id: uid('surum'), label, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
         })

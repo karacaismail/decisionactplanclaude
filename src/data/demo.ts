@@ -93,7 +93,7 @@ function offers(): Row[] {
 /**
  * Örnek plan: Mahalle kafesi. Ekranları tanıtır. Kullanıcı verisi değildir.
  * Adım 00 ile 17 arası dolu. Beş kapı "İlerle" ile geçildi. Geçiş kapısı açık.
- * Adım 18, 19 ve 20 boştur. Geçiş kararını kullanıcı kendisi kaydeder.
+ * Adım 19 ve 20 boştur. Geçiş kararını kullanıcı kendisi kaydeder.
  */
 export function buildDemoPlan(): PlanDoc {
   const p = emptyPlan('ornek-mahalle-kafesi', 'Örnek: Mahalle kafesi')
@@ -432,7 +432,7 @@ const GATE_REASON: Record<number, string> = {
   4: '14 teklifte 11 taahhüt. 7 ödeme. Eşik 10 idi. Reddedenlerin gerekçesi yazıldı.',
   5: 'Bir siparişten 30 TL kalıyor. Kasa hiçbir ödeme gününde eksiye düşmüyor. İki kritik riskin kuralı yazıldı. Pist 8 ay.',
 }
-/** Beş kapı kararının kaç gün önce verildiği. Kapı 5, Adım 17'den sonra gelir. */
+/** Beş kapı kararının kaç gün önce verildiği. Kapı 5, Adım 18'den sonra gelir. */
 const GATE_DAYS = [60, 45, 30, 5, 2]
 
 /** Kapı kararını motorun ölçütlerinden üretir. Alan adları değişirse test bunu yakalar. */
