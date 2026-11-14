@@ -131,7 +131,7 @@ export function EvidenceScreen() {
           <Select id={id('tur')} value={draft.kind ?? 'gozlem'} onChange={(v) => setDraft({ kind: v })} options={KIND_OPTIONS} />
         </Form.Item>
         <Form.Item label="Olay tarihi" htmlFor={id('tarih')}>
-          <DatePicker id={id('tarih')} format="DD.MM.YYYY" value={draft.date ? dayjs(draft.date) : null} onChange={(v) => setDraft({ date: v ? v.format('YYYY-MM-DD') : undefined })} />
+          <DatePicker id={id('tarih')} format="D MMMM YYYY" placeholder="Tarih seçin" disabledDate={(d) => d.isAfter(dayjs().endOf('day'))} value={draft.date ? dayjs(draft.date) : null} onChange={(v) => setDraft({ date: v ? v.format('YYYY-MM-DD') : undefined })} />
         </Form.Item>
       </div>
       <Form.Item label="Kaynak" htmlFor={id('kaynak')}>

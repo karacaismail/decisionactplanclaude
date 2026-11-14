@@ -1,7 +1,8 @@
 import { breakEvenCalc } from '@/engine/calc'
 import { ADVANTAGE_LEVELS, STRENGTH_LABEL, strengthsOf } from '@/engine/strengths'
 import { CROSS_QUESTIONS, ORIGIN_OPTIONS } from '@/engine/situation'
-import { conditionsCalc, DEPENDENCY_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
+import { conditionsCalc, DEPENDENCY_OPTIONS, DISSENT_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
+import { pathsCalc } from '@/engine/integrity'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
 
@@ -124,7 +125,7 @@ export const KARAR5: StepDef[] = [
           { key: 'spentKurus', type: 'money', label: 'Bugüne kadar harcanan tutar', help: 'Koşullu izinle harcadığınız parayı buraya yazmayın. O tutar ayrıca düşülür.', span: 12 },
           { key: 'commitments', type: 'repeater', label: 'Ödenmemiş taahhütler', addLabel: 'Taahhüt ekle', maxRows: 8, when: { field: { key: 'commitmentsKnown', equals: 'var' } }, columns: [
             { key: 'what', type: 'text', label: 'Ne için?', placeholder: 'Örneğin 24 aylık kira' },
-            { key: 'amountKurus', type: 'money', label: 'Ödenmemiş tutar' },
+            { key: 'amountKurus', type: 'money', label: 'Ödenmemiş tutar', help: 'Koşullu izne bağlanan parayı buraya yazmayın. O tutar ayrıca düşülür. Aynı borcu iki satıra yazmayın.' },
             { key: 'dueDate', type: 'date', label: 'Vade' },
             { key: 'basis', type: 'text', label: 'Dayanak', placeholder: 'Örneğin imzalı sözleşme' },
           ] },
@@ -307,6 +308,18 @@ export const KARAR5: StepDef[] = [
         ],
       },
       {
+        title: 'Ayrı görüş',
+        description: 'Ekipten ya da dışarıdan biri farklı düşünüyorsa görüşünü yazın. Ayrı görüş bir kusur değildir. Stratej bu görüşü de okur. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'dissents', type: 'repeater', label: 'Ayrı görüşler', addLabel: 'Görüş ekle', maxRows: 6, columns: [
+            { key: 'who', type: 'text', label: 'Kim söylüyor?' },
+            { key: 'about', type: 'text', label: 'Hangi iddiaya ya da bulguya itiraz ediyor?', placeholder: 'Örneğin 7 aylık kart talebi gösterir' },
+            { key: 'view', type: 'text', label: 'Görüşü nedir?', placeholder: 'Örneğin kart alanlar arkadaş çevresi' },
+            { key: 'response', type: 'select', label: 'Karar sahibi ne dedi?', options: DISSENT_OPTIONS },
+          ] },
+        ],
+      },
+      {
         title: 'Geri dönülemez kararlar',
         fields: [
           { key: 'irreversible', type: 'chips', label: 'Hangi kararlar geri alınamaz?', options: [
@@ -407,6 +420,7 @@ export const KARAR5: StepDef[] = [
               { value: 'tekYonlu', label: 'Hayır, geri alınmaz' },
             ] },
           ] },
+          { key: 'pathCheck', type: 'calc', label: 'Yollar ne kadar farklı?', emptyText: 'Yol yazınca denetim burada görünür.', compute: (v) => pathsCalc(v.paths) },
         ],
       },
       {

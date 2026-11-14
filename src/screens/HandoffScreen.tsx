@@ -23,7 +23,7 @@ import {
   type PathColumn,
   type SensitivityRow,
 } from '@/reports/handoff'
-import { CONDITION_LABEL, RELATION_LABEL, type ConditionStatus } from '@/engine/crux'
+import { CONDITION_LABEL, DISSENT_LABEL, RELATION_LABEL, type ConditionStatus } from '@/engine/crux'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
@@ -490,6 +490,13 @@ export function HandoffScreen() {
               <>
                 <p className="helper">Yollar yan yana durur. Rapor yol seçmez. Stratej yolu önerir. Karar sahibi seçer.</p>
                 <PathCompare paths={report.paths} narrow={narrow} />
+                {report.pathIssues.length ? (
+                  <Callout tone="uyari" title="Yol denetimi">
+                    <ul className="devir-list devir-issues">
+                      {report.pathIssues.map((x) => <li key={x}>{x}</li>)}
+                    </ul>
+                  </Callout>
+                ) : null}
                 {report.crosses.length ? (
                   <div className="devir-block">
                     <h3 className="devir-sub">Yollar hangi sorulardan çıktı?</h3>
@@ -540,6 +547,22 @@ export function HandoffScreen() {
               <h3 className="devir-sub">Kırılgan sayı</h3>
               {report.fragile ? <p className="devir-line">{report.fragile}</p> : <Missing step="16" />}
             </div>
+            {report.dissents.length ? (
+              <div className="devir-block devir-dissents">
+                <h3 className="devir-sub">Ayrı görüşler</h3>
+                <ul className="devir-list">
+                  {report.dissents.map((d, i) => (
+                    <li key={i}>
+                      {d.who ? `${d.who}: ` : ''}{d.view}
+                      <span className="devir-source devir-tags">
+                        <Tag color={d.response === 'kabul' ? 'success' : d.response === 'suruyor' ? 'warning' : undefined}>{DISSENT_LABEL[d.response]}</Tag>
+                        {d.about ? <span>İtiraz edilen: {d.about}</span> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
             <div className="devir-block">
               <h3 className="devir-sub">Açık varsayımlar</h3>
               {report.assumptions.length ? (

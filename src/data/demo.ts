@@ -363,6 +363,7 @@ export function buildDemoPlan(): PlanDoc {
     }, 4),
     '17': done({
       dependencies: ['tekTedarikci', 'tekKisi'],
+      dissents: [row('gorus-1', { who: 'Eşim', about: '7 aylık kart talebi gösterir.', view: 'Kart alan 7 kişinin 5\'i arkadaşımız. Yabancı müşteri henüz ödemedi.', response: 'suruyor' })],
       dependencyNote: 'Çekirdeği tek toptancıdan alıyoruz. İkinci toptancıdan fiyat aldık. Barista bilgisi tek kişide. Tarifleri yazıyoruz.',
       premortem: [
         row('batma-1', { reason: 'Günlük sipariş 40’a çıkmadı.', earlySignal: 'İlk ay günde 25 siparişin altı.', prevention: 'Açılıştan önce 30 aylık kart satarım.', owner: 'Kurucu', stopThreshold: '6. ayda günde 40 sipariş yoksa dururum.' }),

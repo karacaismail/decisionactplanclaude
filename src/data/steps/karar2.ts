@@ -1,4 +1,5 @@
 import type { StepDef } from '../schema'
+import { peopleCalc } from '@/engine/integrity'
 import type { PlanDoc } from '../types'
 
 const RATE5 = ['Çok zayıf', 'Zayıf', 'Orta', 'İyi', 'Çok iyi']
@@ -139,6 +140,7 @@ export const KARAR2: StepDef[] = [
         description: 'Her görüşme bir satırdır. Pazar yerinde bu defter satan taraf içindir.',
         fields: [
           { key: 'interviews', type: 'repeater', label: 'Görüşmeler', addLabel: 'Görüşme ekle', minRows: 1, columns: INTERVIEW_COLUMNS },
+          { key: 'interviewPeople', type: 'calc', label: 'Kişi denetimi', emptyText: 'Görüşme yazınca denetim burada görünür.', compute: (v) => peopleCalc(v.interviews, 'person') },
         ],
       },
       {
@@ -330,13 +332,14 @@ export const KARAR2: StepDef[] = [
         ],
       },
       {
-        title: 'Üç rol',
+        title: 'Alım kararındaki dört rol',
         when: { any: [{ profile: { customer: ['isletme'] } }, { profile: { customer: ['kamu'] } }, { profile: { marketplaceBuyer: ['isletme'] } }, { profile: { marketplaceSeller: ['isletme'] } }] },
         fields: [
           { key: 'rolesNote', type: 'info', label: 'Neden ayrı yazılır?', tone: 'ipucu', text: 'İşletmede kullanan, ödeyen ve karar veren kişi ayrı olabilir. Üçüne de ulaşmanız gerekir.' },
           { key: 'userPerson', type: 'text', label: 'Kullanan kişi', placeholder: 'Kasadaki çalışan', span: 8 },
           { key: 'payerPerson', type: 'text', label: 'Ödeyen kişi', placeholder: 'Dükkân sahibi', span: 8 },
           { key: 'deciderPerson', type: 'text', label: 'Karar veren kişi', placeholder: 'Dükkân sahibi veya ortağı', span: 8 },
+          { key: 'blockerPerson', type: 'text', label: 'Alımı kim durdurabilir?', help: 'Kullanan, ödeyen ve karar veren razı olsa da alımı durdurabilen kişidir. Örneğin muhasebeci ya da satın alma sorumlusu.', placeholder: 'Örneğin muhasebeci', span: 8 },
         ],
       },
       {

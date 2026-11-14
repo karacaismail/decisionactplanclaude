@@ -126,10 +126,28 @@ Bu kayıtlar isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü deği
 | Yolun para mantığı, kurma yolu ve kanıt türü | Adım 18 | 4. bölüm |
 | Bu işi deneyip bırakanlar | Adım 09 | 2. bölüm |
 | Tek kaynağa bağımlılık | Adım 17 | 3. bölüm |
+| Ayrı görüş | Adım 17 | 5. bölüm |
+| Alımı durdurabilen kişi | Adım 08 | 2. bölüm |
 | Üç yıllık beklenti | Adım 02 | 3. bölüm |
 | Altı sorunun cevabı | Yazılım plandan bulur. | Ek 3 |
 
 Kuralların tamamı iki belgededir: [codex-onerileri-uygulama-notu.md](codex-onerileri-uygulama-notu.md) ve [arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md](arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md).
+
+### Veri bütünlüğü kuralları
+
+Yazılım birbirini tutmayan kayıtları yakalar. Yorum yapmaz.
+
+| Kural | Nerede? | Yazılım ne yapar? |
+|---|---|---|
+| Aynı kişi iki kez sayılmaz. | Adım 06 ve Adım 15 | Uyarır. Adımı durdurmaz. |
+| Sayılar birbirini tutmalı. | Adım 15 | Adımı tamamlatmaz. |
+| Aynı adı taşıyan yol bir kez sayılır. | Adım 18 ve Kapı 5 | Kapı 5 yolu bir kez sayar. |
+| Aynı görünen iki yol uyarı verir. | Adım 18 ve devir raporu | Uyarır ve rapora yazar. |
+| Varsayım ve kurucu kanaati sorunun kanıtı sayılmaz. | Geçiş kapısı, Z2 | Ölçütü karşılanmış saymaz. |
+| Gelecek tarihli kayıt kanıt sayılmaz. | Geçiş kapısı ve kanıt formu | Kaydı saymaz ve uyarır. |
+| Talep kanıtındaki karşı bulgu gizlenmez. | Geçiş kapısı | Uyarır. Kararı karar sahibi verir. |
+
+Kuralların kaynağı [codex-uygulamasi-karsilastirma-raporu.md](codex-uygulamasi-karsilastirma-raporu.md) dosyasındadır.
 
 ## 7. Yazılım neyi yapmaz?
 
@@ -167,6 +185,7 @@ Her kuralın tek bir kaynağı vardır. Ekranlar kuralı yeniden yazmaz, kaynakt
 | Güç süzgeci | `src/engine/strengths.ts` |
 | Durum özeti ve çapraz sorular | `src/engine/situation.ts` |
 | Asıl engel, başarı koşulları, serbest bütçe | `src/engine/crux.ts` |
+| Veri bütünlüğü denetimleri | `src/engine/integrity.ts` |
 | Yöntem yardımı verisi | `src/data/models-howto.json` |
 | Devir raporu | `src/reports/handoff.ts` |
 

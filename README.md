@@ -31,6 +31,7 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 - Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
 - Karar Kitabı'ndan alınan üç yardımın planı: [docs/karar-kitabi-firsatlari-plani.md](docs/karar-kitabi-firsatlari-plani.md)
 - Codex önerilerinin uygulama notu: [docs/codex-onerileri-uygulama-notu.md](docs/codex-onerileri-uygulama-notu.md)
+- Codex uygulamasıyla karşılaştırma ve veri bütünlüğü kuralları: [docs/codex-uygulamasi-karsilastirma-raporu.md](docs/codex-uygulamasi-karsilastirma-raporu.md)
 - Araştırma analizi ve yedi ekleme: [docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md](docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md)
 - Strateje devir raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
 - Amaç ve ilk boşluk analizi: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)

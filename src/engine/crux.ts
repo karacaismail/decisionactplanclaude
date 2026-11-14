@@ -167,12 +167,14 @@ export function freeBudget(plan: PlanDoc, values: Row | undefined = plan.steps[B
 
 /* ---- Eşleşme oranı ---- */
 
-export type MatchRate = { state: 'yok' } | { state: 'sifir' } | { state: 'hesap'; percent: number }
+export type MatchRate = { state: 'yok' } | { state: 'sifir' } | { state: 'hata' } | { state: 'hesap'; percent: number }
 
-/** Oran pay ve paydadan hesaplanır. Payda sıfırsa oran hesaplanmaz. Ölçüm yoksa oran bilinmez. */
+/** Oran pay ve paydadan hesaplanır. Payda sıfırsa oran hesaplanmaz. Pay paydayı geçerse oran yazılmaz. Ölçüm yoksa oran bilinmez. */
 export function matchRate(valid: unknown, matched: unknown): MatchRate {
   if (typeof valid !== 'number' || typeof matched !== 'number') return { state: 'yok' }
   if (valid === 0) return { state: 'sifir' }
+  /* Uygun teklif alan talep, geçerli talebi geçemez. Geçiyorsa oran yazılmaz. */
+  if (matched > valid) return { state: 'hata' }
   return { state: 'hesap', percent: Math.round((matched / valid) * 100) }
 }
 
@@ -221,4 +223,24 @@ export function failedAttemptsOf(plan: PlanDoc): FailedAttempt[] {
 export function linkedEvidence(plan: PlanDoc, value: unknown): { titles: string[]; missing: number } {
   const r = linked(plan, value)
   return { titles: r.titles, missing: r.missing }
+}
+
+/* ---- Ayrı görüş ---- */
+
+export type DissentResponse = 'kabul' | 'suruyor' | 'bekliyor'
+export const DISSENT_LABEL: Record<DissentResponse, string> = { kabul: 'Kabul edildi', suruyor: 'Ayrı görüş sürüyor', bekliyor: 'İnceleme bekliyor' }
+export const DISSENT_OPTIONS = (Object.keys(DISSENT_LABEL) as DissentResponse[]).map((value) => ({ value, label: DISSENT_LABEL[value] }))
+
+export interface Dissent {
+  who: string | null
+  about: string | null
+  view: string
+  response: DissentResponse
+}
+
+/** Adım 17'de kaydedilen ayrı görüşler. Cevabı seçilmemiş görüş "İnceleme bekliyor" sayılır. */
+export function dissentsOf(plan: PlanDoc): Dissent[] {
+  return list(v(plan, '17', 'dissents'))
+    .filter((r) => text(r.view))
+    .map((r) => ({ who: text(r.who), about: text(r.about), view: text(r.view)!, response: r.response === 'kabul' || r.response === 'suruyor' ? r.response : 'bekliyor' }))
 }

@@ -152,6 +152,56 @@ describe('kanıt bağı ve çürüyen varsayım', () => {
     list[0] = { ...list[0], impact: 2, status: 'curudu', resultNote: '' }
     const r = evaluateReadiness(p)
     expect(r.mandatory.find((c) => c.id === 'Z8')?.met).toBe(true)
-    expect(r.warnings).toHaveLength(1)
+    expect(r.warnings.filter((w) => w.includes('varsayım çürüdü'))).toHaveLength(1)
+  })
+})
+
+describe('kanıtın sayılma kuralı', () => {
+  const z2 = (p: PlanDoc) => evaluateReadiness(p).mandatory.find((c) => c.id === 'Z2')?.met
+  const z6 = (p: PlanDoc) => evaluateReadiness(p).mandatory.find((c) => c.id === 'Z6')?.met
+  const tomorrow = () => new Date(Date.now() + 2 * 86_400_000).toISOString().slice(0, 10)
+
+  it('örnek planda sorun ve talep kanıtı sayılır', () => {
+    const p = buildDemoPlan()
+    expect(z2(p)).toBe(true)
+    expect(z6(p)).toBe(true)
+  })
+  it('varsayım türündeki kayıt sorunun kanıtı sayılmaz', () => {
+    const p = buildDemoPlan()
+    for (const e of p.evidence) if (e.linkedSteps.some((s) => ['05', '06', '07'].includes(s))) e.kind = 'varsayim'
+    expect(z2(p)).toBe(false)
+  })
+  it('kurucu kanaati (7. basamak) sorunun kanıtı sayılmaz', () => {
+    const p = buildDemoPlan()
+    for (const e of p.evidence) if (e.linkedSteps.some((s) => ['05', '06', '07'].includes(s))) e.ladder = 7
+    expect(z2(p)).toBe(false)
+  })
+  it('gelecek tarihli kayıt kanıt sayılmaz ve uyarı çıkar', () => {
+    const p = buildDemoPlan()
+    for (const e of p.evidence) e.date = tomorrow()
+    const r = evaluateReadiness(p)
+    expect(r.mandatory.find((c) => c.id === 'Z2')?.met).toBe(false)
+    expect(r.mandatory.find((c) => c.id === 'Z6')?.met).toBe(false)
+    expect(r.warnings.some((w) => w.includes('kanıtın tarihi gelecekte'))).toBe(true)
+  })
+  it('talep kanıtındaki karşı bulgu öneriyi düşürmez ama uyarı olarak görünür', () => {
+    const p = buildDemoPlan()
+    const r = evaluateReadiness(p)
+    expect(r.warnings.some((w) => w.startsWith('Talep kanıtında karşı bulgu var: Üç kişi fiyatı yüksek buldu.'))).toBe(true)
+    for (const e of p.evidence) delete e.counterFinding
+    const clean = evaluateReadiness(p)
+    expect(clean.warnings.some((w) => w.startsWith('Talep kanıtında karşı bulgu var'))).toBe(false)
+    expect(clean.suggested).toBe(r.suggested)
+  })
+})
+
+describe('yol adayları ölçütü aynı adı bir kez sayar', () => {
+  it('aynı adla iki kez yazılan yol Kapı 5 ölçütünü karşılamaz', () => {
+    const p = buildDemoPlan()
+    const yol = (x: PlanDoc) => evaluateReadiness(x).mandatory.find((c) => c.id === 'Z5')?.met
+    expect(yol(p)).toBe(true)
+    const paths = p.steps['18'].values.paths as Record<string, unknown>[]
+    p.steps['18'].values.paths = [paths[0], paths[1], { ...paths[2], name: paths[1].name }, { ...paths[3], name: String(paths[1].name).toUpperCase() }]
+    expect(yol(p)).toBe(false)
   })
 })

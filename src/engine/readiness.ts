@@ -1,4 +1,5 @@
 import { DECISIONS } from '@/data/decisions'
+import { isFuture } from './integrity'
 import type { PlanDoc, TransitionOutcome } from '@/data/types'
 import { gatePassed } from './gate'
 import { effectiveTransition, lastTransition, transitionPassed } from './transition'
@@ -47,12 +48,15 @@ function crit(plan: PlanDoc, gate: number, id: string): boolean | null {
 const both = (...xs: (boolean | null)[]): boolean | null => (xs.some((x) => x === false) ? false : xs.every((x) => x === true) ? true : null)
 
 export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string } = {}): ReadinessEvaluation {
-  const strongEvidence = plan.evidence.filter((e) => e.ladder >= 1 && e.ladder <= 3).length
+  /* Gelecek tarihli kayıt henüz gözlenmemiştir. Kanıt sayılmaz. */
+  const dated = plan.evidence.filter((e) => !isFuture(e.date))
+  const strongEvidence = dated.filter((e) => e.ladder >= 1 && e.ladder <= 3).length
   const assumptions = rows(plan, '10', 'assumptions').filter((a) => filled(a.assumption))
   const refuted = assumptions.filter((a) => a.status === 'curudu')
   /** Etkisi yüksek (4 ya da 5) ve çürümüş, karşılığında ne değiştiği yazılmamış varsayım. */
   const refutedOpen = refuted.filter((a) => Number(a.impact ?? 0) >= 4 && !filled(a.resultNote))
-  const problemEvidence = plan.evidence.filter((e) => e.linkedSteps.some((st) => st === '05' || st === '06' || st === '07')).length
+  /* Varsayım ve kurucu kanaati (7. basamak) sorunun kanıtı sayılmaz. */
+  const problemEvidence = dated.filter((e) => e.kind !== 'varsayim' && e.ladder <= 6 && e.linkedSteps.some((st) => st === '05' || st === '06' || st === '07')).length
   const gatesOk = [1, 2, 3, 4, 5].every((n) => gatePassed(plan, n))
   const limitsOk = (plan.limits.stopRules?.length ?? 0) >= 3 && Boolean(plan.limits.budgetKurus && plan.limits.deadline && plan.limits.retriesPerDecision)
 
@@ -67,7 +71,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
         return problemEvidence > 0
       })(),
       step: '07',
-      hint: 'Görüşmelerde sorunun tanınması ve tekrar, çaba, kayıp ölçülerinden biri gerekir. Adım 05, 06 ya da 07\'ye bağlı en az bir kanıt kaydı da gerekir.',
+      hint: 'Görüşmelerde sorunun tanınması ve tekrar, çaba, kayıp ölçülerinden biri gerekir. Adım 05, 06 ya da 07\'ye bağlı en az bir kanıt kaydı da gerekir. Varsayım, kurucu kanaati ve gelecek tarihli kayıt kanıt sayılmaz.',
     },
     { id: 'Z3', label: 'İlk müşteri grubu ve ulaşma yolu yazılı.', met: crit(plan, 2, 'segment'), step: '08', hint: 'Kime, hangi yoldan ulaşacağınızı yazın.' },
     { id: 'Z4', label: 'Ulaşılabilir pazar başarı hedefini karşılıyor.', met: crit(plan, 3, 'pazar'), step: '09', hint: 'Bir yılda kazanabileceğiniz müşteri sayısı hedefe yetmeli.' },
@@ -110,6 +114,10 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
   const supportingMet = supporting.filter((c) => c.met === true).length
   const reasons: string[] = []
   const warnings: string[] = []
+  const demandCounter = dated.filter((e) => e.linkedSteps.includes('15') && typeof e.counterFinding === 'string' && e.counterFinding.trim())
+  if (demandCounter.length > 0) warnings.push(`Talep kanıtında karşı bulgu var: ${demandCounter.map((e) => e.counterFinding!.trim().replace(/\.$/, '')).join('. ')}. Kararı vermeden önce bu bulguyu okuyun.`)
+  const future = plan.evidence.length - dated.length
+  if (future > 0) warnings.push(`${future} kanıtın tarihi gelecekte. Bu kayıtlar kanıt sayılmadı. Tarihi düzeltin.`)
   if (refutedOpen.length > 0) warnings.push(`${refutedOpen.length} kritik varsayım çürüdü ve karşılığı yazılmadı. Varsayımlar ekranında sonuç notunu yazın.`)
   else if (refuted.length > 0) warnings.push(`${refuted.length} varsayım çürüdü. Strateji çalışmasında bu varsayıma dayanmayın.`)
   let suggested: TransitionOutcome

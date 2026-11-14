@@ -5,7 +5,8 @@
  * Eksik bilgi uydurulmaz. Kural docs/strateje-devir-uygulama-plani.md dosyasındadır.
  */
 import { DECISIONS } from '@/data/decisions'
-import { CONDITION_LABEL, cruxOf, dependenciesOf, failedAttemptsOf, freeBudget, linkedEvidence, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, VEHICLE_LABEL, type Crux, type PathLink, type SuccessCondition, type Vehicle } from '@/engine/crux'
+import { pathIssues } from '@/engine/integrity'
+import { CONDITION_LABEL, cruxOf, dependenciesOf, DISSENT_LABEL, dissentsOf, type Dissent, failedAttemptsOf, freeBudget, linkedEvidence, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, VEHICLE_LABEL, type Crux, type PathLink, type SuccessCondition, type Vehicle } from '@/engine/crux'
 import { crossAnswers, ORIGIN_LABEL, type CrossAnswer, type Origin } from '@/engine/situation'
 import { STRENGTHS_STEP, STRENGTH_LABEL, STRENGTH_NOTE, strengthsOf } from '@/engine/strengths'
 import { TRANSITION_LABEL, type Evidence, type PlanDoc, type TransitionOutcome } from '@/data/types'
@@ -127,6 +128,10 @@ export interface HandoffReport {
   crosses: CrossAnswer[]
   /** Bir yolun iki işi arasındaki bağlar. Çelişkiler burada görünür. */
   links: PathLink[]
+  /** Aynı adı taşıyan ya da aynı görünen yollar. */
+  pathIssues: string[]
+  /** Ayrı görüşler. Stratej bunları da okur. */
+  dissents: Dissent[]
   counterMove: string | null
   sensitivity: SensitivityRow[]
   /** 5. Seçimi değiştirebilecek eksik bilgi */
@@ -306,6 +311,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   }
   const rivals = rows(plan, '09', 'competitors').map((r) => str(r.name)).filter(Boolean)
   pushMarket(str(v(plan, '08', 'accessPath')) ? `Ulaşma yolu: ${str(v(plan, '08', 'accessPath'))}` : null, '08')
+  pushMarket(str(v(plan, '08', 'blockerPerson')) ? `Alımı durdurabilen kişi: ${str(v(plan, '08', 'blockerPerson'))}` : null, '08')
   pushMarket(rivals.length ? `Rakipler ve ikameler: ${rivals.join(', ')}.` : null, '09')
   pushMarket(str(v(plan, '09', 'profitPool')) ? `Parayı kazanan: ${str(v(plan, '09', 'profitPool'))}` : null, '09')
   for (const f of failedAttemptsOf(plan)) pushMarket(`Bu işi deneyip bırakan: ${f.who}.${f.why ? ` Bırakma nedeni: ${f.why}` : ''}${f.difference ? ` Bizim farkımız: ${f.difference}` : ''}`, '09')
@@ -373,6 +379,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
     const rate = matchRate(valid, matched)
     if (rate.state === 'hesap') kind(`${valid} geçerli talebin ${matched} tanesi uygun teklif aldı. Eşleşme oranı yüzde ${rate.percent}.`, '15', 'hesap')
     if (rate.state === 'sifir') kind('Geçerli talep sayısı sıfır. Eşleşme oranı hesaplanmaz.', '15', 'hesap')
+    if (rate.state === 'hata') kind('Uygun teklif alan talep, geçerli talebi geçiyor. Eşleşme oranı yazılmadı.', '15', 'hesap')
     const registered = num(v(plan, '15', 'registeredSellers'))
     const active = num(v(plan, '15', 'activeSellers'))
     if (registered !== null && active !== null) kind(`${fmt(registered)} kayıtlı satıcının ${fmt(active)} tanesi gerçek talebe cevap verdi.`, '15', 'hesap')
@@ -446,6 +453,8 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
     paths,
     crosses: crossAnswers(plan),
     links: pathLinksOf(plan),
+    pathIssues: pathIssues(rows(plan, '18', 'paths')),
+    dissents: dissentsOf(plan),
     counterMove: str(v(plan, '18', 'counterMove')),
     sensitivity,
     assumptions,
@@ -513,16 +522,18 @@ export function handoffToMarkdown(r: HandoffReport): string {
     out.push('')
   }
   if (r.crosses.length) out.push('Yollar şu sorulardan çıktı:', '', ...r.crosses.map((c) => `- ${c.question} ${c.text}`), '')
+  if (r.pathIssues.length) out.push('Yol denetimi:', '', ...r.pathIssues.map((x) => `- ${x}`), '')
   if (r.links.length) out.push('Yol bağları:', '', ...r.links.map((l) => `- ${l.path ? `${l.path}. ` : ''}${l.a} ile ${l.b}: ${RELATION_LABEL[l.relation]}.${l.reason ? ` ${l.reason}` : ''}`), '')
   if (r.counterMove) out.push(`Rakip karşı hamlesi: ${r.counterMove}`, '')
   if (r.sensitivity.length) out.push('Para hesabı üç durumda:', '', '| Durum | Sipariş katkısı | Başabaş | Not |', '|---|---|---|---|', ...r.sensitivity.map((s) => `| ${s.label} | ${s.contribution} | ${s.breakEven} | ${s.note} |`), '')
   out.push('## 5. Seçimi değiştirebilecek eksik bilgi', '')
   if (r.fragile) out.push(`Kırılgan sayı: ${r.fragile}`, '')
   if (r.assumptions.length) out.push('Açık varsayımlar:', '', ...r.assumptions.map((a) => `- ${a.state === 'curudu' ? 'Çürüdü. ' : ''}${a.text} Etki ${a.impact} / 5.${a.test ? ` Test: ${a.test}` : ''}${a.affects ? ` Yanlış çıkarsa değişen yol: ${a.affects}.` : ''}`), '')
+  if (r.dissents.length) out.push('Ayrı görüşler:', '', ...r.dissents.map((d) => `- ${d.who ? `${d.who}: ` : ''}${d.view}${d.about ? ` İtiraz edilen: ${d.about}.` : ''} Durum: ${DISSENT_LABEL[d.response]}.`), '')
   if (r.uncertainties.length) out.push('Kritik belirsizlikler:', '', ...r.uncertainties.map((u) => `- ${u}`), '')
   if (r.scenarios.length) out.push('Senaryolar:', '', ...r.scenarios.map((s) => `- ${s.name}. İşaret: ${s.signal ?? 'yazılmadı'}. Kazanma koşulu: ${s.winCondition ?? 'yazılmadı'}.`), '')
   if (r.openDecisions.length) out.push('Açık karar defteri:', '', '| Karar sorusu | Seçenekler | Dayanak | Karar sahibi | Karar tarihi | Dönüş bedeli | Geri alınır mı? |', '|---|---|---|---|---|---|---|', ...r.openDecisions.map((d) => `| ${cell(d.question)} | ${cell(d.alternatives)} | ${cell(d.basis)} | ${cell(d.owner)} | ${cell(d.dueDate)} | ${cell(d.reversalCost)} | ${d.door ? DOOR_LABEL[d.door] : 'Yazılmadı'} |`), '')
-  if (!r.fragile && !r.assumptions.length && !r.uncertainties.length && !r.scenarios.length && !r.openDecisions.length) out.push('Henüz yazılmadı.', '')
+  if (!r.fragile && !r.assumptions.length && !r.uncertainties.length && !r.scenarios.length && !r.openDecisions.length && !r.dissents.length) out.push('Henüz yazılmadı.', '')
   out.push('## Ek 1. Kapsam', '', `${r.coverageFilled} / ${r.coverage.length} başlık dolu.`, '', ...r.coverage.map((c) => `- ${c.no}. ${c.title}: ${c.status === 'dolu' ? 'dolu' : c.status === 'kismen' ? 'kısmen dolu' : 'boş'} (Adım ${c.step})`), '')
   out.push("## Ek 2. Stratej'in ilk günü", '', ...r.firstDay.map((s, i) => `${i + 1}. ${s}`), '')
   out.push('## Ek 3. Altı soru', '', ...r.sixQuestions.map((q, i) => `${i + 1}. ${q.question} ${q.answer ?? 'Henüz yazılmadı.'} (Adım ${q.step})`), '')

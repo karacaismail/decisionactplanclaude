@@ -127,6 +127,9 @@ describe('eşleşme oranı', () => {
     expect(matchRate(undefined, 3)).toEqual({ state: 'yok' })
     expect(matchRate(20, undefined)).toEqual({ state: 'yok' })
   })
+  it('uygun teklif geçerli talebi geçerse oran yazılmaz', () => {
+    expect(matchRate(5, 8)).toEqual({ state: 'hata' })
+  })
   it('ölçülen sıfır eşleşme yüzde sıfırdır', () => {
     expect(matchRate(20, 0)).toEqual({ state: 'hesap', percent: 0 })
   })

@@ -5,6 +5,7 @@
  * Alan adları docs/alan-sozlesmesi.md dosyasında yazılıdır.
  */
 import type { DecisionDef, GateCriterion } from './schema'
+import { distinctPaths } from '@/engine/integrity'
 import type { Measure, PlanDoc } from './types'
 
 const v = (p: PlanDoc, step: string, key: string): unknown => p.steps[step]?.values?.[key]
@@ -228,7 +229,8 @@ export const DECISIONS: DecisionDef[] = [
         }),
         c('yol', 'Yol adayları karşılaştırıldı. Bugünkü durum ve en az iki yol var. Ağır yatırımda en az üç yol.', (p) => {
           if (!p.steps['18']) return null
-          const named = rows(p, '18', 'paths').filter((r) => filled(r.name) && (filled(r.where) || filled(r.how)))
+          /* Aynı adı taşıyan yol bir kez sayılır. */
+          const named = distinctPaths(rows(p, '18', 'paths')).filter((r) => filled(r.where) || filled(r.how))
           const need = p.profile.smallReversible ? 3 : 4
           return named.length >= need
         }),

@@ -86,9 +86,9 @@ Bu bölümler yalnız ilgili profilde görünür. Tek kurucu yeni iş açarsa hi
 ## 4. Uygulanmayan parçalar ve nedenleri
 
 - **Roller.** Codex salt okunur rolü sınamayı önerdi. Bu uygulamada rol yoktur. Veri tek kullanıcının tarayıcısında durur.
-- **İkinci görüş kaydı.** Codex, karşı görüşü savunan kişinin bulgu seçmesini önerdi. Bu uygulamada ikinci görüş yalnız sınır artışında istenir. Bunun yerine "başka açıklama" ve "ayıran bulgu" alanları eklendi.
+- **İkinci görüş kaydı.** Codex, karşı görüşü savunan kişinin bulgu seçmesini önerdi. İlk turda yalnız "başka açıklama" ve "ayıran bulgu" alanları eklendi. Sonradan Adım 17'ye "Ayrı görüş" bölümü de eklendi.
 - **Deneme kaydına bağ.** Codex, denemeyi engele ve koşula bağlamayı önerdi. Bu uygulamada ayrı bir deneme kaydı yoktur. Bağ, kanıt defteri üzerinden kurulur.
-- **Benzer yolları bulma.** Yazılım iki yolun benzediğini kendisi bulamaz. Bu yüzden dört soru her zaman ipucu olarak görünür.
+- **Benzer yolları bulma.** Yazılım anlamca benzer yolları bulamaz. Bu yüzden dört soru her zaman ipucu olarak görünür. Birebir aynı yazılmış yolları ise bulur. Bu kural sonradan eklendi ve [karşılaştırma raporundadır](codex-uygulamasi-karsilastirma-raporu.md).
 - **Ek formların ayrı indirilmesi.** Yeni bölümler küçük form tanımlarıdır ve ana pakettedir. Ayrı indirilen tek veri yöntem yardımıdır.
 - **OGSM ve Hoshin Kanri.** Codex de bu iki yöntemi strateji sonrasına bıraktı. Bu uygulamada da eklenmedi.
 - **Yüzde 42 zamanlama değeri.** Codex bu oranı puanlamaya almamayı önerdi. Bu uygulamada da yoktur.

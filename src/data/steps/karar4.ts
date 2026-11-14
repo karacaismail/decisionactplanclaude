@@ -1,5 +1,6 @@
 import type { Condition, StepDef } from '../schema'
 import { matchRate } from '@/engine/crux'
+import { demandNumberIssues, peopleCalc } from '@/engine/integrity'
 
 type Row = Record<string, unknown> & { _id: string }
 
@@ -208,6 +209,7 @@ export const KARAR4: StepDef[] = [
             { key: 'ladder', type: 'evidenceLadder', label: 'Kanıt basamağı' },
             { key: 'reason', type: 'text', label: 'Gerekçe', placeholder: 'Reddettiyse neden? Kabul ettiyse ne verdi?' },
           ] },
+          { key: 'offerPeople', type: 'calc', label: 'Kişi denetimi', emptyText: 'Teklif yazınca denetim burada görünür.', compute: (v) => peopleCalc(v.offers, 'person') },
         ],
       },
       {
@@ -221,6 +223,7 @@ export const KARAR4: StepDef[] = [
             const r = matchRate(v.validRequests, v.matchedRequests)
             if (r.state === 'yok') return null
             if (r.state === 'sifir') return { value: 'Hesaplanamaz', lines: ['Geçerli talep sayısı sıfır. Bu yüzden oran hesaplanmaz.'] }
+            if (r.state === 'hata') return { value: 'Hesaplanamaz', lines: ['Uygun teklif alan talep, geçerli talebi geçiyor.'], warn: 'Sayıları inceleyin.' }
             return { value: `Yüzde ${r.percent}`, lines: [`${v.validRequests} geçerli talebin ${v.matchedRequests} tanesi uygun teklif aldı.`] }
           } },
           { key: 'registeredSellers', type: 'number', label: 'Kayıtlı satıcı sayısı', min: 0, unit: 'satıcı', span: 12 },
@@ -257,6 +260,7 @@ export const KARAR4: StepDef[] = [
     ],
     models: [15],
     completeWhen: ['method', 'threshold', 'offers'],
+    validate: (values) => demandNumberIssues(values),
     chart: {
       kind: 'funnel',
       title: 'Talep hunisi',
