@@ -6,6 +6,8 @@ Bu belge 14 Kasım 2026 Cumartesi günü yazıldı. Kod değişirse bu belge de 
 
 **Stratej kimdir?** Stratej, stratejiyi geliştiren kişinin unvanıdır. Tanım Erol Mütercimler'e aittir.
 
+**Seçimi kim yapar?** Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder. Tek kurucuda iki rol aynı kişide olabilir.
+
 ## 1. Sıra
 
 Yol dört bölümdür. Bölümler bu sırayla açılır. Sıra hiçbir ekranda değişmez.
@@ -14,7 +16,7 @@ Yol dört bölümdür. Bölümler bu sırayla açılır. Sıra hiçbir ekranda d
 |---|---|---|---|---|
 | 1 | Temel | Adım 00 ile Adım 18 arası. Karar 1 ile Karar 5 arası. | Kapı 5 geçilir. | Karar sahibi |
 | 2 | Geçiş kapısı | Adım yoktur. Devir raporu okunur. | Geçiş kararı kaydedilir. | Karar sahibi |
-| 3 | Strateji çalışması | Adım 19 ve Adım 20 | Yol seçilir. Strateji karar dosyası tamamlanır. | Stratej |
+| 3 | Strateji çalışması | Adım 19 ve Adım 20 | Yol seçilir. Strateji karar dosyası tamamlanır. | Karar sahibi. Stratej önerir. |
 | 4 | Uygulama | Adım 21 ile Adım 34 arası. Karar 6, 7 ve 8. | Kapı 8 geçilir. | Karar sahibi |
 
 Temel bölümündeki kararlar şunlardır:
@@ -121,12 +123,17 @@ Bu kayıtlar isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü deği
 | Serbest bütçe | Adım 16 | 3. bölüm |
 | Darboğaz | Adım 12 | 3. bölüm |
 | İş türüne özgü bilgi | Adım 12 ve Adım 15 | 2. bölüm |
+| Yolun para mantığı, kurma yolu ve kanıt türü | Adım 18 | 4. bölüm |
+| Bu işi deneyip bırakanlar | Adım 09 | 2. bölüm |
+| Tek kaynağa bağımlılık | Adım 17 | 3. bölüm |
+| Üç yıllık beklenti | Adım 02 | 3. bölüm |
+| Altı sorunun cevabı | Yazılım plandan bulur. | Ek 3 |
 
-Kuralların tamamı [codex-onerileri-uygulama-notu.md](codex-onerileri-uygulama-notu.md) dosyasındadır.
+Kuralların tamamı iki belgededir: [codex-onerileri-uygulama-notu.md](codex-onerileri-uygulama-notu.md) ve [arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md](arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md).
 
 ## 7. Yazılım neyi yapmaz?
 
-- Yazılım yol seçmez. Yolu stratej seçer.
+- Yazılım yol seçmez. Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder.
 - Yazılım yol önermez. Durum özeti yalnız listeyi toplar ve soruyu sorar.
 - Yazılım bir gücün gerçek olup olmadığına karar vermez. Dört soruyu kullanıcı cevaplar.
 - Yazılım geçiş kararını vermez. Yazılım yalnız öneri üretir.
@@ -139,7 +146,7 @@ Kaynak plan [act_plan_v5_final-claude.md](act_plan_v5_final-claude.md) dosyasıd
 
 | Konu | Kaynak planda | Uygulamada | Neden? |
 |---|---|---|---|
-| Adım 18'in adı | "Saha ve kazanma yolu" | "Yol adayları" | Seçim stratej'e bırakıldı. |
+| Adım 18'in adı | "Saha ve kazanma yolu" | "Yol adayları" | Seçim strateji çalışmasına bırakıldı. |
 | Seçilen yol | Adım 18'de yazılır. | Adım 19'da yazılır. | Seçim geçiş kapısından sonra yapılır. |
 | Karar 5'in adımları | 16, 17, 18, 19 ve 20 | 16, 17 ve 18 | Adım 19 ve 20 strateji çalışmasına taşındı. |
 | Geçiş kapısı | Yoktur. | Karar 5 ile strateji çalışması arasındadır. | Dayanak, seçimden önce incelenir. |

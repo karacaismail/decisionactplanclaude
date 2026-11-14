@@ -175,3 +175,50 @@ export function matchRate(valid: unknown, matched: unknown): MatchRate {
   if (valid === 0) return { state: 'sifir' }
   return { state: 'hesap', percent: Math.round((matched / valid) * 100) }
 }
+
+/* ---- Yolun kurma biçimi ve bağımlılıklar ---- */
+
+export type Vehicle = 'kendimiz' | 'satinAl' | 'ortak'
+export const VEHICLE_LABEL: Record<Vehicle, string> = { kendimiz: 'Kendimiz kurarız', satinAl: 'Satın alırız', ortak: 'Ortakla kurarız' }
+export const VEHICLE_OPTIONS = (Object.keys(VEHICLE_LABEL) as Vehicle[]).map((value) => ({ value, label: VEHICLE_LABEL[value] }))
+
+export const DEPENDENCY_LABEL: Record<string, string> = {
+  tekMusteri: 'Tek müşteri',
+  tekTedarikci: 'Tek tedarikçi',
+  tekKanal: 'Tek kanal',
+  tekTeknoloji: 'Tek teknoloji',
+  tekPara: 'Tek para kaynağı',
+  tekKisi: 'Tek kişi',
+}
+export const DEPENDENCY_OPTIONS = Object.entries(DEPENDENCY_LABEL).map(([value, label]) => ({ value, label }))
+
+export interface Dependencies {
+  labels: string[]
+  note: string | null
+}
+
+/** Adım 17'de işaretlenen bağımlılıklar. Hiçbiri işaretlenmediyse null döner. */
+export function dependenciesOf(plan: PlanDoc): Dependencies | null {
+  const labels = ids(v(plan, '17', 'dependencies')).map((d) => DEPENDENCY_LABEL[d]).filter(Boolean)
+  return labels.length ? { labels, note: text(v(plan, '17', 'dependencyNote')) } : null
+}
+
+export interface FailedAttempt {
+  who: string
+  what: string | null
+  why: string | null
+  difference: string | null
+}
+
+/** Adım 09'da yazılan başarısız örnekler. Başarı hikâyelerinin yanıltmasına karşı durur. */
+export function failedAttemptsOf(plan: PlanDoc): FailedAttempt[] {
+  return list(v(plan, '09', 'failedAttempts'))
+    .filter((r) => text(r.who))
+    .map((r) => ({ who: text(r.who)!, what: text(r.what), why: text(r.why), difference: text(r.difference) }))
+}
+
+/** Bir yola bağlı kanıtların başlıkları. Silinmiş kanıt sayılır. */
+export function linkedEvidence(plan: PlanDoc, value: unknown): { titles: string[]; missing: number } {
+  const r = linked(plan, value)
+  return { titles: r.titles, missing: r.missing }
+}

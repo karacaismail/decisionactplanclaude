@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildDemoPlan } from '@/data/demo'
 import { emptyPlan } from '@/data/types'
-import { NO_PATHS, buildHandoffReport, confidenceOf, handoffToMarkdown } from './handoff'
+import { NO_PATHS, buildHandoffReport, confidenceOf, handoffToMarkdown, pathBasis } from './handoff'
 
 describe('buildHandoffReport', () => {
   it('boş planda uydurma yapmaz', () => {
@@ -73,7 +73,7 @@ describe('buildHandoffReport', () => {
 
   it('Markdown beş bölümü ve iki eki içerir', () => {
     const md = handoffToMarkdown(buildHandoffReport(buildDemoPlan()))
-    for (const h of ['## 1. Stratej bugün hangi kararı verecek?', '## 2. Dayanaklar', '## 3. Bağlayıcı sınırlar', '## 4. Karşılaştırılacak yollar', '## 5. Seçimi değiştirebilecek eksik bilgi', '## Ek 1. Kapsam', "## Ek 2. Stratej'in ilk günü"]) expect(md).toContain(h)
+    for (const h of ['## 1. Bugün hangi karar verilecek?', '## 2. Dayanaklar', '## 3. Bağlayıcı sınırlar', '## 4. Karşılaştırılacak yollar', '## 5. Seçimi değiştirebilecek eksik bilgi', '## Ek 1. Kapsam', "## Ek 2. Stratej'in ilk günü"]) expect(md).toContain(h)
   })
 })
 
@@ -95,7 +95,7 @@ describe('confidenceOf', () => {
     expect(r.conditions.map((c) => c.baseline)).toEqual(['Bilinmiyor', "14 teklifin 7'si", '0'])
     expect(r.links.filter((l) => l.relation === 'celisiyor')).toHaveLength(1)
     const md = handoffToMarkdown(r)
-    expect(md.indexOf('### Asıl engel')).toBeGreaterThan(md.indexOf('## 1. Stratej bugün hangi kararı verecek?'))
+    expect(md.indexOf('### Asıl engel')).toBeGreaterThan(md.indexOf('## 1. Bugün hangi karar verilecek?'))
     expect(md.indexOf('### Başarı neye bağlı?')).toBeLessThan(md.indexOf('## 2. Dayanaklar'))
     expect(md).toContain('Bulgular çelişiyor')
     expect(md).toContain('Yol bağları:')
@@ -125,5 +125,61 @@ describe('confidenceOf', () => {
     p.steps['15'].values = { ...p.steps['15'].values, validRequests: 20, matchedRequests: 8, registeredSellers: 60, activeSellers: 12 }
     const g = buildHandoffReport(p).groups.find((x) => x.title === 'İş türüne özgü bilgi')
     expect(g?.claims.map((c) => c.text)).toEqual(['20 geçerli talebin 8 tanesi uygun teklif aldı. Eşleşme oranı yüzde 40.', '60 kayıtlı satıcının 12 tanesi gerçek talebe cevap verdi.'])
+  })
+
+  it('her yolun para mantığını, kurma yolunu ve kanıt türünü gösterir', () => {
+    const r = buildHandoffReport(buildDemoPlan())
+    const [, cart, card, salon] = r.paths
+    expect(cart.revenue).toBe('Tek kahve satışı. Kahve 80 TL.')
+    expect(cart.vehicle).toBe('Kendimiz kurarız')
+    expect(cart.sourced).toBe(true)
+    expect(pathBasis(cart)).toBe('Kaynaklı. Mahallede sabah 9’dan önce açık kafe yok.')
+    expect(card.sources).toEqual(['7 kişi aylık kahve kartına ödeme yaptı'])
+    expect(salon.sourced).toBe(false)
+    expect(pathBasis(salon)).toBe('Varsayım. Kanıt bağlanmadı.')
+    const md = handoffToMarkdown(r)
+    for (const label of ['| Para nasıl kazanılır? |', '| Nasıl kurulur? |', '| Kanıtın türü |']) expect(md).toContain(label)
+  })
+
+  it('bağlı kanıt silinince yol "Varsayım" olur ve eksik bağlantı yazılır', () => {
+    const p = buildDemoPlan()
+    p.evidence = p.evidence.filter((e) => e.id !== 'kanit-1')
+    const cart = buildHandoffReport(p).paths[1]
+    expect(cart.sourced).toBe(false)
+    expect(pathBasis(cart)).toBe('Varsayım. Kanıt bağlanmadı. 1 bağlı kanıt silinmiş.')
+  })
+
+  it('başarısız örneği, bağımlılığı ve üç yıllık beklentiyi rapora koyar', () => {
+    const r = buildHandoffReport(buildDemoPlan())
+    const market = r.groups.find((g) => g.title === 'Rakip ve erişim')!
+    expect(market.claims.some((c) => c.text.startsWith('Bu işi deneyip bırakan: Meydandaki eski kafe.'))).toBe(true)
+    expect(r.limits.find((l) => l.label === 'Tek kaynağa bağımlılık')?.value).toContain('Tek tedarikçi, Tek kişi')
+    expect(r.limits.find((l) => l.label === 'Üç yıllık beklenti')?.value).toBe('Mahallede iki satış noktası. Kurucu maaşını işten alıyor')
+  })
+
+  it('altı sorunun cevabını plandan bulur, boş planda uydurmaz', () => {
+    const full = buildHandoffReport(buildDemoPlan())
+    expect(full.sixQuestions.map((q) => q.question)).toEqual([
+      'Müşterimiz kim ve neye değer veriyor?',
+      'Önümüzdeki asıl engel ne?',
+      'Nerede oynuyoruz, neyi yapmıyoruz?',
+      'Büyüyünce bizi ne koruyacak?',
+      'Hangi koşullar şart ve neyle ölçülür?',
+      'Bu iş nasıl batar?',
+    ])
+    expect(full.sixQuestions.every((q) => q.answer)).toBe(true)
+    expect(full.sixQuestions[1].answer).toBe('Aylık kart ilgisi, gideri karşılayan günlük satışa dönüşecek mi?')
+    const empty = buildHandoffReport(emptyPlan('p', 'Plan'))
+    expect(empty.sixQuestions.map((q) => q.answer)).toEqual([null, null, null, null, null, null])
+    const md = handoffToMarkdown(empty)
+    expect(md).toContain('## Ek 3. Altı soru')
+    expect(md).toContain('1. Müşterimiz kim ve neye değer veriyor? Henüz yazılmadı. (Adım 08)')
+  })
+
+  it('rol dilini raporda tek biçimde kullanır', () => {
+    const md = handoffToMarkdown(buildHandoffReport(buildDemoPlan()))
+    expect(md).toContain('## 1. Bugün hangi karar verilecek?')
+    expect(md).toContain('Öneriyi karar sahibine sunun.')
+    expect(md).not.toMatch(/Seçimi stratej yapar|Stratej'in kararı/)
   })
 })

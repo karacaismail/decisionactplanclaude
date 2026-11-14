@@ -39,18 +39,21 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | 16 | paymentDays | repeater, satır alanları `date, balanceAfterKurus (money)` | Kapı 5, kasa grafiği |
 | 17 | risks | repeater, satır alanları `risk, likelihood (rate 1 ile 3), impact (rate 1 ile 3), trigger, response, owner` | Kapı 5 |
 | 04 | factorNotes | repeater, satır alanları `factor, change, effect (select: firsat, tehdit), action` | Adım 18 durum özeti |
+| 02 | horizon | textarea, isteğe bağlı | Devir raporu, sınırlar |
+| 09 | failedAttempts | repeater, satır alanları `who, what, why, difference` | Devir raporu |
 | 10 | assumptions | repeater. Yeni satır alanı `affectsPath` isteğe bağlıdır. | Devir raporu |
 | 12 | strengths | repeater, satır alanları `name, valuable, rare, hardToCopy, organized (select: evet, hayir), basis` | Adım 12 tamamlama kuralı, Adım 16 güç listesi, Adım 18 durum özeti, devir raporu |
 | 12 | bottleneck, bottleneckLimit, bottleneckAlt | text, isteğe bağlı | Devir raporu, sınırlar |
-| 12 | groupResource, groupTerms, groupDecider, groupDemand, groupBasis | yalnız grup profilinde | Devir raporu |
+| 12 | groupResource, groupTerms, groupDecider, groupDemand, groupExpectation, groupAutonomy, groupBasis | yalnız grup profilinde | Devir raporu |
 | 15 | validRequests, matchedRequests, registeredSellers, activeSellers, matchHours | number, yalnız pazar yeri profilinde | Devir raporu |
 | 15 | participants, beneficiaries, benefitNote | yalnız ücretsiz hizmette | Devir raporu |
 | 16 | commitmentsKnown (segmented: var, yok, bilinmiyor), spentKurus, commitments (repeater: `what, amountKurus, dueDate, basis`) | isteğe bağlı | Serbest bütçe hesabı, devir raporu |
+| 17 | dependencies (chips), dependencyNote | isteğe bağlı | Devir raporu, sınırlar |
 | 18 | crossSO, crossWO, crossST, crossWT | textarea, isteğe bağlı | Devir raporu |
 | 18 | crux, cruxWhy, cruxPaths, cruxAlt, cruxSplit, cruxEvidence, cruxCounter | metin ve kanıt bağı, isteğe bağlı | Devir raporu |
 | 18 | successConditions | repeater, satır alanları `condition, paths, measure, baseline, threshold, thresholdWhen (select: once, sonra), owner, support, counter, comment` | Devir raporu |
 | 18 | pathLinks | repeater, satır alanları `path, a, b, relation (select: destekliyor, celisiyor, bilinmiyor), reason` | Devir raporu |
-| 18 | paths | repeater, satır alanları `name, where, how, giveUp, evidence, origin (select: so, wo, st, wt, baska), cost, reversible`. İlk satır "Bugünkü durumu sürdürmek"tir. | Kapı 5, geçiş kapısı, devir raporu |
+| 18 | paths | repeater, satır alanları `name, where, how, revenue, vehicle (select: kendimiz, satinAl, ortak), giveUp, evidence, evidenceIds (kanıt bağı), origin (select: so, wo, st, wt, baska), cost, reversible`. İlk satır "Bugünkü durumu sürdürmek"tir. | Kapı 5, geçiş kapısı, devir raporu |
 | 18 | pathScores, counterMove | puanlama ve textarea | Devir raporu |
 | 18 | openDecisions | repeater, satır alanları `question, alternatives, basis, owner, dueDate, reversalCost, door` | Devir raporu |
 | 19 | chosenPath, choiceReason, givenUp | text ve textarea | Strateji çalışmasının bitişi, yönetici raporu, aksiyon planı |

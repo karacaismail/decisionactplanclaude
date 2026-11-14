@@ -71,7 +71,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
     },
     { id: 'Z3', label: 'İlk müşteri grubu ve ulaşma yolu yazılı.', met: crit(plan, 2, 'segment'), step: '08', hint: 'Kime, hangi yoldan ulaşacağınızı yazın.' },
     { id: 'Z4', label: 'Ulaşılabilir pazar başarı hedefini karşılıyor.', met: crit(plan, 3, 'pazar'), step: '09', hint: 'Bir yılda kazanabileceğiniz müşteri sayısı hedefe yetmeli.' },
-    { id: 'Z5', label: 'Yol adayları yan yana yazıldı. Bugünkü durum ve en az iki yol var.', met: crit(plan, 5, 'yol'), step: '18', hint: 'Stratej bu adaylar arasından seçer. Ağır yatırımda en az üç yol gerekir.' },
+    { id: 'Z5', label: 'Yol adayları yan yana yazıldı. Bugünkü durum ve en az iki yol var.', met: crit(plan, 5, 'yol'), step: '18', hint: 'Stratej bu adaylardan birini önerir. Karar sahibi seçer. Ağır yatırımda en az üç yol gerekir.' },
     {
       id: 'Z6',
       label: 'En az bir bağlılık işareti var. Kanıt 1, 2 ya da 3. basamakta.',

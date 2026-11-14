@@ -7,9 +7,9 @@ import { expect, test, type Page } from '@playwright/test'
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
-const MEASURES = ['Kime ve nereden?', 'Neyle kazanılır?', 'Neyden vazgeçilir?', 'Destekleyen kanıt', 'Hangi sorudan çıktı?', 'Bedeli ve süresi', 'Geri alınabilir mi?', 'Puan']
-const NOTE_18 = 'Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.'
-const HELPER_19 = 'Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.'
+const MEASURES = ['Kime ve nereden?', 'Neyle kazanılır?', 'Para nasıl kazanılır?', 'Nasıl kurulur?', 'Neyden vazgeçilir?', 'Destekleyen kanıt', 'Kanıtın türü', 'Hangi sorudan çıktı?', 'Bedeli ve süresi', 'Geri alınabilir mi?', 'Puan']
+const NOTE_18 = 'Bu adımda yol seçmeyin. Stratej bu adaylardan birini önerir. Karar sahibi seçer.'
+const HELPER_19 = 'Seçimi karar sahibi yapar. Yazılım bu alanı sizin yerinize doldurmaz.'
 
 async function noHorizontalOverflow(page: Page, label = '') {
   const r = await page.evaluate(() => {
@@ -121,7 +121,7 @@ test('geçiş kararı yokken strateji çalışması kilitli görünür', async (
 
   // Dayanak özeti yerine stratej'in sorusu, ilk günü ve yol adayları durur.
   await expect(page.getByText('Dayanak özeti', { exact: true })).toHaveCount(0)
-  const question = page.locator('.ant-card').filter({ hasText: "Stratej'in önündeki karar" })
+  const question = page.locator('.ant-card').filter({ hasText: "Masadaki karar" })
   await expect(question.locator('.strateji-question')).toHaveText(/\S/)
   await expect(question.locator('.strateji-question')).not.toHaveText('Yol adayı henüz yazılmadı.')
   expect(Number.parseFloat(await question.locator('.strateji-question').evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(20)

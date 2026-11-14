@@ -19,7 +19,11 @@ export function evalCondition(c: Condition | undefined, plan: PlanDoc, currentSt
   if ('field' in c) {
     const f = c.field
     const v = f.step || !currentValues ? stepValue(plan, f.step ?? currentStep ?? '', f.key) : currentValues[f.key]
-    if (f.truthy !== undefined) return f.truthy ? Boolean(v) : !v
+    if (f.truthy !== undefined) {
+      /* Boş liste dolu sayılmaz. Örneğin hiçbir kutu işaretlenmemiş bir seçim listesi. */
+      const filled = Array.isArray(v) ? v.length > 0 : Boolean(v)
+      return f.truthy ? filled : !filled
+    }
     if (f.in) return f.in.includes(v)
     if ('equals' in f) return v === f.equals
     return Boolean(v)

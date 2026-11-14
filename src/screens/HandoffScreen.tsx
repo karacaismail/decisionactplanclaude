@@ -10,6 +10,7 @@ import {
   CONFIDENCE_LABEL,
   DOOR_LABEL,
   NO_PATHS,
+  pathBasis,
   STATUS_LABEL,
   buildHandoffReport,
   handoffToMarkdown,
@@ -38,6 +39,7 @@ const SECTIONS = [
   { id: 'devir-eksik', toc: '5. Eksik bilgi' },
   { id: 'devir-kapsam', toc: 'Ek 1. Kapsam' },
   { id: 'devir-ilk-gun', toc: "Ek 2. Stratej'in ilk günü" },
+  { id: 'devir-alti-soru', toc: 'Ek 3. Altı soru' },
 ] as const
 
 /** Dayanak gruplarının yazıldığı adım. Sıra `buildHandoffReport` içindeki grup sırasıdır. */
@@ -158,8 +160,11 @@ interface Measure {
 const MEASURES: Measure[] = [
   { label: 'Kime ve nereden?', render: (p) => orNone(p.where) },
   { label: 'Neyle kazanılır?', render: (p) => orNone(p.how) },
+  { label: 'Para nasıl kazanılır?', render: (p) => orNone(p.revenue) },
+  { label: 'Nasıl kurulur?', render: (p) => orNone(p.vehicle) },
   { label: 'Neyden vazgeçilir?', render: (p) => orNone(p.giveUp) },
   { label: 'Destekleyen kanıt', render: (p) => orNone(p.evidence) },
+  { label: 'Kanıtın türü', render: (p) => <span className="devir-basis"><Tag color={p.sourced ? 'success' : 'warning'}>{p.sourced ? 'Kaynaklı' : 'Varsayım'}</Tag>{pathBasis(p).replace(/^(Kaynaklı|Varsayım)\. /, '')}</span> },
   { label: 'Hangi sorudan çıktı?', render: (p) => orNone(p.origin) },
   { label: 'Bedeli ve süresi', render: (p) => orNone(p.cost) },
   { label: 'Geri alınabilir mi?', render: (p) => doorTag(p.reversible) },
@@ -262,7 +267,7 @@ function ClaimGroupBlock({ title, decision, claims, step, density }: { title: st
   return (
     <section className={`devir-block devir-group${open ? ' is-open' : ''}`} aria-label={title}>
       <h3 className="devir-sub">{title}</h3>
-      <p className="helper">Stratej'in kararı: {decision}</p>
+      <p className="helper">Bu bilgiyle verilecek karar: {decision}</p>
       {claims.length ? <ClaimTable claims={claims} density={density} label={`${title} dayanakları`} /> : <Missing step={step} />}
       {more > 0 ? (
         <Button className="no-print devir-more-button" type="text" aria-expanded={open} onClick={() => setOpen((x) => !x)}>
@@ -358,7 +363,7 @@ export function HandoffScreen() {
 
       <div className="devir-layout">
         <div className="devir-main" ref={mainRef}>
-          <Card id={SECTIONS[0].id} className="devir-card devir-lead" title={<h2 className="devir-card-title">1. Stratej bugün hangi kararı verecek?</h2>}>
+          <Card id={SECTIONS[0].id} className="devir-card devir-lead" title={<h2 className="devir-card-title">1. Bugün hangi karar verilecek?</h2>}>
             <p className="devir-question">{report.question}</p>
             {report.scope ? (
               <p className="devir-line">
@@ -483,7 +488,7 @@ export function HandoffScreen() {
           <Card id={SECTIONS[3].id} className="devir-card" title={<h2 className="devir-card-title">4. Karşılaştırılacak yollar</h2>}>
             {report.paths.length ? (
               <>
-                <p className="helper">Yollar yan yana durur. Rapor yol seçmez. Seçimi stratej yapar.</p>
+                <p className="helper">Yollar yan yana durur. Rapor yol seçmez. Stratej yolu önerir. Karar sahibi seçer.</p>
                 <PathCompare paths={report.paths} narrow={narrow} />
                 {report.crosses.length ? (
                   <div className="devir-block">
@@ -595,6 +600,18 @@ export function HandoffScreen() {
             <div className="no-print">
               <Button onClick={() => navigate('/strateji')}>Strateji çalışmasına git</Button>
             </div>
+          </Card>
+
+          <Card id={SECTIONS[7].id} className="devir-card" title={<h2 className="devir-card-title">Ek 3. Altı soru</h2>}>
+            <p className="helper">Yazılım altı cevabı plandan bulur. Yeni bilgi eklemez. Cevap yoksa soruyu ilgili adımda cevaplayın.</p>
+            <ol className="devir-six">
+              {report.sixQuestions.map((q, i) => (
+                <li key={q.question}>
+                  <span className="devir-six-q">{i + 1}. {q.question}</span>
+                  {q.answer ? <span className="devir-six-a">{q.answer}</span> : <Missing step={q.step} />}
+                </li>
+              ))}
+            </ol>
           </Card>
         </div>
 

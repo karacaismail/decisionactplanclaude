@@ -155,7 +155,7 @@ test('kapı devir raporuna bağlıdır: doluluk kartı, karar sorusu ve onay kut
 
   // Karar panelinin üstünde stratej'in önündeki karar sorusu yazar.
   const question = page.locator('.gecis-aside .gecis-question')
-  await expect(question).toContainText("Stratej'in önündeki karar:")
+  await expect(question).toContainText("Masadaki karar:")
   await expect(question.locator('.gecis-question-text')).toHaveText(/\S/)
   await expect(question.locator('.gecis-question-text')).not.toHaveText('Yol adayı henüz yazılmadı.')
   const before = await page.evaluate(() => {

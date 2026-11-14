@@ -53,7 +53,7 @@ async function openReport(page: Page) {
 test('rapor karar sorusuyla açılır ve seçim önermez', async ({ page }) => {
   await openReport(page)
   const lead = page.locator('#devir-karar')
-  await expect(lead.getByRole('heading', { name: '1. Stratej bugün hangi kararı verecek?' })).toBeVisible()
+  await expect(lead.getByRole('heading', { name: '1. Bugün hangi karar verilecek?' })).toBeVisible()
   const question = page.locator('.devir-question')
   await expect(question).toContainText(QUESTION)
   await expect(question).toBeInViewport()
@@ -75,7 +75,7 @@ test('dayanaklar türüne göre etiketlenir ve süzülür', async ({ page }) => 
   expect(await types.filter({ hasText: 'Kaynaklı' }).count()).toBeGreaterThanOrEqual(1)
   expect(await types.filter({ hasText: 'Varsayım' }).count()).toBeGreaterThanOrEqual(1)
   await expect(card.getByText(/^\d+ cümle: \d+ kaynaklı, \d+ hesap, \d+ karar, \d+ varsayım\.$/)).toBeVisible()
-  await expect(card.getByText("Stratej'in kararı: Önce kimin hangi sorununa odaklanacağız?")).toBeVisible()
+  await expect(card.getByText("Bu bilgiyle verilecek karar: Önce kimin hangi sorununa odaklanacağız?")).toBeVisible()
 
   await card.locator('.ant-segmented-item', { hasText: 'Varsayım' }).click()
   await expect(types.filter({ hasNotText: 'Varsayım' })).toHaveCount(0)

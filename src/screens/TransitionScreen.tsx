@@ -223,7 +223,7 @@ export function TransitionScreen() {
 
         <div className="gecis-aside">
           <p className="gecis-question">
-            <span className="gecis-question-label">Stratej'in önündeki karar:</span>
+            <span className="gecis-question-label">Masadaki karar:</span>
             <span className="gecis-question-text">{report.question}</span>
           </p>
           <Card className="k-card" variant="borderless" title="Kararı kaydedin" extra={<span>Raporu okuyun, sonra sonucu seçin.</span>}>

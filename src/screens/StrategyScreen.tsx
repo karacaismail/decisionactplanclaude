@@ -140,10 +140,10 @@ export function StrategyScreen() {
             </Card>
           ) : null}
 
-          <Card title="Stratej'in önündeki karar" extra={<Link to="/devir">Devir raporunu aç</Link>}>
+          <Card title="Masadaki karar" extra={<Link to="/devir">Devir raporunu aç</Link>}>
             <p className="strateji-question">{report.question}</p>
             {report.scope ? <p className="strateji-scope">Kapsam sınırı: ekip yalnız şu konuyu planlar. {report.scope}</p> : null}
-            <p className="helper">Kararı stratej verir. Dayanaklar, sınırlar ve eksik bilgi devir raporundadır.</p>
+            <p className="helper">Stratej yolu önerir. Karar sahibi seçer. Dayanaklar, sınırlar ve eksik bilgi devir raporundadır.</p>
           </Card>
 
           <Card title="Stratej'in ilk günü" extra={<span>{report.firstDay.length} adım</span>}>

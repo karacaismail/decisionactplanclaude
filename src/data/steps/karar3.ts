@@ -93,6 +93,18 @@ export const KARAR3: StepDef[] = [
         ],
       },
       {
+        title: 'Bu işi deneyip bırakanlar',
+        description: 'Başarılı örnekler yanıltır. Aynı işi deneyip bırakanları da yazın. Bilmiyorsanız sorun ve araştırın. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'failedAttempts', type: 'repeater', label: 'Başarısız örnekler', addLabel: 'Örnek ekle', maxRows: 5, columns: [
+            { key: 'who', type: 'text', label: 'Kim denedi?', placeholder: 'Örneğin meydandaki eski kafe' },
+            { key: 'what', type: 'text', label: 'Ne yaptı?' },
+            { key: 'why', type: 'text', label: 'Neden bıraktı?', placeholder: 'Örneğin kira ikinci yıl iki katına çıktı' },
+            { key: 'difference', type: 'text', label: 'Sizin farkınız ne?' },
+          ] },
+        ],
+      },
+      {
         title: 'Boşluklar',
         fields: [
           { key: 'profitPool', type: 'textarea', label: 'Bu pazarda parayı kim kazanıyor?', rows: 2, maxLength: 300, placeholder: 'Zincir kafeler sabah satışından kazanıyor. Küçük kafeler öğle menüsünden.', help: 'Kârın nerede toplandığını yazın. Bilmiyorsanız "Bilinmiyor" yazın.' },
@@ -427,6 +439,8 @@ export const KARAR3: StepDef[] = [
             { value: 'dis', label: 'Dışarıdan' },
             { value: 'ikisi', label: 'İkisinden de' },
           ] },
+          { key: 'groupExpectation', type: 'text', label: 'Grup bu işten hangi sonucu bekliyor?', placeholder: 'Örneğin üç yılda grup dışından gelir', maxLength: 200, span: 12 },
+          { key: 'groupAutonomy', type: 'text', label: 'Hangi kararı gruba sormadan alabilirsiniz?', placeholder: 'Örneğin 500 bin TL altındaki alımlar', maxLength: 200, span: 12 },
           { key: 'groupBasis', type: 'text', label: 'Grup katkısının dayanağı nedir?', placeholder: 'Örneğin yönetim kurulu kararı', maxLength: 160, span: 12 },
         ],
       },

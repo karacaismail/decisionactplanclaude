@@ -124,6 +124,11 @@ describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
     for (const key of ['crux', 'cruxWhy', 'cruxPaths', 'cruxAlt', 'cruxSplit', 'cruxEvidence', 'cruxCounter', 'successConditions', 'pathLinks', 'crossSO', 'crossWO', 'crossST', 'crossWT']) delete bare.steps['18'].values[key]
     for (const key of ['commitmentsKnown', 'spentKurus', 'commitments']) delete bare.steps['16'].values[key]
     for (const key of ['strengths', 'bottleneck', 'bottleneckLimit', 'bottleneckAlt']) delete bare.steps['12'].values[key]
+    delete bare.steps['09'].values.failedAttempts
+    delete bare.steps['17'].values.dependencies
+    delete bare.steps['17'].values.dependencyNote
+    delete bare.steps['02'].values.horizon
+    bare.steps['18'].values.paths = (bare.steps['18'].values.paths as Record<string, unknown>[]).map(({ revenue: _r, vehicle: _v, evidenceIds: _e, ...rest }) => rest)
     const a = evaluateReadiness(full, { secondReader: 'Ayşe' })
     const b = evaluateReadiness(bare, { secondReader: 'Ayşe' })
     expect(a.suggested).toBe(b.suggested)
@@ -255,6 +260,7 @@ describe('metinler eski süreci anlatmaz', () => {
     [/Saha ve kazanma yolu/, 'Adım 18\'in adı "Yol adayları"dır.'],
     [/[Tt]emel belgesinde yazar|temel belgesindeki kanıt/, 'Belgenin adı "Strateje devir raporu"dur.'],
     [/stratejist/i, 'Unvan "stratej"dir.'],
+    [/Seçimi stratej yapar|Kararı stratej verir|Seçim stratej.{1,2}in işidir|aralarından seçer|adaylar arasından seçer|Yolu stratej seçer/, 'Stratej önerir. Seçimi karar sahibi yapar.'],
     [/dayanakları inceledim/i, 'Kutu metni "Strateje devir raporunu okudum"dur.'],
   ]
   it('güncel dosyalarda eski ifade yoktur', () => {
@@ -273,6 +279,7 @@ describe('metinler eski süreci anlatmaz', () => {
       expect(map).toContain(`| Karar ${n} | ${d.title} | ${d.steps.join(', ')} |`)
     }
     expect(map).toContain(`| 3 | ${STRATEGY.title} | Adım 19 ve Adım 20 |`)
+    expect(map).toContain('Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder.')
     expect(map).toContain('Destekleyici ölçüt sayısı 7')
   })
   it('tarihsel plan belgeleri güncellik notu taşır', () => {

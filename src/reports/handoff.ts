@@ -1,11 +1,11 @@
 /**
  * Strateje devir raporu.
  * Stratej, stratejiyi geliştiren kişinin unvanıdır. Bu rapor onun önüne konur.
- * Rapor seçim yapmaz. Seçimi stratej yapar. Rapor soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir.
+ * Rapor seçim yapmaz. Stratej yolu önerir, karar sahibi seçer. Rapor soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir.
  * Eksik bilgi uydurulmaz. Kural docs/strateje-devir-uygulama-plani.md dosyasındadır.
  */
 import { DECISIONS } from '@/data/decisions'
-import { CONDITION_LABEL, cruxOf, freeBudget, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, type Crux, type PathLink, type SuccessCondition } from '@/engine/crux'
+import { CONDITION_LABEL, cruxOf, dependenciesOf, failedAttemptsOf, freeBudget, linkedEvidence, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, VEHICLE_LABEL, type Crux, type PathLink, type SuccessCondition, type Vehicle } from '@/engine/crux'
 import { crossAnswers, ORIGIN_LABEL, type CrossAnswer, type Origin } from '@/engine/situation'
 import { STRENGTHS_STEP, STRENGTH_LABEL, STRENGTH_NOTE, strengthsOf } from '@/engine/strengths'
 import { TRANSITION_LABEL, type Evidence, type PlanDoc, type TransitionOutcome } from '@/data/types'
@@ -33,7 +33,7 @@ export interface Claim {
 }
 export interface ClaimGroup {
   title: string
-  /** Stratej bu bilgiyle hangi kararı verir? */
+  /** Bu bilgiyle hangi karar verilir? */
   decision: string
   claims: Claim[]
 }
@@ -45,8 +45,17 @@ export interface PathColumn {
   baseline: boolean
   where: string | null
   how: string | null
+  /** Para nasıl kazanılır? */
+  revenue: string | null
+  /** Kendimiz mi kurarız, satın mı alırız, ortakla mı kurarız? */
+  vehicle: string | null
   giveUp: string | null
   evidence: string | null
+  /** Kanıt defterinden bağlanan kanıtların başlıkları. Boşsa yol "Varsayım" sayılır. */
+  sources: string[]
+  sourced: boolean
+  /** Bağlıyken silinmiş kanıt sayısı. */
+  missingEvidence: number
   /** Yol hangi çapraz sorudan çıktı? Kullanıcı seçer. */
   origin: string | null
   cost: string | null
@@ -95,7 +104,7 @@ export interface HandoffReport {
   title: string
   stamp?: string
   meta: string[]
-  /** 1. Stratej bugün hangi kararı verecek? */
+  /** 1. Bugün hangi karar verilecek? */
   question: string
   /** Asıl engel: önce çözülmesi gereken güçlük. Kullanıcı yazmadıysa yoktur. */
   crux: Crux | null
@@ -131,6 +140,15 @@ export interface HandoffReport {
   coverageFilled: number
   /** Ek 2: stratej'in ilk günü */
   firstDay: string[]
+  /** Ek 3: altı soru. Cevap plandan bulunur. Yoksa null kalır. */
+  sixQuestions: SixQuestion[]
+}
+
+export interface SixQuestion {
+  question: string
+  answer: string | null
+  /** Cevabın yazıldığı adım. */
+  step: string
 }
 
 export const HANDOFF_TITLE = 'Strateje devir raporu'
@@ -138,8 +156,8 @@ export const NO_PATHS = 'Yol adayı henüz yazılmadı.'
 export const FIRST_DAY = [
   'Raporu sorgulayın. Hangi cümle kaynaklı, hangisi hesap, hangisi varsayım?',
   'Yolları yan yana karşılaştırın. Her yol neyle kazanır, neyden vazgeçer?',
-  'Bir yol seçin ya da yeni bir yol yazın. Gerekçeyi ve vazgeçilenleri yazın.',
-  'Seçimi 90 günlük yola çevirin. Seçimi değiştirebilecek bilgiyi ilk denemeye koyun.',
+  'Bir yol önerin ya da yeni bir yol yazın. Gerekçeyi ve vazgeçilenleri yazın.',
+  'Öneriyi karar sahibine sunun. Karar sahibi seçince seçimi 90 günlük yola çevirin.',
 ]
 
 type Row = Record<string, unknown>
@@ -190,20 +208,32 @@ function pathColumns(p: PlanDoc): PathColumn[] {
     .map((r, i) => {
       const s = sm.scores?.[String(r._id)] ?? {}
       const total = Object.entries(s).reduce((acc, [k, n]) => acc + Number(n) * (sm.weights?.[k] ?? 1), 0)
+      const ev = linkedEvidence(p, r.evidenceIds)
       return {
         id: String(r._id ?? i),
         name: str(r.name)!,
         baseline: i === 0,
         where: str(r.where),
         how: str(r.how),
+        revenue: str(r.revenue),
+        vehicle: typeof r.vehicle === 'string' && r.vehicle in VEHICLE_LABEL ? VEHICLE_LABEL[r.vehicle as Vehicle] : null,
         giveUp: str(r.giveUp),
         evidence: str(r.evidence),
+        sources: ev.titles,
+        sourced: ev.titles.length > 0,
+        missingEvidence: ev.missing,
         origin: typeof r.origin === 'string' && r.origin in ORIGIN_LABEL ? ORIGIN_LABEL[r.origin as Origin] : null,
         cost: str(r.cost),
         reversible: door(r.reversible),
         score: total > 0 ? total : null,
       }
     })
+}
+
+/** Yolun dayanağı: kanıt bağlıysa "Kaynaklı", bağlı değilse "Varsayım". */
+export function pathBasis(p: PathColumn): string {
+  const missing = p.missingEvidence > 0 ? ` ${p.missingEvidence} bağlı kanıt silinmiş.` : ''
+  return p.sourced ? `Kaynaklı. ${p.sources.join('. ')}.${missing}` : `Varsayım. Kanıt bağlanmadı.${missing}`
 }
 
 /** Katkı kötü, orta ve iyi durumdayken aylık gideri kaç sipariş karşılar? */
@@ -278,6 +308,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   pushMarket(str(v(plan, '08', 'accessPath')) ? `Ulaşma yolu: ${str(v(plan, '08', 'accessPath'))}` : null, '08')
   pushMarket(rivals.length ? `Rakipler ve ikameler: ${rivals.join(', ')}.` : null, '09')
   pushMarket(str(v(plan, '09', 'profitPool')) ? `Parayı kazanan: ${str(v(plan, '09', 'profitPool'))}` : null, '09')
+  for (const f of failedAttemptsOf(plan)) pushMarket(`Bu işi deneyip bırakan: ${f.who}.${f.why ? ` Bırakma nedeni: ${f.why}` : ''}${f.difference ? ` Bizim farkımız: ${f.difference}` : ''}`, '09')
   const som = num(v(plan, '09', 'somCustomers'))
   if (som !== null) marketClaims.push({ text: `Gerçekçi pazar bir yılda ${fmt(som)} müşteridir.`, status: 'hesap', confidence: confidenceOf(marketEvidence ? marketEvidence.ladder : null), source: marketEvidence?.title, step: '09' })
 
@@ -306,6 +337,10 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   if (free.state === 'bilinmiyor') limits.push({ label: 'Serbest bütçe', value: 'Bilinmiyor. Ödenmemiş taahhüt bilinmiyor' })
   const bottleneck = str(v(plan, '12', 'bottleneck'))
   if (bottleneck) limits.push({ label: 'Darboğaz', value: [bottleneck.replace(/\.$/, ''), str(v(plan, '12', 'bottleneckLimit'))].filter(Boolean).join('. Bugünkü sınır: ') })
+  const deps = dependenciesOf(plan)
+  if (deps) limits.push({ label: 'Tek kaynağa bağımlılık', value: `${deps.labels.join(', ')}${deps.note ? `. ${deps.note.replace(/\.$/, '')}` : ''}` })
+  const horizon = str(v(plan, '02', 'horizon'))
+  if (horizon) limits.push({ label: 'Üç yıllık beklenti', value: horizon.replace(/\.$/, '') })
   const owner = [...plan.decisions].reverse().find((d) => d.decidedBy)?.decidedBy
   if (owner) limits.push({ label: 'Karar sahibi', value: owner })
 
@@ -323,6 +358,10 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   if (plan.profile.group) {
     const resource = str(v(plan, '12', 'groupResource'))
     if (resource) kind(`Grubun verdiği ortak kaynak: ${resource}${str(v(plan, '12', 'groupTerms')) ? `. Kullanım koşulu: ${str(v(plan, '12', 'groupTerms'))}` : ''}`, '12', 'karar')
+    const expectation = str(v(plan, '12', 'groupExpectation'))
+    if (expectation) kind(`Grubun beklediği sonuç: ${expectation}`, '12', 'karar')
+    const autonomy = str(v(plan, '12', 'groupAutonomy'))
+    if (autonomy) kind(`Gruba sormadan alınabilen karar: ${autonomy}`, '12', 'karar')
     const demand = v(plan, '12', 'groupDemand')
     if (demand === 'grupIci') kind('Talep grup içinden geliyor. Bu talep bağımsız dış talebin kanıtı değildir.', '12')
     if (demand === 'dis') kind('Talep grubun dışından geliyor.', '12')
@@ -374,13 +413,29 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
 
   const coverage = coverageOf(plan, paths, openDecisions, sensitivity)
   const level = validationLevel(plan)
+  const crux = cruxOf(plan)
+  const conditions = successConditionsOf(plan)
+  const real = paths.filter((x) => !x.baseline)
+  const join = (parts: (string | null | undefined)[]): string | null => {
+    const filled = parts.map((x) => (x ? x.replace(/\.$/, '') : null)).filter((x): x is string => Boolean(x))
+    return filled.length ? `${filled.join('. ')}.` : null
+  }
+  const advantages = strengthsOf(plan).filter((x) => x.level === 'kalici' || x.level === 'gecici' || x.level === 'kullanilmayan')
+  const sixQuestions: SixQuestion[] = [
+    { question: 'Müşterimiz kim ve neye değer veriyor?', answer: join([str(v(plan, '08', 'segmentName')), str(v(plan, '13', 'vpResult'))]), step: '08' },
+    { question: 'Önümüzdeki asıl engel ne?', answer: crux ? crux.text : null, step: '18' },
+    { question: 'Nerede oynuyoruz, neyi yapmıyoruz?', answer: real.length ? join([`Masadaki yollar: ${real.map((x) => x.name).join(', ')}`, real.some((x) => x.giveUp) ? `Vazgeçilenler: ${real.map((x) => x.giveUp).filter(Boolean).join(' ')}` : null]) : null, step: '18' },
+    { question: 'Büyüyünce bizi ne koruyacak?', answer: advantages.length ? join([advantages.map((x) => `${x.name} (${STRENGTH_LABEL[x.level]})`).join(', ')]) : null, step: '12' },
+    { question: 'Hangi koşullar şart ve neyle ölçülür?', answer: conditions.length ? join(conditions.map((c) => `${c.condition.replace(/\.$/, '')}${c.measure ? `, ölçü: ${c.measure}` : ''}`)) : null, step: '18' },
+    { question: 'Bu iş nasıl batar?', answer: join(rows(plan, '17', 'premortem').map((r) => str(r.reason)).slice(0, 3)), step: '17' },
+  ]
   return {
     title: HANDOFF_TITLE,
     stamp: foundation.stamp,
     meta: [`Plan: ${plan.name}`, `Sürüm: ${plan.revision}`, `Doğrulama seviyesi: ${level} / 5. ${LEVELS[level].title}.`, `Oluşturma: ${formatDate(now.toISOString())}`],
     question: decisionQuestion(paths, openDecisions),
-    crux: cruxOf(plan),
-    conditions: successConditionsOf(plan),
+    crux,
+    conditions,
     scope,
     transition,
     locked,
@@ -401,6 +456,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
     coverage,
     coverageFilled: coverage.filter((c) => c.status === 'dolu').length,
     firstDay: FIRST_DAY,
+    sixQuestions,
   }
 }
 
@@ -410,7 +466,7 @@ export function handoffToMarkdown(r: HandoffReport): string {
   const out: string[] = [`# ${r.title}`, '']
   if (r.stamp) out.push(`> ${r.stamp}`, '')
   out.push(...r.meta.map((m) => `- ${m}`), '')
-  out.push('## 1. Stratej bugün hangi kararı verecek?', '', r.question, '')
+  out.push('## 1. Bugün hangi karar verilecek?', '', r.question, '')
   if (r.crux) {
     out.push('### Asıl engel', '', r.crux.text, '')
     if (r.crux.why) out.push(`Neden önce: ${r.crux.why}`, '')
@@ -430,7 +486,7 @@ export function handoffToMarkdown(r: HandoffReport): string {
   if (r.locked.length) out.push('### Verilmiş kararlar', '', ...r.locked.map((l) => `- ${l.text} (${l.source})`), '')
   out.push('## 2. Dayanaklar', '')
   for (const g of r.groups) {
-    out.push(`### ${g.title}`, '', `Stratej'in kararı: ${g.decision}`, '')
+    out.push(`### ${g.title}`, '', `Bu bilgiyle verilecek karar: ${g.decision}`, '')
     if (!g.claims.length) out.push('Henüz yazılmadı.', '')
     else out.push('| Bilgi | Tür | Güven | Kaynak | Karşı bulgu |', '|---|---|---|---|---|', ...g.claims.map((c) => `| ${cell(c.text)} | ${STATUS_LABEL[c.status]} | ${CONFIDENCE_LABEL[c.confidence]} | ${c.source ? `${cell(c.source)}${c.date ? `, ${c.date}` : ''}` : 'Kaynak yok'} | ${c.counter ? cell(c.counter) : 'Yok'} |`), '')
   }
@@ -445,8 +501,11 @@ export function handoffToMarkdown(r: HandoffReport): string {
     const line = (label: string, pick: (p: PathColumn) => string | null) => out.push(`| ${label} | ${r.paths.map((p) => cell(pick(p))).join(' | ')} |`)
     line('Kime ve nereden?', (p) => p.where)
     line('Neyle kazanılır?', (p) => p.how)
+    line('Para nasıl kazanılır?', (p) => p.revenue)
+    line('Nasıl kurulur?', (p) => p.vehicle)
     line('Neyden vazgeçilir?', (p) => p.giveUp)
     line('Destekleyen kanıt', (p) => p.evidence)
+    line('Kanıtın türü', (p) => pathBasis(p))
     line('Hangi sorudan çıktı?', (p) => p.origin)
     line('Bedeli ve süresi', (p) => p.cost)
     line('Geri alınabilir mi?', (p) => (p.reversible ? DOOR_LABEL[p.reversible] : null))
@@ -466,5 +525,6 @@ export function handoffToMarkdown(r: HandoffReport): string {
   if (!r.fragile && !r.assumptions.length && !r.uncertainties.length && !r.scenarios.length && !r.openDecisions.length) out.push('Henüz yazılmadı.', '')
   out.push('## Ek 1. Kapsam', '', `${r.coverageFilled} / ${r.coverage.length} başlık dolu.`, '', ...r.coverage.map((c) => `- ${c.no}. ${c.title}: ${c.status === 'dolu' ? 'dolu' : c.status === 'kismen' ? 'kısmen dolu' : 'boş'} (Adım ${c.step})`), '')
   out.push("## Ek 2. Stratej'in ilk günü", '', ...r.firstDay.map((s, i) => `${i + 1}. ${s}`), '')
+  out.push('## Ek 3. Altı soru', '', ...r.sixQuestions.map((q, i) => `${i + 1}. ${q.question} ${q.answer ?? 'Henüz yazılmadı.'} (Adım ${q.step})`), '')
   return out.join('\n')
 }

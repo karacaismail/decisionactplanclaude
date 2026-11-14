@@ -21,6 +21,12 @@ describe('evalCondition', () => {
     expect(evalCondition({ field: { key: 'mode', equals: 'ucretli' } }, plan, '14', { mode: 'ucretli' })).toBe(true)
   })
 
+  it('boş liste dolu sayılmaz', () => {
+    expect(evalCondition({ field: { key: 'dependencies', truthy: true } }, plan, undefined, { dependencies: [] })).toBe(false)
+    expect(evalCondition({ field: { key: 'dependencies', truthy: true } }, plan, undefined, { dependencies: ['tekKisi'] })).toBe(true)
+    expect(evalCondition({ field: { key: 'dependencies', truthy: false } }, plan, undefined, { dependencies: [] })).toBe(true)
+  })
+
   it('not, all ve any birleşir', () => {
     expect(evalCondition({ not: { profile: { customer: ['isletme'] } } }, plan)).toBe(false)
     expect(evalCondition({ all: [{ profile: { customer: ['isletme'] } }, { profile: { regulation: ['yuksek'] } }] }, plan)).toBe(true)

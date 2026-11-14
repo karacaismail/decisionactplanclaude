@@ -146,3 +146,10 @@
 @media (min-width: 768px) {
   .devir-conditions { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+.devir-basis { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; min-width: 0; overflow-wrap: break-word; }
+.devir-basis .ant-tag { margin: 0; }
+/* Ek 3: altı soru. Soru koyu, cevap altında durur. */
+.devir-six { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; counter-reset: alti; }
+.devir-six > li { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+.devir-six-q { font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.devir-six-a { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }

@@ -22,6 +22,7 @@ export const CHANGE_LABELS: Record<string, string> = {
   successSentence: 'Başarı cümlesi',
   hoursPerWeek: 'Haftalık çalışma saati',
   extraIncome: 'Başka gelir',
+  horizon: 'Üç yıllık beklenti',
 }
 
 /** Kayda geçen sınır alanları. */

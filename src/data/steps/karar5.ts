@@ -1,7 +1,7 @@
 import { breakEvenCalc } from '@/engine/calc'
 import { ADVANTAGE_LEVELS, STRENGTH_LABEL, strengthsOf } from '@/engine/strengths'
 import { CROSS_QUESTIONS, ORIGIN_OPTIONS } from '@/engine/situation'
-import { conditionsCalc, freeBudget, RELATION_OPTIONS } from '@/engine/crux'
+import { conditionsCalc, DEPENDENCY_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
 
@@ -299,6 +299,14 @@ export const KARAR5: StepDef[] = [
         ],
       },
       {
+        title: 'Tek kaynağa bağımlılık',
+        description: 'İşiniz tek bir kaynağa bağlıysa o kaynak gidince iş durur. Size uyanları işaretleyin. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'dependencies', type: 'chips', label: 'İşiniz hangisine bağlı?', options: DEPENDENCY_OPTIONS },
+          { key: 'dependencyNote', type: 'textarea', label: 'Her bağımlılık için bir cümle yazın', help: 'İş neye bağlı? Yedeği ne?', rows: 3, maxLength: 500, placeholder: 'Örneğin: Kahve çekirdeğini tek toptancıdan alıyoruz. İkinci toptancıdan fiyat aldık.', when: { field: { key: 'dependencies', truthy: true } } },
+        ],
+      },
+      {
         title: 'Geri dönülemez kararlar',
         fields: [
           { key: 'irreversible', type: 'chips', label: 'Hangi kararlar geri alınamaz?', options: [
@@ -358,10 +366,10 @@ export const KARAR5: StepDef[] = [
     title: 'Yol adayları',
     question: 'Hangi yollar masada? Her yol neyle kazanır, neyden vazgeçer?',
     mandatory: true,
-    who: 'Kurucu ve ekip. Seçimi bu adımda yapmayın. Seçim stratej\'in işidir.',
+    who: 'Kurucu ve ekip. Bu adımda seçim yapmayın. Stratej yolu önerir. Karar sahibi seçer.',
     timebox: '2 ile 4 gün.',
     shortPath: true,
-    intro: 'Bu adım strateji seçmez. Strateji için adayları hazırlar. Stratej bu adayları yan yana görür ve aralarından seçer. Adım 11\'de bir çözümü denemek için seçtiniz. Bu adımda işin bütün yolunu yazarsınız: hangi müşteri, hangi kanal, neyle kazanma.',
+    intro: 'Bu adım strateji seçmez. Strateji için adayları hazırlar. Stratej bu adayları yan yana görür ve birini önerir. Seçimi karar sahibi yapar. Adım 11\'de bir çözümü denemek için seçtiniz. Bu adımda işin bütün yolunu yazarsınız: hangi müşteri, hangi kanal, neyle kazanma.',
     howTo: [
       'Önce durum özetini okuyun. Özet güçlü yönleri, zayıf yönleri, fırsatları ve tehditleri gösterir.',
       'Dört çapraz soruyu cevaplayın. Örneğin: "Hangi güçlü yönle hangi fırsatı yakalarız?"',
@@ -371,7 +379,7 @@ export const KARAR5: StepDef[] = [
       'Her yol için neyden vazgeçeceğinizi yazın. Bedelini ve geri alınıp alınamayacağını yazın.',
       'Puanlamadan önce ölçütlerin ağırlığını yazın. Ağırlıkları kilitleyin. Sonra her yolu puanlayın.',
       'İsterseniz asıl engeli ve başarı koşullarını yazın. Kanıtı defterden seçin.',
-      'Yol seçmeyin. Stratej\'in vereceği açık kararları listeye yazın.',
+      'Yol seçmeyin. Strateji çalışmasında verilecek açık kararları listeye yazın.',
     ],
     sections: [
       {
@@ -387,8 +395,11 @@ export const KARAR5: StepDef[] = [
             { key: 'name', type: 'text', label: 'Yolun adı' },
             { key: 'where', type: 'text', label: 'Hangi müşteri, bölge ve kanal?' },
             { key: 'how', type: 'text', label: 'Neyle kazanırız?', placeholder: 'Fiyat, farklılık, hız, güven veya uzmanlık' },
+            { key: 'revenue', type: 'text', label: 'Para nasıl kazanılır?', placeholder: 'Tek satış, aylık kart ya da komisyon' },
+            { key: 'vehicle', type: 'select', label: 'Nasıl kurulur?', options: VEHICLE_OPTIONS },
             { key: 'giveUp', type: 'text', label: 'Neyden vazgeçeriz?' },
             { key: 'evidence', type: 'text', label: 'Destekleyen kanıt' },
+            { key: 'evidenceIds', type: 'evidenceLink', label: 'Kanıt defterinden seç', help: 'Kanıt bağlarsanız rapor bu yolu "Kaynaklı" diye gösterir. Bağlamazsanız "Varsayım" diye gösterir.' },
             { key: 'origin', type: 'select', label: 'Hangi sorudan çıktı?', help: 'Yol hangi çapraz sorunun cevabından çıktı? Boş kalabilir.', options: ORIGIN_OPTIONS },
             { key: 'cost', type: 'text', label: 'Bedeli ve süresi', placeholder: '60.000 TL ve 3 hafta' },
             { key: 'reversible', type: 'select', label: 'Geri alınabilir mi?', options: [
@@ -450,6 +461,9 @@ export const KARAR5: StepDef[] = [
         title: 'Başarı neye bağlı?',
         description: 'İşin yürümesi için gerçekleşmesi gereken koşulları yazın. Her koşul bir iddiadır. Kanıt bağlayınca durumu değişir. Bu bölüm isteğe bağlıdır.',
         fields: [
+          { key: 'conditionHelp', type: 'info', label: 'Koşul, ölçü, sınır ve iş ayrı şeylerdir', tone: 'bilgi', text: 'Koşul, işin yürümesi için gerçekleşmesi gereken durumdur. Örneğin "sabah talebi gideri karşılar". Ölçü, koşulu neyle saydığınızdır. Örneğin "günlük ücretli sipariş". Sınır, yeterli saydığınız sayıdır. Örneğin "günde 40 sipariş". İş ise sizin yaptığınız şeydir. Örneğin "durağa tabela koymak". Bu tabloya iş değil, koşul yazın.' },
+          { key: 'conditionSources', type: 'info', label: 'Koşulu dört yerde arayın', tone: 'ipucu', text: 'Birincisi sektörünüzdür. Bu işte herkes için şart olan nedir? İkincisi kendi konumunuzdur. Size özel şart nedir? Üçüncüsü dış koşullardır. Örneğin kira ya da izin. Dördüncüsü bu döneme özgü sorundur. Örneğin açılış gecikmesi.' },
+          { key: 'conditionMarket', type: 'info', label: 'Pazar yeri için üç aday koşul', tone: 'ornek', text: 'Birincisi nitelikli taleptir. Alıcı gerçekten almak istiyor mu? İkincisi cevap veren satıcıdır. Kayıtlı satıcı talebe cevap veriyor mu? Üçüncüsü uygun eşleşmedir. Alıcı zamanında uygun teklif alıyor mu? Bunlar yalnız öneridir. Size uyanı yazın.', when: { profile: { customer: ['pazarYeri'] } } },
           { key: 'successConditions', type: 'repeater', label: 'Başarı koşulları', addLabel: 'Koşul ekle', maxRows: 8, columns: [
             { key: 'condition', type: 'text', label: 'Koşul', placeholder: 'Örneğin sabah talebi günlük gideri karşılar' },
             { key: 'paths', type: 'text', label: 'Hangi yolu etkiler?', placeholder: 'Bütün yollar ya da yolun adı' },
@@ -470,7 +484,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Açık kararlar',
-        description: 'Stratej\'in vereceği kararları yazın. Kararı siz vermeyin. Seçenekleri ve dayanağı yazın.',
+        description: 'Strateji çalışmasında verilecek kararları yazın. Kararı bu adımda vermeyin. Seçenekleri ve dayanağı yazın.',
         fields: [
           { key: 'openDecisions', type: 'repeater', label: 'Açık karar defteri', addLabel: 'Karar ekle', columns: [
             { key: 'question', type: 'text', label: 'Karar sorusu', placeholder: 'Hangi fiyat modelini deneyeceğiz?' },
@@ -537,7 +551,7 @@ export const KARAR5: StepDef[] = [
     intro: 'Strateji bir seçimdir. Seçim vazgeçiş içerir. Vazgeçiş yoksa strateji değil dilek listesi vardır.',
     howTo: [
       'Devir raporundaki yol adaylarını yan yana okuyun. Gerekirse yeni bir yol yazın.',
-      'Bir yol seçin. Gerekçeyi yazın. Hangi kanıta dayandığınızı yazın.',
+      'Stratej bir yol önerir. Karar sahibi yolu seçer. Gerekçeyi ve dayandığı kanıtı yazın.',
       'Neyden vazgeçtiğinizi yazın. Hangi müşteri, bölge, kanal ya da özellik.',
       'Bir hedef yazın. Üç anahtar sonuç yazın. Her sonuç bir sayı olsun.',
       'Yolu üç kutuya bölün. Şimdi, sonra ve daha sonra. Şimdi kutusu ilk 90 gündür.',

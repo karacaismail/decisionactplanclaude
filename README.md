@@ -4,7 +4,7 @@ Bu araç stratejik planlamadan önce yapılacak işleri yaptırır. Araç her id
 
 Aracın bitiş çizgisi geçiş kapısıdır. Karar sahibi orada şu soruya cevap verir: "Dayanak yeterli mi?" Yazılım öneri üretir. Kararı karar sahibi kaydeder.
 
-Strateji çalışmasını stratej yürütür. Stratej, stratejiyi geliştiren kişinin unvanıdır. Yazılım stratej için "Strateje devir raporu" üretir. Yazılım yol seçmez.
+Strateji çalışmasını stratej yürütür. Stratej, stratejiyi geliştiren kişinin unvanıdır. Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder. Yazılım stratej için "Strateje devir raporu" üretir. Yazılım yol seçmez.
 
 ## Yol
 
@@ -31,6 +31,7 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 - Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
 - Karar Kitabı'ndan alınan üç yardımın planı: [docs/karar-kitabi-firsatlari-plani.md](docs/karar-kitabi-firsatlari-plani.md)
 - Codex önerilerinin uygulama notu: [docs/codex-onerileri-uygulama-notu.md](docs/codex-onerileri-uygulama-notu.md)
+- Araştırma analizi ve yedi ekleme: [docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md](docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md)
 - Strateje devir raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
 - Amaç ve ilk boşluk analizi: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)
 - İlk ön yüz uygulama planı: [docs/uygulama-plani-on-yuz.md](docs/uygulama-plani-on-yuz.md)

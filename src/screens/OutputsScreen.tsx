@@ -93,7 +93,7 @@ function HandoffSummary({ report, state, current }: { report: HandoffReport; sta
         <p className="helper report-state">{state}</p>
       </header>
       <section className="report-section" aria-labelledby="devir-ozet-soru">
-        <h3 id="devir-ozet-soru">Stratej bugün hangi kararı verecek?</h3>
+        <h3 id="devir-ozet-soru">Bugün hangi karar verilecek?</h3>
         <p className="devir-question">{report.question}</p>
       </section>
       <FactList

@@ -43,12 +43,12 @@ const hasRows = (x: unknown, keys: string[]): boolean => Array.isArray(x) && x.s
 
 /** Yol adaylarının yazıldığı adım. Bu adım Karar 5'tedir ve kilitli değildir. */
 const PATHS_STEP = '18'
-/** Stratej'in seçim yaptığı adım. Yol adayları tablosu bu adımın üstünde salt okunur durur. */
+/** Seçimin kaydedildiği adım. Stratej önerir, karar sahibi seçer. Yol adayları tablosu bu adımın üstünde salt okunur durur. */
 const CHOICE_STEP = '19'
 
 /**
  * Adım 19 için hedef ve iş önerileri. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
- * "Seçilen yol", "Seçimin gerekçesi" ve "Vazgeçilenler" için öneri ÜRETİLMEZ. Seçimi stratej yapar.
+ * "Seçilen yol", "Seçimin gerekçesi" ve "Vazgeçilenler" için öneri ÜRETİLMEZ. Stratej önerir, karar sahibi seçer.
  * Örnek: Adım 02'deki başarı cümlesi, Adım 19'daki "Hedef" alanı için önerilir.
  */
 function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<string, unknown>): Suggestion[] {
@@ -203,7 +203,7 @@ export function WorkScreen() {
           ) : null}
           {step.id === PATHS_STEP ? (
             <Callout tone="ipucu" title="Bu adımda seçim yok">
-              Bu adımda yol seçmeyin. Stratej bu adaylar arasından seçer.
+              Bu adımda yol seçmeyin. Stratej bu adaylardan birini önerir. Karar sahibi seçer.
             </Callout>
           ) : null}
           {step.id === PATHS_STEP ? (
@@ -214,7 +214,7 @@ export function WorkScreen() {
           ) : null}
           {showPaths && !locked ? (
             <Card className="step-card" variant="borderless" title="Yol adayları" extra={<Link to={stepPath(PATHS_STEP)}>Adım 18'i aç</Link>}>
-              <p className="card-desc">Seçimi siz yaparsınız. Yazılım bu alanı sizin yerinize doldurmaz.</p>
+              <p className="card-desc">Seçimi karar sahibi yapar. Yazılım bu alanı sizin yerinize doldurmaz.</p>
               <PathCompare paths={paths} />
             </Card>
           ) : null}

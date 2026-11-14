@@ -2,7 +2,7 @@ import { Empty, Grid, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { stepPath } from '@/data/registry'
-import { DOOR_LABEL, NO_PATHS, type PathColumn } from '@/reports/handoff'
+import { DOOR_LABEL, NO_PATHS, pathBasis, type PathColumn } from '@/reports/handoff'
 import '@/styles/screens-strateji.css'
 
 interface CompareRow {
@@ -15,8 +15,11 @@ interface CompareRow {
 const ROWS: CompareRow[] = [
   { key: 'where', label: 'Kime ve nereden?', pick: (p) => p.where },
   { key: 'how', label: 'Neyle kazanılır?', pick: (p) => p.how },
+  { key: 'revenue', label: 'Para nasıl kazanılır?', pick: (p) => p.revenue },
+  { key: 'vehicle', label: 'Nasıl kurulur?', pick: (p) => p.vehicle },
   { key: 'giveUp', label: 'Neyden vazgeçilir?', pick: (p) => p.giveUp },
   { key: 'evidence', label: 'Destekleyen kanıt', pick: (p) => p.evidence },
+  { key: 'basis', label: 'Kanıtın türü', pick: (p) => pathBasis(p) },
   { key: 'origin', label: 'Hangi sorudan çıktı?', pick: (p) => p.origin },
   { key: 'cost', label: 'Bedeli ve süresi', pick: (p) => p.cost },
   { key: 'reversible', label: 'Geri alınabilir mi?', pick: (p) => (p.reversible ? DOOR_LABEL[p.reversible] : null) },
@@ -36,7 +39,7 @@ export interface PathCompareProps {
 
 /**
  * Yol adaylarını yan yana gösterir. Sütunlar yollardır, satırlar karşılaştırma ölçüleridir.
- * Bileşen salt okunurdur ve hiçbir yolu öne çıkarmaz. Seçimi stratej yapar.
+ * Bileşen salt okunurdur ve hiçbir yolu öne çıkarmaz. Stratej önerir, karar sahibi seçer.
  * Tablo kendi kabında yatay kayar. Sayfa taşmaz.
  * Dar ekranda ölçü sütunu yoktur. Ölçünün adı her hücrenin üstünde yazar.
  */

@@ -184,6 +184,7 @@ export const KARAR1: StepDef[] = [
           { key: 'deadline', type: 'date', label: 'Bitiş tarihi', required: true, span: 8 },
           { key: 'retriesPerDecision', type: 'number', label: 'Karar başına en çok deneme', required: true, min: 1, max: 4, span: 8 },
           { key: 'hoursPerWeek', type: 'number', label: 'Haftada kaç saat ayıracaksınız?', unit: 'saat', min: 1, max: 80, span: 8 },
+          { key: 'horizon', type: 'textarea', label: 'Üç yıl sonra bu iş nerede olsun?', help: 'Bu cevap bir sınır değildir. Stratej yolları bu beklentiye göre geliştirir. Boş kalabilir.', rows: 2, maxLength: 300, placeholder: 'Örneğin: Mahallede iki şube. Kendi maaşımı işten alıyorum.' },
           { key: 'hoursNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Haftada 10 saatten az zaman var. Karar sürelerini iki katıyla planlayın. Yeni süre ek harcama yetkisi vermez.', when: { all: [{ field: { key: 'hoursPerWeek', truthy: true } }, { not: { field: { key: 'hoursPerWeek', in: [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79, 80] } } }] } },
         ],
       },
