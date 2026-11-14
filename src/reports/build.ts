@@ -39,9 +39,9 @@ const stampOf = (p: PlanDoc): string | undefined => (p.example ? EXAMPLE_STAMP :
 const v = (p: PlanDoc, s: string, k: string): unknown => p.steps[s]?.values?.[k]
 const str = (x: unknown, fallback = 'Bilinmiyor'): string => (typeof x === 'string' && x.trim() ? x : typeof x === 'number' ? String(x) : fallback)
 /** Dolu metin ya da sayı. Boşsa null döner; cümleye girmez. */
-const text = (x: unknown): string | null => (typeof x === 'string' && x.trim() ? x.trim() : typeof x === 'number' ? String(x) : null)
+export const text = (x: unknown): string | null => (typeof x === 'string' && x.trim() ? x.trim() : typeof x === 'number' ? String(x) : null)
 /** Dolu parçaları virgülle birleştirir. Boş parça dizilmez. Hepsi boşsa null döner. */
-const joinFilled = (parts: unknown[], sep = ', '): string | null => {
+export const joinFilled = (parts: unknown[], sep = ', '): string | null => {
   const filled = parts.map(text).filter((x): x is string => x !== null)
   return filled.length ? filled.join(sep) : null
 }
@@ -91,8 +91,10 @@ export function measureLines(measures: (Measure | undefined)[], labels: (string 
 }
 /** Problem cümlesi: kim, hangi durumda, hangi iş. Boş parça dizilmez. Hepsi boşsa tek cümle. */
 export function problemLines(p: PlanDoc, label = 'Problem'): string[] {
-  const core = joinFilled([v(p, '05', 'who'), v(p, '05', 'context'), v(p, '05', 'job')])
-  const obstacle = text(v(p, '05', 'obstacle'))
+  /* Adım 05 alan adları: problemWho, problemWhen, problemJob, problemBlocker. Eski kayıtlar kısa adları taşıyabilir. */
+  const f = (key: string, old: string): unknown => v(p, '05', key) ?? v(p, '05', old)
+  const core = joinFilled([f('problemWho', 'who'), f('problemWhen', 'context'), f('problemJob', 'job')].map((x) => text(x)?.replace(/\.$/, '')))
+  const obstacle = text(f('problemBlocker', 'obstacle'))?.replace(/\.$/, '') ?? null
   if (!core && !obstacle) return [`${label} henüz yazılmadı.`]
   const lines: string[] = []
   if (core) lines.push(`${label}: ${core}.`)
@@ -100,10 +102,10 @@ export function problemLines(p: PlanDoc, label = 'Problem'): string[] {
   return lines
 }
 /** Risk satırı: yalnız dolu parçalar yazılır. */
-const riskLine = (r: Record<string, unknown>): string =>
+export const riskLine = (r: Record<string, unknown>): string =>
   [['Risk', r.risk], ['Tetikleyici', r.trigger], ['Yanıt', r.response], ['Sahip', r.owner]]
     .filter(([, val]) => text(val) !== null)
-    .map(([label, val]) => `${label}: ${text(val)}.`)
+    .map(([label, val]) => `${label}: ${text(val)?.replace(/\.+$/, '')}.`)
     .join(' ')
 
 const PROFILE_LABEL: Record<string, Record<string, string>> = {

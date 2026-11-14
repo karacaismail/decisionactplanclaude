@@ -3,8 +3,8 @@ import { Button, Empty, Input, List, Modal } from 'antd'
 import { useNavigate } from 'react-router'
 import { ArrowElbowDownLeft, BookOpen, Compass, Flag, ListChecks, MagnifyingGlass, SquaresFour } from '@phosphor-icons/react'
 import { create } from 'zustand'
-import { DECISIONS } from '@/data/decisions'
-import { STEPS } from '@/data/registry'
+import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
+import { STEPS, stepPath } from '@/data/registry'
 import models from '@/data/models.json'
 import '@/styles/screens-karar.css'
 
@@ -35,13 +35,17 @@ const MAX_RESULTS = 12
 
 const SCREENS: { title: string; to: string; subtitle: string }[] = [
   { title: 'Planlar', to: '/', subtitle: 'Bütün planlar' },
-  { title: 'Plan özeti', to: '/ozet', subtitle: 'Açık karar ve kapılar' },
+  { title: 'Plan özeti', to: '/ozet', subtitle: 'Sıradaki iş, yol ve kapılar' },
+  { title: 'Geçiş kapısı', to: '/gecis', subtitle: 'Dayanak yeterli mi? Geçiş kararı' },
+  { title: 'Strateji çalışması', to: '/strateji', subtitle: 'Adım 18, 19 ve 20' },
+  { title: 'Temel taşları', to: '/temel', subtitle: 'Yirmi temel taşı ve kanıt gücü' },
+  { title: 'Varsayımlar', to: '/varsayimlar', subtitle: 'Denenmedi, doğrulandı, çürüdü' },
   { title: 'Devralma', to: '/devralma', subtitle: 'Çalışan işi devralma girişi' },
   { title: 'Kanıtlar', to: '/kanitlar', subtitle: 'Gözlem, tahmin ve varsayımlar' },
   { title: 'İşler', to: '/isler', subtitle: 'Açık işler ve sorumlular' },
   { title: 'Göstergeler', to: '/gostergeler', subtitle: 'Grafikler ve ölçüler' },
-  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Yönetici özeti ve aksiyon planı' },
-  { title: 'Geçmiş', to: '/gecmis', subtitle: 'Karar ve değişiklik kaydı' },
+  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Temel belgesi, yönetici raporu ve aksiyon planı' },
+  { title: 'Geçmiş', to: '/gecmis', subtitle: 'Karar, geçiş ve değişiklik kaydı' },
   { title: 'Karar Kitabı', to: '/yontemler', subtitle: '128 yöntem' },
 ]
 
@@ -54,7 +58,8 @@ interface ModelRow {
 function buildItems(): Item[] {
   const out: Item[] = []
   for (const d of DECISIONS) out.push({ id: `karar-${d.n}`, group: 'Kararlar', title: `Karar ${d.n}. ${d.title}`, subtitle: d.question, to: `/karar/${d.n}` })
-  for (const s of Object.values(STEPS)) out.push({ id: `adim-${s.id}`, group: 'Adımlar', title: `Adım ${s.id}. ${s.title}`, subtitle: `Karar ${s.decision}`, to: `/karar/${s.decision}/adim/${s.id}` })
+  /* Adım 18, 19 ve 20 bir karara değil strateji çalışmasına bağlıdır. Adres kayıt defterinden gelir. */
+  for (const s of Object.values(STEPS)) out.push({ id: `adim-${s.id}`, group: 'Adımlar', title: `Adım ${s.id}. ${s.title}`, subtitle: s.decision === STRATEGY_N ? STRATEGY.title : `Karar ${s.decision}`, to: stepPath(s.id) })
   for (const m of models as ModelRow[]) out.push({ id: `yontem-${m.g}`, group: 'Yöntemler', title: m.title, subtitle: m.section, to: '/yontemler' })
   for (const s of SCREENS) out.push({ id: `ekran-${s.to}`, group: 'Ekranlar', title: s.title, subtitle: s.subtitle, to: s.to })
   return out
@@ -64,10 +69,11 @@ const ITEMS = buildItems()
 
 const fold = (s: string) => s.toLocaleLowerCase('tr-TR')
 
-/** Sorguya uyan en çok 12 sonuç. Boş sorguda ekranlar ve kararlar gelir. */
+/** Sorguya uyan en çok 12 sonuç. Boş sorguda bütün ekranlar ve kararlar gelir. */
 export function searchItems(query: string): Item[] {
   const q = fold(query.trim())
-  if (!q) return [...ITEMS.filter((i) => i.group === 'Ekranlar'), ...ITEMS.filter((i) => i.group === 'Kararlar')].slice(0, MAX_RESULTS)
+  /* Sıra ekrandaki grup sırasıyla aynıdır. Böylece ok tuşları görünen sırayla gezer. */
+  if (!q) return [...ITEMS.filter((i) => i.group === 'Kararlar'), ...ITEMS.filter((i) => i.group === 'Ekranlar')]
   const words = q.split(/\s+/).filter(Boolean)
   const score = (i: Item): number => {
     const title = fold(i.title)

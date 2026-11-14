@@ -186,6 +186,8 @@ export const KARAR4: StepDef[] = [
         title: 'Eşik ve süre',
         fields: [
           { key: 'threshold', type: 'threshold', label: 'Başarı eşiği. Kaç taahhüt gelirse test başarılıdır?', unit: 'taahhüt', help: 'Testten önce yazın. Dayanak yazın. Yalnız 1, 2 ve 3. basamaktaki taahhütler sayılır.' },
+          { key: 'priceOfferedKurus', type: 'money', label: 'Teklif ettiğiniz fiyat', help: 'Müşteriye söylediğiniz gerçek fiyat.', span: 12 },
+          { key: 'priceAcceptedCount', type: 'number', label: 'Bu fiyatı kabul eden kişi sayısı', unit: 'kişi', min: 0, span: 12 },
           { key: 'startDate', type: 'date', label: 'Başlangıç tarihi', span: 12 },
           { key: 'endDate', type: 'date', label: 'Bitiş tarihi', help: 'En çok 3 hafta sonra.', span: 12 },
         ],

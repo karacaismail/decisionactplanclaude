@@ -32,7 +32,7 @@ export function EvidenceScreen() {
   const plan = useCurrentPlan()
   const addEvidence = usePlanStore((s) => s.addEvidence)
   const updateEvidence = usePlanStore((s) => s.updateEvidence)
-  const update = usePlanStore((s) => s.update)
+  const removeEvidence = usePlanStore((s) => s.removeEvidence)
   const [panel, setPanel] = useState<Panel | null>(null)
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<string[]>([])
@@ -82,9 +82,9 @@ export function EvidenceScreen() {
     setPanel(null)
   }
   const removeSelected = () => {
-    const ids = new Set(selected)
-    update((p) => { p.evidence = p.evidence.filter((e) => !ids.has(e.id)) })
-    message.success(`${ids.size} kanıt silindi.`)
+    // Depo kanıtı siler, bağlı kararları ve geçiş kararını eskitir.
+    removeEvidence(selected)
+    message.success(`${selected.length} kanıt silindi.`)
     setSelected([])
     setConfirmOpen(false)
   }
@@ -196,7 +196,7 @@ export function EvidenceScreen() {
             <Popconfirm
               open={confirmOpen}
               title="Seçilen kanıtlar silinsin mi?"
-              description="Silinen kanıt geri gelmez. Adımlardaki bağlantılar düşer."
+              description="Bu kanıta dayanan kararlar yeniden inceleme ister."
               okText="Sil"
               cancelText="Vazgeç"
               okButtonProps={{ danger: true }}

@@ -159,6 +159,95 @@
     border-left-color: #000 !important;
   }
 
+  /*
+   * Temel belgesi tek A4 sayfaya yakın basılır. Yazı 14 px, aralıklar dardır.
+   * Kenar boşluğu adlı sayfa ile daraltılır. Soru bloğu sayfa ortasından bölünmez.
+   */
+  @page temel {
+    size: A4;
+    margin: 12mm 14mm 14mm;
+  }
+
+  .report-foundation {
+    page: temel;
+    gap: 12px !important;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .report-foundation h2.report-title {
+    font-size: 22px !important;
+  }
+
+  .report-foundation h3,
+  .report-foundation .foundation-question,
+  .report-foundation .foundation-heading {
+    font-size: 16px !important;
+    color: #000 !important;
+  }
+
+  .report-foundation .report-head,
+  .report-foundation .report-section {
+    gap: 4px !important;
+  }
+
+  /* Altı soru kağıtta iki sütuna akar: ilk üç soru solda, son üç soru sağda. Böylece belge tek sayfaya yaklaşır. */
+  .report-foundation .foundation-summary {
+    display: block !important;
+    column-count: 2;
+    column-gap: 20px;
+  }
+
+  .report-foundation .foundation-block {
+    gap: 2px !important;
+    margin: 0 0 10px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Üst bilgi çiftleri iki sütuna dizilir. Böylece başlık bölümü kısalır. */
+  .report-foundation .report-facts.ant-descriptions tbody {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0 20px;
+  }
+
+  .report-foundation .report-facts.ant-descriptions tr,
+  .report-foundation .report-facts.ant-descriptions td {
+    display: block;
+    min-width: 0;
+  }
+
+  .report-foundation .foundation-lines,
+  .report-foundation .foundation-source,
+  .report-foundation .foundation-more,
+  .report-foundation .helper,
+  .report-foundation .note-body,
+  .report-foundation .ant-descriptions-item-label,
+  .report-foundation .ant-descriptions-item-content {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    color: #000 !important;
+  }
+
+  .report-foundation .foundation-lines {
+    gap: 0 !important;
+  }
+
+  .report-foundation .report-facts.ant-descriptions .ant-descriptions-row > th,
+  .report-foundation .report-facts.ant-descriptions .ant-descriptions-row > td {
+    padding-bottom: 2px !important;
+  }
+
+  .report-foundation .foundation-closing {
+    padding-top: 10px !important;
+    border-top: 1px solid #999 !important;
+  }
+
+  .report-foundation .note {
+    padding: 2px 0 2px 12px !important;
+  }
+
   a,
   a:visited {
     color: inherit !important;

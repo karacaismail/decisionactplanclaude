@@ -1,17 +1,21 @@
 import { useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
+import { useSearchParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
+import { buildActionPlan, buildExecutiveReport, factOf, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
+import { buildFoundationDoc, foundationToMarkdown, type FoundationDoc } from '@/reports/foundation'
 import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
+import { FoundationSummary } from '@/components/FoundationSummary'
 import '@/styles/screens-rapor.css'
+import '@/styles/screens-strateji.css'
 import '@/styles/print.css'
 
-type Kind = 'yonetici' | 'aksiyon'
-const KIND_LABEL: Record<Kind, string> = { yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
+type Kind = 'temel' | 'yonetici' | 'aksiyon'
+const KIND_LABEL: Record<Kind, string> = { temel: 'Temel belgesi', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
 /** Güncel taslağın seçici değeri. Sürüm kimlikleri "surum-" ile başlar, çakışmaz. */
 const CURRENT = 'guncel'
 
@@ -73,7 +77,46 @@ function SectionBody({ s }: { s: ReportSection }) {
 }
 
 /**
- * Çıktılar. İki belge aynı veriden üretilir. Masaüstünde iki sütun:
+ * Temel belgesinin gövdesi: altı soru, kaynak satırları, altta geçiş kararı ve açık kalanlar.
+ * Bölümler telefonda da açık durur. Belge tek sayfaya yakın basılır (print.css, `.report-foundation`).
+ */
+function FoundationBody({ doc, state }: { doc: FoundationDoc; state: string }) {
+  /* "Geçiş kararı" bölümü kararın yokluğunu zaten söyler. Aynı cümle "Açık kalanlar" altında yinelenmez. */
+  const openItems = doc.transition ? doc.openItems : doc.openItems.filter((l) => l !== 'Geçiş kararı henüz kaydedilmedi.')
+  return (
+    <article className="report report-foundation">
+      <header className="report-head">
+        {doc.stamp ? <Callout tone="uyari" title="Örnek">{doc.stamp}</Callout> : null}
+        <h2 className="report-title">{doc.title}</h2>
+        <FactList facts={doc.meta.map(factOf)} />
+        <p className="helper report-state">{state}</p>
+      </header>
+      <FoundationSummary doc={doc} />
+      <section className="report-section foundation-closing" aria-labelledby="temel-gecis-karari">
+        <h3 id="temel-gecis-karari" className="foundation-heading">Geçiş kararı</h3>
+        {doc.transition ? (
+          <ul className="foundation-lines">
+            {doc.transition.lines.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        ) : (
+          <p className="foundation-source">Geçiş kararı henüz kaydedilmedi. Karar, geçiş kapısında kaydedilir.</p>
+        )}
+      </section>
+      {openItems.length ? (
+        <section className="report-section" aria-labelledby="temel-acik-kalanlar">
+          <h3 id="temel-acik-kalanlar" className="foundation-heading">Açık kalanlar</h3>
+          <ul className="foundation-lines">
+            {openItems.map((l, i) => <li key={i}>{l}</li>)}
+          </ul>
+        </section>
+      ) : null}
+    </article>
+  )
+}
+
+/**
+ * Çıktılar. Üç belge aynı veriden üretilir: temel belgesi, yönetici raporu ve girişimci aksiyon planı.
+ * Varsayılan sekme yönetici raporudur. Adres `?belge=temel` taşırsa temel belgesi açılır. Masaüstünde iki sütun:
  * solda belge kartı (sekmeler, içindekiler, belge), sağda "Sürümler" ve "Dışa aktar" kartları.
  * Telefonda tek sütun; rapor bölümleri akordeondur ve ilk bölüm açık gelir. Yazdırmada yalnız belge kalır.
  */
@@ -83,7 +126,8 @@ export function OutputsScreen() {
   const snapshot = usePlanStore((s) => s.snapshot)
   const bp = Grid.useBreakpoint()
   const wide = Boolean(bp.md)
-  const [kind, setKind] = useState<Kind>('yonetici')
+  const [params] = useSearchParams()
+  const [kind, setKind] = useState<Kind>(params.get('belge') === 'temel' ? 'temel' : 'yonetici')
   const [versionId, setVersionId] = useState<string>(CURRENT)
   const [pinLabel, setPinLabel] = useState('')
 
@@ -96,12 +140,18 @@ export function OutputsScreen() {
     return parseSnapshot(revision)
   }, [plan, revision])
   const report: Report | null = useMemo(() => {
-    if (!viewed) return null
+    if (!viewed || kind === 'temel') return null
     const base = kind === 'yonetici' ? buildExecutiveReport(viewed) : buildActionPlan(viewed)
+    return revision ? { ...base, meta: [...base.meta, `Sürüm kaydı: ${formatDate(revision.createdAt)}`] } : base
+  }, [viewed, kind, revision])
+  const foundation: FoundationDoc | null = useMemo(() => {
+    if (!viewed || kind !== 'temel') return null
+    const base = buildFoundationDoc(viewed)
     return revision ? { ...base, meta: [...base.meta, `Sürüm kaydı: ${formatDate(revision.createdAt)}`] } : base
   }, [viewed, kind, revision])
 
   if (!plan) return null
+  const hasDoc = kind === 'temel' ? Boolean(foundation) : Boolean(report)
 
   const versionOptions = [
     { value: CURRENT, label: 'Güncel taslak' },
@@ -110,7 +160,8 @@ export function OutputsScreen() {
   const versionSlug = revision ? `surum-${versionIndex + 1}` : `taslak-surum-${plan.revision}`
   const slug = slugify(plan.name)
   const isCurrent = !revision
-  const publish = () => update((p) => p.outputs.push({ id: uid('cikti'), kind, revision: viewed?.revision ?? p.revision, createdAt: new Date().toISOString() }))
+  /* Yayım kaydı yalnız iki rapor içindir. Temel belgesi yayım listesine yazılmaz. */
+  const publish = (k: 'yonetici' | 'aksiyon') => update((p) => p.outputs.push({ id: uid('cikti'), kind: k, revision: viewed?.revision ?? p.revision, createdAt: new Date().toISOString() }))
   const pin = () => {
     const label = pinLabel.trim() || `${KIND_LABEL[kind]} çıktısı`
     snapshot(label)
@@ -120,10 +171,15 @@ export function OutputsScreen() {
     setPinLabel('')
   }
   const downloadMarkdown = () => {
+    if (kind === 'temel') {
+      if (foundation) download(`${slug}-temel-belgesi-${versionSlug}.md`, foundationToMarkdown(foundation), 'text/markdown')
+      return
+    }
     if (!report) return
-    publish()
+    publish(kind)
     download(`${slug}-${kind}-${versionSlug}.md`, reportToMarkdown(report), 'text/markdown')
   }
+  const stateText = isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : `Sürüm kaydı: ${formatDate(revision!.createdAt)}. Bu sürüm donduruldu. Sonraki değişiklikler bu belgeyi etkilemez.`
   const downloadJson = () => {
     if (viewed) download(`${slug}-veri-${versionSlug}.json`, JSON.stringify(viewed, null, 2), 'application/json')
   }
@@ -163,21 +219,24 @@ export function OutputsScreen() {
   return (
     <div className="page page-rapor">
       <div className="no-print">
-        <PageHeader kicker="Çıktılar" title="Çıktılar" description="İki belge aynı veri sürümünden üretilir. Eksik bilgi uydurulmaz. Eksik yere “Bilinmiyor” yazılır." />
+        <PageHeader kicker="Çıktılar" title="Çıktılar" description="Üç belge aynı veri sürümünden üretilir. Eksik bilgi uydurulmaz. Eksik yere “Bilinmiyor” yazılır." />
       </div>
 
       <div className="report-layout">
         <Card
           className="report-card"
           tabList={[
+            { key: 'temel', label: KIND_LABEL.temel },
             { key: 'yonetici', label: KIND_LABEL.yonetici },
             { key: 'aksiyon', label: KIND_LABEL.aksiyon },
           ]}
           activeTabKey={kind}
           onTabChange={(k) => setKind(k as Kind)}
-          tabProps={{ rootClassName: 'report-tabs', size: 'middle' }}
+          tabProps={{ rootClassName: 'report-tabs report-tabs-wrap', size: 'middle' }}
         >
-          {!report || !viewed ? (
+          {kind === 'temel' && foundation ? (
+            <FoundationBody doc={foundation} state={stateText} />
+          ) : !report || !viewed ? (
             <Callout tone="uyari" danger title="Bu sürüm okunamadı">Kayıtlı sürüm verisi bozuk. Güncel taslağı seçin ya da başka bir sürüm deneyin.</Callout>
           ) : (
             <>
@@ -242,12 +301,12 @@ export function OutputsScreen() {
 
           <Card title="Dışa aktar">
             <div className="export-actions">
-              <Button type="primary" block icon={<Printer size={16} />} onClick={() => window.print()} disabled={!report}>Yazdır veya PDF</Button>
-              <Button block icon={<DownloadSimple size={16} />} onClick={downloadMarkdown} disabled={!report}>Markdown indir</Button>
+              <Button type="primary" block icon={<Printer size={16} />} onClick={() => window.print()} disabled={!hasDoc}>Yazdır veya PDF</Button>
+              <Button block icon={<DownloadSimple size={16} />} onClick={downloadMarkdown} disabled={!hasDoc}>Markdown indir</Button>
               <Button block icon={<FileCode size={16} />} onClick={downloadJson} disabled={!viewed}>JSON indir</Button>
             </div>
             {plan.outputs.length === 0 ? (
-              <p className="helper">Markdown indirince belge yayımlanmış sayılır. Yayımlanan belgeler burada listelenir.</p>
+              <p className="helper">Markdown indirince yönetici raporu ve aksiyon planı yayımlanmış sayılır. Yayımlanan belgeler burada listelenir.</p>
             ) : (
               <ul className="published-list" aria-label="Yayımlanan belgeler">
                 {[...plan.outputs].reverse().map((o) => (

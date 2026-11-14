@@ -1,21 +1,86 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Anchor, Button, Card, Collapse, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
+import { Anchor, Button, Card, Collapse, ConfigProvider, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
 import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { STEPS, nextStepId, prevStepId, decisionOf } from '@/data/registry'
+import { STEPS, nextStepId, prevStepId, decisionOf, groupLabel, stepPath } from '@/data/registry'
+import { STRATEGY_N } from '@/data/decisions'
+import { decisionLocked, lockReason } from '@/engine/gate'
+import { uid } from '@/engine/format'
 import { stepApplies } from '@/engine/conditions'
 import { FormRenderer, sectionStats, type SectionStat } from '@/components/FormRenderer'
 import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
+import { FoundationSummary } from '@/components/FoundationSummary'
 import { ChartFrame } from '@/charts/ChartFrame'
 import type { StepDef } from '@/data/schema'
-import type { Limits } from '@/data/types'
+import type { Limits, PlanDoc } from '@/data/types'
 import '@/styles/screens-form.css'
+import '@/styles/screens-strateji.css'
 
 const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBurnKurus', 'cashKurus', 'budgetKurus', 'deadline', 'retriesPerDecision', 'hoursPerWeek']
+
+/** Temel adımlarından gelen öneri. Kayda kendiliğinden yazılmaz. Kullanıcı "Alana yaz" düğmesine basarsa yazılır. */
+interface Suggestion {
+  key: string
+  /** Önerinin yazılacağı alanın adı. */
+  label: string
+  /** Ekranda gösterilen öneri metni. */
+  display: string
+  /** Önerinin geldiği yer. Örneğin "Adım 11, denenecek birinci yol". */
+  source: string
+  /** Alana yazılacak değeri üretir. Satır kimliği yazma anında verilir. */
+  build: () => unknown
+}
+
+const filledText = (x: unknown): string | null => (typeof x === 'string' && x.trim() ? x.trim() : null)
+const hasRows = (x: unknown, keys: string[]): boolean => Array.isArray(x) && x.some((r) => keys.some((k) => filledText((r as Record<string, unknown>)?.[k])))
+
+/**
+ * Adım 18 ve Adım 19 için öneriler. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
+ * Örnek: Adım 11'deki "birinci yol", Adım 18'deki "Seçilen yol" alanı için önerilir.
+ */
+function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<string, unknown>): Suggestion[] {
+  const from = (step: string, key: string): unknown => plan.steps[step]?.values?.[key]
+  const out: Suggestion[] = []
+  if (stepId === '18') {
+    const firstPath = filledText(from('11', 'testOption1'))
+    if (firstPath && !isFilled(values.chosenPath)) {
+      out.push({ key: 'chosenPath', label: 'Seçilen yol', display: firstPath, source: 'Adım 11, denenecek birinci yol', build: () => firstPath })
+    }
+    const segment = filledText(from('08', 'segmentName'))
+    const channel = filledText(from('08', 'accessChannel')) ?? filledText(from('08', 'accessPath'))
+    if (segment && !hasRows(values.paths, ['name', 'where', 'how'])) {
+      const where = [segment, channel].filter(Boolean).map((x) => String(x).replace(/\.+$/, '')).join('. ') + '.'
+      out.push({
+        key: 'paths',
+        label: 'Olası yollar, ilk satır',
+        display: `Hedef müşteri ve kanal: ${where}${firstPath ? ` Yolun adı: ${firstPath}` : ''}`,
+        source: 'Adım 08, ilk müşteri grubu ve ulaşma yolu',
+        build: () => [{ _id: uid('satir'), name: firstPath ?? '', where }],
+      })
+    }
+  }
+  if (stepId === '19') {
+    const success = filledText(plan.limits.successSentence)
+    if (success && !isFilled(values.objective)) {
+      out.push({ key: 'objective', label: 'Hedef', display: success, source: 'Adım 02, başarı cümlesi', build: () => success })
+    }
+    const threshold = (from('15', 'threshold') as { value?: number | null } | undefined)?.value
+    if (typeof threshold === 'number' && !hasRows(values.keyResults, ['kr', 'target'])) {
+      out.push({
+        key: 'keyResults',
+        label: 'Anahtar sonuçlar, ilk satır',
+        display: `Taahhüt veren müşteri sayısı. Hedef sayı: ${threshold}.`,
+        source: 'Adım 15, talep testinin eşiği',
+        build: () => [{ _id: uid('satir'), kr: 'Taahhüt veren müşteri sayısı', target: String(threshold) }],
+      })
+    }
+  }
+  return out
+}
 
 /**
  * Adım ekranı. Üstte sayfa başlığı ve etiket satırı. Ortada bölüm kartları (form) ve sağda "Bu adım" kartı.
@@ -24,10 +89,12 @@ const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBu
  * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
  * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
  * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
+ * Adım 18, 19 ve 20 strateji çalışmasıdır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
+ * Adresler adımın kendi grubundan üretilir (`stepPath`). Adresteki karar numarası okunmaz.
  */
 export function WorkScreen() {
   const bp = Grid.useBreakpoint()
-  const { n, id } = useParams()
+  const { id } = useParams()
   const nav = useNavigate()
   const { message } = AntApp.useApp()
   const plan = useCurrentPlan()
@@ -49,15 +116,20 @@ export function WorkScreen() {
   }, [step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (step) setLocation(`/karar/${n}/adim/${step.id}`)
+    if (step) setLocation(stepPath(step.id))
   }, [step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   if (!plan || !step) return null
   const decision = decisionOf(step.decision)
   const applies = stepApplies(step.mandatory, plan)
   const wide = Boolean(bp.xl)
+  const isStrategy = step.decision === STRATEGY_N
+  /* Strateji adımı geçiş kapısı kararı olmadan salt okunurdur. Hiçbir yazma işlemi yapılmaz. */
+  const locked = isStrategy && decisionLocked(plan, STRATEGY_N)
+  const gatePath = isStrategy ? '/strateji' : `/karar/${step.decision}/kapi`
 
   const persist = (next: Record<string, unknown>, status?: 'tamam') => {
+    if (locked) return
     if (isProfile) setProfile(next)
     else setStepValues(step.id, next, status)
     if (step.id === '02') {
@@ -67,12 +139,14 @@ export function WorkScreen() {
     }
   }
   const onChange = (key: string, v: unknown) => {
+    if (locked) return
     const next = { ...values, [key]: v }
     setValues(next)
     if (timer.current) window.clearTimeout(timer.current)
     timer.current = window.setTimeout(() => persist(next), 400)
   }
   const complete = () => {
+    if (locked) return
     const missing = (step.completeWhen ?? []).filter((k) => !isFilled(values[k]))
     if (missing.length) {
       message.warning(`Eksik alan var: ${missing.length}. Zorunlu alanları doldurun.`)
@@ -81,8 +155,8 @@ export function WorkScreen() {
     persist(values, 'tamam')
     message.success('Adım tamamlandı.')
     const nx = nextStepId(step.id)
-    if (nx && STEPS[nx].decision === step.decision) nav(`/karar/${n}/adim/${nx}`)
-    else nav(`/karar/${n}/kapi`)
+    if (nx && STEPS[nx].decision === step.decision) nav(stepPath(nx))
+    else nav(gatePath)
   }
   const prev = prevStepId(step.id)
   const next = nextStepId(step.id)
@@ -92,11 +166,17 @@ export function WorkScreen() {
   const title = `Adım ${step.id}. ${step.title}`
   const stats = sectionStats(step, plan, values)
   const example = decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null
+  const suggestions = isStrategy && !locked ? foundationSuggestions(step.id, plan, values) : []
+  const applySuggestion = (s: Suggestion) => {
+    onChange(s.key, s.build())
+    message.success('Öneri alana yazıldı. Alanı düzenleyebilirsiniz.')
+  }
+  const form = <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
 
   return (
     <div className="page">
       <div className="work-head">
-        <PageHeader kicker={decision ? `Karar ${step.decision}. ${decision.title}` : undefined} title={title} description={step.question} documentTitle={title} />
+        <PageHeader kicker={decision ? groupLabel(step.decision) : undefined} title={title} description={step.question} documentTitle={title} />
         <div className="work-meta">
           {applies === 'zorunlu' ? <Tag color="processing">Zorunlu</Tag> : applies === 'kosullu' ? <Tag>Koşullu</Tag> : <Tag>Bu profilde gerekmez</Tag>}
           {rec?.status === 'tamam' ? <Tag color="success">Tamam</Tag> : rec?.status === 'atlandi' ? <Tag>Atlandı</Tag> : null}
@@ -110,8 +190,45 @@ export function WorkScreen() {
         <div className="work-main">
           {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
           {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için alt şeritteki "Daha fazla" menüsünden "Bu adımı atla" seçeneğini kullanın.</Callout> : null}
+          {locked ? (
+            <Callout tone="uyari" title="Bu adım kilitli">
+              {lockReason(plan, STRATEGY_N)} Adımı okuyabilirsiniz. Alanlar ve kayıt düğmeleri kapalıdır.
+              <span className="work-lock-links">
+                <Link to="/gecis">Geçiş kapısına git</Link>
+                <Link to="/strateji">Strateji özetine dön</Link>
+              </span>
+            </Callout>
+          ) : null}
+          {isStrategy && !locked ? (
+            <Collapse
+              className="aside-collapse foundation-collapse"
+              expandIconPlacement="end"
+              items={[{ key: 'dayanak', label: 'Dayanak özeti', children: <FoundationSummary plan={plan} compact /> }]}
+            />
+          ) : null}
+          {suggestions.length ? (
+            <Card className="step-card suggest-card" variant="borderless" title="Temelden gelen öneriler" extra={<Tag>{suggestions.length} öneri</Tag>}>
+              <p className="card-desc">Öneriler temel adımlarındaki cevaplarınızdan gelir. Öneri kendiliğinden kaydedilmez. "Alana yaz" düğmesine basarsanız öneri ilgili alana yazılır.</p>
+              <ul className="suggest-list">
+                {suggestions.map((s) => (
+                  <li key={s.key} className="suggest-item">
+                    <span className="suggest-text">
+                      <span className="suggest-label">{s.label} <Tag>Taslak</Tag></span>
+                      <span className="suggest-value">{s.display}</span>
+                      <span className="helper">Kaynak: {s.source}.</span>
+                    </span>
+                    <Button onClick={() => applySuggestion(s)} aria-label={`Alana yaz: ${s.label}`}>Alana yaz</Button>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ) : null}
           {step.intro ? <p className="work-intro">{step.intro}</p> : null}
-          <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
+          {locked ? (
+            <ConfigProvider componentDisabled>
+              <fieldset className="work-lock" disabled aria-label="Kilitli form">{form}</fieldset>
+            </ConfigProvider>
+          ) : form}
           {chartData && step.chart ? (
             <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} />
           ) : null}
@@ -187,24 +304,24 @@ export function WorkScreen() {
       </div>
 
       <div className="action-bar step-actions no-print">
-        {prev ? <Link className="bar-link" to={`/karar/${STEPS[prev].decision}/adim/${prev}`}>Geri</Link> : null}
+        {prev ? <Link className="bar-link" to={stepPath(prev)}>Geri</Link> : null}
         <span className="spacer" />
         <Dropdown
           trigger={['click']}
           placement="topRight"
-          menu={{ items: [{ key: 'atla', label: 'Bu adımı atla' }], onClick: ({ key }) => { if (key === 'atla') setSkipOpen(true) } }}
+          menu={{ items: [{ key: 'atla', label: 'Bu adımı atla', disabled: locked }], onClick: ({ key }) => { if (key === 'atla' && !locked) setSkipOpen(true) } }}
         >
           <Button type="text" className="bar-more" aria-label="Daha fazla" icon={<DotsThree size={20} weight="bold" />} />
         </Dropdown>
         {nextInDecision ? (
-          <Button className="bar-draft" onClick={() => { persist(values); nav(`/karar/${n}/adim/${nextInDecision}`) }}>Taslak bırak, ilerle</Button>
+          <Button className="bar-draft" disabled={locked} onClick={() => { persist(values); nav(stepPath(nextInDecision)) }}>Taslak bırak, ilerle</Button>
         ) : (
-          <Button className="bar-draft" onClick={() => { persist(values); nav(`/karar/${n}/kapi`) }}>Kapıya git</Button>
+          <Button className="bar-draft" onClick={() => { persist(values); nav(gatePath) }}>{isStrategy ? 'Strateji özetine git' : 'Kapıya git'}</Button>
         )}
-        <Button type="primary" onClick={complete}>Adımı tamamla</Button>
+        <Button type="primary" disabled={locked} onClick={complete}>Adımı tamamla</Button>
       </div>
 
-      <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(`/karar/${STEPS[next].decision}/adim/${next}`) }}>
+      <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { if (locked) return; skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(stepPath(next)) }}>
         <div className="field">
           <label htmlFor="atlama-nedeni" className="field-label">Neden atlıyorsunuz? Neden rapora yazılır.</label>
           <Input.TextArea id="atlama-nedeni" rows={2} value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />

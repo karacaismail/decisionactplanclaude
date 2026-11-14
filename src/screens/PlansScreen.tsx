@@ -6,35 +6,46 @@ import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
 import { downloadJson, safeFileName } from '@/engine/sync'
-import { gatePassed } from '@/engine/gate'
-import { DECISIONS } from '@/data/decisions'
 import { buildDemoPlan } from '@/data/demo'
 import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { planPosition, type PlanPosition } from '@/screens/OverviewScreen'
 import '@/styles/screens-pano.css'
 
-const GATES = DECISIONS.length
+/** Doğrulama seviyesinin en üst basamağı. Beş temel kapı geçilince 5 olur. */
+const MAX_LEVEL = 5
 
 interface Row {
   plan: PlanDoc
-  passed: number
-  openGate: number | null
+  position: PlanPosition
 }
 
 function toRow(plan: PlanDoc): Row {
-  const passed = DECISIONS.filter((d) => gatePassed(plan, d.n)).length
-  const open = DECISIONS.find((d) => !gatePassed(plan, d.n))
-  return { plan, passed, openGate: open ? open.n : null }
+  return { plan, position: planPosition(plan) }
+}
+
+/** Planın yol üzerindeki yeri tek etikette. */
+function stageTag(p: PlanPosition): { label: string; color: string } {
+  if (p.stage === 'temel') return { label: `Temel, Karar ${p.decision} açık`, color: 'processing' }
+  if (p.stage === 'gecis') return { label: 'Geçiş kapısı bekliyor', color: 'warning' }
+  if (p.stage === 'strateji') return { label: 'Strateji çalışması', color: 'processing' }
+  if (p.stage === 'uygulama') return { label: `Uygulama, Karar ${p.decision} açık`, color: 'processing' }
+  return { label: 'Tamamlandı', color: 'success' }
 }
 
 function StatusTags({ row }: { row: Row }) {
+  const tag = stageTag(row.position)
   return (
     <span className="tag-row">
       {row.plan.example ? <Tag>Örnek</Tag> : null}
-      {row.openGate === null ? <Tag color="success">Tamamlandı</Tag> : <Tag color="processing">Açık karar {row.openGate}</Tag>}
+      <Tag color={tag.color}>{tag.label}</Tag>
     </span>
   )
+}
+
+function LevelBar({ level }: { level: number }) {
+  return <Progress percent={Math.round((level / MAX_LEVEL) * 100)} format={() => `${level} / ${MAX_LEVEL}`} aria-label={`Doğrulama seviyesi ${level} / ${MAX_LEVEL}`} />
 }
 
 export function PlansScreen() {
@@ -58,7 +69,8 @@ export function PlansScreen() {
     const q = query.trim().toLocaleLowerCase('tr-TR')
     return q ? rows.filter((r) => r.plan.name.toLocaleLowerCase('tr-TR').includes(q)) : rows
   }, [rows, query])
-  const openCount = rows.filter((r) => r.openGate !== null).length
+  /* Beş temel kapıyı geçen plan geçiş kapısına ulaşmıştır. */
+  const reachedCount = rows.filter((r) => r.position.stage !== 'temel').length
   const latest = rows[0]?.plan.updatedAt
 
   /* Yeni ekran en üstten açılır. Liste aşağı kaydırılmış olsa da kaydırma sıfırlanır. */
@@ -159,13 +171,13 @@ export function PlansScreen() {
       ),
     },
     {
-      title: 'İlerleme',
+      title: 'Doğrulama seviyesi',
       key: 'progress',
-      width: 170,
-      sorter: (a, b) => a.passed - b.passed,
-      render: (_, r) => <Progress percent={Math.round((r.passed / GATES) * 100)} format={() => `${r.passed} / ${GATES}`} aria-label={`${r.passed} / ${GATES} kapı geçildi`} />,
+      width: 190,
+      sorter: (a, b) => a.position.level - b.position.level,
+      render: (_, r) => <LevelBar level={r.position.level} />,
     },
-    { title: 'Durum', key: 'status', width: 190, render: (_, r) => <StatusTags row={r} /> },
+    { title: 'Durum', key: 'status', width: 230, render: (_, r) => <StatusTags row={r} /> },
     {
       title: 'Son değişiklik',
       key: 'updated',
@@ -216,8 +228,8 @@ export function PlansScreen() {
           <p className="helper">{rows.length === 0 ? 'Henüz plan yok.' : rows.filter((r) => r.plan.example).length > 0 ? 'Biri örnek plan.' : 'Hepsi sizin planınız.'}</p>
         </Card>
         <Card className="pano-card">
-          <Statistic title="Açık karar" value={openCount} suffix="karar" />
-          <p className="helper">{openCount === 0 ? 'Bekleyen karar yok.' : `${openCount} planda sıradaki kapı bekliyor.`}</p>
+          <Statistic title="Geçiş kapısına ulaşan plan" value={reachedCount} suffix="plan" />
+          <p className="helper">{reachedCount === 0 ? 'Henüz hiçbir plan beş temel kapıyı geçmedi.' : `${reachedCount} plan beş temel kapıyı geçti.`}</p>
         </Card>
         <Card className="pano-card">
           <Statistic title="Son değişiklik" value={latest ? formatDate(latest, false) : 'Henüz yok'} />
@@ -253,7 +265,8 @@ export function PlansScreen() {
                     </Button>
                     {actions(r.plan)}
                   </div>
-                  <Progress percent={Math.round((r.passed / GATES) * 100)} format={() => `${r.passed} / ${GATES}`} aria-label={`${r.passed} / ${GATES} kapı geçildi`} />
+                  <span className="helper">Doğrulama seviyesi</span>
+                  <LevelBar level={r.position.level} />
                   <StatusTags row={r} />
                   <span className="helper tabular">
                     Son değişiklik {formatDate(r.plan.updatedAt, false)}. Sürüm {r.plan.revision}.

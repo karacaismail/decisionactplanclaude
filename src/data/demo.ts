@@ -92,14 +92,15 @@ function offers(): Row[] {
 
 /**
  * Örnek plan: Mahalle kafesi. Ekranları tanıtır. Kullanıcı verisi değildir.
- * Karar 1 ile 4 arası adımlar dolu. Dört kapı "İlerle" ile geçildi. Karar 5 açık.
+ * Adım 00 ile 17 arası dolu. Beş kapı "İlerle" ile geçildi. Geçiş kapısı açık.
+ * Adım 18, 19 ve 20 boştur. Geçiş kararını kullanıcı kendisi kaydeder.
  */
 export function buildDemoPlan(): PlanDoc {
   const p = emptyPlan('ornek-mahalle-kafesi', 'Örnek: Mahalle kafesi')
   p.example = true
   p.entry = 'yeni'
   p.createdAt = iso(-70)
-  p.lastLocation = '/karar/5'
+  p.lastLocation = '/gecis'
 
   p.profile = {
     customer: 'tuketici',
@@ -237,6 +238,7 @@ export function buildDemoPlan(): PlanDoc {
         row('varsayim-1', { assumption: 'Evden çalışanlar aylık kart için önden ödeme yapar.', area: 'istek', impact: 5, evidence: 2, testMethod: 'Açılıştan önce aylık kart satmak.', falsifyThreshold: '30 kişiden 10’u almazsa yanlış.', fallback: 'Tek seferlik fiyatla başlarım.' }),
         row('varsayim-2', { assumption: 'Sabah 7’de açılmak günde 20 ek müşteri getirir.', area: 'para', impact: 4, evidence: 3, testMethod: 'İlk ay sabah sayımı.', falsifyThreshold: 'Günde 10 altıysa yanlış.', fallback: 'Açılışı 8’e alırım.' }),
         row('varsayim-3', { assumption: 'Ruhsat 1 ayda çıkar.', area: 'hukuk', impact: 4, evidence: 3, testMethod: 'Belediyeye sormak.', falsifyThreshold: '2 ayı geçerse yanlış.', fallback: 'Geçici satış noktası planlarım.' }),
+        row('varsayim-4', { assumption: 'Kafe günde 40 sipariş alır.', area: 'para', impact: 5, evidence: 2, testMethod: 'İlk ay her gün sipariş saymak.', falsifyThreshold: 'İlk ay günde 25 altıysa yanlış.', fallback: 'Öğle saatine uygun fiyatlı menü eklerim.' }),
       ],
     }, 40),
     '11': done({
@@ -311,7 +313,61 @@ export function buildDemoPlan(): PlanDoc {
       offers: offers(),
       resultNote: '14 kişiye teklif sundum. 11 kişi taahhüt verdi. 7 kişi ödeme yaptı. Eşik geçildi.',
       secondTestNeeded: false,
+      priceOfferedKurus: 60000,
+      priceAcceptedCount: 7,
     }, 8),
+    '16': done({
+      problem: 'Mahallede sabah erken açık ve sakin bir kafe yok. İnsanlar zincir kafeye 20 dakika yürüyor.',
+      segment: 'Evden çalışanlar. Sabah 8 ile 11 arası çalışacak yer arıyorlar.',
+      valueProp: 'Yürüme süresi 20 dakikadan 5 dakikaya iner. Sabah 7’de masa ve kahve hazır olur.',
+      solution: '25 kişilik, prizli ve sessiz mahalle kafesi. Kafe sabah 7’de açılır.',
+      channels: 'Mahalle sosyal medya grubu, apartman panoları ve açılış haftası tadımı.',
+      revenue: 'Tek sipariş ortalama 65 TL. Aylık kahve kartı 600 TL. Masa ve kahve paketi 1.200 TL.',
+      cost: 'Sabit gider ayda 30.000 TL. Bunun 18.000 TL’si kira. Bir siparişin gideri 35 TL.',
+      metrics: 'Günlük sipariş sayısı. Satılan aylık kart sayısı. Ay sonu kasa.',
+      unfairAdvantage: '8 yıllık kafe deneyimi ve mahallede tanıdık komşular.',
+      contributionLow: tl(20),
+      contributionMid: tl(30),
+      contributionHigh: tl(40),
+      monthlyPerCustomerKurus: tl(600),
+      acquisitionKurus: tl(40),
+      paybackMonths: 1,
+      collectionDays: 0,
+      breakEvenCount: 1000,
+      paymentDays: [
+        row('odeme-1', { date: day(5), labelText: 'Depozito ve ilk kira', balanceAfterKurus: tl(204_000) }),
+        row('odeme-2', { date: day(12), labelText: 'İkinci el makine ve tadilat', balanceAfterKurus: tl(132_000) }),
+        row('odeme-3', { date: day(30), labelText: 'Açılış stoku ve ruhsat harcı', balanceAfterKurus: tl(120_000) }),
+        row('odeme-4', { date: day(36), labelText: 'Kira ve muhasebeci', balanceAfterKurus: tl(99_500) }),
+        row('odeme-5', { date: day(60), labelText: 'İlk ayın satış geliri', balanceAfterKurus: tl(104_000) }),
+      ],
+      cashDaysNote: 'Kasa en düşük değerini açılıştan sonraki ilk kira gününde görür. O gün kasada 99.500 TL kalır.',
+      fragileNumber: 'Günlük sipariş sayısı. Sayı 40’tan 32’ye düşerse sabit gider karşılanmaz.',
+      fragileTested: false,
+    }, 4),
+    '17': done({
+      premortem: [
+        row('batma-1', { reason: 'Günlük sipariş 40’a çıkmadı.', earlySignal: 'İlk ay günde 25 siparişin altı.', prevention: 'Açılıştan önce 30 aylık kart satarım.', owner: 'Kurucu', stopThreshold: '6. ayda günde 40 sipariş yoksa dururum.' }),
+        row('batma-2', { reason: 'Kira beklenenden hızlı arttı.', earlySignal: 'Mal sahibi yüzde 30 üstü artış ister.', prevention: 'Sözleşmeye artış sınırı yazdırırım.', owner: 'Kurucu', stopThreshold: 'Kira ve maaş gelirin yüzde 70’ini aşarsa dururum.' }),
+        row('batma-3', { reason: 'Zincir kafe yakına şube açtı.', earlySignal: 'Yakın sokakta zincir kafe tabelası görülür.', prevention: 'Aylık kartı ve erken saati korurum.', owner: 'Kurucu', stopThreshold: 'Kart sayısı 3 ayda yüzde 30 düşerse yön değiştiririm.' }),
+        row('batma-4', { reason: 'Ruhsat gecikti.', earlySignal: 'Başvurudan 30 gün sonra cevap yok.', prevention: 'Meydanda kahve arabasıyla başlarım.', owner: 'Kurucu', stopThreshold: 'Ruhsat 2 ayı geçerse açılışı ertelerim.' }),
+        row('batma-5', { reason: 'Tek başıma yetişemedim.', earlySignal: 'Haftada 60 saati geçen çalışma.', prevention: 'Sabah saatine yarı zamanlı yardımcı alırım.', owner: 'Kurucu', stopThreshold: '3 hafta üst üste 60 saati geçersem yardımcı alırım.' }),
+      ],
+      risks: [
+        row('risk-1', { risk: 'Sipariş az gelir.', category: 'ticari', likelihood: 2, impact: 3, trigger: 'İlk ay günde 25 siparişin altı.', response: 'Öğle menüsü eklerim. Kart fiyatını yeniden denerim.', owner: 'Kurucu' }),
+        row('risk-2', { risk: 'Kahve çekirdeği fiyatı artar.', category: 'tedarik', likelihood: 3, impact: 2, trigger: 'Tedarikçi yüzde 20 üstü zam bildirir.', response: 'İkinci tedarikçiye geçerim. Fiyatı 5 TL artırırım.', owner: 'Kurucu' }),
+        row('risk-3', { risk: 'Ruhsat gecikir.', category: 'hukuk', likelihood: 2, impact: 2, trigger: 'Başvurudan 30 gün sonra cevap yok.', response: 'Kahve arabasıyla başlarım.', owner: 'Kurucu' }),
+        row('risk-4', { risk: 'Kasa 60.000 TL altına düşer.', category: 'para', likelihood: 1, impact: 3, trigger: 'Ay sonu kasa 60.000 TL altında.', response: 'Yeni harcamayı durdururum. Durdurma kuralını uygularım.', owner: 'Kurucu' }),
+        row('risk-5', { risk: 'Kahve makinesi bozulur.', category: 'teknik', likelihood: 2, impact: 2, trigger: 'Makine bir günden uzun çalışmaz.', response: 'Servisi çağırırım. Filtre kahveyle devam ederim.', owner: 'Kurucu' }),
+        row('risk-6', { risk: 'Kurucu hastalanır.', category: 'operasyon', likelihood: 1, impact: 3, trigger: 'Kafe iki gün üst üste kapalı kalır.', response: 'Eski iş arkadaşım kafeyi geçici olarak açar.', owner: 'Kurucu' }),
+      ],
+      eca: [
+        row('kural-1', { event: 'İlk ay bitti.', condition: 'Günlük sipariş 25’in altında.', action: 'Öğle menüsü eklerim. Kart fiyatını yeniden denerim.', who: 'Kurucu', when: 'İkinci ayın ilk haftası' }),
+        row('kural-2', { event: 'Tedarikçi zam bildirdi.', condition: 'Zam yüzde 20’nin üstünde.', action: 'İkinci tedarikçiye geçerim.', who: 'Kurucu', when: 'Bildirimi izleyen 7 gün içinde' }),
+      ],
+      irreversible: ['uzunKira', 'buyukAlim'],
+      irreversibleNote: 'Kira sözleşmesine 6. ayda çıkış hakkı yazdırırım. Makineyi ikinci el alırım.',
+    }, 3),
   }
 
   p.evidence = [
@@ -321,8 +377,8 @@ export function buildDemoPlan(): PlanDoc {
     evidence('kanit-4', '7 kişi aylık kahve kartına ödeme yaptı', 'gozlem', 1, -8, 'Banka dekontları ve kasa fişleri', 'Evden çalışanlar', ['15'], 'Üç kişi fiyatı yüksek buldu.'),
   ]
 
-  p.decisions = [1, 2, 3, 4].map((n, i) => gateDecision(p, n, -(60 - i * 15) + (i === 3 ? 10 : 0), i + 1))
-  p.revision = 4
+  p.decisions = GATE_DAYS.map((daysAgo, i) => gateDecision(p, i + 1, -daysAgo, i + 1))
+  p.revision = 5
   p.tasks = [
     task('is-1', 'Ruhsat başvurusunu belediyeye teslim et.', 'Kurucu', 7, 'acik', 'Belediyeden başvuru numarası alındı.', '04', p.decisions[0].id),
     task('is-2', 'Reddeden 3 kişiyi arayıp fiyat önerisini sor.', 'Kurucu', 3, 'acik', 'Üç kişinin cevabı teklif defterine yazıldı.', '15', p.decisions[3].id),
@@ -330,7 +386,7 @@ export function buildDemoPlan(): PlanDoc {
   ]
   p.revisions = p.decisions.map((d) => ({ id: `surum-${d.gate}`, label: `Kapı ${d.gate} kararı: İlerle`, createdAt: d.decidedAt, snapshot: '' }))
   for (const r of p.revisions) r.snapshot = JSON.stringify({ ...p, revisions: [] })
-  p.updatedAt = iso(-5)
+  p.updatedAt = iso(-2)
   return p
 }
 
@@ -347,7 +403,10 @@ const GATE_REASON: Record<number, string> = {
   2: '15 görüşmede 13 kişi problemi tanıdı. 10 kişi bugün zaman harcıyor. Üç ölçü eşiği geçti.',
   3: 'Üç farklı yol puanlandı. Küçük kafe öne çıktı. 350 müşteri hedefi 300’ü karşılıyor.',
   4: '14 teklifte 11 taahhüt. 7 ödeme. Eşik 10 idi. Reddedenlerin gerekçesi yazıldı.',
+  5: 'Bir siparişten 30 TL kalıyor. Kasa hiçbir ödeme gününde eksiye düşmüyor. İki kritik riskin kuralı yazıldı. Pist 8 ay.',
 }
+/** Beş kapı kararının kaç gün önce verildiği. Kapı 5, Adım 17'den sonra gelir. */
+const GATE_DAYS = [60, 45, 30, 5, 2]
 
 /** Kapı kararını motorun ölçütlerinden üretir. Alan adları değişirse test bunu yakalar. */
 function gateDecision(p: PlanDoc, gate: number, daysAgo: number, revision: number): Decision {

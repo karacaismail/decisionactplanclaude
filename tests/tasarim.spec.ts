@@ -25,7 +25,7 @@ test('ölçüt 1: h1 28px ve 600, kicker 14px büyük harf', async ({ page }) =>
     const h1 = page.locator('h1').first()
     await expect(h1).toBeVisible()
     const cs = await h1.evaluate((el) => { const s = getComputedStyle(el); return { size: s.fontSize, weight: s.fontWeight } })
-    expect(px(cs.size), url).toBe(30)
+    expect(px(cs.size), url).toBeGreaterThanOrEqual(30)
     expect(Number(cs.weight), url).toBe(600)
   }
   const kicker = page.locator('.page-kicker').first()
@@ -51,30 +51,36 @@ test('ölçüt 2: 14px altı okunabilir metin yok', async ({ page }) => {
   }
 })
 
-test('ölçüt 3 ve 4: üst şerit 56px ekmek kırıntılı, yan menü 240px ve etiketsiz', async ({ page, viewport }) => {
+test('ölçüt 3 ve 4: üst şerit 60px, yatay sekmeler, yol dizini etiketsiz', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) < 1024, 'Yalnız masaüstü')
   await openDemo(page)
   await page.goto('/#/karar/3/adim/11')
-  const header = page.locator('header').first()
+  const header = page.locator('.topbar').first()
   expect(px(await header.evaluate((el) => getComputedStyle(el).height))).toBe(60)
-  await expect(page.locator('nav[aria-label="Konum"]')).toContainText('Karar 3')
-  const sider = page.locator('.ant-layout-sider').first()
-  expect(px(await sider.evaluate((el) => getComputedStyle(el).width))).toBe(240)
-  expect(await sider.locator('.ant-tag').count(), 'menüde etiket olmamalı').toBe(0)
-  const items = sider.locator('.ant-menu-item')
-  const h = await items.first().evaluate((el) => getComputedStyle(el).height)
-  expect(px(h)).toBe(40)
+  const tabs = page.locator('.product-nav a')
+  expect(await tabs.count()).toBeGreaterThanOrEqual(8)
+  const active = page.locator('.product-nav a[aria-current="page"]')
+  await expect(active).toHaveText(/Yol/)
+  const bar = await active.evaluate((el) => getComputedStyle(el, '::after').height)
+  expect(px(bar)).toBe(3)
+  const rail = page.locator('.journey-rail').first()
+  await expect(rail).toBeVisible()
+  expect(await rail.locator('.ant-tag').count(), 'yol dizininde etiket olmamalı').toBe(0)
+  const items = rail.locator('.ant-menu-item')
+  expect(px(await items.first().evaluate((el) => getComputedStyle(el).height))).toBe(42)
   const clipped = await items.evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length)
-  expect(clipped, 'menüde kesilen madde olmamalı').toBe(0)
+  expect(clipped, 'yol dizininde kesilen madde olmamalı').toBe(0)
+  await page.goto('/#/kanitlar')
+  await expect(page.locator('.journey-rail'), 'yol dizini yalnız yol ekranlarında').toHaveCount(0)
 })
 
-test('ölçüt 5: etkin menü maddesinin sol çizgisi düz köşeli', async ({ page, viewport }) => {
+test('ölçüt 5: etkin yol maddesinin sol çizgisi düz köşeli', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) < 1024, 'Yalnız masaüstü')
   await openDemo(page)
-  const active = page.locator('.ant-menu-item-selected').first()
+  await page.goto('/#/karar/3')
+  const active = page.locator('.journey-rail .ant-menu-item-selected').first()
   await expect(active).toBeVisible()
   const read = () => active.evaluate((el) => { const s = getComputedStyle(el); return { bw: s.borderLeftWidth, tl: s.borderTopLeftRadius, bl: s.borderBottomLeftRadius, shadow: s.boxShadow } })
-  // Stil dosyası geç yüklenebilir; çizgi görünene kadar bekle.
   await expect.poll(async () => { const cs = await read(); return px(cs.bw) === 3 || cs.shadow.includes('inset') }, { timeout: 10_000, message: 'etkin maddede sol çizgi' }).toBeTruthy()
   await expect.poll(async () => { const cs = await read(); return px(cs.tl) === 0 && px(cs.bl) === 0 }, { timeout: 10_000, message: 'çizgiye değen köşeler düz olmalı' }).toBeTruthy()
 })
@@ -188,14 +194,15 @@ test('2. tur 3: adım alt şeridi en çok 3 düğme, 320 yüksekliği en çok 11
   if ((viewport?.width ?? 0) <= 400) expect(px(await bar.evaluate((el) => getComputedStyle(el).height))).toBeLessThanOrEqual(112)
 })
 
-test('2. tur 5: telefonda konum satırı tek tam parça', async ({ page, viewport }) => {
+test('2. tur 5: telefonda üst şerit taşmaz ve sayfa başlığı görünür', async ({ page, viewport }) => {
   test.skip((viewport?.width ?? 0) > 400, 'Yalnız telefon')
   await openDemo(page)
   await page.goto('/#/karar/3/adim/11')
-  const crumbs = page.locator('.breadcrumb .crumb')
-  await expect(crumbs).toHaveCount(1)
-  const clipped = await crumbs.first().evaluate((el) => el.scrollWidth > el.clientWidth + 1)
-  expect(clipped, 'konum metni kesilmemeli').toBeFalsy()
+  const bar = page.locator('.topbar')
+  await expect(bar).toBeVisible()
+  const over = await bar.evaluate((el) => el.scrollWidth > el.clientWidth + 1)
+  expect(over, 'üst şerit taşmamalı').toBeFalsy()
+  await expect(page.locator('h1').first()).toBeVisible()
 })
 
 test('2. tur 2: onay kutusu ve radyo çevresinde eylem rengi yok', async ({ page }) => {

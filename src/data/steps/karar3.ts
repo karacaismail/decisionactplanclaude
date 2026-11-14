@@ -170,6 +170,13 @@ export const KARAR3: StepDef[] = [
             { key: 'testMethod', type: 'text', label: 'Test yöntemi', placeholder: 'Görüşme, sahte kapı, ön sipariş' },
             { key: 'falsifyThreshold', type: 'text', label: 'Şu olursa yanlış sayarım', placeholder: '10 bakkaldan 2\'den azı öderse' },
             { key: 'fallback', type: 'text', label: 'Yanlış çıkarsa ne yaparım?', placeholder: 'Fiyatı düşürürüm veya segmenti değiştiririm' },
+            /* Boş değer "Denenmedi" sayılır. Varsayımlar ekranı bu iki alanı okur ve yazar. */
+            { key: 'status', type: 'select', label: 'Durum', placeholder: 'Denenmedi', options: [
+              { value: 'denenmedi', label: 'Denenmedi' },
+              { value: 'dogrulandi', label: 'Doğrulandı' },
+              { value: 'curudu', label: 'Çürüdü' },
+            ] },
+            { key: 'resultNote', type: 'text', label: 'Sonuç ne oldu?' },
           ] },
         ],
       },

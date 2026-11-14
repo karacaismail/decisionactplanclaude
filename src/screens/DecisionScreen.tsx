@@ -6,7 +6,9 @@ import { decisionOf, stepsOf } from '@/data/registry'
 import type { StepDef } from '@/data/schema'
 import type { PlanDoc } from '@/data/types'
 import { stepApplies } from '@/engine/conditions'
-import { evaluateGate, gatePassed, lastDecision, effectiveOutcome } from '@/engine/gate'
+import { STAGES, stageOfDecision } from '@/data/stages'
+import { decisionLocked, evaluateGate, gatePassed, lastDecision, lockReason, effectiveOutcome } from '@/engine/gate'
+import { transitionPassed } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { DecisionBadge } from '@/components/DecisionBadge'
@@ -49,7 +51,14 @@ export function DecisionScreen() {
   if (!plan || !d) return null
 
   const steps = stepsOf(d.n).filter((s) => !plan.shortPath || s.shortPath)
-  const locked = d.n > 1 && !gatePassed(plan, d.n - 1)
+  const locked = decisionLocked(plan, d.n)
+  const reason = lockReason(plan, d.n)
+  /* Karar 6 geçiş kapısına bağlıdır. Öteki kararlar bir önceki kapıya bağlıdır. */
+  const lockedByTransition = locked && d.n === 6
+  const stage = STAGES.find((x) => x.key === stageOfDecision(d.n))
+  const kicker = stage ? `${stage.title} aşaması, Karar ${d.n}` : `Karar ${d.n}`
+  /* Kapı 5 geçildiyse sıradaki iş geçiş kapısıdır. Geçiş kararı geçerliyse not gerekmez. */
+  const transitionNext = d.n === 5 && gatePassed(plan, 5) && !transitionPassed(plan)
   const last = lastDecision(plan, d.n)
   const isDone = (id: string) => stateOf(plan, id) === 'tamam' || stateOf(plan, id) === 'atlandi'
   const visible = steps.filter((s) => stepApplies(s.mandatory, plan) !== 'gizli')
@@ -65,7 +74,11 @@ export function DecisionScreen() {
   const dayMax = visible.length * 3
   const currentIndex = firstOpen ? visible.indexOf(firstOpen) : visible.length
 
-  const gateButton = locked ? (
+  const gateButton = lockedByTransition ? (
+    <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/gecis')}>
+      Geçiş kapısına git
+    </Button>
+  ) : locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav(`/karar/${d.n - 1}/kapi`)}>
       Önceki kapıya git
     </Button>
@@ -78,12 +91,22 @@ export function DecisionScreen() {
 
   return (
     <div className="page page-karar">
-      <PageHeader title={d.question} documentTitle={`Karar ${d.n}. ${d.title}`} kicker={`Karar ${d.n}`} description={d.intro} actions={gateButton} />
+      <PageHeader title={d.question} documentTitle={`Karar ${d.n}. ${d.title}`} kicker={kicker} description={d.intro} actions={gateButton} />
 
-      {locked ? (
-        <Callout tone="uyari" title="Önceki kapı geçilmedi">
-          Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kapı {d.n - 1}
+      {lockedByTransition ? (
+        <Callout tone="uyari" title="Bu karar kilitli">
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında kararı kaydedin. <Link to="/gecis">Geçiş kapısını açın.</Link>
+        </Callout>
+      ) : locked ? (
+        <Callout tone="uyari" title="Bu karar kilitli">
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kapı {d.n - 1}
           {prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.
+        </Callout>
+      ) : null}
+
+      {transitionNext ? (
+        <Callout tone="bilgi" title="Kapı 5 geçildi">
+          Sıradaki iş geçiş kapısıdır. <Link to="/gecis">Geçiş kapısını açın.</Link>
         </Callout>
       ) : null}
 
@@ -122,7 +145,7 @@ export function DecisionScreen() {
               }}
               items={visible.map((s) => {
                 const st = stateOf(plan, s.id)
-                return { title: `Adım ${s.id}`, description: s.title, status: st === 'tamam' || st === 'atlandi' ? 'finish' : s === firstOpen ? 'process' : 'wait' }
+                return { title: `Adım ${s.id}`, content: s.title, status: st === 'tamam' || st === 'atlandi' ? 'finish' : s === firstOpen ? 'process' : 'wait' }
               })}
             />
             <Table<StepDef>

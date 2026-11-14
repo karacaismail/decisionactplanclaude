@@ -1,10 +1,9 @@
 import { useLayoutEffect, useState } from 'react'
 import { Button, Drawer, Grid, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, CaretRight, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
+import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
-import { STEPS, groupLabel } from '@/data/registry'
 import { STAGES } from '@/data/stages'
 import { transitionPassed, lastTransition } from '@/engine/readiness'
 import { decisionLocked, gatePassed } from '@/engine/gate'
@@ -12,7 +11,6 @@ import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPalette, CommandPaletteButton } from '@/components/CommandPalette'
 import { cssVariables } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
-import type { PlanDoc } from '@/data/types'
 
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
@@ -28,40 +26,6 @@ function useThemeVariables(pref: 'light' | 'dark' | 'system') {
   }, [pref])
 }
 
-const PAGE_NAMES: Record<string, string> = {
-  '/': 'Planlar',
-  '/baslangic': 'Giriş',
-  '/ozet': 'Plan özeti',
-  '/devralma': 'Devralma',
-  '/kanitlar': 'Kanıtlar',
-  '/isler': 'İşler',
-  '/ciktilar': 'Çıktılar',
-  '/gecmis': 'Geçmiş',
-  '/gostergeler': 'Göstergeler',
-  '/yontemler': 'Karar Kitabı',
-  '/gecis': 'Geçiş kapısı',
-  '/strateji': 'Strateji çalışması',
-  '/temel': 'Temel taşları',
-  '/varsayimlar': 'Varsayımlar',
-}
-
-/** Konum satırı: Plan › Karar 3 › Adım 11. Son parça kalın yazılır. */
-type Crumb = { label: string; short: string; to?: string }
-function crumbs(pathname: string, plan?: PlanDoc): Crumb[] {
-  const out: Crumb[] = []
-  if (plan && pathname !== '/') out.push({ label: plan.name, short: plan.name, to: '/ozet' })
-  const m = pathname.match(/^\/karar\/(\d+)(?:\/(adim|kapi)(?:\/(\w+))?)?/)
-  if (m) {
-    const n = Number(m[1])
-    out.push(n === 9 ? { label: groupLabel(9), short: 'Strateji', to: '/strateji' } : { label: groupLabel(n), short: `Karar ${n}`, to: `/karar/${n}` })
-    if (m[2] === 'adim' && m[3]) out.push({ label: `Adım ${m[3]}. ${STEPS[m[3]]?.title ?? ''}`.trim(), short: `Adım ${m[3]}` })
-    if (m[2] === 'kapi') out.push({ label: `Kapı ${n}`, short: `Kapı ${n}` })
-    return out
-  }
-  if (PAGE_NAMES[pathname]) out.push({ label: PAGE_NAMES[pathname], short: PAGE_NAMES[pathname] })
-  return out
-}
-
 export function AppShell() {
   const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
@@ -74,11 +38,6 @@ export function AppShell() {
   const [open, setOpen] = useState(false)
   useThemeVariables(themeMode)
 
-  const link = (to: string, text: string) => (
-    <Link to={to}>
-      <span className="label">{text}</span>
-    </Link>
-  )
   const decisionItem = (n: number) => {
     const d = DECISIONS.find((x) => x.n === n)!
     const Icon = decisionIcon(d.icon)
@@ -101,116 +60,141 @@ export function AppShell() {
   const passedTransition = plan ? transitionPassed(plan) : false
   const foundationDone = plan ? stage('temel').decisions.every((n) => gatePassed(plan, n)) : false
   const transitionState = passedTransition ? 'Geçti' : foundationDone ? 'Açık' : 'Kilitli'
-  const items = [
-    { key: '/', icon: <Folders size={20} />, label: link('/', 'Planlar') },
-    ...(plan
-      ? [
-          { key: '/baslangic', icon: <Compass size={20} />, label: link('/baslangic', 'Giriş') },
-          { key: '/ozet', icon: <SquaresFour size={20} />, label: link('/ozet', 'Plan özeti') },
-          { type: 'group' as const, label: 'Temel', children: stage('temel').decisions.map(decisionItem) },
-          {
-            type: 'group' as const,
-            label: 'Geçiş',
-            children: [
-              {
-                key: '/gecis',
-                icon: <DoorOpen size={20} weight={passedTransition ? 'fill' : 'regular'} />,
-                label: (
-                  <Link to="/gecis" aria-label={`Geçiş kapısı, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}`}>
-                    <span className="label">Geçiş kapısı</span>
-                    <span className={`status-dot ${passedTransition ? 'is-passed' : foundationDone ? 'is-current' : ''}`} aria-hidden />
-                  </Link>
-                ),
-              },
-              {
-                key: '/strateji',
-                icon: <Strategy size={20} />,
-                label: (
-                  <Link to="/strateji" aria-label={`Strateji çalışması, ${passedTransition ? 'Açık' : 'Kilitli'}`}>
-                    <span className="label">Strateji çalışması</span>
-                    <span className={`status-dot ${passedTransition ? 'is-current' : ''}`} aria-hidden />
-                  </Link>
-                ),
-              },
-            ],
-          },
-          { type: 'group' as const, label: 'Uygulama', children: stage('uygulama').decisions.map(decisionItem) },
-          {
-            type: 'group' as const,
-            label: 'Araçlar',
-            children: [
-              { key: '/temel', icon: <Stack size={20} />, label: link('/temel', 'Temel taşları') },
-              { key: '/varsayimlar', icon: <Lightbulb size={20} />, label: link('/varsayimlar', 'Varsayımlar') },
-              { key: '/kanitlar', icon: <Paperclip size={20} />, label: link('/kanitlar', 'Kanıtlar') },
-              { key: '/isler', icon: <CheckSquare size={20} />, label: link('/isler', 'İşler') },
-              { key: '/gostergeler', icon: <ChartBar size={20} />, label: link('/gostergeler', 'Göstergeler') },
-              { key: '/ciktilar', icon: <FileText size={20} />, label: link('/ciktilar', 'Çıktılar') },
-              { key: '/gecmis', icon: <ClockCounterClockwise size={20} />, label: link('/gecmis', 'Geçmiş') },
-            ],
-          },
-        ]
-      : []),
-    { key: '/yontemler', icon: <BookOpenText size={20} />, label: link('/yontemler', 'Karar Kitabı') },
-  ]
+
+  /* Yol dizini: Temel, Geçiş ve Uygulama. Yalnız yol ekranlarında görünür. */
+  const journeyItems = plan
+    ? [
+        { key: '/baslangic', icon: <Compass size={20} />, label: <Link to="/baslangic"><span className="label">Giriş</span></Link> },
+        { type: 'group' as const, label: 'Temel', children: stage('temel').decisions.map(decisionItem) },
+        {
+          type: 'group' as const,
+          label: 'Geçiş',
+          children: [
+            {
+              key: '/gecis',
+              icon: <DoorOpen size={20} weight={passedTransition ? 'fill' : 'regular'} />,
+              label: (
+                <Link to="/gecis" aria-label={`Geçiş kapısı, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}`}>
+                  <span className="label">Geçiş kapısı</span>
+                  <span className={`status-dot ${passedTransition ? 'is-passed' : foundationDone ? 'is-current' : ''}`} aria-hidden />
+                </Link>
+              ),
+            },
+            {
+              key: '/strateji',
+              icon: <Strategy size={20} />,
+              label: (
+                <Link to="/strateji" aria-label={`Strateji çalışması, ${passedTransition ? 'Açık' : 'Kilitli'}`}>
+                  <span className="label">Strateji çalışması</span>
+                  <span className={`status-dot ${passedTransition ? 'is-current' : ''}`} aria-hidden />
+                </Link>
+              ),
+            },
+          ],
+        },
+        { type: 'group' as const, label: 'Uygulama', children: stage('uygulama').decisions.map(decisionItem) },
+      ]
+    : []
+
+  /* Sıradaki iş: "Yol" sekmesi buraya gider. */
+  const nextOpen = plan ? stage('temel').decisions.find((n) => !gatePassed(plan, n)) : undefined
+  const journeyHome = !plan ? '/' : nextOpen ? `/karar/${nextOpen}` : !passedTransition ? '/gecis' : '/strateji'
+  const isJourney = /^\/(karar|gecis|strateji|baslangic|devralma)/.test(loc.pathname)
+  const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean }[] = [
+    { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },
+    { to: journeyHome, label: 'Yol', Icon: MapTrifold, active: isJourney, needsPlan: true },
+    { to: '/temel', label: 'Temel taşları', Icon: Stack, active: loc.pathname === '/temel', needsPlan: true },
+    { to: '/varsayimlar', label: 'Varsayımlar', Icon: Lightbulb, active: loc.pathname === '/varsayimlar', needsPlan: true },
+    { to: '/kanitlar', label: 'Kanıtlar', Icon: Paperclip, active: loc.pathname === '/kanitlar', needsPlan: true },
+    { to: '/isler', label: 'İşler', Icon: CheckSquare, active: loc.pathname === '/isler', needsPlan: true },
+    { to: '/gostergeler', label: 'Göstergeler', Icon: ChartBar, active: loc.pathname === '/gostergeler', needsPlan: true },
+    { to: '/ciktilar', label: 'Çıktılar', Icon: FileText, active: loc.pathname === '/ciktilar', needsPlan: true },
+    { to: '/gecmis', label: 'Geçmiş', Icon: ClockCounterClockwise, active: loc.pathname === '/gecmis', needsPlan: true },
+    { to: '/yontemler', label: 'Karar Kitabı', Icon: BookOpenText, active: loc.pathname === '/yontemler', needsPlan: false },
+  ].filter((t) => plan || !t.needsPlan)
+
   const selected = loc.pathname.startsWith('/karar/9') ? '/strateji' : loc.pathname.startsWith('/karar/') ? `/karar/${loc.pathname.split('/')[2]}` : loc.pathname
-  const menu = <Menu className="shell-menu" mode="inline" items={items} selectedKeys={[selected]} onClick={() => setOpen(false)} />
+  const journeyMenu = <Menu className="shell-menu" mode="inline" items={journeyItems} selectedKeys={[selected]} onClick={() => setOpen(false)} />
   const nextTheme = themeMode === 'dark' ? 'light' : 'dark'
   const brand = (
-    <div className="brand">
+    <Link to={plan ? '/ozet' : '/'} className="brand" aria-label="Girişimci Aksiyon Planı, panoya git">
       <span className="brand-mark" aria-hidden>
         <Compass size={18} weight="fill" />
       </span>
-      <div className="brand-text">
-        <strong>Girişimci Aksiyon Planı</strong>
-      </div>
-    </div>
+      <span className="brand-text">
+        <strong>Aksiyon Planı</strong>
+      </span>
+    </Link>
   )
-  const fullTrail = crumbs(loc.pathname, plan)
-  /* Dar ekranda yalnız son iki parça görünür; plan adı menüde zaten vardır. */
-  /* Telefonda yalnız son parça tam yazılır; öncekiler menüden ve "Geri" ile ulaşılır. */
-  const trail = bp.md ? fullTrail : fullTrail.slice(-1)
+  const showRail = Boolean(wide && plan && isJourney)
 
   return (
     <Layout style={{ minHeight: '100dvh', background: token.colorBgLayout }}>
+      <Layout.Header className="no-print topbar">
+        {!wide ? <Button type="text" aria-label="Menüyü aç" icon={<List size={22} />} onClick={() => setOpen(true)} /> : null}
+        {brand}
+        {bp.md ? <span className="topbar-divider" aria-hidden /> : null}
+        <nav className="topbar-context" aria-label="Konum">
+          {bp.md ? (
+            <Link to="/" title="Planlar">
+              <Folders size={18} aria-hidden />
+              <span className="crumb">{plan?.name ?? 'Planlar'}</span>
+            </Link>
+          ) : null}
+          {plan?.example && bp.md ? <span className="tag">Örnek plan</span> : null}
+        </nav>
+        <div className="topbar-actions">
+          <CommandPaletteButton />
+          {plan ? <SaveStatus /> : null}
+          <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
+        </div>
+      </Layout.Header>
       {wide ? (
-        <Layout.Sider width={240} className="no-print shell-sider" style={{ position: 'sticky', top: 0, height: '100dvh', overflowY: 'auto' }}>
-          {brand}
-          {menu}
-        </Layout.Sider>
+        <nav className="no-print product-nav" aria-label="Ana bölümler">
+          {!plan ? (
+            <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined}>
+              <Folders size={18} aria-hidden /> Planlar
+            </Link>
+          ) : null}
+          {tabs.map((t) => (
+            <Link key={t.label} to={t.to} aria-current={t.active ? 'page' : undefined}>
+              <t.Icon size={18} weight={t.active ? 'fill' : 'regular'} aria-hidden /> {t.label}
+            </Link>
+          ))}
+        </nav>
       ) : null}
-      <Layout style={{ minWidth: 0, background: token.colorBgLayout }}>
-        <Layout.Header className="no-print shell-header">
-          {!wide ? <Button type="text" aria-label="Menüyü aç" icon={<List size={20} />} onClick={() => setOpen(true)} /> : null}
-          <nav className="breadcrumb" aria-label="Konum">
-            {trail.length === 0 ? <span className="crumb is-current">Girişimci Aksiyon Planı</span> : null}
-            {trail.map((c, i) => {
-              const last = i === trail.length - 1
-              return (
-                <span key={`${c.label}-${i}`} style={{ display: 'contents' }}>
-                  {i > 0 ? <CaretRight size={12} className="sep" aria-hidden /> : null}
-                  {c.to && !last ? (
-                    <Link to={c.to} className="crumb">{c.label}</Link>
-                  ) : (
-                    <span className={`crumb ${last ? 'is-current' : ''}`} aria-current={last ? 'page' : undefined} title={c.label}>{bp.md ? c.label : c.short}</span>
-                  )}
-                </span>
-              )
-            })}
-          </nav>
-          <div className="shell-status">
-            <CommandPaletteButton />
-            {plan?.example && bp.md ? <span className="tag">Örnek plan</span> : null}
-            {plan ? <SaveStatus /> : null}
-            <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
-          </div>
-        </Layout.Header>
+      <div className={`shell-body ${showRail ? 'has-rail' : ''}`}>
+        {showRail ? (
+          <aside className="no-print journey-rail" aria-label="Yol dizini">
+            <p className="journey-rail-title">
+              <MapTrifold size={20} aria-hidden /> Yol dizini
+            </p>
+            <p className="journey-rail-sub">Temel, geçiş ve uygulama.</p>
+            {journeyMenu}
+          </aside>
+        ) : null}
         <Layout.Content className="shell-content">
           <Outlet />
         </Layout.Content>
-        <CommandPalette />
-      </Layout>
-      <Drawer open={open} onClose={() => setOpen(false)} placement="left" title={brand} size={Math.min(300, typeof window !== 'undefined' ? window.innerWidth - 24 : 300)} styles={{ body: { padding: 0 }, header: { padding: '0 8px', borderBottom: `1px solid ${token.colorBorder}` } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
-        {menu}
+      </div>
+      <CommandPalette />
+      <Drawer open={open} onClose={() => setOpen(false)} placement="left" title="Menü" size={Math.min(320, typeof window !== 'undefined' ? window.innerWidth - 24 : 320)} styles={{ body: { padding: '0 0 24px' } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
+        <nav className="drawer-nav" aria-label="Ana bölümler">
+          <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined} onClick={() => setOpen(false)}>
+            <Folders size={20} aria-hidden /> Planlar
+          </Link>
+          {tabs.map((t) => (
+            <Link key={t.label} to={t.to} aria-current={t.active && !isJourney ? 'page' : undefined} onClick={() => setOpen(false)}>
+              <t.Icon size={20} aria-hidden /> {t.label}
+            </Link>
+          ))}
+        </nav>
+        {plan ? (
+          <>
+            <p className="drawer-section">Yol dizini</p>
+            <div style={{ padding: '0 12px' }}>{journeyMenu}</div>
+          </>
+        ) : null}
       </Drawer>
     </Layout>
   )

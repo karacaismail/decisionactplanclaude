@@ -1,10 +1,11 @@
 import { useState, type KeyboardEvent } from 'react'
-import { Button, Card } from 'antd'
+import { Button, Card, Grid, Steps } from 'antd'
 import { ArrowRight, CheckCircle, Handshake, Lightbulb, Warning } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { STAGES } from '@/data/stages'
 import type { Entry } from '@/data/types'
 import '@/styles/screens-pano.css'
 
@@ -14,12 +15,16 @@ const OPTIONS: { value: Entry; title: string; text: string; to: string; Icon: ty
   { value: 'acil', title: 'Acil zarar tehlikesi var', text: 'Etkilenen işi hemen durdurun. Sorumlu kişi güvenli koşulları doğrulayınca kararı yeniden açın.', to: '/karar/1/adim/02', Icon: Warning },
 ]
 
+/** Aracın amacı üç kısa cümlede. İlk ekranda okunur. */
+const PURPOSE = ['Stratejik planlamadan önce yapılacak işleri yaptırır.', 'Her iddia için kanıt ister.', 'Sonunda dayanak yeterliyse strateji çalışmasını açar.']
+
 export function StartScreen() {
   const nav = useNavigate()
   const plan = useCurrentPlan()
   const update = usePlanStore((s) => s.update)
   const setLocation = usePlanStore((s) => s.setLocation)
   const [picked, setPicked] = useState<Entry | undefined>(plan?.entry)
+  const bp = Grid.useBreakpoint()
   if (!plan) return null
   const selected = OPTIONS.find((o) => o.value === picked)
 
@@ -55,6 +60,23 @@ export function StartScreen() {
         kicker="Giriş"
         description="Bir sonraki harcamaya hangi kanıtla karar vereceksiniz? Önce sıradaki işi yazın. Sonra kararı değiştirecek bulguyu seçin."
       />
+
+      <Card className="pano-card purpose-card" title="Bu araç ne işe yarar?">
+        <ul className="purpose-list">
+          {PURPOSE.map((text) => (
+            <li key={text}>{text}</li>
+          ))}
+        </ul>
+        <Steps
+          className="pano-steps purpose-steps"
+          size="small"
+          orientation={bp.md ? 'horizontal' : 'vertical'}
+          titlePlacement={bp.md ? 'vertical' : 'horizontal'}
+          current={0}
+          items={STAGES.map((st) => ({ key: st.key, title: st.title, content: st.description }))}
+          aria-label="Yolun dört bölümü"
+        />
+      </Card>
 
       <div className="entry-grid" role="radiogroup" aria-label="Başlangıç yolu">
         {OPTIONS.map((o, i) => {
