@@ -123,6 +123,7 @@ export function OutputsScreen() {
   const plan = useCurrentPlan()
   const update = usePlanStore((s) => s.update)
   const snapshot = usePlanStore((s) => s.snapshot)
+  const markBackup = usePlanStore((s) => s.markBackup)
   const bp = Grid.useBreakpoint()
   const wide = Boolean(bp.md)
   const [params] = useSearchParams()
@@ -180,7 +181,10 @@ export function OutputsScreen() {
   }
   const stateText = isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : `Sürüm kaydı: ${formatDate(revision!.createdAt)}. Bu sürüm donduruldu. Sonraki değişiklikler bu belgeyi etkilemez.`
   const downloadJson = () => {
-    if (viewed) download(`${slug}-veri-${versionSlug}.json`, JSON.stringify(viewed, null, 2), 'application/json')
+    if (!viewed) return
+    download(`${slug}-veri-${versionSlug}.json`, JSON.stringify(viewed, null, 2), 'application/json')
+    /* Güncel taslağın indirilmesi yedek sayılır. Eski sürümün indirilmesi sayılmaz. */
+    if (isCurrent && plan) markBackup(plan.id)
   }
 
   /* Sürüm zaman çizgisi: en yeni üstte, güncel taslak en altta. Seçili sürüm turuncu nokta ile işaretlidir. */

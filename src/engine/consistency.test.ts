@@ -14,7 +14,13 @@ import { emptyPlan, type Decision, type PlanDoc, type TransitionRecord } from '@
 import { buildHandoffReport } from '@/reports/handoff'
 import { buildActionPlan, buildExecutiveReport } from '@/reports/build'
 import { applyStepValues, markStaleAfterGate } from './changes'
-import { decisionLocked, gatePassed, lockReason, lockTarget, strategyDone } from './gate'
+import { decisionLocked, evaluateGate, gatePassed, lockReason, lockTarget, strategyDone } from './gate'
+import { requiredKeys, sectionStats } from '@/components/FormRenderer'
+import decisionsSrc from '@/data/decisions.ts?raw'
+import transitionSrc from './transition.ts?raw'
+import readinessSrc from './readiness.ts?raw'
+import strengthsSrc from './strengths.ts?raw'
+import integritySrc from './integrity.ts?raw'
 import { planPosition } from './position'
 import { evaluateReadiness, transitionPassed } from './readiness'
 
@@ -128,6 +134,8 @@ describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
     delete bare.steps['17'].values.dependencies
     delete bare.steps['17'].values.dependencyNote
     delete bare.steps['02'].values.horizon
+    for (const key of ['worstCase', 'stakeholders']) delete bare.steps['17'].values[key]
+    for (const key of ['uncertainty1Level', 'uncertainty2Level']) delete bare.steps['04'].values[key]
     bare.steps['18'].values.paths = (bare.steps['18'].values.paths as Record<string, unknown>[]).map(({ revenue: _r, vehicle: _v, evidenceIds: _e, ...rest }) => rest)
     const a = evaluateReadiness(full, { secondReader: 'Ayşe' })
     const b = evaluateReadiness(bare, { secondReader: 'Ayşe' })
@@ -138,6 +146,111 @@ describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
       const gate = DECISIONS.find((d) => d.n === n)!.gate
       expect(gate.criteria.map((c) => c.check(full))).toEqual(gate.criteria.map((c) => c.check(bare)))
     }
+  })
+})
+
+describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
+  const visible = (id: string) => STEPS[id].shortPath
+  for (const n of FOUNDATION_DECISIONS) {
+    it(`Kapı ${n} kısa yolda gizli bir adımı okumaz`, () => {
+      const p = buildDemoPlan()
+      p.shortPath = true
+      const gate = DECISIONS.find((d) => d.n === n)!.gate
+      const read = stepsRead(p, (x) => gate.criteria.forEach((c) => c.check(x)))
+      expect([...read].filter((id) => !visible(id))).toEqual([])
+    })
+  }
+  it('ekipte Kapı 1 kısa yolda gizli bir adımı okumaz', () => {
+    const p = buildDemoPlan()
+    p.shortPath = true
+    p.profile.team = 'ekip'
+    const gate = DECISIONS.find((d) => d.n === 1)!.gate
+    const read = stepsRead(p, (x) => gate.criteria.forEach((c) => c.check(x)))
+    expect(read.has('03')).toBe(true)
+    expect([...read].filter((id) => !visible(id))).toEqual([])
+  })
+  it('kısa yolda örnek plan beş temel kapıda "İlerle" önerisi alır', () => {
+    const p = buildDemoPlan()
+    p.shortPath = true
+    for (const n of FOUNDATION_DECISIONS) {
+      const gate = DECISIONS.find((d) => d.n === n)!.gate
+      expect([n, evaluateGate(gate, p).suggested]).toEqual([n, 'ilerle'])
+    }
+  })
+  it('kısa yolda Adım 17 üç bölüm gösterir ve gizli bölümün alanını istemez', () => {
+    const p = buildDemoPlan()
+    p.shortPath = true
+    const step = STEPS['17']
+    const values = p.steps['17'].values
+    expect(sectionStats(step, p, values).map((s) => s.title)).toEqual(['Ön ölüm listesi', 'Risk tablosu', 'Tek kaynağa bağımlılık'])
+    expect(requiredKeys(step, p, values)).toEqual(['premortem', 'risks'])
+    p.shortPath = false
+    expect(sectionStats(step, p, values).length).toBeGreaterThan(3)
+  })
+})
+
+describe('isteğe bağlı bölüm hiçbir kuralın istediği alanı taşımaz', () => {
+  /* Kapılar, geçiş kapısı, hazırlık ölçütleri ve adım tamamlama denetimleri. */
+  const rules = [decisionsSrc, transitionSrc, readinessSrc, strengthsSrc, integritySrc].join('\n')
+  const real = (sec: { fields: { key: string; type: string }[] }) => sec.fields.filter((f) => f.type !== 'info' && f.type !== 'calc')
+  const foundation = STEP_IDS.filter((id) => FOUNDATION_DECISIONS.includes(STEPS[id].decision))
+
+  it('adımı tamamlayan alan isteğe bağlı bölümde durmaz', () => {
+    const wrong: string[] = []
+    for (const id of foundation) {
+      const must = new Set(STEPS[id].completeWhen ?? [])
+      for (const sec of STEPS[id].sections) if (sec.optional) for (const f of real(sec)) if (must.has(f.key)) wrong.push(`${id}.${f.key}`)
+    }
+    expect(wrong).toEqual([])
+  })
+
+  it('kapının ya da geçiş kapısının okuduğu alan isteğe bağlı bölümde durmaz', () => {
+    const wrong: string[] = []
+    for (const id of foundation) {
+      for (const sec of STEPS[id].sections) {
+        if (!sec.optional) continue
+        for (const f of real(sec)) if (new RegExp(`['.]${f.key}\\b`).test(rules)) wrong.push(`${id}.${f.key}`)
+      }
+    }
+    expect(wrong).toEqual([])
+  })
+
+  it('zorunlu alanı olmayan ve hiçbir kuralın okumadığı bölüm isteğe bağlıdır', () => {
+    /* Bu bölümler kurala girmez ama açık durur. Biri yalnız yol gösterir, biri ikinci tarafın görüşmesini, biri hesabın sonucunu taşır. */
+    const keepOpen = ['06 Kaç görüşme?', '06 Alan taraf defteri', '16 Başabaş sayısı']
+    const wrong: string[] = []
+    for (const id of foundation) {
+      const must = new Set(STEPS[id].completeWhen ?? [])
+      for (const sec of STEPS[id].sections) {
+        const fields = real(sec)
+        const needed = fields.some((f) => must.has(f.key) || new RegExp(`['.]${f.key}\\b`).test(rules))
+        const name = `${id} ${sec.title ?? 'Sorular'}`
+        if (!needed && !sec.optional && !keepOpen.includes(name)) wrong.push(name)
+      }
+    }
+    expect(wrong).toEqual([])
+  })
+
+  /*
+   * Alan bütçesi. Kapsam kaymasına karşı kapıdır.
+   * Yeni alan eklemek bu testi kırar. Bütçeyi yükseltme kararını karar sahibi verir.
+   * Gerekçe docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md dosyasının 10.3. bölümündedir.
+   */
+  it('strateji öncesi alan sayısı bütçeyi aşmaz', () => {
+    let all = 0
+    let open = 0
+    for (const id of foundation) {
+      for (const sec of STEPS[id].sections) {
+        all += real(sec).length
+        if (!sec.optional) open += real(sec).length
+      }
+    }
+    expect(all).toBeLessThanOrEqual(240)
+    expect(open).toBeLessThanOrEqual(149)
+  })
+
+  it('her temel adımında en az bir zorunlu bölüm kalır', () => {
+    for (const id of foundation) expect([id, STEPS[id].sections.some((sec) => !sec.optional)]).toEqual([id, true])
   })
 })
 

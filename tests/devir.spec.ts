@@ -32,8 +32,11 @@ async function smallText(page: Page): Promise<string[]> {
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
-  await expect(page).toHaveURL(/#\/ozet/)
+  /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
+  await expect(async () => {
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
+  }).toPass()
 }
 
 async function createPlan(page: Page, name = 'Deneme planı') {

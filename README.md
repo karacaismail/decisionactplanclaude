@@ -29,6 +29,9 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 
 - Güncel süreç, kilitler ve eskime kuralları: [docs/surec-haritasi.md](docs/surec-haritasi.md)
 - Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
+- Strateji tanımı, boşluk analizi ve uygulama notu: [docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md](docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md)
+- Gerçek deneme föyü: [docs/gercek-deneme-foyu.md](docs/gercek-deneme-foyu.md)
+- Sonraki ana aşamaların planı: [docs/sonraki-ana-asamalar-plani.md](docs/sonraki-ana-asamalar-plani.md)
 - Karar Kitabı'ndan alınan üç yardımın planı: [docs/karar-kitabi-firsatlari-plani.md](docs/karar-kitabi-firsatlari-plani.md)
 - Codex önerilerinin uygulama notu: [docs/codex-onerileri-uygulama-notu.md](docs/codex-onerileri-uygulama-notu.md)
 - Codex uygulamasıyla karşılaştırma ve veri bütünlüğü kuralları: [docs/codex-uygulamasi-karsilastirma-raporu.md](docs/codex-uygulamasi-karsilastirma-raporu.md)

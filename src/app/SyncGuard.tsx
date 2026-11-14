@@ -8,6 +8,27 @@ import type { PlanDoc } from '@/data/types'
  * Kayıt bekçisi. Başka sekme aynı planı değiştirirse uyarır.
  * Kayıt başarısızsa açık hata gösterir. Kayıt sürerken ayrılmayı sorar.
  */
+/** Depodaki yedek tarihlerini bellektekiyle birleştirir. Her plan için yeni olan tarih kalır. */
+function mergeBackups(raw: string | null) {
+  if (!raw) return
+  try {
+    const stored = (JSON.parse(raw) as { state?: { backups?: Record<string, string> } }).state?.backups
+    if (!stored) return
+    const mine = usePlanStore.getState().backups
+    const next = { ...mine }
+    let changed = false
+    for (const [id, at] of Object.entries(stored)) {
+      if (typeof at === 'string' && (!next[id] || at > next[id])) {
+        next[id] = at
+        changed = true
+      }
+    }
+    if (changed) usePlanStore.setState({ backups: next })
+  } catch {
+    /* Bozuk kayıt yedek tarihini değiştirmez. */
+  }
+}
+
 export function SyncGuard() {
   const plan = useCurrentPlan()
   const saveState = usePlanStore((s) => s.saveState)
@@ -19,6 +40,8 @@ export function SyncGuard() {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY) return
       const current = usePlanStore.getState()
+      /* Öteki sekmede alınan yedeğin tarihi bu sekmeye de geçer. Yeni tarih eskisinin üstüne yazılmaz. */
+      mergeBackups(e.newValue)
       const mine = current.currentId ? current.plans[current.currentId] : undefined
       const stored = detectConflict(e.newValue, mine)
       if (!stored) return

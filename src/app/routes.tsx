@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from 'react-router'
+import { Navigate, Route, Routes, useParams } from 'react-router'
 import { AppShell } from './AppShell'
 import { PlansScreen } from '@/screens/PlansScreen'
 import { StartScreen } from '@/screens/StartScreen'
@@ -26,6 +26,12 @@ function RequirePlan({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+/** Çalışma ekranı her adımda yeniden kurulur. Sekme, açık bölüm ve taslak değerler öteki adıma taşınmaz. */
+function WorkRoute() {
+  const { id } = useParams()
+  return <WorkScreen key={id} />
+}
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -42,7 +48,7 @@ export function AppRoutes() {
         <Route path="/karar/9" element={<Navigate to="/strateji" replace />} />
         <Route path="/karar/9/kapi" element={<Navigate to="/strateji" replace />} />
         <Route path="/karar/:n" element={<RequirePlan><DecisionScreen /></RequirePlan>} />
-        <Route path="/karar/:n/adim/:id" element={<RequirePlan><WorkScreen /></RequirePlan>} />
+        <Route path="/karar/:n/adim/:id" element={<RequirePlan><WorkRoute /></RequirePlan>} />
         <Route path="/karar/:n/kapi" element={<RequirePlan><ReviewScreen /></RequirePlan>} />
         <Route path="/kanitlar" element={<RequirePlan><EvidenceScreen /></RequirePlan>} />
         <Route path="/isler" element={<RequirePlan><TasksScreen /></RequirePlan>} />

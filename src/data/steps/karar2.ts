@@ -153,6 +153,7 @@ export const KARAR2: StepDef[] = [
       },
       {
         title: 'Problem doğrulama özeti',
+        optional: true,
         fields: [
           { key: 'summarySentence', type: 'text', label: 'Özet cümle', placeholder: '15 kişiden 11\'i problemi tanıdı. 8\'i haftalık yaşıyor. 5\'i çözüm arıyor.', maxLength: 240 },
           { key: 'newProblem', type: 'textarea', label: 'Müşteriler farklı bir problem anlattı mı? Yazın.', rows: 2, maxLength: 300, placeholder: 'Boş bırakabilirsiniz.' },
@@ -242,6 +243,7 @@ export const KARAR2: StepDef[] = [
       },
       {
         title: 'Yardımcı puan',
+        optional: true,
         description: 'Her konuda 1 ile 5 arası puan verin. Toplam 5 ile 25 arasında çıkar.',
         fields: [
           { key: 'helperNote', type: 'info', label: 'Bu puan yardımcıdır', tone: 'bilgi', text: 'Beş puanın toplamı yalnız sizi yönlendirir. Kapı 2 bu toplamı ölçüt olarak okumaz. Kapı yukarıdaki üç ölçüye bakar.' },
@@ -333,6 +335,7 @@ export const KARAR2: StepDef[] = [
       },
       {
         title: 'Alım kararındaki dört rol',
+        optional: true,
         when: { any: [{ profile: { customer: ['isletme'] } }, { profile: { customer: ['kamu'] } }, { profile: { marketplaceBuyer: ['isletme'] } }, { profile: { marketplaceSeller: ['isletme'] } }] },
         fields: [
           { key: 'rolesNote', type: 'info', label: 'Neden ayrı yazılır?', tone: 'ipucu', text: 'İşletmede kullanan, ödeyen ve karar veren kişi ayrı olabilir. Üçüne de ulaşmanız gerekir.' },
@@ -354,6 +357,7 @@ export const KARAR2: StepDef[] = [
       },
       {
         title: 'Pazar yeri tarafı',
+        optional: true,
         when: { profile: { customer: ['pazarYeri'] } },
         fields: [
           { key: 'eagerSide', type: 'segmented', label: 'Hangi taraf daha istekli?', options: [

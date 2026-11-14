@@ -1,4 +1,5 @@
 import type { StepDef } from '../schema'
+import { UNCERTAINTY_OPTIONS } from '@/engine/crux'
 
 const RATE5 = ['Çok zayıf', 'Zayıf', 'Orta', 'İyi', 'Çok iyi']
 
@@ -105,6 +106,7 @@ export const KARAR1: StepDef[] = [
       },
       {
         title: 'Ortaklar',
+        optional: true,
         when: { profile: { team: ['ekip'] } },
         fields: [
           { key: 'partners', type: 'repeater', label: 'Ortak uyum kartı', addLabel: 'Ortak ekle', columns: [
@@ -224,7 +226,8 @@ export const KARAR1: StepDef[] = [
     mandatory: { profile: { team: ['ekip'] } },
     whenNote: 'Yalnız ekip varsa yapılır. Tek kurucu bu adımı atlar.',
     who: 'Kurucular birlikte.',
-    shortPath: false,
+    /* Kapı 1 ekipte bu adımı okur. Bu yüzden adım kısa yolda da görünür. Tek kurucuda profil koşulu adımı gizler. */
+    shortPath: true,
     howTo: ['Her kapı için tek bir karar sahibi yazın.', 'Kim öneri yapar? Kim itiraz eder? Kime bilgi verilir? Üçünü de yazın.', 'Anlaşmazlık kuralını yazın.'],
     sections: [
       {
@@ -286,6 +289,8 @@ export const KARAR1: StepDef[] = [
           { key: 'forceRivalry', type: 'rate', label: 'Rekabetin şiddeti', labels: RATE5, span: 12 },
           { key: 'uncertainty1', type: 'text', label: 'Birinci kritik belirsizlik', span: 12 },
           { key: 'uncertainty2', type: 'text', label: 'İkinci kritik belirsizlik', span: 12 },
+          { key: 'uncertainty1Level', type: 'select', label: 'Birinci belirsizlik ne kadar belirsiz?', help: 'Stratej hangi araçla çalışacağını bu cevaba göre seçer.', options: UNCERTAINTY_OPTIONS, span: 12 },
+          { key: 'uncertainty2Level', type: 'select', label: 'İkinci belirsizlik ne kadar belirsiz?', options: UNCERTAINTY_OPTIONS, span: 12 },
           { key: 'scenarios', type: 'repeater', label: 'Dört senaryo', addLabel: 'Senaryo ekle', maxRows: 4, columns: [
             { key: 'name', type: 'text', label: 'Senaryo' },
             { key: 'signal', type: 'text', label: 'Erken uyarı işareti' },

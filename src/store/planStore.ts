@@ -24,6 +24,10 @@ interface PlanState {
   importPlan: (doc: unknown) => string
   /** Dosya metnini denetleyip içe alır. 8 MB sınırı vardır. */
   importPlanText: (text: string, byteLength?: number) => string
+  /** Her planın son yedek tarihi. Yedek, JSON dosyasını indirmektir. */
+  backups: Record<string, string>
+  /** Planın şimdi yedeklendiğini kaydeder. */
+  markBackup: (id: string) => void
   setTheme: (t: PlanState['theme']) => void
   /** Planı değiştirir. İşlev tam olarak false döndürürse hiçbir şey yazılmaz. */
   update: (fn: (p: PlanDoc) => unknown) => void
@@ -71,6 +75,8 @@ export const usePlanStore = create<PlanState>()(
       plans: {},
       currentId: undefined,
       theme: 'system',
+      backups: {},
+      markBackup: (id) => set((s) => ({ backups: { ...s.backups, [id]: new Date().toISOString() } })),
       saveState: 'kaydedildi',
       saveError: undefined,
       setSaveState: (saveState, saveError) => set({ saveState, saveError }),
@@ -83,7 +89,9 @@ export const usePlanStore = create<PlanState>()(
         set((s) => {
           const plans = { ...s.plans }
           delete plans[id]
-          return { plans, currentId: s.currentId === id ? undefined : s.currentId, saveState: 'kaydediliyor' }
+          const backups = { ...s.backups }
+          delete backups[id]
+          return { plans, backups, currentId: s.currentId === id ? undefined : s.currentId, saveState: 'kaydediliyor' }
         }),
       selectPlan: (id) => set({ currentId: id }),
       importPlan: (doc) => {
@@ -181,7 +189,7 @@ export const usePlanStore = create<PlanState>()(
         for (const plan of Object.values(st?.plans ?? {})) migrateChoiceFields(plan)
         return st as unknown as PlanState
       },
-      partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme }) as unknown as PlanState,
+      partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme, backups: s.backups }) as unknown as PlanState,
     },
   ),
 )

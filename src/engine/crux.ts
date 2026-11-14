@@ -244,3 +244,53 @@ export function dissentsOf(plan: PlanDoc): Dissent[] {
     .filter((r) => text(r.view))
     .map((r) => ({ who: text(r.who), about: text(r.about), view: text(r.view)!, response: r.response === 'kabul' || r.response === 'suruyor' ? r.response : 'bekliyor' }))
 }
+
+/* ---- Belirsizlik seviyesi ---- */
+
+export type UncertaintyLevel = 'acik' | 'secenek' | 'aralik' | 'belirsiz'
+export const UNCERTAINTY_LABEL: Record<UncertaintyLevel, string> = {
+  acik: 'Tek bir sonuç bekliyorum',
+  secenek: 'İki ya da üç sonuçtan biri olacak',
+  aralik: 'Sonuç bir aralıkta kalacak',
+  belirsiz: 'Ne olacağını kestiremiyorum',
+}
+export const UNCERTAINTY_OPTIONS = (Object.keys(UNCERTAINTY_LABEL) as UncertaintyLevel[]).map((value) => ({ value, label: UNCERTAINTY_LABEL[value] }))
+
+export interface Uncertainty {
+  text: string
+  /** Kullanıcı seçmediyse null kalır. Yazılım seviye uydurmaz. */
+  level: string | null
+}
+
+export function uncertaintiesOf(plan: PlanDoc): Uncertainty[] {
+  return (['uncertainty1', 'uncertainty2'] as const)
+    .map((key) => {
+      const level = v(plan, '04', `${key}Level`)
+      return { text: text(v(plan, '04', key)), level: typeof level === 'string' && level in UNCERTAINTY_LABEL ? UNCERTAINTY_LABEL[level as UncertaintyLevel] : null }
+    })
+    .filter((u): u is Uncertainty => u.text !== null)
+}
+
+/* ---- İşi etkileyen kişiler ---- */
+
+export type StakeholderEffect = 'engel' | 'kolaylik' | 'ikisi'
+export const STAKEHOLDER_LABEL: Record<StakeholderEffect, string> = { engel: 'Engelleyebilir', kolaylik: 'Kolaylaştırabilir', ikisi: 'İkisini de yapabilir' }
+export const STAKEHOLDER_OPTIONS = (Object.keys(STAKEHOLDER_LABEL) as StakeholderEffect[]).map((value) => ({ value, label: STAKEHOLDER_LABEL[value] }))
+
+export interface Stakeholder {
+  who: string
+  effect: string | null
+  how: string | null
+  plan: string | null
+}
+
+export function stakeholdersOf(plan: PlanDoc): Stakeholder[] {
+  return list(v(plan, '17', 'stakeholders'))
+    .filter((r) => text(r.who))
+    .map((r) => ({ who: text(r.who)!, effect: typeof r.effect === 'string' && r.effect in STAKEHOLDER_LABEL ? STAKEHOLDER_LABEL[r.effect as StakeholderEffect] : null, how: text(r.how), plan: text(r.plan) }))
+}
+
+/** "Bu iş tutmazsa en çok ne kaybedersiniz?" sorusunun cevabı. */
+export function worstCaseOf(plan: PlanDoc): string | null {
+  return text(v(plan, '17', 'worstCase'))
+}

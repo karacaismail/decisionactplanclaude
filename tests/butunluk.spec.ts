@@ -10,8 +10,11 @@ const STORAGE_KEY = 'decisionactplan-v1'
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
-  await expect(page).toHaveURL(/#\/ozet/)
+  /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
+  await expect(async () => {
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
+  }).toPass()
 }
 
 async function patchPlan(page: Page, patch: string) {
@@ -24,6 +27,18 @@ async function patchPlan(page: Page, patch: string) {
     [STORAGE_KEY, patch],
   )
   await page.reload()
+}
+
+/** İsteğe bağlı bölümler ayrı sekmededir. Sekme varsa onu seçer. */
+async function optionalTab(page: Page) {
+  const tab = page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' })
+  if (await tab.count()) await tab.click()
+}
+
+/** Boş isteğe bağlı bölüm kapalı gelir. Kapalıysa açar. */
+async function expand(page: Page, title: string) {
+  const open = page.getByRole('button', { name: `${title} bölümünü aç` })
+  if (await open.count()) await open.click()
 }
 
 async function designRules(page: Page, scope: string, label: string) {
@@ -84,6 +99,7 @@ test('geçiş kapısı talep kanıtındaki karşı bulguyu uyarı olarak göster
 test('ayrı görüş Adım 17\'de yazılır ve devir raporunda görünür', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/karar/5/adim/17')
+  await optionalTab(page)
   const card = page.locator('.form-section').filter({ has: page.locator('.ant-card-head-title', { hasText: 'Ayrı görüş' }) })
   await expect(card.getByText('Karar sahibi ne dedi?', { exact: true }).first()).toBeVisible()
   await page.goto('/#/devir')

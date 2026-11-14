@@ -1,3 +1,4 @@
+import { BACKUP_DAYS } from '@/engine/backup'
 import { useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { App as AntApp, Button, Card, Dropdown, Empty, Grid, Input, List, Modal, Popconfirm, Progress, Statistic, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -55,6 +56,7 @@ export function PlansScreen() {
   const selectPlan = usePlanStore((s) => s.selectPlan)
   const deletePlan = usePlanStore((s) => s.deletePlan)
   const importPlan = usePlanStore((s) => s.importPlan)
+  const markBackup = usePlanStore((s) => s.markBackup)
   const importPlanText = usePlanStore((s) => s.importPlanText)
   const { message } = AntApp.useApp()
   const bp = Grid.useBreakpoint()
@@ -148,7 +150,10 @@ export function PlansScreen() {
           ],
           onClick: ({ key }) => {
             if (key === 'open') openPlan(p.id, p.lastLocation ?? '/ozet')
-            if (key === 'json') downloadJson(`${safeFileName(p.name)}.json`, p)
+            if (key === 'json') {
+              downloadJson(`${safeFileName(p.name)}.json`, p)
+              markBackup(p.id)
+            }
             if (key === 'delete') setConfirmId(p.id)
           },
         }}
@@ -279,7 +284,7 @@ export function PlansScreen() {
       </Card>
 
       <Callout tone="ipucu" title="Veri nerede durur?">
-        Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta "Çıktılar" ekranından JSON dışa aktarın.
+        Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta yedek alın. Yedek almak için planın menüsünden "JSON indir" seçin. Yedek {BACKUP_DAYS} günden eskiyse pano sizi uyarır.
       </Callout>
 
       <Modal open={open} title="Yeni plan" onCancel={() => setOpen(false)} onOk={create} okText="Oluştur" cancelText="Vazgeç" okButtonProps={{ disabled: !name.trim() }}>

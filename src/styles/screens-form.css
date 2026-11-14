@@ -24,6 +24,8 @@
 @media (max-width: 599px) {
   .step-card.ant-card > .ant-card-head { padding: 14px 16px 0; }
   .step-card.ant-card > .ant-card-body { padding: 12px 16px 16px; }
+  /* Telefonda kartın iç boşluğu yalnız başlık ve gövdeden gelir. Genel .form-section boşluğu alanı daraltmaz. */
+  .step-card.form-section.ant-card { padding: 0; }
 }
 .card-desc { margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); max-width: 72ch; }
 .fill-tag.ant-tag, .rate-tag.ant-tag, .ladder-tag.ant-tag, .threshold-tag.ant-tag, .total-cell.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
@@ -314,3 +316,23 @@
 .calc-value { font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; color: var(--color-text-primary); }
 .calc-lines { margin: 0; padding-left: 18px; display: grid; gap: 2px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
 .calc-warn { font-size: 14px; font-weight: 600; color: var(--color-status-harm); }
+
+/* Bölüm sekmeleri ve isteğe bağlı bölümler. Kapalı bölüm yalnız başlığını gösterir. */
+.form-tabs { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-width: 0; }
+.form-tabs .ant-segmented { width: 100%; }
+.form-tabs .ant-segmented-item-label { font-size: 14px; white-space: normal; min-height: 44px; display: flex; align-items: center; justify-content: center; text-align: center; line-height: 1.3; padding: 6px 8px; }
+.form-tabs-note { margin: 0; }
+.form-section-extra { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
+.form-section-extra .ant-tag { margin: 0; }
+/* Görünen düğme 32 pikseldir. Dokunma alanı 44 pikseldir. */
+.form-section-toggle.ant-btn { position: relative; font-size: 14px; min-height: 32px; }
+.form-section-toggle.ant-btn::after { content: ''; position: absolute; inset: -6px 0; }
+/* Sağ sütundaki bağlantı kartı yapışkan üst şeridin altına getirir. */
+.step-card.form-section { scroll-margin-top: 84px; }
+.form-section .ant-card-head-title > span:focus { outline: 0; }
+/* Bölüm açılırken ve kapanırken aynı sürede hareket eder. Süre ve eğri ortak değişkenden gelir. */
+@keyframes form-section-reveal { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+.form-section-body.is-opening { animation: form-section-reveal var(--motion-panel) var(--motion-ease) both; }
+.form-section-body.is-closing { animation: form-section-reveal var(--motion-panel) var(--motion-ease) both reverse; }
+.form-section-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+.step-card.form-section.is-closed.ant-card > .ant-card-head { padding-bottom: 16px; }

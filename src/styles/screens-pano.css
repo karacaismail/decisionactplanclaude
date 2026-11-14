@@ -222,3 +222,6 @@
 .purpose-list { margin: 0; padding-left: 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
 .purpose-steps.ant-steps .ant-steps-item-icon { font-size: 14px; font-weight: 600; }
 .purpose-steps.ant-steps .ant-steps-item-title { font-size: 16px; }
+
+/* Yedek uyarısı: düğme metnin altında, kendi satırında durur. */
+.backup-action { display: block; margin-top: var(--space-2); }

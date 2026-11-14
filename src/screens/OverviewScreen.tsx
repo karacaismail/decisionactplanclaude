@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Button, Card, Collapse, Descriptions, Empty, Grid, List, Progress, Statistic, Steps, Switch, Table, Tabs, Tag, Timeline, theme } from 'antd'
 import { Link, useNavigate } from 'react-router'
-import { ArrowRight, CheckSquare, Flag, Notebook, Path } from '@phosphor-icons/react'
+import { ArrowRight, CheckSquare, DownloadSimple, Flag, Notebook, Path } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
@@ -12,6 +12,8 @@ import { stepApplies } from '@/engine/conditions'
 import { Callout } from '@/components/Callout'
 import { DecisionBadge, outcomeColor } from '@/components/DecisionBadge'
 import { planPosition } from '@/engine/position'
+import { BACKUP_DAYS, backupState } from '@/engine/backup'
+import { downloadJson, safeFileName } from '@/engine/sync'
 import { PageHeader } from '@/components/PageHeader'
 import { KpiStrip, StatTile } from '@/components/StatTile'
 import { ChartFrame } from '@/charts/ChartFrame'
@@ -76,6 +78,8 @@ export function OverviewScreen() {
   const nav = useNavigate()
   const plan = useCurrentPlan()
   const update = usePlanStore((s) => s.update)
+  const backups = usePlanStore((s) => s.backups)
+  const markBackup = usePlanStore((s) => s.markBackup)
   const themePref = usePlanStore((s) => s.theme)
   const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
@@ -91,6 +95,12 @@ export function OverviewScreen() {
   if (!plan) return null
 
   const position = planPosition(plan)
+  const lastBackupAt = backups[plan.id]
+  const backup = backupState(plan, lastBackupAt)
+  const takeBackup = () => {
+    downloadJson(`${safeFileName(plan.name)}.json`, plan)
+    markBackup(plan.id)
+  }
   const { level, strategyDone, strategyTotal } = position
   const foundationPassed = FOUNDATION_DECISIONS.filter((n) => gatePassed(plan, n)).length
   const foundationDone = foundationPassed === FOUNDATION_DECISIONS.length
@@ -299,6 +309,14 @@ export function OverviewScreen() {
         description={<>Son değişiklik {formatDate(plan.updatedAt)}. Sürüm {plan.revision}.</>}
       />
 
+      {backup === 'hic' || backup === 'eski' ? (
+        <Callout tone="uyari" title="Yedek alın">
+          {backup === 'hic' ? 'Bu planın yedeği hiç alınmadı.' : `Son yedek ${formatDate(lastBackupAt)} alındı. Yedek ${BACKUP_DAYS} günden eski.`} Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur.
+          <span className="backup-action">
+            <Button icon={<DownloadSimple size={16} />} onClick={takeBackup}>Yedeği indir</Button>
+          </span>
+        </Callout>
+      ) : null}
       {transitionExpired ? (
         <Callout tone="uyari" danger title="Koşullu geçiş kararının süresi doldu">
           Açık soru son tarihe kadar kapanmadı. Strateji çalışması yeniden kilitlendi. <Link to="/gecis">Geçiş kapısında yeni karar kaydedin.</Link>

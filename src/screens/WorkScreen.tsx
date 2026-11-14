@@ -8,7 +8,7 @@ import { STRATEGY_N } from '@/data/decisions'
 import { decisionLocked, lockReason } from '@/engine/gate'
 import { uid } from '@/engine/format'
 import { stepApplies } from '@/engine/conditions'
-import { FormRenderer, sectionStats, type SectionStat } from '@/components/FormRenderer'
+import { FormRenderer, requiredKeys, sectionStats, type SectionStat } from '@/components/FormRenderer'
 import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
@@ -18,7 +18,6 @@ import { SituationSummary } from '@/components/SituationSummary'
 import { PathCompare } from '@/components/PathCompare'
 import { buildHandoffReport } from '@/reports/handoff'
 import { ChartFrame } from '@/charts/ChartFrame'
-import type { StepDef } from '@/data/schema'
 import type { Limits, PlanDoc } from '@/data/types'
 import '@/styles/screens-form.css'
 import '@/styles/screens-strateji.css'
@@ -101,6 +100,7 @@ export function WorkScreen() {
   const stored = useMemo(() => (isProfile ? (plan?.profile as Record<string, unknown>) : plan?.steps[step?.id ?? '']?.values) ?? {}, [plan, step, isProfile])
   const [values, setValues] = useState<Record<string, unknown>>(stored)
   const [skipOpen, setSkipOpen] = useState(false)
+  const [reveal, setReveal] = useState<{ id: string; n: number } | undefined>(undefined)
   const [skipReason, setSkipReason] = useState('')
   const timer = useRef<number | null>(null)
 
@@ -144,9 +144,12 @@ export function WorkScreen() {
   }
   const complete = () => {
     if (locked) return
-    const missing = (step.completeWhen ?? []).filter((k) => !isFilled(values[k]))
+    const missing = requiredKeys(step, plan, values).filter((k) => !isFilled(values[k]))
     if (missing.length) {
       message.warning(`Eksik alan var: ${missing.length}. Zorunlu alanları doldurun.`)
+      /* Eksik alan öteki sekmede olabilir. Form ilk eksik bölümü açar ve ekrana getirir. */
+      const at = step.sections.findIndex((sec) => sec.fields.some((f) => f.key === missing[0]))
+      if (at >= 0) setReveal((r) => ({ id: `b${step.id}-${at}`, n: (r?.n ?? 0) + 1 }))
       return
     }
     const issues = step.validate?.(values, plan) ?? []
@@ -173,7 +176,7 @@ export function WorkScreen() {
     onChange(s.key, s.build())
     message.success('Öneri alana yazıldı. Alanı düzenleyebilirsiniz.')
   }
-  const form = <FormRenderer step={step} plan={plan} values={values} onChange={onChange} />
+  const form = <FormRenderer step={step} plan={plan} values={values} onChange={onChange} readOnly={locked} revealId={reveal} />
 
   return (
     <div className="page">
@@ -274,7 +277,7 @@ export function WorkScreen() {
               expandIconPlacement="end"
               defaultActiveKey={['durum']}
               items={[
-                { key: 'durum', label: 'Bu adım', children: <StepProgress step={step} stats={stats} values={values} /> },
+                { key: 'durum', label: 'Bu adım', children: <StepProgress stats={stats} values={values} must={requiredKeys(step, plan, values)} /> },
                 ...(step.howTo ? [{ key: 'nasil', label: 'Nasıl yapılır?', children: <HowToList items={step.howTo} /> }] : []),
                 ...(example ? [{ key: 'ornek', label: 'Günlük Hayattan', children: example }] : []),
                 ...(step.models.length ? [{ key: 'yontem', label: 'Karar Kitabı yöntemleri', children: <ModelChips indexes={step.models} showTitle={false} /> }] : []),
@@ -285,7 +288,7 @@ export function WorkScreen() {
         {wide ? (
           <aside className="work-aside" aria-label="Bu adım">
             <Card className="step-card aside-card" variant="borderless" title="Bu adım" extra={<Tag>{stats.length} bölüm</Tag>}>
-              <StepProgress step={step} stats={stats} values={values} />
+              <StepProgress stats={stats} values={values} must={requiredKeys(step, plan, values)} />
               {stats.length > 1 ? (
                 <div className="aside-block">
                   <span className="aside-label"><ListNumbers size={16} aria-hidden /> Bölümler</span>
@@ -296,7 +299,8 @@ export function WorkScreen() {
                     items={stats.map((s) => ({ key: s.id, href: `#${s.id}`, title: s.total ? `${s.title} (${s.filled} / ${s.total})` : s.title }))}
                     onClick={(e, link) => {
                       e.preventDefault()
-                      document.getElementById(link.href.slice(1))?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                      /* Bölüm öteki sekmede ya da kapalı olabilir. Form bölümü açar ve ekrana getirir. */
+                      setReveal((r) => ({ id: link.href.slice(1), n: (r?.n ?? 0) + 1 }))
                     }}
                   />
                 </div>
@@ -350,12 +354,18 @@ export function WorkScreen() {
   )
 }
 
-/** Doluluk halkası ve sayılar. Yüzde, görünen alanların dolu olanlarından hesaplanır. */
-function StepProgress({ step, stats, values }: { step: StepDef; stats: SectionStat[]; values: Record<string, unknown> }) {
-  const total = stats.reduce((s, x) => s + x.total, 0)
-  const filled = stats.reduce((s, x) => s + x.filled, 0)
+/**
+ * Doluluk halkası ve sayılar. Yüzde yalnız zorunlu bölümlerin alanlarından hesaplanır.
+ * İsteğe bağlı bölümler yüzdeyi düşürmez. Sayıları ayrı satırda görünür.
+ */
+function StepProgress({ stats, values, must }: { stats: SectionStat[]; values: Record<string, unknown>; must: string[] }) {
+  const core = stats.filter((x) => !x.optional)
+  const extra = stats.filter((x) => x.optional)
+  const total = core.reduce((s, x) => s + x.total, 0)
+  const filled = core.reduce((s, x) => s + x.filled, 0)
+  const extraTotal = extra.reduce((s, x) => s + x.total, 0)
+  const extraFilled = extra.reduce((s, x) => s + x.filled, 0)
   const pct = total ? Math.round((filled / total) * 100) : 0
-  const must = step.completeWhen ?? []
   const mustFilled = must.filter((k) => isFilled(values[k])).length
   return (
     <div className="step-progress">
@@ -363,6 +373,7 @@ function StepProgress({ step, stats, values }: { step: StepDef; stats: SectionSt
       <div className="step-progress-text">
         <strong>{filled} / {total} alan dolu</strong>
         {must.length ? <span className="helper">Zorunlu alan: {mustFilled} / {must.length} dolu</span> : <span className="helper">Bu adımda zorunlu alan yok.</span>}
+        {extraTotal ? <span className="helper">İsteğe bağlı alan: {extraFilled} / {extraTotal} dolu</span> : null}
         {pct === 100 ? <Tag color="success">Hazır</Tag> : null}
       </div>
     </div>

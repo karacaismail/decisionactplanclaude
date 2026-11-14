@@ -24,6 +24,7 @@ import {
   type SensitivityRow,
 } from '@/reports/handoff'
 import { CONDITION_LABEL, DISSENT_LABEL, RELATION_LABEL, type ConditionStatus } from '@/engine/crux'
+import { BLIND_SPOT_LABEL } from '@/engine/blindspots'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
@@ -42,8 +43,6 @@ const SECTIONS = [
   { id: 'devir-alti-soru', toc: 'Ek 3. Altı soru' },
 ] as const
 
-/** Dayanak gruplarının yazıldığı adım. Sıra `buildHandoffReport` içindeki grup sırasıdır. */
-const GROUP_STEP = ['05', '15', '09', '16', '02', '10']
 
 type Filter = 'hepsi' | ClaimStatus
 const FILTERS: { value: Filter; label: string }[] = [
@@ -307,7 +306,7 @@ export function HandoffScreen() {
   const allClaims = report.groups.flatMap((g) => g.claims)
   const count = (s: ClaimStatus) => allClaims.filter((c) => c.status === s).length
   const visibleGroups = report.groups
-    .map((g, i) => ({ ...g, step: GROUP_STEP[i] ?? '05', shown: filter === 'hepsi' ? g.claims : g.claims.filter((c) => c.status === filter) }))
+    .map((g) => ({ ...g, shown: filter === 'hepsi' ? g.claims : g.claims.filter((c) => c.status === filter) }))
     .filter((g) => filter === 'hepsi' || g.shown.length > 0)
   const assumptionsWritten = Array.isArray(plan.steps['10']?.values?.assumptions) && (plan.steps['10']?.values?.assumptions as unknown[]).length > 0
   const t = report.transition
@@ -483,6 +482,23 @@ export function HandoffScreen() {
               <h3 className="devir-sub">Kırmızı çizgiler</h3>
               {report.redLines ? <p className="devir-line">{report.redLines}</p> : <Missing step="01" />}
             </div>
+            {report.stakeholders.length ? (
+              <div className="devir-block devir-stakeholders">
+                <h3 className="devir-sub">İşi etkileyen kişiler</h3>
+                <ul className="devir-list">
+                  {report.stakeholders.map((x, i) => (
+                    <li key={`${i}-${x.who}`}>
+                      {x.who}
+                      <span className="devir-source devir-tags">
+                        {x.effect ? <Tag color={x.effect === 'Engelleyebilir' ? 'warning' : undefined}>{x.effect}</Tag> : null}
+                        {x.how ? <span>Ne yapabilir: {x.how}</span> : null}
+                        {x.plan ? <span>Önlem: {x.plan}</span> : null}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </Card>
 
           <Card id={SECTIONS[3].id} className="devir-card" title={<h2 className="devir-card-title">4. Karşılaştırılacak yollar</h2>}>
@@ -587,7 +603,19 @@ export function HandoffScreen() {
             </div>
             <div className="devir-block">
               <h3 className="devir-sub">Kritik belirsizlikler ve senaryolar</h3>
-              {report.uncertainties.length ? <ul className="devir-list">{report.uncertainties.map((u) => <li key={u}>{u}</li>)}</ul> : null}
+              {report.uncertaintyLevels.length ? (
+                <ul className="devir-list devir-uncertainties">
+                  {report.uncertaintyLevels.map((u, i) => (
+                    <li key={`${i}-${u.text}`}>
+                      {u.text}
+                      <span className="devir-source devir-tags">
+                        <span>Belirsizlik seviyesi:</span>
+                        {u.level ? <Tag>{u.level}</Tag> : <span className="devir-none">Seçilmedi</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
               {report.scenarios.length ? <Records rows={report.scenarios} columns={scenarioColumns} narrow={narrow} label="Senaryolar" /> : null}
               {!report.uncertainties.length && !report.scenarios.length ? <Missing step="04" /> : null}
             </div>
@@ -614,6 +642,28 @@ export function HandoffScreen() {
                 </li>
               ))}
             </ul>
+            <div className="devir-block devir-blind">
+              <h3 className="devir-sub">Bakılmayan alanlar</h3>
+              {report.blindSpots.length ? (
+                <>
+                  <p className="helper">Öngörülemeyen sorunlar en çok kimsenin bakmadığı yerde saklanır. Bu adımlara bakılmadı.</p>
+                  <ul className="devir-list">
+                    {report.blindSpots.map((b) => (
+                      <li key={b.step}>
+                        Adım {b.step}. {b.title}
+                        <span className="devir-source devir-tags">
+                          <Tag color={b.kind === 'atlandi' ? 'warning' : undefined}>{BLIND_SPOT_LABEL[b.kind]}</Tag>
+                          <span>{b.reason}</span>
+                          <StepLink step={b.step} />
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              ) : (
+                <p className="devir-line">Bakılmayan alan yok. Atlanan ya da boş bırakılan temel adımı yok.</p>
+              )}
+            </div>
           </Card>
 
           <Card id={SECTIONS[6].id} className="devir-card" title={<h2 className="devir-card-title">Ek 2. Stratej'in ilk günü</h2>}>

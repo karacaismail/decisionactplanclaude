@@ -65,6 +65,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Yukarıdan aşağıya hesap',
+        optional: true,
         fields: [
           { key: 'totalMarket', type: 'number', label: 'Toplam pazar. Sektördeki müşteri sayısı', unit: 'müşteri', min: 0, span: 12 },
           { key: 'totalMarketSource', type: 'text', label: 'Kaynak', placeholder: 'TÜİK, sektör derneği, Ticaret Bakanlığı', span: 12 },
@@ -94,6 +95,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Bu işi deneyip bırakanlar',
+        optional: true,
         description: 'Başarılı örnekler yanıltır. Aynı işi deneyip bırakanları da yazın. Bilmiyorsanız sorun ve araştırın. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'failedAttempts', type: 'repeater', label: 'Başarısız örnekler', addLabel: 'Örnek ekle', maxRows: 5, columns: [
@@ -106,6 +108,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Boşluklar',
+        optional: true,
         fields: [
           { key: 'profitPool', type: 'textarea', label: 'Bu pazarda parayı kim kazanıyor?', rows: 2, maxLength: 300, placeholder: 'Zincir kafeler sabah satışından kazanıyor. Küçük kafeler öğle menüsünden.', help: 'Kârın nerede toplandığını yazın. Bilmiyorsanız "Bilinmiyor" yazın.' },
           { key: 'gaps', type: 'repeater', label: 'Rakiplerin olmadığı boşluklar', addLabel: 'Boşluk ekle', maxRows: 3, columns: [
@@ -285,6 +288,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Pazar yeri',
+        optional: true,
         when: { profile: { customer: ['pazarYeri'] } },
         fields: [
           { key: 'firstSide', type: 'segmented', label: 'İlk hangi tarafı toplayacaksınız?', options: [
@@ -334,7 +338,7 @@ export const KARAR3: StepDef[] = [
     title: 'Yapabilirlik ve kaynak',
     question: 'Seçtiğiniz yolu gerçekten yapabilir misiniz? Neyi kendiniz, neyi dışarıdan alacaksınız?',
     mandatory: false,
-    whenNote: 'Donanım, fiziksel ürün veya mekân gereken işte tam sürüm zorunludur. Diğer işlerde beceri tablosu yeter. Bu adımı Adım 15\'ten önce bitirin.',
+    whenNote: 'Beceri tablosu her işte zorunludur. Donanım, fiziksel ürün ve mekân bölümleri isteğe bağlıdır. Bu adımı Adım 15\'ten önce bitirin.',
     who: 'Kurucu. Teknik konuda uzman görüşü alın.',
     shortPath: true,
     howTo: [
@@ -366,6 +370,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Teknik ön kanıt',
+        optional: true,
         when: { profile: { offering: ['donanim'] } },
         fields: [
           { key: 'techProof', type: 'textarea', label: 'Teknik ön kanıt planı. Hangi küçük parça çalıştığını gösterecek?', rows: 3, maxLength: 500 },
@@ -378,6 +383,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Tedarik ve üretim',
+        optional: true,
         when: { profile: { offering: ['fiziksel'] } },
         fields: [
           { key: 'supplyCostKurus', type: 'money', label: 'Tedarik maliyeti. Bir birim için', span: 12 },
@@ -392,6 +398,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Mekân',
+        optional: true,
         when: { profile: { needsPremises: [true] } },
         fields: [
           { key: 'location', type: 'text', label: 'Düşünülen konum', help: 'Konumu müşteri yoğunluğuna göre seçin.', maxLength: 200 },
@@ -419,6 +426,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Darboğaz',
+        optional: true,
         description: 'Talep artarsa ilk hangi iş aksar? Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'bottleneck', type: 'text', label: 'Talep artarsa ilk hangi iş aksar?', help: 'Sınırı belirleyen kişiyi, makineyi ya da ortağı yazın.', placeholder: 'Örneğin tek barista sabah kuyruğuna yetişmez', maxLength: 160, span: 12 },
@@ -428,6 +436,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Grup katkısı',
+        optional: true,
         description: 'İşiniz bir gruba bağlı. Grubun size verdiğini ve sizden beklediğini ayrı yazın.',
         when: { profile: { group: [true] } },
         fields: [
@@ -446,6 +455,7 @@ export const KARAR3: StepDef[] = [
       },
       {
         title: 'Pistle karşılaştırma',
+        optional: true,
         fields: [
           { key: 'neededMoneyKurus', type: 'money', label: 'Bu yol için gereken toplam para', span: 12 },
           { key: 'neededMonths', type: 'number', label: 'Bu yol için gereken süre', unit: 'ay', min: 0, span: 12 },

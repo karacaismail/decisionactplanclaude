@@ -51,6 +51,9 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | 08 | blockerPerson | text, isteğe bağlı | Devir raporu |
 | 17 | dependencies (chips), dependencyNote | isteğe bağlı | Devir raporu, sınırlar |
 | 17 | dissents | repeater, satır alanları `who, about, view, response (select: kabul, suruyor, bekliyor)` | Devir raporu |
+| 17 | worstCase | textarea, isteğe bağlı | Devir raporu, sınırlar, "En kötü durum" |
+| 17 | stakeholders | repeater, isteğe bağlı, satır alanları `who, effect (select), how, plan` | Devir raporu, "İşi etkileyen kişiler" |
+| 04 | uncertainty1Level, uncertainty2Level | select, isteğe bağlı | Devir raporu, belirsizlik seviyesi |
 | 18 | crossSO, crossWO, crossST, crossWT | textarea, isteğe bağlı | Devir raporu |
 | 18 | crux, cruxWhy, cruxPaths, cruxAlt, cruxSplit, cruxEvidence, cruxCounter | metin ve kanıt bağı, isteğe bağlı | Devir raporu |
 | 18 | successConditions | repeater, satır alanları `condition, paths, measure, baseline, threshold, thresholdWhen (select: once, sonra), owner, support, counter, comment` | Devir raporu |

@@ -11,8 +11,11 @@ const SIX = ['Müşterimiz kim ve neye değer veriyor?', 'Önümüzdeki asıl en
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
-  await expect(page).toHaveURL(/#\/ozet/)
+  /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
+  await expect(async () => {
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
+  }).toPass()
 }
 
 async function patchPlan(page: Page, patch: string) {
@@ -37,6 +40,18 @@ async function designRules(page: Page, scope: string, label: string) {
   }, scope)
   expect(r.sw, `Sayfa yatay taşmamalı: ${label}`).toBeLessThanOrEqual(r.iw + 1)
   expect(r.small, `Yazı en az 14 piksel olmalı: ${label}`).toEqual([])
+}
+
+/** İsteğe bağlı bölümler ayrı sekmededir. Sekme varsa onu seçer. */
+async function optionalTab(page: Page) {
+  const tab = page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' })
+  if (await tab.count()) await tab.click()
+}
+
+/** Boş isteğe bağlı bölüm kapalı gelir. Kapalıysa açar. */
+async function expand(page: Page, title: string) {
+  const open = page.getByRole('button', { name: `${title} bölümünü aç` })
+  if (await open.count()) await open.click()
 }
 
 const section = (page: Page, title: string) => page.locator('.form-section').filter({ has: page.locator('.ant-card-head-title', { hasText: title }) })
@@ -98,6 +113,7 @@ test('rol dili her yerde aynıdır: stratej önerir, karar sahibi seçer', async
 test('Adım 09 başarısız örnekleri, Adım 17 bağımlılığı, Adım 02 üç yıllık beklentiyi sorar', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/karar/3/adim/09')
+  await optionalTab(page)
   const failed = section(page, 'Bu işi deneyip bırakanlar')
   await expect(failed).toBeVisible()
   for (const label of ['Kim denedi?', 'Neden bıraktı?', 'Sizin farkınız ne?']) await expect(failed.getByText(label, { exact: true }).first()).toBeVisible()
@@ -105,6 +121,7 @@ test('Adım 09 başarısız örnekleri, Adım 17 bağımlılığı, Adım 02 ü�
   await designRules(page, '.form-section', 'adım 09 başarısız örnekler')
 
   await page.goto('/#/karar/5/adim/17')
+  await optionalTab(page)
   const dep = section(page, 'Tek kaynağa bağımlılık')
   for (const label of ['Tek müşteri', 'Tek tedarikçi', 'Tek kanal', 'Tek teknoloji', 'Tek para kaynağı', 'Tek kişi']) await expect(dep.getByText(label, { exact: true })).toBeVisible()
   await expect(dep.locator('textarea')).toHaveCount(1)
@@ -112,6 +129,8 @@ test('Adım 09 başarısız örnekleri, Adım 17 bağımlılığı, Adım 02 ü�
   await designRules(page, '.form-section', 'adım 17 bağımlılık')
   // Hiçbir kutu işaretli değilse açıklama alanı görünmez.
   await patchPlan(page, `plan.steps['17'].values.dependencies = []`)
+  await optionalTab(page)
+  await expand(page, 'Tek kaynağa bağımlılık')
   await expect(section(page, 'Tek kaynağa bağımlılık').locator('textarea')).toHaveCount(0)
 
   await page.goto('/#/karar/1/adim/02')
@@ -123,6 +142,7 @@ test('Adım 18 yol satırı para mantığını ve kurma yolunu sorar, koşul yar
   await page.goto('/#/karar/5/adim/18')
   const paths = section(page, 'Yollar')
   for (const label of ['Para nasıl kazanılır?', 'Nasıl kurulur?', 'Kanıt defterinden seç']) await expect(paths.getByText(label, { exact: true }).first()).toBeVisible()
+  await optionalTab(page)
   const help = section(page, 'Başarı neye bağlı?')
   await expect(help.getByText('Koşul, ölçü, sınır ve iş ayrı şeylerdir')).toBeVisible()
   await expect(help.getByText('Koşulu dört yerde arayın')).toBeVisible()
@@ -131,8 +151,11 @@ test('Adım 18 yol satırı para mantığını ve kurma yolunu sorar, koşul yar
   await designRules(page, '.form-section', 'adım 18 koşul yardımı')
 
   await patchPlan(page, `plan.profile.customer = 'pazarYeri'; plan.profile.group = true`)
+  await optionalTab(page)
   await expect(section(page, 'Başarı neye bağlı?').getByText('Pazar yeri için üç aday koşul')).toBeVisible()
   await page.goto('/#/karar/3/adim/12')
+  await optionalTab(page)
+  await expand(page, 'Grup katkısı')
   const group = section(page, 'Grup katkısı')
   await expect(group.getByText('Grup bu işten hangi sonucu bekliyor?', { exact: true })).toBeVisible()
   await expect(group.getByText('Hangi kararı gruba sormadan alabilirsiniz?', { exact: true })).toBeVisible()

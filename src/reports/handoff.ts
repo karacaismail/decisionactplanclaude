@@ -6,7 +6,8 @@
  */
 import { DECISIONS } from '@/data/decisions'
 import { pathIssues } from '@/engine/integrity'
-import { CONDITION_LABEL, cruxOf, dependenciesOf, DISSENT_LABEL, dissentsOf, type Dissent, failedAttemptsOf, freeBudget, linkedEvidence, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, VEHICLE_LABEL, type Crux, type PathLink, type SuccessCondition, type Vehicle } from '@/engine/crux'
+import { BLIND_SPOT_LABEL, blindSpots, knowledgeRatio, type BlindSpot, type KnowledgeRatio } from '@/engine/blindspots'
+import { CONDITION_LABEL, cruxOf, dependenciesOf, DISSENT_LABEL, dissentsOf, type Dissent, failedAttemptsOf, freeBudget, linkedEvidence, matchRate, pathLinksOf, RELATION_LABEL, successConditionsOf, stakeholdersOf, uncertaintiesOf, worstCaseOf, type Stakeholder, type Uncertainty, VEHICLE_LABEL, type Crux, type PathLink, type SuccessCondition, type Vehicle } from '@/engine/crux'
 import { crossAnswers, ORIGIN_LABEL, type CrossAnswer, type Origin } from '@/engine/situation'
 import { STRENGTHS_STEP, STRENGTH_LABEL, STRENGTH_NOTE, strengthsOf } from '@/engine/strengths'
 import { TRANSITION_LABEL, type Evidence, type PlanDoc, type TransitionOutcome } from '@/data/types'
@@ -34,6 +35,8 @@ export interface Claim {
 }
 export interface ClaimGroup {
   title: string
+  /** Bu grubun yazıldığı adım. Boş grupta bağlantı buraya gider. */
+  step: string
   /** Bu bilgiyle hangi karar verilir? */
   decision: string
   claims: Claim[]
@@ -118,10 +121,15 @@ export interface HandoffReport {
   locked: { text: string; source: string }[]
   /** 2. Dayanaklar */
   groups: ClaimGroup[]
+  /** Dayanak cümlelerinin kaçı varsayım, kaçı kaynaklı? Cümle yoksa null. */
+  knowledge: KnowledgeRatio | null
   /** 3. Bağlayıcı sınırlar */
-  limits: { label: string; value: string }[]
+  /** `guess` kurucunun tahminidir. Karar sayılmaz. */
+  limits: { label: string; value: string; guess?: boolean }[]
   stopRules: string[]
   redLines: string | null
+  /** İşi engelleyebilen ya da kolaylaştırabilen kişiler. */
+  stakeholders: Stakeholder[]
   /** 4. Karşılaştırılacak yollar */
   paths: PathColumn[]
   /** Kullanıcının cevapladığı çapraz sorular. Yolların nereden çıktığını gösterir. */
@@ -138,11 +146,15 @@ export interface HandoffReport {
   assumptions: OpenAssumption[]
   fragile: string | null
   uncertainties: string[]
+  /** Kritik belirsizlikler ve kullanıcının seçtiği belirsizlik seviyesi. */
+  uncertaintyLevels: Uncertainty[]
   scenarios: { name: string; signal: string | null; winCondition: string | null }[]
   openDecisions: OpenDecision[]
   /** Ek 1: 14 başlık kapsamı */
   coverage: CoverageItem[]
   coverageFilled: number
+  /** Ek 1: bakılmayan alanlar. Atlanan, doldurulmayan ya da kısa yolun gizlediği adımlar. */
+  blindSpots: BlindSpot[]
   /** Ek 2: stratej'in ilk günü */
   firstDay: string[]
   /** Ek 3: altı soru. Cevap plandan bulunur. Yoksa null kalır. */
@@ -330,7 +342,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
       step: STRENGTHS_STEP,
     }))
 
-  const limits: { label: string; value: string }[] = []
+  const limits: { label: string; value: string; guess?: boolean }[] = []
   const L = plan.limits
   if (L.budgetKurus) limits.push({ label: 'Toplam harcama sınırı', value: formatMoney(L.budgetKurus) })
   if (L.deadline) limits.push({ label: 'Bitiş tarihi', value: formatDate(L.deadline) })
@@ -343,6 +355,8 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   if (free.state === 'bilinmiyor') limits.push({ label: 'Serbest bütçe', value: 'Bilinmiyor. Ödenmemiş taahhüt bilinmiyor' })
   const bottleneck = str(v(plan, '12', 'bottleneck'))
   if (bottleneck) limits.push({ label: 'Darboğaz', value: [bottleneck.replace(/\.$/, ''), str(v(plan, '12', 'bottleneckLimit'))].filter(Boolean).join('. Bugünkü sınır: ') })
+  const worst = worstCaseOf(plan)
+  if (worst) limits.push({ label: 'En kötü durum', value: worst.replace(/\.$/, ''), guess: true })
   const deps = dependenciesOf(plan)
   if (deps) limits.push({ label: 'Tek kaynağa bağımlılık', value: `${deps.labels.join(', ')}${deps.note ? `. ${deps.note.replace(/\.$/, '')}` : ''}` })
   const horizon = str(v(plan, '02', 'horizon'))
@@ -350,7 +364,8 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   const owner = [...plan.decisions].reverse().find((d) => d.decidedBy)?.decidedBy
   if (owner) limits.push({ label: 'Karar sahibi', value: owner })
 
-  const limitClaims: Claim[] = limits.map((l) => ({ text: `${l.label}: ${l.value}.`, status: 'karar', confidence: 'yuksek', step: '02' }))
+  /* En kötü durum kurucunun tahminidir. Karar değil, varsayım sayılır. */
+  const limitClaims: Claim[] = limits.map((l) => (l.guess ? { text: `${l.label}: ${l.value}.`, status: 'varsayim', confidence: 'kanitsiz', step: '17' } : { text: `${l.label}: ${l.value}.`, status: 'karar', confidence: 'yuksek', step: '02' }))
 
   const assumptionRows = rows(plan, '10', 'assumptions').filter((a) => str(a.assumption))
   const assumptions: OpenAssumption[] = assumptionRows
@@ -393,18 +408,19 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   }
 
   const groups: ClaimGroup[] = [
-    { title: 'Müşteri ve sorun', decision: 'Önce kimin hangi sorununa odaklanacağız?', claims: claimsFrom(plan, who, 'kaynakli') },
-    { title: 'Talep', decision: 'Talep hangi müşteri ve teklif için yeterince güçlü?', claims: claimsFrom(plan, customer, 'kaynakli') },
-    { title: 'Rakip ve erişim', decision: 'Müşteri hangi nedenle bize geçer? Ona nerede ulaşırız?', claims: marketClaims },
-    { title: 'Güçlü yönler', decision: 'Hangi güce yaslanırız? Hangi güç fark yaratmaz?', claims: strengthClaims },
-    { title: 'Para', decision: 'Hangi satış yolu giderleri karşılar? Ekibin gücü hangisine yeter?', claims: claimsFrom(plan, money, 'hesap') },
-    { title: 'Sınırlar', decision: 'Hangi seçenekler sınırlarımız içinde? Hangi durumda vazgeçeriz?', claims: limitClaims },
+    { title: 'Müşteri ve sorun', step: '05', decision: 'Önce kimin hangi sorununa odaklanacağız?', claims: claimsFrom(plan, who, 'kaynakli') },
+    { title: 'Talep', step: '15', decision: 'Talep hangi müşteri ve teklif için yeterince güçlü?', claims: claimsFrom(plan, customer, 'kaynakli') },
+    { title: 'Rakip ve erişim', step: '09', decision: 'Müşteri hangi nedenle bize geçer? Ona nerede ulaşırız?', claims: marketClaims },
+    { title: 'Güçlü yönler', step: '12', decision: 'Hangi güce yaslanırız? Hangi güç fark yaratmaz?', claims: strengthClaims },
+    { title: 'Para', step: '16', decision: 'Hangi satış yolu giderleri karşılar? Ekibin gücü hangisine yeter?', claims: claimsFrom(plan, money, 'hesap') },
+    { title: 'Sınırlar', step: '02', decision: 'Hangi seçenekler sınırlarımız içinde? Hangi durumda vazgeçeriz?', claims: limitClaims },
     {
       title: 'Bilinmeyenler',
+      step: '10',
       decision: 'Hangi bilgi değişirse seçtiğimiz yol da değişir?',
       claims: assumptions.slice(0, 5).map((a) => ({ text: a.state === 'curudu' ? `Çürüdü: ${a.text}` : a.text, status: 'varsayim' as const, confidence: 'kanitsiz' as const, step: '10' })),
     },
-    ...(kindClaims.length ? [{ title: 'İş türüne özgü bilgi', decision: 'Bu iş türünde hangi ayrım seçimi değiştirir?', claims: kindClaims }] : []),
+    ...(kindClaims.length ? [{ title: 'İş türüne özgü bilgi', step: '12', decision: 'Bu iş türünde hangi ayrım seçimi değiştirir?', claims: kindClaims }] : []),
   ]
 
   const locked = DECISIONS.filter((d) => d.n <= 5 && gatePassed(plan, d.n)).map((d) => {
@@ -439,7 +455,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   return {
     title: HANDOFF_TITLE,
     stamp: foundation.stamp,
-    meta: [`Plan: ${plan.name}`, `Sürüm: ${plan.revision}`, `Doğrulama seviyesi: ${level} / 5. ${LEVELS[level].title}.`, `Oluşturma: ${formatDate(now.toISOString())}`],
+    meta: [`Plan: ${plan.name}`, plan.profile.group ? 'Düzey: tek işin planı. İş bir gruba bağlı.' : 'Düzey: tek işin planı.', `Sürüm: ${plan.revision}`, `Doğrulama seviyesi: ${level} / 5. ${LEVELS[level].title}.`, `Oluşturma: ${formatDate(now.toISOString())}`],
     question: decisionQuestion(paths, openDecisions),
     crux,
     conditions,
@@ -447,9 +463,11 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
     transition,
     locked,
     groups,
+    knowledge: knowledgeRatio(groups),
     limits,
     stopRules: (plan.limits.stopRules ?? []).map((r) => (typeof r === 'string' ? r : str((r as { rule?: unknown }).rule))).filter((x): x is string => Boolean(x)),
     redLines: str(v(plan, '01', 'redLines')),
+    stakeholders: stakeholdersOf(plan),
     paths,
     crosses: crossAnswers(plan),
     links: pathLinksOf(plan),
@@ -460,10 +478,12 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
     assumptions,
     fragile: str(v(plan, '16', 'fragileNumber')),
     uncertainties: [str(v(plan, '04', 'uncertainty1')), str(v(plan, '04', 'uncertainty2'))].filter((x): x is string => Boolean(x)),
+    uncertaintyLevels: uncertaintiesOf(plan),
     scenarios: rows(plan, '04', 'scenarios').filter((s) => str(s.name)).map((s) => ({ name: str(s.name)!, signal: str(s.signal), winCondition: str(s.winCondition) })),
     openDecisions,
     coverage,
     coverageFilled: coverage.filter((c) => c.status === 'dolu').length,
+    blindSpots: blindSpots(plan),
     firstDay: FIRST_DAY,
     sixQuestions,
   }
@@ -494,6 +514,7 @@ export function handoffToMarkdown(r: HandoffReport): string {
   if (r.transition) out.push(`Geçiş kararı: ${r.transition.label}. ${r.transition.reason} Karar sahibi ${r.transition.decidedBy}. ${r.transition.date}.${r.transition.stale ? ' Karar inceleme bekliyor.' : ''}`, '')
   if (r.locked.length) out.push('### Verilmiş kararlar', '', ...r.locked.map((l) => `- ${l.text} (${l.source})`), '')
   out.push('## 2. Dayanaklar', '')
+  if (r.knowledge) out.push(r.knowledge.sentence, '')
   for (const g of r.groups) {
     out.push(`### ${g.title}`, '', `Bu bilgiyle verilecek karar: ${g.decision}`, '')
     if (!g.claims.length) out.push('Henüz yazılmadı.', '')
@@ -503,6 +524,7 @@ export function handoffToMarkdown(r: HandoffReport): string {
   out.push(...(r.limits.length ? r.limits.map((l) => `- ${l.label}: ${l.value}`) : ['Henüz yazılmadı.']), '')
   if (r.stopRules.length) out.push('Durdurma kuralları:', '', ...r.stopRules.map((s) => `- ${s}`), '')
   out.push(`Kırmızı çizgiler: ${r.redLines ?? 'Henüz yazılmadı.'}`, '')
+  if (r.stakeholders.length) out.push('İşi etkileyen kişiler:', '', ...r.stakeholders.map((x) => `- ${x.who}${x.effect ? `. ${x.effect}` : ''}.${x.how ? ` Ne yapabilir: ${x.how.replace(/\.$/, '')}.` : ''}${x.plan ? ` Önlem: ${x.plan.replace(/\.$/, '')}.` : ''}`), '')
   out.push('## 4. Karşılaştırılacak yollar', '')
   if (!r.paths.length) out.push(NO_PATHS, '')
   else {
@@ -530,11 +552,13 @@ export function handoffToMarkdown(r: HandoffReport): string {
   if (r.fragile) out.push(`Kırılgan sayı: ${r.fragile}`, '')
   if (r.assumptions.length) out.push('Açık varsayımlar:', '', ...r.assumptions.map((a) => `- ${a.state === 'curudu' ? 'Çürüdü. ' : ''}${a.text} Etki ${a.impact} / 5.${a.test ? ` Test: ${a.test}` : ''}${a.affects ? ` Yanlış çıkarsa değişen yol: ${a.affects}.` : ''}`), '')
   if (r.dissents.length) out.push('Ayrı görüşler:', '', ...r.dissents.map((d) => `- ${d.who ? `${d.who}: ` : ''}${d.view}${d.about ? ` İtiraz edilen: ${d.about}.` : ''} Durum: ${DISSENT_LABEL[d.response]}.`), '')
-  if (r.uncertainties.length) out.push('Kritik belirsizlikler:', '', ...r.uncertainties.map((u) => `- ${u}`), '')
+  if (r.uncertaintyLevels.length) out.push('Kritik belirsizlikler:', '', ...r.uncertaintyLevels.map((u) => `- ${/[.?!]$/.test(u.text) ? u.text : `${u.text}.`} Belirsizlik seviyesi: ${u.level ?? 'seçilmedi'}.`), '')
   if (r.scenarios.length) out.push('Senaryolar:', '', ...r.scenarios.map((s) => `- ${s.name}. İşaret: ${s.signal ?? 'yazılmadı'}. Kazanma koşulu: ${s.winCondition ?? 'yazılmadı'}.`), '')
   if (r.openDecisions.length) out.push('Açık karar defteri:', '', '| Karar sorusu | Seçenekler | Dayanak | Karar sahibi | Karar tarihi | Dönüş bedeli | Geri alınır mı? |', '|---|---|---|---|---|---|---|', ...r.openDecisions.map((d) => `| ${cell(d.question)} | ${cell(d.alternatives)} | ${cell(d.basis)} | ${cell(d.owner)} | ${cell(d.dueDate)} | ${cell(d.reversalCost)} | ${d.door ? DOOR_LABEL[d.door] : 'Yazılmadı'} |`), '')
   if (!r.fragile && !r.assumptions.length && !r.uncertainties.length && !r.scenarios.length && !r.openDecisions.length && !r.dissents.length) out.push('Henüz yazılmadı.', '')
   out.push('## Ek 1. Kapsam', '', `${r.coverageFilled} / ${r.coverage.length} başlık dolu.`, '', ...r.coverage.map((c) => `- ${c.no}. ${c.title}: ${c.status === 'dolu' ? 'dolu' : c.status === 'kismen' ? 'kısmen dolu' : 'boş'} (Adım ${c.step})`), '')
+  if (r.blindSpots.length) out.push('Bakılmayan alanlar:', '', ...r.blindSpots.map((b) => `- Adım ${b.step}. ${b.title}: ${BLIND_SPOT_LABEL[b.kind]}. ${b.reason}`), '')
+  else out.push('Bakılmayan alan yok. Atlanan ya da boş bırakılan temel adımı yok.', '')
   out.push("## Ek 2. Stratej'in ilk günü", '', ...r.firstDay.map((s, i) => `${i + 1}. ${s}`), '')
   out.push('## Ek 3. Altı soru', '', ...r.sixQuestions.map((q, i) => `${i + 1}. ${q.question} ${q.answer ?? 'Henüz yazılmadı.'} (Adım ${q.step})`), '')
   return out.join('\n')

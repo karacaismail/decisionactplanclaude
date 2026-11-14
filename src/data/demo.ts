@@ -166,6 +166,8 @@ export function buildDemoPlan(): PlanDoc {
       forceRivalry: 2,
       uncertainty1: 'Kira 12 ay içinde ne kadar artacak?',
       uncertainty2: 'Zincir kafe mahalleye şube açar mı?',
+      uncertainty1Level: 'aralik',
+      uncertainty2Level: 'secenek',
       scenarios: [
         row('senaryo-1', { name: 'Sakin mahalle', signal: 'Kira artışı yüzde 30 altında kalır.', winCondition: 'Düzenli müşteri 300’ü geçer.' }),
         row('senaryo-2', { name: 'Zincir gelir', signal: 'Yakın sokakta zincir kafe tabelası görülür.', winCondition: 'Sabit müşteri kartı ve erken saat üstünlüğü korunur.' }),
@@ -362,6 +364,11 @@ export function buildDemoPlan(): PlanDoc {
       fragileTested: false,
     }, 4),
     '17': done({
+      worstCase: 'En çok 120.000 TL ve 6 ay kaybederim. Eski işime dönebilirim. Evimi riske atmıyorum.',
+      stakeholders: [
+        row('kisi-1', { who: 'Dükkânın mal sahibi', effect: 'engel', how: 'Kirayı ikinci yıl iki katına çıkarabilir.', plan: 'Artış oranını sözleşmeye yazdırırım.' }),
+        row('kisi-2', { who: 'Mahalle muhtarı', effect: 'kolaylik', how: 'Duyuruyu mahalle grubunda paylaşabilir.', plan: 'Açılıştan önce ziyaret ederim.' }),
+      ],
       dependencies: ['tekTedarikci', 'tekKisi'],
       dissents: [row('gorus-1', { who: 'Eşim', about: '7 aylık kart talebi gösterir.', view: 'Kart alan 7 kişinin 5\'i arkadaşımız. Yabancı müşteri henüz ödemedi.', response: 'suruyor' })],
       dependencyNote: 'Çekirdeği tek toptancıdan alıyoruz. İkinci toptancıdan fiyat aldık. Barista bilgisi tek kişide. Tarifleri yazıyoruz.',

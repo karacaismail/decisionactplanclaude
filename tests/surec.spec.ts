@@ -10,8 +10,11 @@ const STORAGE_KEY = 'decisionactplan-v1'
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
-  await expect(page).toHaveURL(/#\/ozet/)
+  /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
+  await expect(async () => {
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
+  }).toPass()
 }
 
 /** Kayıtlı planı yerinde değiştirir ve sayfayı yeniden yükler. */

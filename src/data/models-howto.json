@@ -315,7 +315,7 @@
   ],
   "warn": [],
   "tip": [
-   "Bir ekip çatışmalarını sürekli yöneticiye taşıyorsa dördüncü tepki alışkanlık olmuştur. Dördüncü tepki, sorumluluğu başkasına bırakmaktır. Her seferinde karar veren yönetici kısa sürede hız kazanır. Ama yönetici zamanla ekibin çatışma çözme gücünü zayıflatır."
+   "Bir ekip çatışmalarını sürekli yöneticiye taşıyorsa dördüncü tepki alışkanlık olmuştur. Dördüncü tepki, sorumluluğu başkasına bırakmaktır. Her seferinde karar veren yönetici ilk başta hız kazanır. Ama yönetici zamanla ekibin çatışma çözme gücünü zayıflatır."
   ]
  },
  {
@@ -356,7 +356,7 @@
    },
    {
     "title": "Kısasa kısas uygulayın",
-    "text": "Önce iş birliğiyle başlayın. Karşı taraf sizi aldatırsa açık ve ölçülü bir karşılık verin. Karşı taraf düzelince siz de düzelin. Kin tutan yöntem turnuvayı kaybeder."
+    "text": "Önce iş birliğiyle başlayın. Karşı taraf sizi aldatırsa açık ve ölçülü bir karşılık verin. Karşı taraf düzelince siz de düzelin. Kin tutan taraf kaybeder."
    },
    {
     "title": "İletişimi açın",
@@ -558,11 +558,11 @@
    },
    {
     "title": "En tehlikeli gücü bulun",
-    "text": "Genelde bir ya da iki güç kârın çoğunu yer. Gücünüzü o noktaya verin. Size mal satan güçlüyse ikinci bir satıcı bulun. Müşteri güçlüyse müşterinin size bağlı kalmasını sağlayın."
+    "text": "Genelde bir ya da iki güç kârın çoğunu yer. Emeğinizi önce bu güçlere ayırın. Size mal satan güçlüyse ikinci bir satıcı bulun. Müşteri güçlüyse müşterinin size bağlı kalmasını sağlayın."
    },
    {
     "title": "Kararı yazın",
-    "text": "Birinci yol bu işe girmek ya da bu işte kalmaktır. İkinci yol yerinizi güçlendirerek girmektir. Üçüncü yol bu işe girmemektir. Kararı yazmazsanız incelemeyi boşa yapmış olursunuz."
+    "text": "Sonuç üç yoldan biridir. Birinci yol bu işe girmek ya da bu işte kalmaktır. İkinci yol yerinizi güçlendirerek girmektir. Üçüncü yol bu işe girmemektir. Kararı yazmazsanız incelemeyi boşa yapmış olursunuz."
    }
   ],
   "warn": [
@@ -581,7 +581,7 @@
    },
    {
     "title": "Her başlıkta tek soru sorun",
-    "text": "Her başlıkta şu soruyu sorun. “Bu alanda önümüzdeki 12 ile 24 ay arasında beni doğrudan etkileyecek ne değişiyor?” Cevap bir sayfayı geçmesin."
+    "text": "Her başlıkta şu soruyu sorun. “Bu alanda önümüzdeki 12 ile 24 ay içinde beni doğrudan etkileyecek ne değişiyor?” Cevap bir sayfayı geçmesin."
    },
    {
     "title": "Her bulguya iş bağlayın",
@@ -608,7 +608,7 @@
    },
    {
     "title": "Her kaynağa dört soru sorun",
-    "text": "VRIO, dört sorunun İngilizce baş harfleridir. Kaynak değerli mi, nadir mi, kopyalaması zor mu, kullanabiliyor musunuz? Her kaynağa bu soruları sırayla ve kendinizi kandırmadan sorun. Yanına dezavantaj, eşitlik, geçici avantaj ya da kalıcı avantaj yazın."
+    "text": "VRIO, dört sorunun İngilizce baş harfleridir. Kaynak değerli mi, nadir mi, kopyalaması zor mu, kullanabiliyor musunuz? Her kaynağa bu soruları sırayla ve kendinizi kandırmadan sorun. Her kaynağın yanına ulaştığı seviyeyi yazın. Seviyeler dezavantaj, eşitlik, geçici avantaj ve kalıcı avantajdır."
    },
    {
     "title": "En güçlü kaynağı büyütün",
@@ -670,7 +670,7 @@
    },
    {
     "title": "Her kararı yolunuzla sınayın",
-    "text": "Yeni ürün, makine ya da eleman alırken tek soru sorun. “Bu harcama beni seçtiğim yolda güçlendiriyor mu?” diye sorun. Cevap hayırsa harcama ne kadar çekici olsa da vazgeçin."
+    "text": "Yeni ürün, makine ya da eleman kararında tek soru sorun. “Bu harcama beni seçtiğim yolda güçlendiriyor mu?” diye sorun. Cevap hayırsa harcama ne kadar çekici olsa da vazgeçin."
    }
   ],
   "warn": [
@@ -728,7 +728,7 @@
    }
   ],
   "warn": [
-   "Bir satırda beş D ve altı B varsa her karar toplantıya döner. Danışılan kişi azaldıkça iş hızlanır. Dolaba kaldırdığınız tablo, hiç yapılmamış tablo gibidir. Yeni kavga çıkınca tablodaki satırı ve harfleri kontrol edin."
+   "Bir satırda beş D ve altı B varsa her karar toplantıya döner. Danışılan kişi azaldıkça iş hızlanır. Dolaba kaldırdığınız tablo, hiç yapılmamış tablo gibidir. Yeni kavga çıkınca önce tabloya bakın. Bu iş tabloda bir satır olarak var mı? Harfler doğru mu?"
   ],
   "tip": [
    "Sütunlara unvan yazmayın, kişi adı yazın. “Üretim birimi” sorumlu olamaz ama Cavit sorumlu olabilir. O harfi iki kişi arasında gidip geliyorsa iş büyük ihtimalle iki ayrı iştir. Satırı bölün ve her parçaya ayrı bir Onaylayan yazın."
@@ -739,7 +739,7 @@
   "steps": [
    {
     "title": "Kıyaslanacak işi ve ölçüyü seçin",
-    "text": "Her şeyi birden kıyaslamayın. En çok şikayet alan veya para kaybettiren tek işi seçin. Teslim süresi, hata oranı veya maliyet böyle bir iş olabilir. Ölçü birimini baştan belirleyin."
+    "text": "Her şeyi birden kıyaslamayın. En çok şikayet alan veya para kaybettiren tek işi seçin. Örneğin teslim süresini, hata oranını veya maliyeti seçin. Ölçü birimini baştan belirleyin."
    },
    {
     "title": "Önce kendi sayınızı dürüstçe çıkarın",
@@ -881,7 +881,7 @@
     "text": "Kağıdı SO, WO, ST, WT adlı dört hücreye bölün. S güç, W zayıflık, O fırsat, T tehdit demektir. Güçlü ve zayıf yönleri fırsat ve tehditlerle tek tek eşleştirin. Her eşleşmede ne yapmanız gerektiğini sorun, her hamleyi hücreye yazın."
    },
    {
-    "title": "Hücre başına en çok iki plan",
+    "title": "Her hücreden en çok iki plan seçin",
     "text": "Hücreler dolunca eleme yapın. Her hücreden en güçlü bir veya iki planı seçin. En az masrafla en büyük farkı yaratan planı arayın. Planı gerçekten yapacak gücünüz olup olmadığına da bakın."
    },
    {
@@ -928,7 +928,7 @@
   "steps": [
    {
     "title": "Sorunu net ve açık yazın",
-    "text": "“İşler kötü” diye başlamayın. “Salı günü üç müşteri siparişini geç aldı” diye başlayın. Sorunu yeri, zamanı ve ölçüsüyle tek cümlede yazın. Bulanık soruna sorulan “neden?” sorusu bulanık cevap getirir."
+    "text": "“İşler kötü” diye başlamayın. “Salı günü üç müşteri siparişini geç aldı” diye başlayın. Sorunu yeri, zamanı ve ölçüsüyle tek cümlede yazın. Sorun bulanık yazılırsa “neden?” sorusu da bulanık cevap getirir."
    },
    {
     "title": "İlgili kişilere, mümkünse olay yerinde sorun",
@@ -944,7 +944,7 @@
    }
   ],
   "warn": [
-   "Bazı sorunların birden fazla asıl nedeni olur. Sorun azalır ama bitmezse öbür nedeni de araştırın. Masa başında kurulan “Bence şundandır” zinciri mantıklı görünür ama yanıltır. Her halkayı yerinde kontrol edin."
+   "Bazı sorunların birden fazla asıl nedeni olur. Bir nedeni çözünce sorun azalabilir ama bitmeyebilir. O zaman öbür nedeni de araştırın. Masa başında kurulan “Bence şundandır” zinciri mantıklı görünür ama yanıltır. Her halkayı yerinde kontrol edin."
   ],
   "tip": [
    "Zincir bir insanı suçlayarak bitmesin. Bir kişiye ulaşınca “Hatayı önleyen düzen neden yoktu?” diye sorun. İnsanlar değişir ama düzen kalır. Kalıcı çözüm hep düzende bulunur."
@@ -959,11 +959,11 @@
    },
    {
     "title": "Her tahmine makul bir aralık verin",
-    "text": "Her kalem için bir kötü ve bir iyi değer belirleyin. Örneğin “Satış 160 ile 240 arasında olabilir” deyin. Aralığı hayalden değil, geçmiş yıllardan, iş kolunuzdan ve toptancınızdan öğrenin. Abartılı aralıklar analizi korku filmine çevirir."
+    "text": "Her tahmin için bir kötü ve bir iyi değer belirleyin. Örneğin “Satış 160 ile 240 arasında olabilir” deyin. Aralığı hayalden değil, geçmiş yıllardan, iş kolunuzdan ve toptancınızdan öğrenin. Abartılı aralıklar analizi korku filmine çevirir."
    },
    {
     "title": "Tahminleri teker teker değiştirin, etkiyi yazın",
-    "text": "Bir tahmini kötü ve iyi değerine çekin, gerisini sabit tutun. Sonucun ne kadar değiştiğini yazın ve sıradaki tahmine geçin. Sonunda etkileri büyükten küçüğe sıralayın, bu sıraya tornado tablosu denir. En üstteki bir iki kalem planınızın kaderini belirler."
+    "text": "Bir tahmini kötü ve iyi değerine çekin, gerisini sabit tutun. Sonucun ne kadar değiştiğini yazın ve sıradaki tahmine geçin. Sonunda etkileri büyükten küçüğe sıralayın, bu sıraya tornado tablosu denir. En üstteki bir iki tahmin planınızın kaderini belirler."
    },
    {
     "title": "Önlem alın, kararı ona göre verin",
@@ -982,7 +982,7 @@
   "steps": [
    {
     "title": "Sorun ve müşteri kutusuyla başlayın",
-    "text": "En çok üç büyük müşteri derdini ve derdi çekeni yazın. “Herkes” bir müşteri grubu değildir. İlk müşteriniz olacak dar ve ulaşabileceğiniz grubu ayrıca yazın. Bu iki kutu zayıfsa diğer kutuları doldurmak boşunadır."
+    "text": "Müşterinin en büyük dertlerini yazın. En az bir, en çok üç dert yazın. Bu dertleri en çok kimin çektiğini de yazın. “Herkes” bir müşteri grubu değildir. İlk müşteriniz olacak dar ve ulaşabileceğiniz grubu ayrıca yazın. Bu iki kutu zayıfsa diğer kutuları doldurmak boşunadır."
    },
    {
     "title": "Değer önerisini ve çözümü yazın",
@@ -1075,7 +1075,7 @@
    },
    {
     "title": "Sağlam hamleleri ve uyarı işaretlerini bulun",
-    "text": "Kararınızın hangi senaryoda işe yaradığına, hangisinde batırdığına bakın. Dört senaryoda da makul kalan hamleleri bugünden yapın. Esneklik, düşük aylık gider ve beceri yatırımı böyle hamlelerdir. Erken uyarı işaretlerini belirleyip izleyin, planınızı gidişe göre değiştirin."
+    "text": "Kararınızın hangi senaryoda işe yaradığına, hangisinde batırdığına bakın. Dört senaryoda da makul kalan hamleleri bugünden yapın. Esneklik, düşük sabit gider ve beceri yatırımı böyle hamlelerdir. Sabit gider, satış olmasa da ödediğiniz giderdir. Erken uyarı işaretlerini belirleyip izleyin, planınızı gidişe göre değiştirin."
    }
   ],
   "warn": [
@@ -1094,7 +1094,7 @@
    },
    {
     "title": "CLV sayınızı hesaplayın",
-    "text": "Alışveriş başına karı, yıllık alışveriş sayısını, müşterinin kaldığı yılı bulun. Satış tutarını değil, karı alın. Kayıtlardan bulduğunuz bu üç ortalamayı çarpın. Emin olmadığınız yerde iyimser değil, temkinli sayıyı seçin."
+    "text": "Kayıtlarınızdan üç ortalama bulun. Birincisi alışveriş başına kardır, satış tutarı değildir. İkincisi yıllık alışveriş sayısıdır. Üçüncüsü müşterinin kaç yıl müşteri kaldığıdır. Bu üç ortalamayı çarpın. Emin olmadığınız yerde iyimser değil, temkinli sayıyı seçin."
    },
    {
     "title": "Oranı ve geri ödeme süresini bulun",
@@ -1102,7 +1102,7 @@
    },
    {
     "title": "İki koldan iyileştirin ve izleyin",
-    "text": "CAC için pahalı reklam yolunu kısın, ucuz ve iyisini büyütün. Bir de tavsiye düzeni kurun. CLV için müşteriyi hatırlatma, bakım ve sadakatle tutun. Alışveriş sıklığını ve tutarını artıran teklifler yapın. İki sayıyı üç ayda bir hesaplayın, bozulmayı satış tablosundan aylar önce görürsünüz."
+    "text": "CAC için pahalı geliş yolunu kısın. Ucuz olan ve iyi müşteri getiren geliş yolunu büyütün. Bir de tavsiye düzeni kurun. CLV için müşteriyi tutan alışkanlıklar kurun. Hatırlatma, bakım ve sadakat böyle alışkanlıklardır. Alışveriş sıklığını ve tutarını artıran teklifler yapın. İki sayıyı üç ayda bir yeniden hesaplayın. Böylece bozulmayı satış tablosundan aylar önce görürsünüz."
    }
   ],
   "warn": [

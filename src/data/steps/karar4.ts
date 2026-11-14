@@ -43,6 +43,7 @@ export const KARAR4: StepDef[] = [
       },
       {
         title: 'Değer önerisi kanvası',
+        optional: true,
         description: 'Sol taraf müşteri. Sağ taraf çözüm. Her sol satıra sağda bir karşılık olmalı.',
         fields: [
           { key: 'customerJobs', type: 'textarea', label: 'Müşterinin işi. Ne bitirmek istiyor?', rows: 2, maxLength: 300, span: 12 },
@@ -101,6 +102,7 @@ export const KARAR4: StepDef[] = [
       },
       {
         title: 'İzinler',
+        optional: true,
         when: { field: { key: 'mode', equals: 'ucretli' } },
         fields: [
           { key: 'permitChecklist', type: 'checklist', label: 'İzin kontrol listesi', items: [
@@ -127,6 +129,7 @@ export const KARAR4: StepDef[] = [
       },
       {
         title: 'Teslim koşulu',
+        optional: true,
         fields: [
           { key: 'deliveryTerms', type: 'textarea', label: 'Bir sayfalık teslim koşulu. Ne, ne zaman, kaç para ve iade koşulu.', rows: 4, maxLength: 800, placeholder: 'Günlük satış raporu. Her akşam saat 21\'de. Ayda 200 TL. İlk ay beğenmezse para iade.' },
         ],

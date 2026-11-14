@@ -182,4 +182,38 @@ describe('confidenceOf', () => {
     expect(md).toContain('Öneriyi karar sahibine sunun.')
     expect(md).not.toMatch(/Seçimi stratej yapar|Stratej'in kararı/)
   })
+
+  it('belirsizlik seviyesini, en kötü durumu ve etkileyen kişileri rapora koyar', () => {
+    const r = buildHandoffReport(buildDemoPlan())
+    expect(r.uncertaintyLevels).toEqual([
+      { text: 'Kira 12 ay içinde ne kadar artacak?', level: 'Sonuç bir aralıkta kalacak' },
+      { text: 'Zincir kafe mahalleye şube açar mı?', level: 'İki ya da üç sonuçtan biri olacak' },
+    ])
+    expect(r.limits.find((l) => l.label === 'En kötü durum')?.value).toContain('En çok 120.000 TL ve 6 ay kaybederim')
+    expect(r.stakeholders.map((x) => [x.who, x.effect])).toEqual([['Dükkânın mal sahibi', 'Engelleyebilir'], ['Mahalle muhtarı', 'Kolaylaştırabilir']])
+    expect(r.meta).toContain('Düzey: tek işin planı.')
+    const md = handoffToMarkdown(r)
+    expect(md).toContain('Belirsizlik seviyesi: Sonuç bir aralıkta kalacak.')
+    expect(md).toContain('İşi etkileyen kişiler:')
+  })
+
+  it('seviyesi seçilmemiş belirsizlik için seviye uydurmaz', () => {
+    const p = buildDemoPlan()
+    delete p.steps['04'].values.uncertainty1Level
+    const r = buildHandoffReport(p)
+    expect(r.uncertaintyLevels[0].level).toBeNull()
+    expect(handoffToMarkdown(r)).toContain('Belirsizlik seviyesi: seçilmedi.')
+  })
+
+  it('varsayımın bilgiye oranını ve bakılmayan alanları yazar', () => {
+    const p = buildDemoPlan()
+    const full = buildHandoffReport(p)
+    expect(full.knowledge?.total).toBe(full.groups.flatMap((g) => g.claims).length)
+    expect(handoffToMarkdown(full)).toContain(full.knowledge!.sentence)
+    expect(full.blindSpots).toEqual([])
+    expect(handoffToMarkdown(full)).toContain('Bakılmayan alan yok.')
+    p.steps['04'] = { values: {}, status: 'atlandi', skipReason: 'Sektörü iyi tanıyorum.', updatedAt: '' }
+    const md = handoffToMarkdown(buildHandoffReport(p))
+    expect(md).toContain('- Adım 04. Dış çevre taraması: Atlandı. Sektörü iyi tanıyorum.')
+  })
 })

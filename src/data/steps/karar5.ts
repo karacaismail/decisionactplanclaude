@@ -1,7 +1,7 @@
 import { breakEvenCalc } from '@/engine/calc'
 import { ADVANTAGE_LEVELS, STRENGTH_LABEL, strengthsOf } from '@/engine/strengths'
 import { CROSS_QUESTIONS, ORIGIN_OPTIONS } from '@/engine/situation'
-import { conditionsCalc, DEPENDENCY_OPTIONS, DISSENT_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
+import { conditionsCalc, DEPENDENCY_OPTIONS, STAKEHOLDER_OPTIONS, DISSENT_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
 import { pathsCalc } from '@/engine/integrity'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
@@ -115,6 +115,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Serbest bütçe',
+        optional: true,
         description: 'Toplam bütçe, harcayabileceğiniz parayı tek başına göstermez. Harcananı ve ödenmemiş taahhüdü düşün.',
         fields: [
           { key: 'commitmentsKnown', type: 'segmented', label: 'Ödenmemiş bağlayıcı taahhüdünüz var mı?', help: 'Bağlayıcı taahhüt, vazgeçseniz de ödeyeceğiniz paradır. Örneğin imzalı kira sözleşmesi.', options: [
@@ -238,7 +239,8 @@ export const KARAR5: StepDef[] = [
     mandatory: true,
     who: 'Kurucu. Dış göz katılırsa daha iyidir.',
     timebox: '2 ile 3 gün.',
-    shortPath: false,
+    shortPath: true,
+    whenNote: 'Kapı 5 risk tablosunu bu adımdan okur. Bu yüzden adım kısa yolda da görünür.',
     intro: 'Ön ölüm analizi, işin battığını hayal edip nedenleri önceden yazmaktır. Böylece önlem erken alınır.',
     howTo: [
       '"Bu iş 12 ay sonra battı" diye düşünün. En olası 5 nedeni yazın.',
@@ -260,6 +262,7 @@ export const KARAR5: StepDef[] = [
             { key: 'owner', type: 'text', label: 'Sorumlu' },
             { key: 'stopThreshold', type: 'text', label: 'Durdurma eşiği', placeholder: 'Sayı içersin.' },
           ] },
+          { key: 'worstCase', type: 'textarea', label: 'Bu iş tutmazsa en çok ne kaybedersiniz? Sonra ayakta kalır mısınız?', help: 'Parayı, zamanı ve verdiğiniz sözleri düşünün. Bu soru, öngöremediğiniz olaylara karşı en sağlam korumadır.', rows: 2, maxLength: 400, placeholder: 'Örneğin: En çok 120.000 TL ve 6 ay kaybederim. Eski işime dönebilirim.' },
         ],
       },
       {
@@ -288,6 +291,8 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Kritik riskler için kurallar',
+        optional: true,
+        hideInShortPath: true,
         description: 'Her kritik risk için bir satır yazın.',
         fields: [
           { key: 'eca', type: 'repeater', label: 'Olay, koşul ve eylem kuralları', addLabel: 'Kural ekle', columns: [
@@ -301,6 +306,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Tek kaynağa bağımlılık',
+        optional: true,
         description: 'İşiniz tek bir kaynağa bağlıysa o kaynak gidince iş durur. Size uyanları işaretleyin. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'dependencies', type: 'chips', label: 'İşiniz hangisine bağlı?', options: DEPENDENCY_OPTIONS },
@@ -309,6 +315,8 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Ayrı görüş',
+        optional: true,
+        hideInShortPath: true,
         description: 'Ekipten ya da dışarıdan biri farklı düşünüyorsa görüşünü yazın. Ayrı görüş bir kusur değildir. Stratej bu görüşü de okur. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'dissents', type: 'repeater', label: 'Ayrı görüşler', addLabel: 'Görüş ekle', maxRows: 6, columns: [
@@ -320,7 +328,23 @@ export const KARAR5: StepDef[] = [
         ],
       },
       {
+        title: 'İşi etkileyen kişiler',
+        optional: true,
+        hideInShortPath: true,
+        description: 'Bu işi kim engelleyebilir, kim kolaylaştırabilir? Müşteri dışındaki kişileri yazın. Örneğin mal sahibi, belediye ya da büyük bir tedarikçi. Bu bölüm isteğe bağlıdır.',
+        fields: [
+          { key: 'stakeholders', type: 'repeater', label: 'Etkileyen kişiler ve kurumlar', addLabel: 'Kişi ekle', maxRows: 6, columns: [
+            { key: 'who', type: 'text', label: 'Kim?', placeholder: 'Örneğin dükkânın mal sahibi' },
+            { key: 'effect', type: 'select', label: 'İşi nasıl etkiler?', options: STAKEHOLDER_OPTIONS },
+            { key: 'how', type: 'text', label: 'Ne yapabilir?', placeholder: 'Örneğin kirayı ikinci yıl iki katına çıkarabilir' },
+            { key: 'plan', type: 'text', label: 'Siz ne yapacaksınız?', placeholder: 'Örneğin artış oranını sözleşmeye yazdırırım' },
+          ] },
+        ],
+      },
+      {
         title: 'Geri dönülemez kararlar',
+        optional: true,
+        hideInShortPath: true,
         fields: [
           { key: 'irreversible', type: 'chips', label: 'Hangi kararlar geri alınamaz?', options: [
             { value: 'uzunKira', label: 'Uzun kira sözleşmesi' },
@@ -397,6 +421,7 @@ export const KARAR5: StepDef[] = [
     sections: [
       {
         title: 'Çapraz sorular',
+        optional: true,
         description: 'Üstteki durum özetine bakın. Dört soruyu cevaplayın. Cevaplar yol adayı bulmanıza yardım eder. Sorular isteğe bağlıdır.',
         fields: CROSS_QUESTIONS.map((q) => ({ key: q.key, type: 'textarea' as const, label: q.label, placeholder: q.placeholder, rows: 2, maxLength: 400, span: 12 as const })),
       },
@@ -425,6 +450,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Puanlama',
+        optional: true,
         description: 'Önce ağırlık verin. Kilitleyin. Sonra her yola 1 ile 5 arası puan verin.',
         fields: [
           { key: 'pathScores', type: 'scoreMatrix', label: 'Yedi ölçütle puanlama', rowsFrom: 'paths', rowLabelKey: 'name', criteria: [
@@ -440,12 +466,14 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Rakip tepkisi',
+        optional: true,
         fields: [
           { key: 'counterMove', type: 'textarea', label: 'Rakip karşı hamlesi ve cevabınız', rows: 3, placeholder: 'Rakip fiyat kırarsa biz hızla ve güvenle kazanırız.' },
         ],
       },
       {
         title: 'Bu yol neden çalışabilir?',
+        optional: true,
         description: 'Bir yolun iki işi birbirini destekleyebilir ya da birbiriyle çelişebilir. Bulduğunuz bağları yazın. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'similarTip', type: 'info', label: 'Yollar birbirine benziyorsa', tone: 'ipucu', text: 'Dört soru sorun. Hangi işi kaldırabiliriz? Hangi işi azaltabiliriz? Hangi işi güçlendirebiliriz? Hangi yeni işi ekleyebiliriz? Çıkan yolu üstteki tabloya yazın.' },
@@ -460,6 +488,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Asıl engel',
+        optional: true,
         description: 'Asıl engel, önce çözülmesi gereken en önemli güçlüktür. Çözülebilir bir güçlük yazın. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'crux', type: 'textarea', label: 'Bu işin önündeki asıl engel nedir?', rows: 2, maxLength: 300, placeholder: 'Örneğin: Yazılı ilgi, gideri karşılayan günlük satışa dönüşecek mi?' },
@@ -473,6 +502,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Başarı neye bağlı?',
+        optional: true,
         description: 'İşin yürümesi için gerçekleşmesi gereken koşulları yazın. Her koşul bir iddiadır. Kanıt bağlayınca durumu değişir. Bu bölüm isteğe bağlıdır.',
         fields: [
           { key: 'conditionHelp', type: 'info', label: 'Koşul, ölçü, sınır ve iş ayrı şeylerdir', tone: 'bilgi', text: 'Koşul, işin yürümesi için gerçekleşmesi gereken durumdur. Örneğin "sabah talebi gideri karşılar". Ölçü, koşulu neyle saydığınızdır. Örneğin "günlük ücretli sipariş". Sınır, yeterli saydığınız sayıdır. Örneğin "günde 40 sipariş". İş ise sizin yaptığınız şeydir. Örneğin "durağa tabela koymak". Bu tabloya iş değil, koşul yazın.' },
@@ -498,6 +528,7 @@ export const KARAR5: StepDef[] = [
       },
       {
         title: 'Açık kararlar',
+        optional: true,
         description: 'Strateji çalışmasında verilecek kararları yazın. Kararı bu adımda vermeyin. Seçenekleri ve dayanağı yazın.',
         fields: [
           { key: 'openDecisions', type: 'repeater', label: 'Açık karar defteri', addLabel: 'Karar ekle', columns: [

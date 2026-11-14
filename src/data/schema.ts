@@ -66,6 +66,10 @@ export interface Section {
   title?: string
   description?: string
   when?: Condition
+  /** İsteğe bağlı bölüm. Boşken kapalı gelir. Çok sayıda olursa ayrı sekmede durur. */
+  optional?: boolean
+  /** Kısa yolda bu bölüm gösterilmez. */
+  hideInShortPath?: boolean
   fields: Field[]
 }
 

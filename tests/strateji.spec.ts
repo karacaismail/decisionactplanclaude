@@ -21,8 +21,11 @@ async function noHorizontalOverflow(page: Page, label = '') {
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
-  await expect(page).toHaveURL(/#\/ozet/)
+  /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
+  await expect(async () => {
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
+  }).toPass()
 }
 
 /** Görünür dolu düğme sayısı. Ekranda en çok bir tane olur. */
@@ -177,6 +180,8 @@ test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kapı 5\'e g
   // Bu adımda seçim alanı ve öneri kartı yoktur.
   await expect(page.locator('#a18-chosenPath')).toHaveCount(0)
   await expect(page.getByText('Temelden gelen öneriler')).toHaveCount(0)
+  // Puanlama isteğe bağlı sekmededir. Yol adları orada satır başlığı olarak görünür.
+  await page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' }).click()
   await expect(page.getByText('Bugünkü durumu sürdürmek').first()).toBeAttached()
   const bar = page.locator('.action-bar')
   expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
