@@ -16,7 +16,7 @@ Arka yüz tek bir Frappe 16 uygulaması olacak. Uygulama altı modüle bölünec
 
 Codex dokuz modül öneriyor. Codex'in modülleri sürecin aşamalarını izliyor. Bizim modüllerimiz ise verinin kimin tarafından yazıldığını izliyor. İki planın ilkesi aynıdır: her kaydın tek bir yazarı olur. Bizim yazarlarımız daha az. Bu yüzden altı modül yeter. Ayrıntı 3. bölümdedir.
 
-Codex'in planından altı fikri aldım. Örneğin kaynak izni ayrı bir karar oldu. Gerçekleşen ölçüm, hedeften ayrı bir kayıt oldu. Liste 2. bölümdedir.
+Codex'in planından beş fikri aldım. Örneğin kaynak izni ayrı bir karar oldu. Gerçekleşen ölçüm, hedeften ayrı bir kayıt oldu. Liste 2. bölümdedir.
 
 Kurumlar ayrı sitelerde çalışacak. Tarayıcı her değişikliği önce kendi deposuna yazacak. Kararlar yalnız sunucuda kesinleşecek.
 
@@ -33,6 +33,7 @@ Bu kararları karar sahibi 15 Kasım 2026 Pazar günü verdi.
 | İnternetsiz çalışma | Evet. Tarayıcıda çalışma sürer. |
 | Baştan indirme süresi | 2 gün |
 | Yerel şifreleme | Tarayıcının sakladığı anahtar |
+| Strateji yeniden açılınca | Uygulama sürer. Kaynak izinleri geri çekilmez. |
 | Karar internetsiz | Yalnız taslak olur. Sunucuda kesinleşir. |
 | Çakışma | Aynı alan çakışırsa kullanıcı seçer. |
 | iPhone | Kullanıcıdan uygulamayı ana ekrana eklemesi istenir. |
@@ -68,11 +69,10 @@ Bu raporda "internetsiz" sözü tek anlamda kullanılır. Bu söz, cihazın sunu
 | No | Codex'in fikri | Neden değerli? | Bu raporda nerede? |
 |---|---|---|---|
 | 1 | Seçim harcama yetkisi vermez. Kaynak izni ayrı bir karardır. | Karar sahibi bir yolu seçse bile para henüz açılmamıştır. Para ayrı bir onayla açılır. | Kaynak İzni kaydı (5.3) |
-| 2 | Yol yeniden seçilince eski kaynak izni aynı işlemde geri çekilir. | Eski yola yeni izin verilebilecek bir aralık kalmaz. | 7.2. Bu fikir sizin kararınızı bekliyor. |
-| 3 | Hedef ile gerçekleşen ayrı kayıtlardır. | Ekip hedefi 5 dakika koyar. Gerçek sonuç 8 dakika çıkar. Hedef değişmeden kalır. | Gösterge Ölçümü kaydı (5.2). Şimdilik yalnız 3.1 göstergelerinde. |
-| 4 | Karar, dayandığı kanıtın sürümünü saklar. | Kanıt sonradan düzeltilirse hangi kararın eski kanıta dayandığı bulunur. | Karar Dayanağı alt tablosu (5.3) |
-| 5 | Ekranda iki ayrı durum görünür: "Cihaza kaydedildi" ve "Kurumda kaydedildi". | Kullanıcı verinin nerede olduğunu bilir. | 8.1 |
-| 6 | Toplama, inceleme ve onay ayrı işlerdir. Metin ile ekin gönderim durumu da ayrıdır. | Bir gözlemin sunucuya ulaşması onay sayılmaz. Not ulaşmışken fotoğraf bekleyebilir. | 8.1 ve 8.6 |
+| 2 | Hedef ile gerçekleşen ayrı kayıtlardır. | Ekip hedefi 5 dakika koyar. Gerçek sonuç 8 dakika çıkar. Hedef değişmeden kalır. | Gösterge Ölçümü kaydı (5.2). Şimdilik yalnız 3.1 göstergelerinde. |
+| 3 | Karar, dayandığı kanıtın sürümünü saklar. | Kanıt sonradan düzeltilirse hangi kararın eski kanıta dayandığı bulunur. | Karar Dayanağı alt tablosu (5.3) |
+| 4 | Ekranda iki ayrı durum görünür: "Cihaza kaydedildi" ve "Kurumda kaydedildi". | Kullanıcı verinin nerede olduğunu bilir. | 8.1 |
+| 5 | Toplama, inceleme ve onay ayrı işlerdir. Metin ile ekin gönderim durumu da ayrıdır. | Bir gözlemin sunucuya ulaşması onay sayılmaz. Not ulaşmışken fotoğraf bekleyebilir. | 8.1 ve 8.6 |
 
 Codex'in birkaç küçük fikrini de aldım:
 
@@ -88,6 +88,7 @@ Codex'in birkaç küçük fikrini de aldım:
 |---|---|
 | Sürecin aşamalarına göre dokuz modül | 3.3 bölümünde ayrıntılı gerekçe var. Kısaca: adım cevapları tek bir kayıt türündedir. Beş aşama modülü aynı tabloyu paylaşmak zorunda kalırdı. |
 | Raporların arka planda hazırlanması | Bizde rapor metnini tarayıcı üretir. Sunucu yalnız anlık görüntüyü alır. Anlık görüntü hızlıdır. Arka plan işi şimdilik gerekmez. |
+| Yol yeniden seçilince eski kaynak izninin geri çekilmesi | Karar sahibi 15 Kasım 2026 Pazar günü bu fikri seçmedi. Uygulama eski seçimle sürer. Karar sahibi bir izni isterse kendisi geri çeker. |
 | Mevcut SQLite sunucusundan aktarım | Bu, Codex'in uygulamasına özgüdür. Bizim uygulamamızın sunucusu yok. Gerekirse Codex'in aktarım adımları ayrıca kullanılır. |
 
 ## 3. Modüller
@@ -201,7 +202,7 @@ Kurallar paketini bütün modüller kullanabilir. Kurallar paketi hiçbir modül
 | Kanıt geri çekildi | Plan | Karar, Denetim kaydı, Eşitleme | Karar bağlı kararları eskitir. Kanıt silinmez, "geri çekildi" durumuna geçer. |
 | Ölçüm eklendi | Plan | Denetim kaydı, Eşitleme | Hiçbir kapı bu ölçümü okumaz. Bu yüzden Karar dinlemez. |
 | Karar onaylandı | Karar | Rapor, Denetim kaydı, Eşitleme | Rapor anlık görüntü alır. |
-| Strateji yeniden açıldı | Karar | Denetim kaydı, Eşitleme | Strateji onayı ve ona bağlı kaynak ayırma izinleri Karar modülünün içinde, aynı işlemde geçersiz olur. Strateji belgesini taslağa döndürme komutu ise iş akışından Plan'a gider. |
+| Strateji yeniden açıldı | Karar | Denetim kaydı, Eşitleme | Strateji onayı Karar modülünün içinde, aynı işlemde geçersiz olur. Kaynak izinleri açık kalır. Strateji belgesini taslağa döndürme komutu ise iş akışından Plan'a gider. |
 | Cihaz iptal edildi | Erişim | Denetim kaydı, Eşitleme | Eşitleme cihazın değişikliklerini incelemeye ayırır. |
 
 Olaylar aynı işlemde çalışır. Bunun bir bedeli var. Dinleyici hata verirse olayı yayan modülün yazması da geri alınır. Bu bağ bilerek seçildi. Çünkü cevap ile kararın birbirini tutması gerekir.
@@ -240,7 +241,7 @@ Olaylar bir zincir kurabilir. Örneğin "Yeniden aç" kararı strateji belgesini
 
 Gösterge Ölçümü yalnız eklenir. Bu sayede iki kişi internetsiz ölçüm girse bile çakışma olmaz. İki ölçüm de kalır.
 
-**Gösterge Ölçümü'nün sınırı.** Bu kayıt yalnız 3.1 adımındaki göstergeleri izler. Kapı 6'nın ölçüleri bugün Adım 22'de durur. Kapı 6 bu ölçüleri okumaya devam eder. Codex'in 3. fikri, yani hedef ile gerçekleşenin ayrılması, bu yüzden şimdilik Kapı 6'ya uygulanmaz. İki ölçüm yerinin birleşmesi ayrı bir iştir. Birleşirse yeni kayıt kapıların okuduğu girdilere, eskime kuralına ve olay tablosuna eklenir.
+**Gösterge Ölçümü'nün sınırı.** Bu kayıt yalnız 3.1 adımındaki göstergeleri izler. Kapı 6'nın ölçüleri bugün Adım 22'de durur. Kapı 6 bu ölçüleri okumaya devam eder. Codex'in 2. fikri, yani hedef ile gerçekleşenin ayrılması, bu yüzden şimdilik Kapı 6'ya uygulanmaz. İki ölçüm yerinin birleşmesi ayrı bir iştir. Birleşirse yeni kayıt kapıların okuduğu girdilere, eskime kuralına ve olay tablosuna eklenir.
 
 ### 5.3. Karar modülü
 
@@ -252,7 +253,7 @@ Gösterge Ölçümü yalnız eklenir. Bu sayede iki kişi internetsiz ölçüm g
 | Strateji Gözden Geçirme | Onaylanan | plan, seçim hâlâ doğru mu, karar, gerekçe, dayanak, geçersiz kılınan onay, karar sahibi, eskime işareti | "Yeniden aç" kararı strateji onayını aynı işlemde geçersiz kılar. |
 | Kaynak İzni | Onaylanan | plan, tür, kapsam, tutar, kişi ve süre, bitiş, sorumlu, kapanış kanıtı, durum, kapanış zamanı, kapanış nedeni, kapı kararı, strateji onayı, 3.3 satırının kimliği, eskime işareti | İki tür var. Koşullu izin bir kapı kararına bağlıdır. Kaynak ayırma izni bir strateji onayına ve 3.3 adımının bir satırına bağlıdır. Hangi bağın zorunlu olduğunu tür belirler. |
 | Sınır Değişikliği | Onaylanan | plan, alan, eski değer, yeni değer, artış mı, değiştiren, inceleyen, inceleme zamanı | Artışta ikinci görüş gerekir. İnceleyen kişi değişikliği yapan kişi olamaz. |
-| Karar Dayanağı | Alt tablo, her karar türünün içinde | dayanak türü, kimlik, sürüm | Kararın okuduğu adımlar ve kanıt sürümleri. Codex'in 4. fikridir. |
+| Karar Dayanağı | Alt tablo, her karar türünün içinde | dayanak türü, kimlik, sürüm | Kararın okuduğu adımlar ve kanıt sürümleri. Codex'in 3. fikridir. |
 
 "Onaylanan" türü Frappe'nin onay yapısıdır. Bu yapıda her kayıt "taslak", "onaylandı" ya da "iptal" durumundadır. Onaydan sonra yalnız şu alanlar değişebilir:
 
@@ -272,7 +273,7 @@ Kaynak İzni'nin iki ayrı kapanış durumu vardır:
 | Durum | Anlamı | Kapıya etkisi |
 |---|---|---|
 | Kanıtla kapandı | İzin verilen iş yapıldı. Kapanış kanıtı geldi. | Koşullu izin kapanınca kapı geçmiş sayılır. Bugünkü kural budur. |
-| Geri çekildi | İzin artık geçerli değil. Örneğin strateji yeniden açıldı. | Geri çekilen koşullu izin kapıyı geçirmez. Kapı "Beklet" sayılır. |
+| Geri çekildi | Karar sahibi izni kendisi geri aldı. | Geri çekilen koşullu izin kapıyı geçirmez. Kapı "Beklet" sayılır. |
 
 **Bütçe sayımı.** Serbest bütçe, harcama sınırından üç tutar düşülerek hesaplanır. Bunlar harcanan tutar, açık koşullu izinler ve açık kaynak ayırma izinleridir. 3.3 adımının bir satırı izne dönüşünce bütçeden düşülür. İzne dönüşmeyen satır düşülmez. Böylece aynı para iki kez sayılmaz. Geri çekilen iznin harcanmamış kısmı serbest bütçeye döner.
 
@@ -446,10 +447,9 @@ Birden çok kaydı aynı işlemde değiştiren dört iş akışı var.
 2. Aynı işlemde strateji onayı geçersiz olur.
 3. Strateji belgesi taslağa döner. Bu komutu iş akışı Plan modülüne gönderir.
 4. Kapı 6, 7 ve 8'in kararları eskir.
-5. Gözlem ve ölçüm girmek sürer.
-6. Geçersiz onaya bağlı kaynak ayırma izinleri "geri çekildi" durumuna geçer. Bu adım sizin kararınızı bekliyor. Kapıların koşullu izinleri bundan etkilenmez.
+5. Uygulama sürer. Gözlem ve ölçüm girmek sürer. Açık kaynak izinleri açık kalır.
 
-6. adım önceki tasarımdan ayrılır. Önceki tasarımda "Yeniden aç" uygulamayı hiç durdurmuyordu. Bu adım Codex'in 2. fikridir. Karar sizindir. Soru 14. bölümdedir. Karar verilene kadar bu adım uygulanmaz.
+Karar sahibi 15 Kasım 2026 Pazar günü bu kuralı seçti. "Yeniden aç" kararı kaynak izinlerini geri çekmez. Uygulama eski seçimle sürer. Karar sahibi bir izni durdurmak isterse izni kendisi geri çeker.
 
 **Ölçüm ekle:**
 
@@ -640,7 +640,6 @@ Arka yüz, ön yüzde de değişiklik ister. Bunlar bu deponun işidir.
 | Kaynak İzni ekranı | Para ancak açık bir izinle harcanır. |
 | Gösterge Ölçümü ekranı | Gerçekleşen değer hedeften ayrı tutulur. |
 | Karar sahibi ve ikinci görüş alanlarını kullanıcıya bağlamak | Bugün bu alanlar serbest metindir. |
-| "Yeniden aç" kararının kaynak izinlerini geri çekmesi | 7.2 bölümündeki kural. Sizin kararınızı bekliyor. |
 | `uid()` işlevinin UUID üretmesi | Bugün kimlikler "plan-..." biçiminde. Frappe 16 UUID olmayan adı reddeder. |
 | Satır listelerinde kalıcı satır kimliği | Bazı eski satırlar sıra numarasıyla kimlik alıyor. Ölçüm ve izin bu satırlara bağlanır. |
 | Kurum sitesi için ikinci bir yapı | Bugün yapının taban yolu GitHub Pages adresine göre sabit. Kurum sitesinde ön yüzü Frappe sunar. |
@@ -697,7 +696,7 @@ Her adımda önce başarısız olan test yazılır. Sonra kod yazılır. Codex'i
 | 6 | Eşitleme uçları, tekrar tablosu, akış sayacı ve değişiklik akışı | Aynı değişiklik iki kez gönderilince bir kez yazılıyor. İki eşzamanlı işlemde hiçbir akış satırı kaçmıyor. Reddedilen değişiklik ötekileri geri almıyor. |
 | 7 | Ön yüzde yerel depo, giden kutusu, durum çubuğu ve dosyayla taşıma | İnternet kesilip gelince bütün değişiklikler sunucuya ulaşıyor. Bugünkü bir plan dosyası kayıpsız taşınıyor. |
 | 8 | Karar modülü: kapılar, geçiş, strateji onayı ve dayanaklar | Kurala uymayan karar taslakta kalıyor. Karar, okuduğu kanıt sürümlerini saklıyor. |
-| 9 | Kaynak izni ve stratejinin yeniden açılması | Kaynak ayırma izni olmayan işe yeni iş bağlanamıyor. Bütçe aynı parayı iki kez saymıyor. "Yeniden aç" strateji onayını geçersiz kılıyor. Ölçüm girmek sürüyor. |
+| 9 | Kaynak izni ve stratejinin yeniden açılması | Kaynak ayırma izni olmayan işe yeni iş bağlanamıyor. Bütçe aynı parayı iki kez saymıyor. "Yeniden aç" strateji onayını geçersiz kılıyor. Kaynak izinleri açık kalıyor. Ölçüm girmek sürüyor. |
 | 10 | Çakışma ekranı, dosya yükleme, uzun kesinti ve cihaz iptali | Aynı alanı değiştiren iki kullanıcı çakışma ekranını görüyor. Kesilen yükleme kaldığı yerden sürüyor. |
 | 11 | Raporlar ve anlık görüntüler | Sabitlenmiş raporun dayanağı sunucunun verisiyle aynı. Yeni bilgi eski raporu değiştirmiyor. |
 | 12 | İki kurum, iki kişi ve iki cihazla kesinti provası | Tarayıcı kapatma, internetsiz açılış, çakışma, silme, üyelik iptali ve kaybolan yanıt sınamaları geçiyor. Testler yavaş ve kopan bir hatta da geçiyor. |
@@ -715,12 +714,13 @@ Her adımda önce başarısız olan test yazılır. Sonra kod yazılır. Codex'i
 | Olay zinciri döngüye girer | Bir olay kendini yeniden tetikler. | Zincir derinliği sınırı |
 | Modüller arası bağ veritabanında denetlenmez | Var olmayan bir karara bağlı görev kalabilir. | Her komut işlevi bağı denetler. Plan, kanıt ve kararlar silinmez. Arşivlenir, geri çekilir ya da geçersiz kılınır. |
 
-## 14. Sizin karar vermeniz gerekenler
+## 14. Açık kalan konular
 
-1. **Ana alan adı ne olacak?** Kurumlar bu adın alt adlarında açılır. DevOps işlerinin 2. adımı bu karara bağlıdır.
-2. **Arka yüz deposunun adı ve lisansı ne olacak?** Lisansı siz seçersiniz. Geliştirmenin 1. adımından önce gerekir.
-3. **"Yeniden aç" kararı kaynak ayırma izinlerini geri çeksin mi?** Önerim: evet. Ölçüm ve kayıt sürer. Yeni iş ise yeni bir izin ister. Bu kural önceki tasarımdan farklıdır.
-4. **Tek kurucu ikinci görüş için plana bir danışman eklesin mi?** Önerim: evet. Sunucuda ikinci görüşü başka bir kişi kendi hesabıyla vermelidir. Bugün bu alan serbest metindir.
+Rapor bu konularda önerilerimle ilerler:
+
+1. **Tek kurucu ve ikinci görüş.** Tek kurucu plana bir danışman ekler. Danışman ikinci görüşü kendi hesabıyla verir.
+2. **Ana alan adı.** Karar sahibi belirler. DevOps işlerinin 0. adımı bu ada bağlıdır.
+3. **Arka yüz deposunun adı ve lisansı.** Karar sahibi belirler. Geliştirmenin 1. adımından önce gerekir.
 
 ## 15. Doğrulanması gerekenler
 
