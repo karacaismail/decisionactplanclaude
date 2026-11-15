@@ -2,6 +2,8 @@
 
 Bu raporu Claude 15 Kasım 2026 Pazar günü hazırladı. Rapor [bütünleşik geliştirme raporunu](butunlesik-gelistirme-raporu.md) yeni hedeflere göre eleştirir. Hiçbir kod yazılmadı.
 
+Codex aynı soruya ayrı bir eleştiri yazdı. İki eleştiri aynı sonuca varıyor. Codex'in sekiz güçlü yaklaşımını bu rapora işledim. Liste 8. bölümdedir.
+
 ## Kısa cevap
 
 **Modül yapısı yeterli. Plan ise bu hedeflere göre yazılmadı.**
@@ -14,6 +16,19 @@ Altı modül ve modüler monolit doğru kalıyor. Eşitleme tasarımı da doğru
 4. **Plan, bütün kurumların tek seferde güncellendiğini varsayıyor.** Gece toplu yayın, tek bir hatayla bütün aboneleri aynı anda etkiler.
 
 Planı bozmadan iki olmazsa olmaz parça eklenmeli: **istemci sürüm uyumluluğu** ve **merkezi kurum dizini**. Bildirim ise koşullu olarak gerekli hâle geliyor.
+
+### Kabul senaryosu
+
+Mimari şu senaryoyu geçmeden toplu yayına hazır sayılmaz. Senaryo Codex'in raporundan alındı.
+
+1. Bir girişimci saat 02.25'te telefonunda bir kanıt kaydeder. Telefon internetsizdir.
+2. Kurumun sunucusu saat 03.10'da güncellenir.
+3. Telefon sabah internete bağlanır.
+4. Kanıt sunucuya yalnız bir kez kaydedilir.
+5. Eski uygulama sürümü kanıtı sessizce kaybetmez.
+6. Yeni sunucu, bekleyen bir taslağı kendiliğinden onaylanmış karara çevirmez.
+
+Aynı senaryonun ters hâli de geçmelidir. Yeni uygulama sürümü, henüz güncellenmemiş bir kurum sunucusuna bağlanır. Uygulama yine çalışır. Sunucunun desteklemediği işlem ekranda kapalı görünür.
 
 ## 1. Yeni hedefler
 
@@ -84,10 +99,15 @@ Terimler:
 
 
 1. Bütün istemciler için tek oturum modeli kurulur: OAuth 2 ile erişim anahtarı. Frappe bunu destekliyor. Web ve mobil aynı yolu kullanır.
+   - Mobilde giriş, uygulamanın içinde değil telefonun kendi tarayıcısında yapılır. Bu, yerli uygulamalar için önerilen standart yoldur (RFC 8252).
+   - Giriş PKCE ile korunur. PKCE, giriş isteğini başlatan telefona bağlayan bir doğrulamadır.
+   - Uygulamanın içine hiçbir gizli anahtar gömülmez.
+   - Giriş bitince tarayıcı kullanıcıyı uygulamaya geri döndürür. Dönüş adresi sunucuda izin listesinde durur.
 2. Erişim anahtarı mobilde telefonun güvenli kasasında saklanır. Örneğin iPhone'da Keychain. Web'de bellekte tutulur.
 3. Her kurum sitesi yalnız bilinen ön yüz adreslerine izin verir. Frappe'de bunun ayarı vardır. Yıldız işareti, yani herkese izin, kullanılmaz.
 4. Yerel depo her kurum için ayrı bir veritabanı açar. Kullanıcı kurum değiştirince öteki kurumun verisi kilitlenir.
 5. Cihaz iptal edilince erişim anahtarı da iptal edilir.
+6. Mobil uygulama, kurum sitesini uzaktan yükleyen bir kabuk olmaz. Capacitor'ın uzak adres ayarı yalnız geliştirme içindir. Apple da mağaza uygulamasının paketlenmiş bir siteden fazlasını sunmasını bekliyor. Bu üründe o fazlalık bellidir: internetsiz kanıt toplamak ve kesintiden sonra çalışmaya devam etmek.
 
 ### 3.2. Mobil uygulama hangi kuruma bağlanacağını bilmiyor
 
@@ -138,13 +158,22 @@ Planın kuralı her gece binlerce kullanıcıyı "uygulamayı güncelleyin" ekra
 #### Öneri: Uyumluluk penceresi
 
 
-1. Her istek iki sürüm bilgisi taşır: web kodunun sürümü ve kabuğun sürümü.
-2. Sunucu belirli bir pencere boyunca eski sürümleri de kabul eder. Önerim 30 gün ya da son iki mağaza sürümü. Hangisi uzunsa o geçerlidir.
-3. Veritabanı değişiklikleri iki adımda yapılır. Önce yeni alan eklenir. Eski alan ancak pencere kapanınca kaldırılır. Aynı gece hiçbir alan kaldırılmaz.
-4. Giden kutusundaki her değişiklik kendi biçim sürümünü taşır. Sunucu eski biçimi yeni biçime çeviren küçük çeviriciler tutar.
-5. Pencerenin dışındaki istemci reddedilir. Bu istemcinin bekleyen değişiklikleri kaybolmaz. Uygulama güncellenince gönderilir.
-6. Kural sürümü her kararın dayanağına yazılır. Sunucu kararı kendi kurallarıyla değerlendirir. Tarayıcının sonucu yalnız bir öneridir. İki sonuç farklıysa ekran "kurallar güncellendi" der.
-7. Yeni bir özellik önce sunucuda kapalı olarak çıkar. Kurum bazında açılır. Böylece gece yayını ile özelliğin açılması ayrılır.
+1. **Bağlanırken anlaşma.** Uygulama bağlanınca desteklediği API ve eşitleme sürümlerini bildirir. Sunucu kabul ettiği sürümleri ve kullanılabilir işlemleri döner. Uygulama yalnız bu işlemleri açık gösterir. Cihazın bildirdiği yetenek kimseye karar yetkisi vermez.
+2. Her istek iki sürüm bilgisi taşır: web kodunun sürümü ve kabuğun sürümü.
+3. Sunucu belirli bir pencere boyunca eski sürümleri de kabul eder. Önerim 30 gün ya da son iki mağaza sürümü. Hangisi uzunsa o geçerlidir.
+4. Veritabanı değişiklikleri iki adımda yapılır. Önce yeni alan eklenir. Eski alan ancak pencere kapanınca kaldırılır. Aynı gece hiçbir alan kaldırılmaz.
+5. Giden kutusundaki her değişiklik kendi biçim sürümünü taşır. Sunucu eski biçimi yeni biçime çeviren küçük çeviriciler tutar.
+6. Pencerenin dışındaki istemci reddedilir. Bu istemcinin bekleyen değişiklikleri kaybolmaz. Uygulama güncellenince gönderilir.
+7. Kural sürümü her kararın dayanağına yazılır. Sunucu kararı kendi kurallarıyla değerlendirir. Tarayıcının sonucu yalnız bir öneridir. İki sonuç farklıysa ekran "kurallar güncellendi" der.
+8. Yeni bir özellik önce sunucuda kapalı olarak çıkar. Kurum bazında açılır. Böylece gece yayını ile özelliğin açılması ayrılır.
+
+**Ters fark da olur.** Bir dalga başarısız olursa bazı kurumlar eski sunucuda kalır. Yeni uygulama sürümü o sunucuya bağlanabilir. Bağlanırken anlaşma bu durumu da çözer. Uygulama, eski sunucunun desteklemediği işlemleri kapalı gösterir.
+
+**Geri dönüşte önce en hafif yol seçilir.** Sıra şöyledir:
+
+1. Sorunlu özellik, özellik anahtarıyla kapatılır.
+2. Gerekirse uygulama uyumlu eski web paketine döner.
+3. Veritabanı yedeğine ancak son çare olarak dönülür. O zaman önce yazma durdurulur. Aradaki işlemler kayıt altına alınır ve sonra uzlaştırılır. Başarılı müşteri yazıları yedekle ezilmez.
 
 Bu öneri iki parça ister:
 
@@ -167,17 +196,47 @@ Mobil odaklı küçük değişiklikler mağazaya gitmeden dağıtılır.
 
 Yani web kodu uzaktan güncellenebilir. Yerli kod, yeni izin ve yeni yerli eklenti ise ancak mağazadan gelir.
 
+Apple'ın inceleme kılavuzunda iki kural daha var. 2.5.2 kuralı, işlev ekleyen ya da değiştiren kodun indirilmesini sınırlar. 2.5.19 kuralı gizli işlevleri yasaklar. Yani "küçük değişiklik" etiketi tek başına dağıtım yolunu belirlemez. Belirleyici soru, değişikliğin telefona ne getirdiğidir.
+
 #### Sonuç
 
-Uzaktan güncelleme için dört kural gerekir. Plan bunları içermiyor.
+Uzaktan değişiklik için açık kurallar gerekir. Plan bunları içermiyor.
 
-#### Öneri
+#### Öneri: İki katmanlı uzaktan değişiklik
 
+Codex daha temkinli bir yol öneriyor. Bu yol bizim önerimizle birleşince üç katman çıkar:
+
+| Katman | Ne taşır? | Ne zaman kullanılır? | Risk |
+|---|---|---|---|
+| 1. Sürümlü ayar | Yardım metni, alan sırası, açıklama, eşik gibi veriler. Kod taşımaz. | İlk tercih budur. Küçük mobil değişikliklerin çoğu bu katmandan gider. | Düşük. Uygulama tanımadığı ayarı atlar. |
+| 2. Uzaktan web paketi | JavaScript, HTML ve CSS. Yerli kod taşımaz. | Yalnız hata düzeltmesi için. Yeni işlev için kullanılmaz. | Orta. Mağaza kuralları yoruma açıktır. |
+| 3. Mağaza sürümü | Her şey | Yeni işlev, yeni izin, yeni yerli eklenti | Düşük. Ama mağaza onayı gerekir. |
+
+Örnekler:
+
+| Değişiklik | Hangi katman? |
+|---|---|
+| Sunucudaki bir rapor hesabı düzeliyor, API aynı | Hiçbiri. Gece sunucu yayını yeter. |
+| Yardım metni değişiyor | 1. katman |
+| Formdaki mevcut alanların sırası değişiyor | 1. katman. Ayar yeni işlem ya da yetki tanımlayamaz. |
+| Mobil menüde küçük bir hata düzeltiliyor | 2. katman |
+| Yeni bir ekran ya da cihaz izni geliyor | 3. katman |
+
+Sürümlü ayar için dört kural geçerlidir:
+
+1. Ayar, sürümlü bir veri biçimine uyar.
+2. Ayar üzerinden kod çalıştırılmaz.
+3. Her ayar sürümü kuruma, uygulama sürümüne ve izinli alan listesine bağlanır.
+4. Eski ayara dönüş ayrıca sınanır.
+
+Uzaktan web paketi için dört kural geçerlidir:
 
 1. **Kanallar kabuk sürümüne bağlanır.** Her web paketi hangi kabuk sürümüyle çalıştığını bilir. Yeni yerli eklenti isteyen paket eski kabuğa gönderilmez.
 2. **Paketler imzalanır.** Telefon imzasız paketi kurmaz.
 3. **Kendiliğinden geri dönüş kurulur.** Yeni paket açılışta "hazırım" demezse telefon eski pakete döner.
 4. **Paketler dalga hâlinde çıkar.** Önce kullanıcıların küçük bir kısmı alır.
+
+Mağaza sürümleri de kademeli çıkar. App Store ve Google Play bunu destekliyor. Üç zaman ayrı kaydedilir: mağaza onayı, yayına açılma ve kullanıcının kurması. Sunucu, telefonun yeni mağaza sürümünü ne zaman kuracağını belirleyemez. Gece 04.00 hedefi yalnız sunucuları kapsar.
 
 Bir uyarı var. Ionic'in uzaktan güncelleme hizmeti Appflow'un yeni satışı 2025'te durdu. Mevcut müşterilerin erişimi 31 Aralık 2027'de bitiyor. Bu yüzden Appflow seçilmemeli. İki seçenek var: Capgo ve Capawesome Cloud. İkisi de kanal, imza ve geri dönüş sunuyor. Bu bilgiler satıcıların kendi belgelerinden geliyor. Seçimden önce doğrulanmalı.
 
@@ -232,6 +291,19 @@ Geliştirmeler her gece 02.30 ile 04.00 arasında bütün abonelere uygulanır.
 | 5 | Pencere içinde bitmeyen dalga durur. Kalan kurumlar ertesi geceye kalır. |
 | 6 | Sabah eşitlemesi için sunucu istek hızını sınırlar. Telefonlar eşitlemeyi rastgele kısa bir gecikmeyle başlatır. |
 | 7 | Değişiklik yoksa yayın yapılmaz. |
+| 8 | Pencerede bitmeyen veritabanı güncellemesi yarıda kesilmez. Kayıt "pencere aşıldı" olarak kalır. Ertesi gece yalnız eksik siteler alınır. |
+| 9 | Kalan süre bir dalganın güvenle bitmesine yetmezse yeni dalga başlamaz. |
+
+**Süre bütçesi.** 90 dakika üç parçaya bölünür. Örneğin hazırlık 10, geçiş 60 ve kurtarma payı 15 dakikadır. Toplam 85 dakikadır. Bu sayılar örnektir, ölçülmedi. Hüseyin Cengiz gerçek site sayısı ve veri boyutuyla ölçer. Ölçüm, büyük verili ve küçük verili kurumları ayrı kapsar.
+
+**Saat 04.00'te yayın ne zaman tamam sayılır?** Jenkins hedef listesini gerçek sürümlerle karşılaştırır. Her abonenin hedef sürümü ve sağlık sonucu kayıtlıysa yayın tamamdır. Bekleyen, geri alınan ya da başarısız site ayrı görünür. Sağlık sonucu dört işlemle ölçülür:
+
+1. Oturum açma
+2. Kanıt yazma
+3. Aynı isteği tekrar gönderme
+4. Rapor okuma
+
+**Saat dilimi.** Codex Türkiye saatini esas aldı. Bütün aboneler Türkiye'deyse Jenkins ve Press'te saat dilimi açıkça `Europe/Istanbul` olarak yazılır. Abone başka ülkelerdeyse pencere kurumun saatine göre belirlenir.
 
 ### 3.7. Jenkins ile Press'in görevleri ayrılmamış
 
@@ -253,7 +325,25 @@ Press, Frappe Cloud'u yöneten yazılımdır. Kendi sunucumuzda kurmak zordur. F
 | Uzaktan güncelleme hizmeti | Web paketini kanallara dağıtır. |
 | App Store ve Play Store | Kabuğu dağıtır. |
 
-Jenkins yayını kendisi yapmaz. Yalnız Press'e ve uzaktan güncelleme hizmetine "yeni sürüm hazır" der.
+Codex Press'in kaynak kodunu okumuş. Press'te üç kayıt türü bu işi yürütür:
+
+| Press kaydı | Ne yapar? |
+|---|---|
+| ReleaseGroup | Hangi uygulamaların birlikte çalışacağını tanımlar. Dalgalar bu gruplarla kurulur. |
+| DeployCandidate | Kurulacak sürümü sabitler. Sunucu görüntüsü bir kez üretilir. Deneme ve üretim aynı görüntüyü kullanır. |
+| SiteUpdate | Bir sitenin güncelleme sonucunu tutar. Sonuçlar: başarılı, eski sürüme döndü ya da elle kurtarma gerekli. |
+
+Bu bilgiyle görev ayrımı netleşir:
+
+1. **Yayının tek başlatıcısı Jenkins'tir.** Jenkins kaynak sürümünü, testleri, pencereyi ve sonuçları izler.
+2. **Sunucu görüntüsünü Press bir kez üretir.** Jenkins görüntünün kimliğini ve özetini kaydeder.
+3. **Siteleri Press günceller.** Jenkins aynı siteye ayrıca veritabanı güncelleme komutu çalıştırmaz.
+4. **Her sitede aynı anda tek geçiş çalışır.** Önceki gecenin geçişi sürerken yeni sürüm o siteyi alamaz. Eski bir sürüm daha yeni bir sitenin üzerine uygulanamaz.
+5. **Kaybolan yanıt uzlaştırılır.** Jenkins yeniden başlarsa işi yeniden başlatmaz. Önce Press'e sitenin durumunu sorar.
+6. **İkinci zamanlayıcı olmaz.** Geç başlayan iş, çalışmadan önce saati yeniden denetler.
+7. **"Başarılı" yetmez.** Press'te başarılı görünen site ayrıca ürünün sağlık işlemleriyle doğrulanır. "Eski sürüme döndü" sonucu teslim sayılmaz.
+
+Müşterinin karar ve kanıt içeriği merkezi yayın kaydına hiç girmez. Yayın kaydı yalnız sürüm, site ve sonuç tutar.
 
 Press'in kendi sunucumuzda çalıştığı önce küçük bir denemeyle kanıtlanmalıdır. Deneme başarısız olursa yedek yol, bench ve Jenkins'le yazılmış yayın adımlarıdır.
 
@@ -279,6 +369,18 @@ Dört kural bu ayrımı korur:
 2. Çekirdek hiçbir ekran kodunu içe aktaramaz. Bu kural bir testle denetlenir.
 3. Mobil uygulamada bütün kod zaten telefondadır. Bu yüzden ayrımın faydası orada ağ değil, paket boyutudur. Küçük paket, uzaktan güncellemeyi hızlandırır.
 4. Hangi kodun indirildiği gerçek ağ kaydıyla doğrulanır.
+
+**Ölçüm platforma göre değişir.**
+
+| Platform | Ne ölçülür? | Neyin olmaması gerekir? |
+|---|---|---|
+| PWA | 320 pikselde, boş önbellekle ilk açılışta indirilen dosyalar | Geniş ekran kodu, stili ve grafik paketi |
+| Mobil uygulama | Mağazadan indirilen toplam paket ve açılışta okunan dosyalar, ayrı ayrı | Yalnız masaüstünde kullanılan dosyalar. Bu dosyalar imzalı mobil pakete hiç girmez. |
+| Tablet | Aynı mağaza paketi tableti de destekliyorsa geniş görünüm pakette kalabilir. | Telefonda geniş görünümün açılışta çalışması |
+
+Mobilde bir dosyayı geç çalıştırmak, mağaza indirmesini küçültmez. Paket küçülmesi için dosya pakete hiç girmemelidir. iOS ve Android paket listeleri ayrı incelenir.
+
+**Servis işçisinin güncellenmesi.** PWA'nın yeni sürümü, açık bir form kaydedilmeden zorla devreye girmez. Önceki ekran paketleri uyumluluk penceresi boyunca indirilebilir kalır. Aynı oturumda eski ve yeni dosyalar karışmaz.
 
 **Başsızlığın bir sonucu daha var.** Ön yüz yalnız API'ye bağlıdır. Bu yüzden API bir sözleşme olarak yazılmalıdır. Sözleşmeden TypeScript istemcisi otomatik üretilir. Böylece ön yüz ile arka yüz aynı sözleşmeyi okur.
 
@@ -313,6 +415,21 @@ Arka yüz tek merkezden ve tek depodan yönetilir.
 
 Ön yüz, arka yüz ve sözleşmeler tek depoda durur. Önceki kararda arka yüz ayrı bir public depoydu. Yeni hedefe göre tek depo daha doğrudur. Tek depo yine public olur.
 
+Codex depo düzenini şöyle öneriyor:
+
+| Depodaki yer | İçinde ne var? |
+|---|---|
+| Kök | Frappe uygulaması. Press uygulamayı doğrudan bu kökten kurar. |
+| Ön yüz klasörü | Ortak TypeScript ön yüzü |
+| Web girişi | PWA'yı üretir. |
+| Mobil girişi | Capacitor ile iOS ve Android paketlerini üretir. |
+| Sözleşmeler klasörü | API sözleşmesi, süreç tanımı, kural örnekleri ve uyumluluk testleri |
+| Yayın tanımı | Jenkinsfile ve paket listesi |
+
+Press'in uygulamayı bu düzenden kurabildiği ilk denemede gösterilmelidir.
+
+Aynı Git sürümünden dört çıktı çıkar. Bunlar bir Frappe paketi, bir PWA ve iki imzalı mobil pakettir. Her çıktının sürümü, dosya özeti ve hedefi kaydedilir. Kurum başına kod dalı açılmaz. Kurum farkları ayar ve yetkiyle karşılanır. Mağaza imza anahtarları ve üretim erişimleri depoya girmez.
+
 ## 4. Planda kalanlar
 
 Bu parçalar yeni hedeflerle de geçerli kalır:
@@ -333,7 +450,11 @@ Bu parçalar yeni hedeflerle de geçerli kalır:
 | 1 | Merkezi kurum dizini | Yeni olmazsa olmaz parça. Kurum sitelerinin dışında durur. |
 | 1 | İstemci sürüm uyumluluğu ve uyumluluk penceresi | Yeni olmazsa olmaz parça. Eşitleme modülüne girer. |
 | 1 | Mobilde SQLite ve depo bağdaştırıcısı | Ön yüz değişikliği |
+| 1 | Kabul senaryosu ve ters hâli | Test |
+| 1 | Bağlanırken sürüm anlaşması | Eşitleme modülü |
+| 2 | Sürümlü ayar katmanı | Arka yüz ve ön yüz |
 | 2 | Uzaktan güncelleme kanalları, imza ve geri dönüş | DevOps ve ön yüz |
+| 2 | Mobilde sistem tarayıcısıyla giriş ve PKCE | Erişim modülü ve ön yüz |
 | 2 | Dalgalı gece yayını ve geri dönüş | DevOps |
 | 2 | Jenkins ve Press görev ayrımı ve Press denemesi | DevOps |
 | 2 | Ön yüzde dört katman | Ön yüz değişikliği |
@@ -358,6 +479,8 @@ Bu işlerin sahibi Hüseyin Cengiz'dir. GoDaddy işleri Asistan Hüseyin'dedir.
 | 6 | Mağaza imza ve gönderim adımlarını Jenkins'e ekler. | Bir deneme sürümü TestFlight'a ve Play'in kapalı test kanalına çıktı. |
 | 7 | Kurum dizinini kurar. | Bir e-posta doğru kurum adresine yönlendi. |
 | 8 | İstek hızı sınırını kurar. | Yüzlerce eşzamanlı eşitleme isteği siteyi düşürmedi. |
+| 9 | Gerçek site sayısı ve veri boyutuyla yayın süresini ölçer. | Bütün hedefler 90 dakikaya sığdı. Ölçüm kuyruğu, denetimi ve geri dönüş payını kapsıyor. |
+| 10 | Yayın kurtarma provası yapar. | Jenkins'in yanıtı kaybolunca aynı siteye ikinci geçiş açılmadı. Eski sürüm yeni sitenin üzerine uygulanmadı. |
 
 Gece yayını sunucudaki zamanlanmış bir iştir. Bu iş DevOps işidir.
 
@@ -374,10 +497,34 @@ Rapor bu konularda önerilerimle ilerler:
 | Uzaktan güncelleme hizmeti | Capgo ya da Capawesome. Seçim küçük bir denemeden sonra yapılır. Appflow seçilmez. |
 | Depo yapısı | Ön yüz, arka yüz ve sözleşmeler tek public depoda |
 
-## 8. Doğrulanmayanlar
+## 8. Codex'in eleştirisinden alınanlar
+
+| No | Yaklaşım | Bu raporda nerede? |
+|---|---|---|
+| 1 | Somut bir kabul senaryosu ve ters hâli | Kısa cevap |
+| 2 | Mobilde sistem tarayıcısıyla giriş ve PKCE | 3.1 |
+| 3 | Bağlanırken sürüm anlaşması, ters sürüm farkı ve hafiften ağıra geri dönüş | 3.3 |
+| 4 | Kod taşımayan sürümlü ayar katmanı ve değişiklik türüne göre dağıtım tablosu | 3.4 |
+| 5 | Mağaza sürümlerinin kademeli yayını ve üç ayrı zaman kaydı | 3.4 |
+| 6 | Press'in üç kayıt türü, tek başlatıcı, site kilidi ve kaybolan yanıtın uzlaştırılması | 3.7 |
+| 7 | Süre bütçesi, "pencere aşıldı" durumu ve saat 04.00'teki tamamlanma ölçütü | 3.6 |
+| 8 | Platforma göre paket ölçümü, servis işçisi güncelleme kuralları ve depo düzeni | 3.8 ve 3.10 |
+
+Bu raporun Codex'te olmayan parçaları şunlardır:
+
+- Mobilde IndexedDB yerine SQLite
+- Merkezi kurum dizini
+- Appflow'un 2027'de kapanması
+- Sabah eşitleme fırtınası ve istek hızı sınırı
+- Bildirimin koşullu olarak gerekmesi
+- Kurumun saat dilimine göre yayın penceresi
+
+İki rapor bir noktada farklı düşünüyor. Codex, mobil menüdeki küçük JavaScript düzeltmelerini de mağaza sürümüne koymayı öneriyor. Bu rapor bu düzeltmeleri uzaktan web paketiyle gönderebiliyor. İki yol da mağaza kurallarına uygundur. Codex'in yolu daha temkinlidir. Bu rapor ilk tercih olarak sürümlü ayarı öneriyor. Uzaktan web paketi yalnız hata düzeltmesi içindir.
+
+## 9. Doğrulanmayanlar
 
 - Apple'ın uzaktan güncelleme kuralını Apple'ın güncel lisans metninden okumadım. Bilgi satıcı bloglarından ve forumlardan geliyor.
-- Frappe Press'in kendi sunucumuzda nasıl çalıştığını belgeden doğrulayamadım. Bilgi forum yazılarından geliyor.
+- Frappe Press'in kendi sunucumuzda nasıl çalıştığını belgeden doğrulayamadım. Bilgi forum yazılarından geliyor. Press'in üç kayıt türünü Codex, Press'in kaynak kodundan okumuş. Ben ayrıca okumadım.
 - Capgo ve Capawesome bilgileri satıcıların kendi belgelerinden geliyor.
 - Capacitor uygulamasının hangi adresle istek gönderdiği denenmedi. İzin listesi bu adrese göre kurulur.
 - Bu rapor gerçek okurla denenmedi.
@@ -398,3 +545,13 @@ Rapor bu konularda önerilerimle ilerler:
 - [Frappe forumu, kendi sunucuda Press](https://discuss.frappe.io/t/self-hosted-press-in-production-version-compatibility-and-setup-guidance-needed/164771)
 - [Frappe forumu, Press yerine bench](https://discuss.frappe.io/t/guidance-on-self-hosting-frappe-cloud-without-press-cli/141824)
 - [Frappe Cloud, bench güncelleme](https://docs.frappe.io/cloud/benches/updating_a_bench)
+- [Codex'in eleştiri raporu](/Users/w6x/Documents/Codex/2026-11-13/files-mentioned-by-the-user-codex/outputs/pwa-capacitor-saas-mimari-elestiri-raporu.md)
+- [Apple App Store inceleme kılavuzu](https://developer.apple.com/app-store/review/guidelines/)
+- [RFC 8252, yerli uygulamalarda OAuth](https://www.rfc-editor.org/rfc/rfc8252.html)
+- [Capacitor yapılandırması](https://capacitorjs.com/docs/config)
+- [App Store kademeli yayın](https://developer.apple.com/help/app-store-connect/update-your-app/release-a-version-update-in-phases/)
+- [Google Play kademeli yayın](https://support.google.com/googleplay/android-developer/answer/6346149?hl=en)
+- [Press, ReleaseGroup](https://github.com/frappe/press/blob/79f4a9301368aa6194a5b148a35a547cc428a1c3/press/press/doctype/release_group/README.md)
+- [Press, SiteUpdate](https://github.com/frappe/press/blob/79f4a9301368aa6194a5b148a35a547cc428a1c3/press/press/doctype/site_update/README.md)
+- [web.dev, PWA güncelleme yaşam döngüsü](https://web.dev/learn/pwa/update/)
+
