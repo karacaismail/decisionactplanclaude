@@ -34,6 +34,7 @@ Bu kararları karar sahibi 15 Kasım 2026 Pazar günü verdi. Plan bu kararlara 
 | Çakışma | Aynı alan çakışırsa kullanıcı seçer. |
 | iPhone | Kullanıcıdan uygulamayı ana ekrana eklemesi istenir. |
 | Oturum süresi | 7 gün |
+| Arka yüz deposu | Ayrı bir public depo. Ön yüz deposu aynı kalır. |
 
 ### 1.2. Terimler
 
@@ -542,7 +543,7 @@ Her aşama bir öncekine dayanır. Her aşamada önce başarısız olan test yaz
 
 1. **Oturum süresi kaç gün olsun?** Bu soruyu cevapladınız. Cevabınız 7 gün oldu. Süre dolunca kullanıcı internet gelince yeniden giriş yapar.
 2. **Ana alan adı ne olacak?** Kurumlar bu adın alt adlarında açılır. Bu karar 2. kurulum işinden önce gerekir.
-3. **Arka yüz kodu ayrı bir depoda mı dursun?** Önerim ayrı bir public depodur. Frappe uygulaması kendi deposunda durmayı bekler.
+3. **Arka yüz kodu ayrı bir depoda mı dursun?** Bu soruyu cevapladınız. Cevabınız "ayrı bir public depo" oldu. Deponun adı ve lisansı 1. aşamadan önce sizinle belirlenir. Lisansı siz seçersiniz.
 4. **TLS sertifikası nasıl yenilensin?** İki seçenek var:
    - Asistan Hüseyin her yenilemede doğrulama kaydını GoDaddy'de elle açar. Bu iş en geç 90 günde bir tekrarlanır.
    - Yenileme otomatik yapılır. Bu seçenek bir zamanlanmış iş ve GoDaddy erişim anahtarı ister. Zamanlanmış iş için açık onayınız gerekir.
