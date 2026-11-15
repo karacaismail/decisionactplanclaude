@@ -33,6 +33,7 @@ Bu kararları karar sahibi 15 Kasım 2026 Pazar günü verdi. Plan bu kararlara 
 | Karar internetsiz | Yalnız taslak olur. Sunucuda kesinleşir. |
 | Çakışma | Aynı alan çakışırsa kullanıcı seçer. |
 | iPhone | Kullanıcıdan uygulamayı ana ekrana eklemesi istenir. |
+| Oturum süresi | 7 gün |
 
 ### 1.2. Terimler
 
@@ -474,7 +475,7 @@ Bugünkü planlar GitHub Pages adresinin tarayıcı deposunda duruyor. Yeni ön 
 | Yerel şifreleme | Tarayıcı bir şifreleme anahtarı üretir. Anahtar dışa aktarılamaz. Anahtar ile veri aynı IndexedDB veritabanında durur. |
 | Şifrelemenin sınırı | Bilgisayarı açık bulan kişi uygulamayı açıp veriyi görebilir. Bu sınırı karar sahibi kabul etti. |
 | Anahtar kaybı | Şifre çözülemezse yazılım veriyi silmez. Kullanıcıya gösterir. Kurum yöneticisine haber verilir. |
-| Oturum süresi | Tek bir ayar yönetir: Frappe'nin oturum süresi. Tarayıcı bu süreyi sunucudan okur. Süre dolunca kullanıcı internet gelince yeniden giriş yapar. Bekleyen değişiklikler kaybolmaz. |
+| Oturum süresi | 7 gündür. Tek bir ayar yönetir: Frappe'nin oturum süresi. Tarayıcı bu süreyi sunucudan okur. Süre dolunca kullanıcı internet gelince yeniden giriş yapar. Bekleyen değişiklikler kaybolmaz. |
 | Çıkış | Çıkışta yerel veri silinir. Gönderilmemiş değişiklik varsa uygulama önce uyarır. |
 | Ortak bilgisayar | "Ortak cihaz" modunda veri tarayıcıda saklanmaz. Bu modda internetsiz çalışılamaz. |
 | İptal edilen cihaz | Sunucu iptal edilen cihazın değişikliğini yazmaz. Değişiklik incelemeye ayrılır. Planın karar sahibi inceler. Cihaz bağlanınca sunucu "yerel veriyi sil" der. |
@@ -539,7 +540,7 @@ Her aşama bir öncekine dayanır. Her aşamada önce başarısız olan test yaz
 
 ## 12. Sizin karar vermeniz gerekenler
 
-1. **Oturum süresi kaç gün olsun?** Süre dolunca kullanıcı internet gelince yeniden giriş yapar. Önerim 7 gün.
+1. **Oturum süresi kaç gün olsun?** Bu soruyu cevapladınız. Cevabınız 7 gün oldu. Süre dolunca kullanıcı internet gelince yeniden giriş yapar.
 2. **Ana alan adı ne olacak?** Kurumlar bu adın alt adlarında açılır. Bu karar 2. kurulum işinden önce gerekir.
 3. **Arka yüz kodu ayrı bir depoda mı dursun?** Önerim ayrı bir public depodur. Frappe uygulaması kendi deposunda durmayı bekler.
 4. **TLS sertifikası nasıl yenilensin?** İki seçenek var:
