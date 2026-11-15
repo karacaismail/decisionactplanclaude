@@ -16,7 +16,7 @@ Arka yüz tek bir Frappe 16 uygulaması olacak. Uygulama altı modüle bölünec
 
 Codex dokuz modül öneriyor. Codex'in modülleri sürecin aşamalarını izliyor. Bizim modüllerimiz ise verinin kimin tarafından yazıldığını izliyor. İki planın ilkesi aynıdır: her kaydın tek bir yazarı olur. Bizim yazarlarımız daha az. Bu yüzden altı modül yeter. Ayrıntı 3. bölümdedir.
 
-Codex'in planından beş fikri aldım. Örneğin kaynak izni ayrı bir karar oldu. Gerçekleşen ölçüm, hedeften ayrı bir kayıt oldu. Liste 2. bölümdedir.
+Codex'in planından dokuz fikri aldım. Örneğin kaynak izni ayrı bir karar oldu. Gerçekleşen ölçüm, hedeften ayrı bir kayıt oldu. Liste 2. bölümdedir.
 
 Kurumlar ayrı sitelerde çalışacak. Tarayıcı her değişikliği önce kendi deposuna yazacak. Kararlar yalnız sunucuda kesinleşecek.
 
@@ -73,6 +73,10 @@ Bu raporda "internetsiz" sözü tek anlamda kullanılır. Bu söz, cihazın sunu
 | 3 | Karar, dayandığı kanıtın sürümünü saklar. | Kanıt sonradan düzeltilirse hangi kararın eski kanıta dayandığı bulunur. | Karar Dayanağı alt tablosu (5.3) |
 | 4 | Ekranda iki ayrı durum görünür: "Cihaza kaydedildi" ve "Kurumda kaydedildi". | Kullanıcı verinin nerede olduğunu bilir. | 8.1 |
 | 5 | Toplama, inceleme ve onay ayrı işlerdir. Metin ile ekin gönderim durumu da ayrıdır. | Bir gözlemin sunucuya ulaşması onay sayılmaz. Not ulaşmışken fotoğraf bekleyebilir. | 8.1 ve 8.6 |
+| 6 | İlk iş, uçtan uca ince bir akıştır: geçiş kararından ilk gerçek sonuca kadar. | Bütün parçalar erken bir arada denenir. Sorun geç çıkmaz. | 12. bölüm |
+| 7 | Raporun cevaplaması gereken üç soru var: Neyi seçtik? Gerçekte ne oldu? Şimdi neyi değiştireceğiz? | Yönetici tek sayfada sonucu görür. | 10. bölüm |
+| 8 | Kanıtın kaynağı düzenli incelenir. | Eski bir kaynağa dayanan karar fark edilir. | Kanıt kaydı (5.2) |
+| 9 | Sapmanın nedeni karar türünü belirler. Teslim aksadıysa plan düzeltilir. Dayanak çöktüyse strateji yeniden açılır. | Kötü bir sonuç her zaman yolun yanlış olduğu anlamına gelmez. | Strateji Gözden Geçirme (5.3) |
 
 Codex'in birkaç küçük fikrini de aldım:
 
@@ -167,7 +171,7 @@ Bir kişi birden çok role sahip olabilir. Tek kurucuda karar sahibi ile stratej
 
 | Yol | Ne zaman kullanılır? | Nasıl çalışır? |
 |---|---|---|
-| Sorgu | Bir modül başka modülün verisini okumak isterse | Sahibi olan modülün `api.py` dosyasındaki okuma işlevi çağrılır. İşlev izni denetler. |
+| Sorgu | Bir modül başka modülün verisini okumak isterse | Sahibi olan modülün `api.py` dosyasındaki okuma işlevi çağrılır. İşlev izni denetler. Örneğin "bu iş için geçerli bir kaynak izni var mı?" sorusunu yalnız Karar modülü cevaplar. Öteki modül bütçeyi kendisi hesaplamaz. |
 | Komut | Bir modül başka modülün verisini değiştirmek isterse | Sahibi olan modülün `api.py` dosyasındaki komut işlevi çağrılır. Veriyi yalnız sahibi yazar. |
 | Olay | Bir iş tamamlanınca başka modüllerin haberi olmalıysa | Modül olayı yayar. Dinleyiciler aynı veritabanı işleminde çalışır. Yayan modül dinleyicinin adını bilmez. |
 
@@ -235,7 +239,7 @@ Olaylar bir zincir kurabilir. Örneğin "Yeniden aç" kararı strateji belgesini
 | Plan | Normal | ad, profil, sınırlar, kısa yol, giriş türü, para birimi, devralma cevapları, süreç sürümü, biçim sürümü, plan sürümü, eski sürüm işareti | Plan sürümünü sunucu artırır. Profil, sınırlar ve devralma cevapları JSON alanıdır. Süreç tanımı bu alanların biçimini denetler. |
 | Adım Kaydı | Normal | plan, adım, cevaplar, durum, atlama nedeni | Her plan ve adım için tek satır. Cevaplar JSON alanıdır. |
 | Görev | Normal | plan, iş, sorumlu, tarih, durum, bağlı karar | Bağlı kararın kimliği düz metin olarak saklanır. 4.5 bölümüne bakın. |
-| Kanıt | Normal | plan, başlık, tür, basamak, tarih, kaynak, karşı bulgu, dosya, kanıt sürümü, dosya durumu, geri çekildi | Dosya her zaman özel dosyadır. Her düzeltmede kanıt sürümü bir artar. Kanıt silinmez, geri çekilir. |
+| Kanıt | Normal | plan, başlık, tür, basamak, tarih, kaynak, karşı bulgu, dosya, kanıt sürümü, dosya durumu, geri çekildi, kaynağın son incelemesi, inceleyen | Dosya her zaman özel dosyadır. Her düzeltmede kanıt sürümü bir artar. Kanıt silinmez, geri çekilir. Kaynak uzun süre incelenmezse ekran uyarır. |
 | Kanıt Bağı | Alt tablo, Kanıt'ın içinde | adım | Kanıtın bağlı olduğu adımlar |
 | Gösterge Ölçümü | Normal, yalnız eklenir | plan, gösterge, değer, birim, olay zamanı, ulaşma zamanı, kaynak kanıt, giren kişi | 3.1 adımındaki göstergenin gerçekleşen değeri. Hedef 3.1 adımında kalır. Kayıt düzeltilmez. Yanlış ölçüm yeni bir ölçümle düzeltilir. |
 
@@ -250,7 +254,7 @@ Gösterge Ölçümü yalnız eklenir. Bu sayede iki kişi internetsiz ölçüm g
 | Kapı Kararı | Onaylanan | plan, kapı, öneri, seçim, gerekçe, karşı görüş, karar sahibi, ikinci görüş veren, kalan deneme, yeniden açılma koşulu, görülen son karar, eskime işareti | Karar sahibi ve ikinci görüş veren Frappe kullanıcısıdır. Sunucu bu alanları oturumdan alır. |
 | Geçiş Kararı | Onaylanan | plan, sonuç, öneri, gerekçe, karar sahibi, ikinci okuyucu, koşulun konusu, açık soru, sorumlu, son tarih, ölçüt sayıları, eskime işareti | Strateji oluşturmayı açar. |
 | Strateji Onayı | Onaylanan | plan, onaylayan, kalite maddeleri, geçersiz, geçersiz kılan gözden geçirme, eskime işareti | Strateji belgesini kesinleştirir. Bugün bu onay Adım 20'deki bir alandır. Sunucuda ayrı bir karar olur. Onay iptal edilmez, geçersiz kılınır. |
-| Strateji Gözden Geçirme | Onaylanan | plan, seçim hâlâ doğru mu, karar, gerekçe, dayanak, geçersiz kılınan onay, karar sahibi, eskime işareti | "Yeniden aç" kararı strateji onayını aynı işlemde geçersiz kılar. |
+| Strateji Gözden Geçirme | Onaylanan | plan, seçim hâlâ doğru mu, sapmanın nedeni, karar, gerekçe, dayanak, geçersiz kılınan onay, karar sahibi, eskime işareti | "Yeniden aç" kararı strateji onayını aynı işlemde geçersiz kılar. |
 | Kaynak İzni | Onaylanan | plan, tür, kapsam, tutar, kişi ve süre, bitiş, sorumlu, kapanış kanıtı, durum, kapanış zamanı, kapanış nedeni, kapı kararı, strateji onayı, 3.3 satırının kimliği, eskime işareti | İki tür var. Koşullu izin bir kapı kararına bağlıdır. Kaynak ayırma izni bir strateji onayına ve 3.3 adımının bir satırına bağlıdır. Hangi bağın zorunlu olduğunu tür belirler. |
 | Sınır Değişikliği | Onaylanan | plan, alan, eski değer, yeni değer, artış mı, değiştiren, inceleyen, inceleme zamanı | Artışta ikinci görüş gerekir. İnceleyen kişi değişikliği yapan kişi olamaz. |
 | Karar Dayanağı | Alt tablo, her karar türünün içinde | dayanak türü, kimlik, sürüm | Kararın okuduğu adımlar ve kanıt sürümleri. Codex'in 3. fikridir. |
@@ -267,6 +271,16 @@ Gösterge Ölçümü yalnız eklenir. Bu sayede iki kişi internetsiz ölçüm g
 | Sınır Değişikliği | İnceleyen, inceleme zamanı |
 
 Bu alanlar Frappe'nin olaylarını atlayan kısa yazma yoluyla yazılmaz. Böylece her değişiklik akışa ve denetim kaydına düşer.
+
+Strateji Gözden Geçirme'deki "sapmanın nedeni" alanı üç seçenek taşır:
+
+| Neden | Ekranın önerdiği karar |
+|---|---|
+| Teslim aksadı | Düzelt. Plan ve işler güncellenir. |
+| Dayanak çöktü | Yeniden aç. Strateji oluşturmaya dönülür. |
+| Bilinmiyor | Sürdür ve ölç. Bir sonraki gözden geçirmenin tarihi yazılır. |
+
+Öneri kararı vermez. Kararı karar sahibi verir.
 
 Kaynak İzni'nin iki ayrı kapanış durumu vardır:
 
@@ -647,6 +661,8 @@ Arka yüz, ön yüzde de değişiklik ister. Bunlar bu deponun işidir.
 | Koşullu iznin Kaynak İzni'ne taşınması | Bugün koşullu izin kararın içinde duruyor. |
 | Kararda "gönderilmeyi bekliyor" ve "sunucu reddetti" durumları | Bugün kararın böyle bir durumu yok. |
 | Rol kısıtları | Örneğin stratej ve okur için karar düğmesi kapanır. |
+| Yönetici raporunda üç soru | Rapor üç soruyu cevaplar: Neyi seçtik? Gerçekte ne oldu? Şimdi neyi değiştireceğiz? |
+| Gözden geçirmede sapmanın nedeni | Karar sahibi önce nedeni seçer. Ekran nedene uygun kararı önerir. Kararı yine karar sahibi verir. |
 | Giriş, kurum adresi ve internetsiz hazırlık ekranı | Kullanıcı internetsiz kullanacağı planları seçer. |
 | Süreç tanımını JSON dosyasına çıkaran betik | Sunucu aynı tanımı kullanır. |
 | Kural örnek dosyasını üreten betik | Python kuralları aynı sonucu vermelidir. |
@@ -683,6 +699,17 @@ Her kurumun zaten ayrı bir sitesi var. Bu yüzden her siteye normal bir sertifi
 Bu yolun küçük bir bedeli var. Her yeni kurum için sertifika alma adımı kurum açma adımlarına eklenir.
 
 ## 12. Geliştirme sırası
+
+**İlk teslim uçtan uca ince bir akıştır.** 4. ile 11. adımların en ince hâli önce bir arada kurulur. Akış şudur:
+
+1. Karar sahibi geçiş kararını verir.
+2. Stratej yolu önerir. Karar sahibi seçer ve strateji belgesini onaylar.
+3. Karar sahibi bir kaynak izni açar.
+4. Ekip bir ölçüm girer. Ölçüm internetsiz de girilir.
+5. Sonuç hedefi tutmazsa karar sahibi gözden geçirme kaydı açar.
+6. Rapor üç soruyu cevaplar: Neyi seçtik? Gerçekte ne oldu? Şimdi neyi değiştireceğiz?
+
+Bu akış çalışınca adımlar tek tek genişletilir.
 
 Her adımda önce başarısız olan test yazılır. Sonra kod yazılır. Codex'in on iki adımı ile bizim on bir adımımız bu listede birleşti.
 
