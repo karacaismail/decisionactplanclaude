@@ -390,4 +390,4 @@ Kaynak kodu okurken önemli bir fark buldum. İki parça yalnız Frappe 16'da va
 
 ## Sonraki belge
 
-Bu araştırmanın vardığı model arka yüz planına işlendi. Plan [arka-yuz-plani.md](arka-yuz-plani.md) dosyasındadır. Planın bağımsız incelemesi iki konuda bu raporu düzeltti: değişiklik grubunun yazılma biçimi ve parça parça dosya yükleme.
+Bu araştırmanın vardığı model arka yüz planına işlendi. Plan [butunlesik-gelistirme-raporu.md](butunlesik-gelistirme-raporu.md) dosyasındadır. Planın bağımsız incelemesi iki konuda bu raporu düzeltti: değişiklik grubunun yazılma biçimi ve parça parça dosya yükleme.
