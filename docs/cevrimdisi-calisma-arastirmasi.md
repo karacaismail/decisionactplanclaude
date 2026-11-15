@@ -62,7 +62,7 @@ Bu, bizim için önerdiğim yolun aynısıdır.
 | Değişiklik zamanı | Her kayıt son değişiklik zamanını taşır. "Şu andan sonra değişenler" diye sorulabilir. | 15 ve 16 |
 | Silinen kayıt listesi | Frappe silinen her kaydı ayrı bir listeye yazar. | 15 ve 16 |
 | Tarayıcının seçtiği kimlik | Tarayıcı yeni kaydın kimliğini kendisi verebilir. Bu, internetsiz kayıt açmak için gereklidir. | Yalnız 16 |
-| Parça parça dosya yükleme | Büyük dosya parçalar hâlinde yüklenir. Kesilen yükleme kaldığı yerden sürer. | Yalnız 16 |
+| Parça parça dosya yükleme | Büyük dosya parçalar hâlinde yüklenir. Arka yüz planındaki inceleme bu özellikte üç sorun buldu. Biz kendi yükleme ucumuzu yazarız. | Yalnız 16 |
 | Kurum başına ayrı site | Her kurumun kendi veritabanı olur. | 15 ve 16 |
 
 Bir uyarı var. Eski kopya denetimi ancak tarayıcı son gördüğü değişiklik zamanını gönderirse çalışır. Tarayıcı bu zamanı göndermezse son yazan kazanır ve önceki değişiklik sessizce kaybolur.
@@ -71,7 +71,7 @@ Bir uyarı var. Eski kopya denetimi ancak tarayıcı son gördüğü değişikli
 
 1. Uygulamanın internetsiz açılması için bir servis işçisi.
 2. Tarayıcıda bir yerel depo ve bir giden kutusu.
-3. Sunucuda tek bir eşitleme ucu. Uç, gelen değişiklik grubunu tek işlemde yazar.
+3. Sunucuda tek bir eşitleme ucu. Uç her değişikliği ayrı bir ara kayıt noktasında yazar. Böylece reddedilen bir değişiklik ötekileri geri almaz.
 4. Sunucuda tekrar anahtarlarını tutan bir tablo.
 5. Çakışmayı bulan ve kullanıcıya gösteren bir yapı.
 6. Sunucudan değişiklikleri sırayla çeken bir sayaç.
@@ -221,7 +221,7 @@ Sorunuz, verinin yalnız internet kesilince yerele kaydedilip kaydedilmeyeceğiy
 | 3 | Giden kutusu | Tarayıcı, IndexedDB | Her değişiklik hem kayda hem giden kutusuna aynı anda yazılır. Biri yazılmazsa hiçbiri yazılmaz. |
 | 4 | Dosya deposu | Tarayıcı, IndexedDB ya da OPFS | Kanıt dosyaları burada bekler. Bağlantı gelince parça parça yüklenir. |
 | 5 | Gönderici | Tarayıcı | Giden kutusunu öncelik sırasıyla gönderir. Hata olursa bekleme süresini artırır. |
-| 6 | Eşitleme ucu | Frappe | Gelen değişiklik grubunu tek işlemde yazar. Her değişiklik için sonuç döner: yazıldı, çakıştı ya da reddedildi. |
+| 6 | Eşitleme ucu | Frappe | Gelen her değişikliği ayrı bir ara kayıt noktasında yazar. Her değişiklik için sonuç döner: yazıldı, çakıştı ya da reddedildi. |
 | 7 | Tekrar tablosu | Frappe | İşlenen tekrar anahtarlarını tutar. Aynı değişiklik iki kez yazılmaz. |
 | 8 | Çekme sayacı | Frappe ve tarayıcı | Tarayıcı "son aldığım yerden sonrasını ver" der. Silinen kayıtlar da gelir. |
 | 9 | Çakışma ekranı | Tarayıcı | İki kişi aynı alanı değiştirdiyse ikisini de gösterir. Kullanıcı seçer. |
@@ -297,10 +297,12 @@ Kaynak kodu okurken önemli bir fark buldum. İki parça yalnız Frappe 16'da va
 | Parça | Frappe 15 | Frappe 16 |
 |---|---|---|
 | Tarayıcının seçtiği kimlik | Yok. Başka bir yolla kurulur. | Var. |
-| Parça parça dosya yükleme | Yok. Biz yazarız. | Var. |
+| Parça parça dosya yükleme | Yok. Biz yazarız. | Var ama güvenli değil. Biz yine kendi ucumuzu yazarız. |
 | İstediği altyapı | Daha eski Python ve MariaDB yeter. | Kaynak koda göre Python 3.14 ve MariaDB 10.7 ya da sonrası gerekir. |
 
 Önerim Frappe 16'dır. Çünkü internetsiz kayıt açmak için tarayıcının kimlik seçmesi gerekir. Altyapı gereksinimini Hüseyin Cengiz sunucuda doğrulamalıdır.
+
+**Karar verildi.** Karar sahibi 15 Kasım 2026 Pazar günü Frappe 16'yı seçti.
 
 ## 7. Önceki üç açık kararımız
 
@@ -314,7 +316,7 @@ Kaynak kodu okurken önemli bir fark buldum. İki parça yalnız Frappe 16'da va
 
 ## 8. Sizin karar vermeniz gerekenler
 
-1. **Frappe 15 mi, Frappe 16 mı?** Önerim Frappe 16.
+1. **Frappe 15 mi, Frappe 16 mı?** Karar verildi: Frappe 16.
 2. **Kaç gün kesintiden sonra plan baştan inmeli?** Önerim 7 gün.
 3. **Yerel veri nasıl şifrelensin?** İki yol var:
    - Tarayıcının sakladığı bir anahtarla şifrelenebilir. Kullanıcı ek bir şey yapmaz. Ancak bilgisayarı açık bulan kişi veriyi okuyabilir.
@@ -385,3 +387,7 @@ Kaynak kodu okurken önemli bir fark buldum. İki parça yalnız Frappe 16'da va
 - [Norveç savunma araştırma kurumu, 2020](https://www.ffi.no/publikasjoner/arkiv/evaluation-of-message-broker-approaches-for-information-exchange-in-disadvantaged-tactical-networks-in-a-federated-environment)
 - [ABD NIST SP 800-124r2](https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-124r2.pdf)
 - [West Point Modern Savaş Enstitüsü, 2019](https://mwi.westpoint.edu/90s-america-online-dial-internet-fixing-armys-horribly-outdated-digital-information-systems/)
+
+## Sonraki belge
+
+Bu araştırmanın vardığı model arka yüz planına işlendi. Plan [arka-yuz-plani.md](arka-yuz-plani.md) dosyasındadır. Planın bağımsız incelemesi iki konuda bu raporu düzeltti: değişiklik grubunun yazılma biçimi ve parça parça dosya yükleme.
