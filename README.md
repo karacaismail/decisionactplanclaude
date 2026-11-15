@@ -35,6 +35,7 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 - Strateji tanımı, boşluk analizi ve uygulama notu: [docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md](docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md)
 - Gerçek deneme föyü: [docs/gercek-deneme-foyu.md](docs/gercek-deneme-foyu.md)
 - Arka yüz için bütünleşik geliştirme raporu: [docs/butunlesik-gelistirme-raporu.md](docs/butunlesik-gelistirme-raporu.md)
+- Mobil uygulama ve SaaS dağıtımı eleştirisi: [docs/elestiri-mobil-saas-dagitim.md](docs/elestiri-mobil-saas-dagitim.md)
 - İnternetsiz çalışma araştırması: [docs/cevrimdisi-calisma-arastirmasi.md](docs/cevrimdisi-calisma-arastirmasi.md)
 - Sonraki ana aşamaların planı: [docs/sonraki-ana-asamalar-plani.md](docs/sonraki-ana-asamalar-plani.md)
 - Karar Kitabı'ndan alınan üç yardımın planı: [docs/karar-kitabi-firsatlari-plani.md](docs/karar-kitabi-firsatlari-plani.md)

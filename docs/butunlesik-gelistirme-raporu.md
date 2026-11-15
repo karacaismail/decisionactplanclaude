@@ -2,6 +2,8 @@
 
 Bu raporu Claude 15 Kasım 2026 Pazar günü hazırladı. Rapor bir tasarımdır. Hiçbir arka yüz kodu yazılmadı.
 
+**Önemli not.** Bu rapor mobil uygulama ve SaaS dağıtımı hedeflerinden önce yazıldı. Bu hedeflere göre eleştirisi [elestiri-mobil-saas-dagitim.md](elestiri-mobil-saas-dagitim.md) dosyasındadır. Eleştirideki değişiklikler bu rapora henüz işlenmedi.
+
 Raporun yeni parçalarını bağımsız bir inceleyici okudu. İnceleyici 12 sorun buldu. Bu sürüm 12 sorunun hepsini işler.
 
 Bu rapor tek kaynaktır. Üç belgenin yerini alır:
