@@ -18,7 +18,7 @@ export function validatePlanDoc(v: unknown): v is PlanDoc {
   for (const key of ['evidence', 'decisions', 'tasks'] as const) if (!Array.isArray(v[key])) return false
   if (v.profile !== undefined && !isRecord(v.profile)) return false
   if (v.limits !== undefined && !isRecord(v.limits)) return false
-  if (v.changes !== undefined && !Array.isArray(v.changes)) return false
+  for (const key of ['changes', 'transitions', 'strategyReviews', 'revisions', 'outputs'] as const) if (v[key] !== undefined && !Array.isArray(v[key])) return false
   return true
 }
 

@@ -1,6 +1,6 @@
 /**
  * Süreç tutarlılığı. Tek bir sıra vardır:
- * Karar 1-5 (temel), geçiş kapısı, strateji çalışması, Karar 6-8 (uygulama).
+ * Karar 1-5 (temel), geçiş kapısı, strateji oluşturma, Karar 6-8 (uygulama).
  * Bu dosya, tanımların, kilitlerin, eskime kuralının ve raporların aynı sırayı kullandığını sınar.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
@@ -8,7 +8,8 @@ import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { buildDemoPlan } from '@/data/demo'
-import { STEPS, STEP_IDS } from '@/data/registry'
+import { STEPS, STEP_IDS, stepHeading } from '@/data/registry'
+import { subStageOfStep } from '@/data/clusters'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, STAGES } from '@/data/stages'
 import { emptyPlan, type Decision, type PlanDoc, type TransitionRecord } from '@/data/types'
 import { buildHandoffReport } from '@/reports/handoff'
@@ -24,7 +25,7 @@ import integritySrc from './integrity.ts?raw'
 import { planPosition } from './position'
 import { evaluateReadiness, transitionPassed } from './readiness'
 
-/** Süreç sırası. Strateji çalışması (9) Karar 5 ile Karar 6 arasındadır. */
+/** Süreç sırası. Strateji oluşturma (9) Karar 5 ile Karar 6 arasındadır. */
 const ORDER = [...FOUNDATION_DECISIONS, STRATEGY_N, ...EXECUTION_DECISIONS]
 const GROUPS = [...DECISIONS, STRATEGY]
 const orderOf = (n: number) => ORDER.indexOf(n)
@@ -36,8 +37,13 @@ function transition(patch: Partial<TransitionRecord> = {}): TransitionRecord {
   return { id: 't1', outcome: 'hazir', suggested: 'hazir', reason: 'Dayanak yeterli.', decidedBy: 'Kurucu', decidedAt: '2026-11-10T00:00:00.000Z', reviewed: true, mandatoryMet: 9, mandatoryTotal: 9, supportingMet: 4, supportingTotal: 7, level: 5, revision: 6, ...patch }
 }
 function finishStrategy(p: PlanDoc) {
-  p.steps['19'] = { values: { chosenPath: 'Durakta satış', choiceReason: 'En güçlü kanıt burada.', givenUp: 'Öğle satışı' }, status: 'tamam', updatedAt: '' }
-  p.steps['20'] = { values: { qualityCheck: ['a', 'b', 'c', 'd', 'e'] }, status: 'tamam', updatedAt: '' }
+  const done = (values: Record<string, unknown>) => ({ values, status: 'tamam' as const, updatedAt: '' })
+  p.steps['S21'] = done({ diagnosis: 'Öğleden sonra dükkân boş kalıyor.', diagnosisWhy: 'Satışın yüzde 80\'i sabah geliyor.' })
+  p.steps['S22'] = done({ options: [{ name: 'Durakta satış' }, { name: 'Öğle menüsü' }] })
+  p.steps['S23'] = done({ tests: [{ option: 'Durakta satış', mustBeTrue: 'Sabah yolcusu durur.', weakest: 'Yolcu beklemez.' }, { option: 'Öğle menüsü', mustBeTrue: 'Çalışan öğlen çıkar.', weakest: 'Fiyat yüksek kalır.' }] })
+  p.steps['19'] = done({ chosenPath: 'Durakta satış', choiceReason: 'En güçlü kanıt burada.', givenUp: 'Öğle satışı' })
+  p.steps['S25'] = done({ moves: [{ move: 'Durağa tezgâh kur', capability: 'Hızlı servis' }] })
+  p.steps['20'] = done({ dossier1: 'Profil', dossier2: 'Problem', dossier3: 'Talep', dossier4: 'Yol', dossier5: 'Para', dossier6: 'Varsayım', dossier7: 'Risk', dossier8: 'Durdurma', dossier9: 'Teşhis', dossier11: 'İlk teslim', counterView: 'Yolcu durmayabilir.', qualityCheck: ['a', 'b', 'c', 'd', 'e'], approvedBy: 'Kurucu' })
 }
 
 /** Bir işlevin okuduğu adımları kaydeder. Plan değişmez. */
@@ -54,8 +60,8 @@ function stepsRead(plan: PlanDoc, run: (p: PlanDoc) => unknown): Set<string> {
 }
 
 describe('adımlar ve gruplar', () => {
-  it('35 adım vardır ve her adım tek bir gruba bağlıdır', () => {
-    expect(STEP_IDS).toHaveLength(35)
+  it('42 adım vardır ve her adım tek bir gruba bağlıdır', () => {
+    expect(STEP_IDS).toHaveLength(42)
     for (const id of STEP_IDS) {
       const owners = GROUPS.filter((g) => g.steps.includes(id))
       expect(owners.map((g) => g.n), `Adım ${id}`).toEqual([STEPS[id].decision])
@@ -64,18 +70,29 @@ describe('adımlar ve gruplar', () => {
   it('grupların listelediği her adım tanımlıdır', () => {
     for (const g of GROUPS) for (const id of g.steps) expect(STEPS[id], `Grup ${g.n}, Adım ${id}`).toBeDefined()
   })
-  it('adım numaraları süreç sırasıyla artar', () => {
+  it('adım listesi süreç sırasıyla dizilir', () => {
     const flat = ORDER.flatMap((n) => GROUPS.find((g) => g.n === n)!.steps)
-    expect(flat).toEqual([...flat].sort())
-    expect(flat).toEqual([...STEP_IDS].sort())
+    expect(flat).toEqual(STEP_IDS)
+    /* Numaralı adımlar kendi içinde artan sıradadır. */
+    const numbered = STEP_IDS.filter((id) => /^\d+$/.test(id))
+    expect(numbered).toEqual([...numbered].sort())
+    expect(numbered).toHaveLength(35)
   })
-  it('temel 00-18, strateji çalışması 19-20, uygulama 21-34 adımlarını taşır', () => {
+  it('strateji öncesi 00-18, strateji oluşturma altı adım, strateji uygulama 3.1 ile başlar', () => {
     const ids = (ns: number[]) => ns.flatMap((n) => GROUPS.find((g) => g.n === n)!.steps)
     expect(ids(FOUNDATION_DECISIONS).at(0)).toBe('00')
     expect(ids(FOUNDATION_DECISIONS).at(-1)).toBe('18')
-    expect(ids([STRATEGY_N])).toEqual(['19', '20'])
-    expect(ids(EXECUTION_DECISIONS).at(0)).toBe('21')
+    expect(ids([STRATEGY_N])).toEqual(['S21', 'S22', 'S23', '19', 'S25', '20'])
+    expect(ids(EXECUTION_DECISIONS).slice(0, 4)).toEqual(['U31', 'U32', 'U33', '21'])
     expect(ids(EXECUTION_DECISIONS).at(-1)).toBe('34')
+  })
+  it('kodu olan her adım bir alt aşamaya ya da çıkış kapısına bağlıdır', () => {
+    const coded = STEP_IDS.filter((id) => STEPS[id].code)
+    expect(coded).toEqual(['S21', 'S22', 'S23', '19', 'S25', '20', 'U31', 'U32', 'U33'])
+    expect(coded.map((id) => STEPS[id].code)).toEqual(['2.1', '2.2', '2.3', '2.4', '2.5', 'Çıkış kapısı', '3.1', '3.2', '3.3'])
+    for (const id of coded) if (STEPS[id].code !== 'Çıkış kapısı') expect([id, subStageOfStep(id)?.code]).toEqual([id, STEPS[id].code])
+    expect(stepHeading('S21')).toBe('2.1. Teşhis')
+    expect(stepHeading('12')).toBe('Adım 12. Yapabilirlik ve kaynak')
   })
   it('aşamalar süreç sırasını ve bütün kararları taşır', () => {
     expect(STAGES.map((s) => s.key)).toEqual(['temel', 'gecis', 'strateji', 'uygulama'])
@@ -86,7 +103,7 @@ describe('adımlar ve gruplar', () => {
 describe('kapılar yalnız kendi adımlarını ve önceki adımları okur', () => {
   const plans = [emptyPlan('p', 'Boş'), buildDemoPlan()]
   for (const g of GROUPS) {
-    it(`${g.n === STRATEGY_N ? 'Strateji çalışması' : `Kapı ${g.n}`}`, () => {
+    it(`${g.n === STRATEGY_N ? 'Strateji oluşturma' : `Kapı ${g.n}`}`, () => {
       for (const plan of plans) {
         const filledPlan = structuredClone(plan)
         for (const id of STEP_IDS) filledPlan.steps[id] ??= { values: {}, status: 'taslak', updatedAt: '' }
@@ -160,6 +177,14 @@ describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
       expect([...read].filter((id) => !visible(id))).toEqual([])
     })
   }
+  it('strateji oluşturma ve uygulama kapıları da kısa yolda gizli bir adımı okumaz', () => {
+    const p = buildDemoPlan()
+    p.shortPath = true
+    for (const g of [STRATEGY, ...DECISIONS.filter((d) => EXECUTION_DECISIONS.includes(d.n))]) {
+      const read = stepsRead(p, (x) => g.gate.criteria.forEach((c) => c.check(x)))
+      expect([g.n, [...read].filter((id) => !visible(id))]).toEqual([g.n, []])
+    }
+  })
   it('ekipte Kapı 1 kısa yolda gizli bir adımı okumaz', () => {
     const p = buildDemoPlan()
     p.shortPath = true
@@ -254,7 +279,7 @@ describe('isteğe bağlı bölüm hiçbir kuralın istediği alanı taşımaz', 
   })
 })
 
-describe('raporlar seçimi strateji çalışmasından okur', () => {
+describe('raporlar seçimi strateji oluşturmadan okur', () => {
   it('seçilen yol Adım 19\'dan gelir, Adım 18\'deki eski alan kullanılmaz', () => {
     const p = buildDemoPlan()
     finishStrategy(p)
@@ -278,15 +303,15 @@ describe('kilit zinciri tek sırayı izler', () => {
     expect(targets(p)).toEqual([null, null, null, null, null, 'gecis', 'gecis', 'gecis', 'gecis'])
     expect(planPosition(p).stage).toBe('gecis')
   })
-  it('geçiş kararından sonra strateji çalışması açılır, uygulama kilitli kalır', () => {
+  it('geçiş kararından sonra strateji oluşturma açılır, uygulama kilitli kalır', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = FOUNDATION_DECISIONS.map((n) => decision(n))
     p.transitions = [transition()]
     expect(targets(p)).toEqual([null, null, null, null, null, null, 'strateji', 'strateji', 'strateji'])
-    expect(lockReason(p, 6)).toContain('Adım 19')
+    expect(lockReason(p, 6)).toContain('Beş alt aşama')
     expect(planPosition(p).stage).toBe('strateji')
   })
-  it('strateji çalışması bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler', () => {
+  it('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = FOUNDATION_DECISIONS.map((n) => decision(n))
     p.transitions = [transition()]
@@ -298,7 +323,7 @@ describe('kilit zinciri tek sırayı izler', () => {
     expect(ORDER.filter((n) => decisionLocked(p, n))).toEqual([])
     expect(planPosition(p).stage).toBe('bitti')
   })
-  it('geçiş kararı düşünce strateji çalışması ve bütün uygulama kilitlenir', () => {
+  it('geçiş kararı düşünce strateji oluşturma ve bütün uygulama kilitlenir', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = [...FOUNDATION_DECISIONS, ...EXECUTION_DECISIONS].map((n) => decision(n))
     p.transitions = [transition({ outcome: 'kosullu', conditional: { topic: 'Kapsam', openQuestion: 'Soru', owner: 'Kurucu', deadline: '2026-01-01' } })]
@@ -369,7 +394,7 @@ describe('metinler eski süreci anlatmaz', () => {
   const current = [...files(join(root, 'src'), ['.ts', '.tsx']), join(root, 'README.md'), join(root, 'docs', 'surec-haritasi.md'), join(root, 'docs', 'alan-sozlesmesi.md')]
   const stale: [RegExp, string][] = [
     [/6 destekleyici/, 'Destekleyici ölçüt sayısı 7\'dir.'],
-    [/Adım 18, 19 ve 20/, 'Strateji çalışması Adım 19 ve 20\'dir. Adım 18 Karar 5\'tedir.'],
+    [/Adım 18, 19 ve 20/, 'Strateji oluşturma Adım 19 ve 20\'dir. Adım 18 Karar 5\'tedir.'],
     [/Saha ve kazanma yolu/, 'Adım 18\'in adı "Yol adayları"dır.'],
     [/[Tt]emel belgesinde yazar|temel belgesindeki kanıt/, 'Belgenin adı "Strateje devir raporu"dur.'],
     [/stratejist/i, 'Unvan "stratej"dir.'],
@@ -391,7 +416,8 @@ describe('metinler eski süreci anlatmaz', () => {
       const d = DECISIONS.find((x) => x.n === n)!
       expect(map).toContain(`| Karar ${n} | ${d.title} | ${d.steps.join(', ')} |`)
     }
-    expect(map).toContain(`| 3 | ${STRATEGY.title} | Adım 19 ve Adım 20 |`)
+    expect(map).toContain(`| 2 | ${STRATEGY.title} | 2.1, 2.2, 2.3, 2.4 ve 2.5 |`)
+    expect(map).toContain('| 3 | Strateji uygulama | 3.1, 3.2, 3.3, 3.4 ve 3.5 |')
     expect(map).toContain('Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder.')
     expect(map).toContain('Destekleyici ölçüt sayısı 7')
   })

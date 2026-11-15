@@ -16,7 +16,7 @@ type Conditional = NonNullable<TransitionDraft['conditional']>
 
 const ORDER: TransitionOutcome[] = ['hazir', 'kosullu', 'degil']
 const HELP: Record<TransitionOutcome, string> = {
-  hazir: 'Strateji çalışması açılır.',
+  hazir: 'Strateji oluşturma açılır.',
   kosullu: 'Ekip yalnız belirtilen konuyu planlar.',
   degil: 'Eksik kanıt tamamlanır.',
 }
@@ -115,10 +115,10 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
     const open = saved.outcome !== 'degil'
     const subTitle =
       saved.outcome === 'hazir'
-        ? '"Planlamaya hazır" kararı kaydedildi. Strateji çalışması açıldı.'
+        ? '"Planlamaya hazır" kararı kaydedildi. Strateji oluşturma açıldı.'
         : saved.outcome === 'kosullu'
           ? '"Koşullu hazır" kararı kaydedildi. Ekip yalnız belirtilen konuyu planlar. Açık soru iş listesine eklendi.'
-          : '"Henüz hazır değil" kararı kaydedildi. Strateji çalışması kapalı kalır. Önce eksik kanıtı tamamlayın.'
+          : '"Henüz hazır değil" kararı kaydedildi. Strateji oluşturma kapalı kalır. Önce eksik kanıtı tamamlayın.'
     return (
       <Result
         className={`k-result gecis-result${open ? '' : ' is-neutral'}`}
@@ -129,7 +129,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
         extra={
           open ? (
             <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav('/strateji')}>
-              Strateji çalışmasını aç
+              Strateji oluşturmayı aç
             </Button>
           ) : (
             <Button type="primary" icon={<ArrowLeft size={16} />} onClick={() => nav(saved.backTo)}>

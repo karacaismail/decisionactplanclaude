@@ -78,16 +78,24 @@ test('çıktılar ekranı iki belgeyi üretir', async ({ page }) => {
   await noHorizontalOverflow(page)
 })
 
-test('35 adımın hepsi hatasız açılır', async ({ page }) => {
+test('42 adımın hepsi hatasız açılır', async ({ page }) => {
   const errors: string[] = []
   page.on('pageerror', (e) => errors.push(e.message))
   page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('antd')) errors.push(m.text()) })
   await createPlan(page)
-  const ids = Array.from({ length: 35 }, (_, i) => String(i).padStart(2, '0'))
-  for (const id of ids) {
-    const n = id === '00' ? 1 : Number(id) <= 4 ? 1 : Number(id) <= 8 ? 2 : Number(id) <= 12 ? 3 : Number(id) <= 15 ? 4 : Number(id) <= 18 ? 5 : Number(id) <= 20 ? 9 : Number(id) <= 25 ? 6 : Number(id) <= 32 ? 7 : 8
+  /* Kodu olan adımlar alt aşama koduyla, öteki adımlar "Adım NN" diye görünür. */
+  const coded: Record<string, [number, string]> = { S21: [9, '2.1'], S22: [9, '2.2'], S23: [9, '2.3'], '19': [9, '2.4'], S25: [9, '2.5'], '20': [9, 'Çıkış kapısı'], U31: [6, '3.1'], U32: [6, '3.2'], U33: [6, '3.3'] }
+  const numbered = Array.from({ length: 35 }, (_, i) => String(i).padStart(2, '0')).filter((id) => !(id in coded))
+  for (const id of numbered) {
+    const k = Number(id)
+    const n = k <= 4 ? 1 : k <= 8 ? 2 : k <= 12 ? 3 : k <= 15 ? 4 : k <= 18 ? 5 : k <= 25 ? 6 : k <= 32 ? 7 : 8
     await page.goto(`/#/karar/${n}/adim/${id}`)
     await expect(page.getByRole('heading', { name: new RegExp(`Adım ${id}\\.`) })).toBeVisible()
+    await noHorizontalOverflow(page, `adım ${id}`)
+  }
+  for (const [id, [n, code]] of Object.entries(coded)) {
+    await page.goto(`/#/karar/${n}/adim/${id}`)
+    await expect(page.getByRole('heading', { level: 1 })).toContainText(`${code}. `)
     await noHorizontalOverflow(page, `adım ${id}`)
   }
   for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) {

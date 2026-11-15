@@ -178,6 +178,28 @@ export const TRANSITION_LABEL: Record<TransitionOutcome, string> = {
   degil: 'Henüz hazır değil',
 }
 
+/** Stratejiyi sınama ve yenileme kararı (alt aşama 3.5). */
+export type RenewalDecision = 'surdur' | 'duzelt' | 'yenidenAc'
+export const RENEWAL_LABEL: Record<RenewalDecision, string> = { surdur: 'Sürdür', duzelt: 'Düzelt', yenidenAc: 'Yeniden aç' }
+/** "Seçim hâlâ doğru mu?" sorusunun cevabı. */
+export type ChoiceHolds = 'evet' | 'kismen' | 'hayir'
+export const HOLDS_LABEL: Record<ChoiceHolds, string> = { evet: 'Evet, seçim hâlâ doğru', kismen: 'Kısmen doğru', hayir: 'Hayır, seçim artık doğru değil' }
+
+/** Strateji gözden geçirme kaydı. Yazılım karar vermez. Karar sahibi kaydeder. */
+export interface StrategyReview {
+  id: string
+  decidedAt: string
+  decidedBy: string
+  holds: ChoiceHolds
+  decision: RenewalDecision
+  reason: string
+  /** Kararın dayandığı gözlem ya da sayı. */
+  evidence?: string
+  /** "Yeniden aç" kararında silinen onay. Örneğin "Kurucu, 2026-11-15". */
+  clearedApproval?: string
+  revision: number
+}
+
 /** Geçiş kapısı kaydı. Yazılım önerir, karar sahibi kaydeder. */
 export interface TransitionRecord {
   id: string
@@ -222,6 +244,13 @@ export interface PlanDoc {
   takeover?: Record<string, unknown>
   /** Stratejik planlamaya geçiş kararları. Son kayıt geçerlidir. */
   transitions?: TransitionRecord[]
+  /** Strateji gözden geçirme kayıtları. Son kayıt geçerlidir. */
+  strategyReviews?: StrategyReview[]
+  /**
+   * Stratejisi eski sürümde tamamlanan plan. Eski sürümde strateji iki adımdı.
+   * Bu plan yeni alt aşamalar boş olsa da strateji uygulamada kalır. "Yeniden aç" kararı bu izni kaldırır.
+   */
+  legacyStrategy?: { migratedAt: string }
   /** Örnek plan: ekranları tanıtır, raporda "Örnek" damgası taşır. */
   example?: boolean
   changes?: ChangeRecord[]

@@ -61,9 +61,21 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | 18 | paths | repeater, satır alanları `name, where, how, revenue, vehicle (select: kendimiz, satinAl, ortak), giveUp, evidence, evidenceIds (kanıt bağı), origin (select: so, wo, st, wt, baska), cost, reversible`. İlk satır "Bugünkü durumu sürdürmek"tir. | Kapı 5, geçiş kapısı, devir raporu |
 | 18 | pathScores, counterMove | puanlama ve textarea | Devir raporu |
 | 18 | openDecisions | repeater, satır alanları `question, alternatives, basis, owner, dueDate, reversalCost, door` | Devir raporu |
-| 19 | chosenPath, choiceReason, givenUp | text ve textarea | Strateji çalışmasının bitişi, yönetici raporu, aksiyon planı |
-| 19 | now, next, later | repeater, satır alanları `action, owner, dueDate` | Aksiyon planı |
-| 20 | qualityCheck | checklist, 5 madde | Strateji çalışmasının bitişi |
+| S21 (2.1) | diagnosis, diagnosisWhy | text ve textarea | Strateji oluşturmanın bitişi, yönetici raporu |
+| S21 (2.1) | setAside | textarea, isteğe bağlı | Yalnız kayıt |
+| S22 (2.2) | options | repeater, satır alanları `name, what, source (select: hazirlik, yeni), difference` | Strateji oluşturmanın bitişi, 2.3 adımının denetimi |
+| S23 (2.3) | tests | repeater, satır alanları `option, mustBeTrue, weakest, how, result (select: destek, karsi, sinanmadi)` | Strateji oluşturmanın bitişi |
+| S23 (2.3) | fit | scoreMatrix, isteğe bağlı, dört ölçüt | Yalnız kayıt |
+| 19 (2.4) | chosenPath, choiceReason, givenUp | text ve textarea | Strateji oluşturmanın bitişi, yönetici raporu, aksiyon planı |
+| 19 (2.4) | winningAim, playField | text ve textarea | Adımın tamamlanması, yönetici raporu |
+| S25 (2.5) | moves | repeater, satır alanları `move, serves, capability, have (select: var, kurulacak, disaridan)` | Strateji oluşturmanın bitişi, yönetici raporu |
+| 20 (çıkış kapısı) | qualityCheck | checklist, 5 madde | Strateji oluşturmanın bitişi |
+| 20 (çıkış kapısı) | approvedBy, approvedAt | text ve date | Strateji oluşturmanın bitişi |
+| U31 (3.1) | objective | text | Aksiyon planı |
+| U31 (3.1) | keyResults | repeater, satır alanları `kr, baseline, target` | Adımın denetimi |
+| U32 (3.2) | now, next, later | repeater, satır alanları `action, owner, dueDate` | Aksiyon planı, 3.3 adımının önerisi |
+| U33 (3.3) | resources | repeater, satır alanları `item, budgetKurus (money), people` | Kaynak hesabı |
+| U33 (3.3) | resourceOwner, resourceShift | text ve textarea | Adımın tamamlanması |
 | 21 | buildWeeks | number | Adım 21 uyarısı |
 | 22 | measure1, measure2, measure3, benefitMeasure | measure | Kapı 6 |
 | 22 | harmLimit | text | Rapor |
@@ -83,3 +95,42 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | 34 | acceptedInWriting | toggle | Kapı 8 |
 
 Para alanları kuruş cinsinden tam sayı tutar. Örneğin 1.250,50 TL için 125050.
+
+## Adım kimlikleri ve kodlar
+
+Strateji oluşturma ve strateji uygulama adımları ekranda alt aşama koduyla görünür. Veride ise kimlikleriyle durur.
+
+| Kimlik | Ekrandaki kod | Ad |
+|---|---|---|
+| S21 | 2.1 | Teşhis |
+| S22 | 2.2 | Seçenekler |
+| S23 | 2.3 | Sınama |
+| 19 | 2.4 | Seçim ve vazgeçiş |
+| S25 | 2.5 | Ana hamleler ve gerekli yetkinlikler |
+| 20 | Çıkış kapısı | Strateji belgesi |
+| U31 | 3.1 | Hedef ve gösterge |
+| U32 | 3.2 | Ana işler ve sorumlular |
+| U33 | 3.3 | Kaynak ve bütçe |
+
+Öteki adımlar ekranda "Adım" sözüyle ve numarasıyla görünür. Örneğin "Adım 12".
+
+## Strateji gözden geçirme kaydı
+
+Kayıtlar `plan.strategyReviews` dizisinde durur. Son kayıt geçerlidir.
+
+| Alan | Tür | Anlamı |
+|---|---|---|
+| holds | evet, kismen, hayir | "Seçim hâlâ doğru mu?" sorusunun cevabı |
+| decision | surdur, duzelt, yenidenAc | Karar sahibinin kararı |
+| reason | metin, en az 20 karakter | Gerekçe |
+| evidence | metin, isteğe bağlı | Kararın dayandığı gözlem ya da sayı |
+| decidedBy, decidedAt | metin ve tarih | Karar sahibi ve karar zamanı |
+
+## Sürüm 3 taşıması
+
+Eski kayıtta hedef ve iş alanları Adım 19'da durur. Yazılım açılışta bu alanları taşır:
+
+- `objective` ve `keyResults` alanları U31 adımına geçer.
+- `now`, `next`, `later` ve `weeklyBottleneck` alanları U32 adımına geçer.
+
+Yeni adımda değer varsa yazılım üstüne yazmaz. İçe alınan eski dosya da aynı taşımadan geçer.

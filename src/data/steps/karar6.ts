@@ -266,7 +266,8 @@ export const KARAR6: StepDef[] = [
     mandatory: true,
     who: 'Kurucu.',
     timebox: 'Her kanal için 2 hafta.',
-    shortPath: false,
+    /* Kapı bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
+    shortPath: true,
     howTo: [
       'Profilinize göre 2 veya 3 kanal seçin.',
       'Her kanala küçük bütçe ve 2 hafta ayırın.',

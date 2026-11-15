@@ -1,12 +1,15 @@
 import { useMemo } from 'react'
-import { Button, Card, Descriptions, Grid, Result, Steps, Table, Tag } from 'antd'
-import { ArrowLeft, ArrowRight, CheckCircle, LockSimple } from '@phosphor-icons/react'
+import { Button, Card, Descriptions, Result, Tag } from 'antd'
+import { ArrowLeft, ArrowRight, CheckCircle, Circle } from '@phosphor-icons/react'
 import { Link, useNavigate } from 'react-router'
 import { useCurrentPlan } from '@/store/planStore'
 import { STRATEGY, STRATEGY_N } from '@/data/decisions'
-import { stepPath, stepsOf } from '@/data/registry'
-import type { StepDef } from '@/data/schema'
-import { TRANSITION_LABEL, type PlanDoc, type TransitionOutcome } from '@/data/types'
+import { stepHeading, stepPath, stepsOf } from '@/data/registry'
+import { clusterOf, SUB_STAGE_LABEL } from '@/data/clusters'
+import { strategyReopened } from '@/engine/renewal'
+import { DOSSIER_STEP } from '@/engine/strategy'
+import { SubStageList } from '@/components/SubStageList'
+import { TRANSITION_LABEL, type TransitionOutcome } from '@/data/types'
 import { strategyDone, decisionLocked, lockReason } from '@/engine/gate'
 import { effectiveTransition, lastTransition } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
@@ -17,21 +20,13 @@ import { PathCompare } from '@/components/PathCompare'
 import '@/styles/screens-karar.css'
 import '@/styles/screens-strateji.css'
 
-type StepState = 'tamam' | 'taslak' | 'atlandi' | 'bos'
-const STATE_LABEL: Record<StepState, string> = { tamam: 'Tamam', taslak: 'Taslak', atlandi: 'Atlandı', bos: 'Boş' }
 const OUTCOME_COLOR: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
-/** "Adım 19'u aç", "Adım 20'yi aç" gibi doğru ek. */
-const OPEN_SUFFIX: Record<string, string> = { '19': "'u", '20': "'yi" }
-
-function stateOf(plan: PlanDoc, id: string): StepState {
-  const s = plan.steps[id]?.status
-  return s === 'tamam' || s === 'taslak' || s === 'atlandi' ? s : 'bos'
-}
 
 /**
- * Strateji çalışması. Adım 19 ve 20 bu gruptadır. Adım listesi `stepsOf` ile veriden gelir.
- * Grup, geçiş kapısı kararı olmadan kilitlidir.
- * Ekran stratej'in okuma sırasıyla dizilir: önündeki karar, ilk günü, yol adayları, adımlar.
+ * Strateji oluşturma. İkinci ana kümedir. Beş zorunlu alt aşaması ve bir çıkış kapısı vardır.
+ * Alt aşamalar `clusters.ts` dosyasından, adımlar `stepsOf` ile veriden gelir.
+ * Küme, geçiş kapısı kararı olmadan kilitlidir.
+ * Ekran stratej'in okuma sırasıyla dizilir: önündeki karar, ilk günü, yol adayları, alt aşamalar, çıkış kapısı.
  * Telefonda tek sütundur ve geçiş kararı en üsttedir. Masaüstünde geçiş kararı sağ sütundadır.
  * Ekranda en çok bir dolu düğme vardır: sıradaki adımı açar. Kilitliyken dolu düğme yoktur.
  * Yazılım yol seçmez. Yol adayları tablosu hiçbir yolu öne çıkarmaz.
@@ -39,7 +34,6 @@ function stateOf(plan: PlanDoc, id: string): StepState {
 export function StrategyScreen() {
   const plan = useCurrentPlan()
   const nav = useNavigate()
-  const bp = Grid.useBreakpoint()
   const report = useMemo(() => (plan ? buildHandoffReport(plan) : null), [plan])
   if (!plan || !report) return null
 
@@ -47,13 +41,17 @@ export function StrategyScreen() {
   const reason = lockReason(plan, STRATEGY_N)
   const last = lastTransition(plan)
   const expired = last ? effectiveTransition(last) !== last.outcome : false
-  const steps = stepsOf(STRATEGY_N).filter((s) => !plan.shortPath || s.shortPath)
-  const isDone = (id: string) => stateOf(plan, id) === 'tamam' || stateOf(plan, id) === 'atlandi'
+  const cluster = clusterOf('olusturma')
+  const steps = stepsOf(STRATEGY_N)
+  const isDone = (id: string) => plan.steps[id]?.status === 'tamam'
   const next = steps.find((s) => !isDone(s.id))
-  const done = steps.filter((s) => isDone(s.id)).length
+  const doneStages = cluster.subStages.filter((x) => x.state(plan) === 'tamam').length
+  const reopened = strategyReopened(plan)
+  const reopenRecord = [...(plan.strategyReviews ?? [])].reverse().find((r) => r.decision === 'yenidenAc')
+  const dossierDone = isDone(DOSSIER_STEP)
   /* Bitiş kuralı motordadır. Kilit, pano ve bu ekran aynı kurala bakar. */
   const criteria = STRATEGY.gate.criteria.map((c) => ({ label: c.label, met: c.check(plan) === true }))
-  const allDone = !locked && strategyDone(plan)
+  const allDone = !locked && strategyDone(plan) && !reopened && !next
   const missing = criteria.filter((c) => !c.met)
 
   const action = locked ? (
@@ -62,18 +60,28 @@ export function StrategyScreen() {
     </Button>
   ) : next ? (
     <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(stepPath(next.id))}>
-      Adım {next.id}
-      {OPEN_SUFFIX[next.id] ?? "'i"} aç
+      Sıradaki adım: {stepHeading(next.id)}
     </Button>
   ) : null
 
   return (
     <div className="page page-karar page-strateji">
-      <PageHeader kicker="Strateji çalışması" title={STRATEGY.question} description={STRATEGY.intro} documentTitle={STRATEGY.title} actions={action} />
+      <PageHeader kicker="Strateji oluşturma" title={STRATEGY.question} description={STRATEGY.intro} documentTitle={STRATEGY.title} actions={action} />
 
       {locked ? (
-        <Callout tone="uyari" title="Strateji çalışması kilitli">
+        <Callout tone="uyari" title="Strateji oluşturma kilitli">
           {reason} Adımları inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında karar kaydedin.
+        </Callout>
+      ) : null}
+
+      {reopened && reopenRecord ? (
+        <Callout tone="uyari" title="Strateji yeniden açıldı">
+          Karar sahibi {reopenRecord.decidedBy} bu kararı {formatDate(reopenRecord.decidedAt)} kaydetti. Gerekçe şudur: {/[.?!]$/.test(reopenRecord.reason) ? reopenRecord.reason : `${reopenRecord.reason}.`} Alt aşamaları yeniden gözden geçirin. Sonra strateji belgesini yeniden onaylayın. Strateji uygulama bu sırada eski seçimle sürer.
+        </Callout>
+      ) : null}
+      {plan.legacyStrategy && !reopened && !criteria.every((c) => c.met) ? (
+        <Callout tone="bilgi" title="Bu plan eski sürümde tamamlandı">
+          Bu planın stratejisi eski sürümde iki adımla tamamlandı. Bu yüzden strateji uygulama açık kalır. Yeni alt aşamalar boş görünür. Doldurursanız strateji belgesi güçlenir.
         </Callout>
       ) : null}
 
@@ -124,8 +132,8 @@ export function StrategyScreen() {
 
         <div className="strateji-main">
           {!locked && !allDone && !next && missing.length > 0 ? (
-            <Callout tone="uyari" title="Strateji çalışması henüz bitmedi">
-              Adımlar tamam görünüyor ama şu koşullar eksik: {missing.map((m) => m.label).join(' ')} Uygulama aşaması bu koşullar tamamlanınca açılır.
+            <Callout tone="uyari" title="Strateji oluşturma henüz bitmedi">
+              Adımlar tamam görünüyor ama şu koşullar eksik: {missing.map((m) => m.label).join(' ')} Strateji uygulama bu koşullar tamamlanınca açılır.
             </Callout>
           ) : null}
           {allDone ? (
@@ -133,9 +141,9 @@ export function StrategyScreen() {
               <Result
                 className="strateji-result"
                 icon={<CheckCircle size={56} weight="fill" aria-hidden />}
-                title="Strateji çalışması tamam"
-                subTitle="Adımların hepsi tamamlandı. Şimdi uygulama aşamasına geçebilirsiniz."
-                extra={<Button onClick={() => nav('/karar/6')}>Uygulama aşamasına geç</Button>}
+                title="Strateji oluşturma tamam"
+                subTitle="Beş alt aşama tamamlandı ve karar sahibi strateji belgesini onayladı. Şimdi strateji uygulamaya geçebilirsiniz."
+                extra={<Button onClick={() => nav('/uygulama')}>Strateji uygulamaya geç</Button>}
               />
             </Card>
           ) : null}
@@ -158,71 +166,22 @@ export function StrategyScreen() {
             <PathCompare paths={report.paths} />
           </Card>
 
-          <Card title="Adımlar" extra={<span className="karar-step-count">{done} / {steps.length} tamam</span>}>
-            <Steps
-              className="karar-steps"
-              size="small"
-              orientation={bp.md ? 'horizontal' : 'vertical'}
-              titlePlacement={bp.md ? 'vertical' : 'horizontal'}
-              current={next ? steps.indexOf(next) : steps.length}
-              onChange={(i) => {
-                const s = steps[i]
-                if (s) nav(stepPath(s.id))
-              }}
-              items={steps.map((s) => ({
-                title: `Adım ${s.id}`,
-                content: s.title,
-                status: isDone(s.id) ? ('finish' as const) : !locked && s === next ? ('process' as const) : ('wait' as const),
-                icon: locked && !isDone(s.id) ? <LockSimple size={16} aria-label="Kilitli" /> : undefined,
-              }))}
-            />
-            <Table<StepDef>
-              className="karar-table"
-              size="middle"
-              pagination={false}
-              rowKey="id"
-              dataSource={steps}
-              scroll={{ x: 500 }}
-              columns={[
-                {
-                  title: 'Adım',
-                  key: 'adim',
-                  render: (_, s) => (
-                    <Link to={stepPath(s.id)} className="karar-step-link">
-                      <span className="route-dot" aria-hidden>
-                        {s.id}
-                      </span>
-                      <span>{s.title}</span>
-                    </Link>
-                  ),
-                },
-                {
-                  title: 'Durum',
-                  key: 'durum',
-                  width: 112,
-                  /* Kilitli ve boş adımda tek etiket yeter: "Kilitli". Dolu adımda durum da yazar. */
-                  render: (_, s) => {
-                    const st = stateOf(plan, s.id)
-                    return (
-                      <span className="strateji-tags">
-                        {locked && st === 'bos' ? null : <Tag color={st === 'tamam' ? 'success' : undefined}>{STATE_LABEL[st]}</Tag>}
-                        {locked ? <Tag icon={<LockSimple size={14} aria-hidden />}>Kilitli</Tag> : null}
-                      </span>
-                    )
-                  },
-                },
-                {
-                  title: 'Son güncelleme',
-                  key: 'tarih',
-                  width: 136,
-                  render: (_, s) => {
-                    const at = plan.steps[s.id]?.updatedAt
-                    return <span className="karar-date">{at ? formatDate(at, false) : 'Güncellenmedi'}</span>
-                  },
-                },
-                { title: 'Eylem', key: 'ac', width: 72, render: (_, s) => <Link to={stepPath(s.id)}>{locked ? 'İncele' : 'Aç'}</Link> },
-              ]}
-            />
+          <Card title={<h2 className="card-heading">Beş zorunlu alt aşama</h2>} extra={<span className="karar-step-count">{doneStages} / {cluster.subStages.length} tamam</span>}>
+            <p className="helper">Giriş koşulu: {cluster.entry} Her alt aşama bir adımdır. Sırayla ilerleyin.</p>
+            <SubStageList plan={plan} items={cluster.subStages} locked={locked} />
+          </Card>
+
+          <Card title={<h2 className="card-heading">Çıkış kapısı</h2>} extra={<Tag color={dossierDone && !reopened ? 'success' : undefined}>{SUB_STAGE_LABEL[dossierDone && !reopened ? 'tamam' : plan.steps[DOSSIER_STEP] ? 'suruyor' : 'bos']}</Tag>}>
+            <p className="helper">{cluster.exit} Strateji uygulama bu altı koşul dolunca açılır.</p>
+            <ul className="criteria-list">
+              {criteria.map((c) => (
+                <li key={c.label}>
+                  {c.met ? <CheckCircle size={20} weight="fill" className="is-met" aria-hidden /> : <Circle size={20} className="is-open" aria-hidden />}
+                  <span>{c.label} <span className="helper">{c.met ? 'Karşılandı.' : 'Henüz karşılanmadı.'}</span></span>
+                </li>
+              ))}
+            </ul>
+            <Link className="substage-link" to={stepPath(DOSSIER_STEP)}>{locked ? 'Strateji belgesini incele' : 'Strateji belgesini aç'}</Link>
           </Card>
         </div>
       </div>

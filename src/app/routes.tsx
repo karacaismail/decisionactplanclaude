@@ -16,6 +16,7 @@ import { MethodsScreen } from '@/screens/MethodsScreen'
 import { TransitionScreen } from '@/screens/TransitionScreen'
 import { HandoffScreen } from '@/screens/HandoffScreen'
 import { StrategyScreen } from '@/screens/StrategyScreen'
+import { ExecutionScreen } from '@/screens/ExecutionScreen'
 import { FoundationScreen } from '@/screens/FoundationScreen'
 import { AssumptionsScreen } from '@/screens/AssumptionsScreen'
 import { useCurrentPlan } from '@/store/planStore'
@@ -43,6 +44,7 @@ export function AppRoutes() {
         <Route path="/devir" element={<RequirePlan><HandoffScreen /></RequirePlan>} />
         <Route path="/gecis" element={<RequirePlan><TransitionScreen /></RequirePlan>} />
         <Route path="/strateji" element={<RequirePlan><StrategyScreen /></RequirePlan>} />
+        <Route path="/uygulama" element={<RequirePlan><ExecutionScreen /></RequirePlan>} />
         <Route path="/temel" element={<RequirePlan><FoundationScreen /></RequirePlan>} />
         <Route path="/varsayimlar" element={<RequirePlan><AssumptionsScreen /></RequirePlan>} />
         <Route path="/karar/9" element={<Navigate to="/strateji" replace />} />

@@ -118,7 +118,7 @@ test('sınırlar, eksik bilgi ve kapsam görünür', async ({ page }) => {
   const coverage = page.locator('#devir-kapsam')
   await expect(coverage.getByText(/^\d+ \/ 14 başlık dolu$/)).toBeVisible()
   await expect(coverage.locator('.devir-coverage > li')).toHaveCount(14)
-  await expect(page.locator('#devir-ilk-gun').getByRole('button', { name: 'Strateji çalışmasına git' })).toBeVisible()
+  await expect(page.locator('#devir-ilk-gun').getByRole('button', { name: 'Strateji oluşturmaya git' })).toBeVisible()
 })
 
 test('tasarım kuralları: tek dolu düğme, iç içe kart yok, küçük yazı yok', async ({ page }) => {

@@ -331,7 +331,8 @@ export const KARAR7: StepDef[] = [
     whenNote: 'İlk düzenli satıştan önce yapılır. Dış para ise yatırımcı görüşmesinden önce yapılır. Hangisi önce gelirse o tarih geçerlidir. Yüksek düzenleme ise ilk satıştan önce zorunludur.',
     who: 'Kurucu. Muhasebeci ve avukatla.',
     timebox: '2 ile 6 hafta. İzinler daha uzun sürebilir.',
-    shortPath: false,
+    /* Kapı bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
+    shortPath: true,
     howTo: [
       'Muhasebeciyle görüşün. Kalıcı şirket türünü seçin.',
       'Avukatla görüşün. Ortaklık sözleşmesi, müşteri sözleşmesi ve kişisel veri kurallarını yazdırın.',

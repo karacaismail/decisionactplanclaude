@@ -1,21 +1,24 @@
 # Girişimci Aksiyon Planı
 
-Bu araç stratejik planlamadan önce yapılacak işleri yaptırır. Araç her iddia için kanıt ister. Dayanak yeterliyse araç strateji çalışmasını açar.
+Bu araç üç işi sırayla yaptırır. Önce strateji öncesi hazırlığı yaptırır. Sonra stratejiyi oluşturtur. Sonra stratejiyi uygulatır.
 
-Aracın bitiş çizgisi geçiş kapısıdır. Karar sahibi orada şu soruya cevap verir: "Dayanak yeterli mi?" Yazılım öneri üretir. Kararı karar sahibi kaydeder.
+Araç her iddia için kanıt ister. Dayanak yeterliyse araç strateji oluşturmayı açar.
 
-Strateji çalışmasını stratej yürütür. Stratej, stratejiyi geliştiren kişinin unvanıdır. Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder. Yazılım stratej için "Strateje devir raporu" üretir. Yazılım yol seçmez.
+Strateji oluşturmayı stratej yürütür. Stratej, stratejiyi geliştiren kişinin unvanıdır. Stratej yolu önerir ve gerekçesini kurar. Karar sahibi seçer ve kaydeder. Yazılım teşhis koymaz ve yol seçmez.
 
-## Yol
+## Üç ana küme
 
-Yol dört bölümdür. Bölümler sırayla açılır.
+Yazılım üç ana kümeden oluşur. Kümeler sırayla açılır.
 
-| Sıra | Bölüm | İçerik | Bitiş |
+| Sıra | Ana küme | İçerik | Bitiş |
 |---|---|---|---|
-| 1 | Temel | Karar 1 ile Karar 5 arası. Adım 00 ile Adım 18 arası. Sorun, talep, para, risk ve yol adayları yazılır. | Kapı 5 |
-| 2 | Geçiş kapısı | 9 zorunlu ve 7 destekleyici ölçüt. Karar sahibi devir raporunu okur. | Geçiş kararı |
-| 3 | Strateji çalışması | Adım 19 ve Adım 20. Geçiş kararı olmadan açılmaz. | Strateji karar dosyası |
-| 4 | Uygulama | Karar 6, 7 ve 8. Adım 21 ile Adım 34 arası. Strateji çalışması bitmeden açılmaz. | Kapı 8 |
+| 1 | Strateji öncesi hazırlık | Karar 1 ile Karar 5 arası. Adım 00 ile Adım 18 arası. Sonra geçiş kapısı. | Geçiş kararı |
+| 2 | Strateji oluşturma | Beş zorunlu alt aşama: teşhis, seçenekler, sınama, seçim ve vazgeçiş, ana hamleler. | Onaylanmış strateji belgesi |
+| 3 | Strateji uygulama | Beş zorunlu alt aşama: hedef ve gösterge, işler ve sorumlular, kaynak ve bütçe, yürütme, sınama ve yenileme. | Çıkış kapısı yoktur. Küme bir döngüdür. |
+
+Bir ana küme ancak olmazsa olmaz ise eklenir. İncelenen 18 çerçevenin 15'i oluşturmayı ve uygulamayı ayrı ana aşama sayıyor. Başka hiçbir aşama bu orana yaklaşmıyor. Sayım [docs/sonraki-ana-asamalar-plani.md](docs/sonraki-ana-asamalar-plani.md) dosyasındadır.
+
+Strateji uygulamanın son alt aşaması şu soruyu sorar: "Seçim hâlâ doğru mu?" Karar sahibi "Yeniden aç" derse iş strateji oluşturmaya geri döner.
 
 Geçiş kapısının üç sonucu vardır: "Planlamaya hazır", "Koşullu hazır" ve "Henüz hazır değil". Temel verisi sonradan değişirse geçiş kararı yeniden inceleme ister. Kilit ve eskime kurallarının tamamı [süreç haritasındadır](docs/surec-haritasi.md).
 

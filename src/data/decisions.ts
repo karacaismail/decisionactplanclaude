@@ -1,11 +1,12 @@
 /**
  * Sekiz karar ve kapıları. Ölçütler adım alanlarını okur.
- * Sıra: Karar 1-5 (temel), geçiş kapısı, strateji çalışması (Adım 19-20), Karar 6-8 (uygulama).
+ * Sıra: Karar 1-5 (strateji öncesi), geçiş kapısı, strateji oluşturma (2.1-2.5 ve strateji belgesi), Karar 6-8 (strateji uygulama).
  * Kural: bir kapının ölçütü, o karardan sonraki bir adımı okuyamaz.
  * Alan adları docs/alan-sozlesmesi.md dosyasında yazılıdır.
  */
 import type { DecisionDef, GateCriterion } from './schema'
 import { distinctPaths } from '@/engine/integrity'
+import { dossierComplete, moveIssues, optionIssues, testIssues } from '@/engine/strategy'
 import type { Measure, PlanDoc } from './types'
 
 const v = (p: PlanDoc, step: string, key: string): unknown => p.steps[step]?.values?.[key]
@@ -222,7 +223,7 @@ export const DECISIONS: DecisionDef[] = [
           if (r.length === 0) return null
           return r.filter((x) => Number(x.likelihood ?? 0) * Number(x.impact ?? 0) >= 6).every((x) => filled(x.trigger) && filled(x.response))
         }),
-        c('pist', 'Pist en az 3 ay. Strateji çalışmasını ve ilk denemeyi kapsıyor.', (p) => {
+        c('pist', 'Pist en az 3 ay. Strateji oluşturmayı ve ilk denemeyi kapsıyor.', (p) => {
           const burn = p.limits.monthlyBurnKurus, cash = p.limits.cashKurus
           if (!burn || !cash) return null
           return Math.floor(cash / burn) >= 3
@@ -254,7 +255,8 @@ export const DECISIONS: DecisionDef[] = [
     time: '4 ile 8 hafta. Donanımda 3 ile 6 ay. Fiziksel üründe tedarik süresi, kamuda alım süresi eklenir.',
     intro: 'Küçük ama baştan sona tamamlanan bir işi gerçek müşteriye verin. Talep, teslim ve faydayı ayrı ölçün.',
     example: 'Sekiz işletmeden dördü ödeme yaptı. Yalnız biri raporu yardımsız hazırladı. Teklif çalıştı. Teslim çalışmadı.',
-    steps: ['21', '22', '23', '24', '25'],
+    /* İlk üç adım uygulama planıdır: hedef ve gösterge, ana işler ve sorumlular, kaynak ve bütçe. Kapı 6 bu adımları okumaz. */
+    steps: ['U31', 'U32', 'U33', '21', '22', '23', '24', '25'],
     gate: {
       n: 6,
       title: 'Devam, yön değiştir, yeniden dene veya durdur',
@@ -317,7 +319,7 @@ export const DECISIONS: DecisionDef[] = [
         }),
       ],
       rows: [
-        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Karar 8\'e geçin. Adım 19\'daki seçimi gerçek veriyle yeniden yapın.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
+        { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Karar 8\'e geçin. Seçimi gerçek veriyle yeniden sınayın. Strateji uygulama ekranında gözden geçirme kaydedin.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
         { condition: 'Yeni sipariş geldikçe gecikme büyüyor', outcome: 'yenidenDene', note: 'Önce darboğazı giderin. Adım 32.', applies: (p) => v(p, '32', 'delayGrowing') === true },
         { condition: 'Satış yükselirken kasa düşüyor', outcome: 'beklet', note: 'Büyümeyi bekletin. Adım 29\'daki tahsilat gününe bakın.', applies: (p) => v(p, '29', 'cashFalling') === true },
         { condition: 'Uyum var, ekonomi çalışmıyor', outcome: 'yenidenDene', note: 'Adım 29\'a odaklanın. 1 döngü daha.', applies: (_p, cr) => cr.uyum === true && cr.oran === false },
@@ -366,31 +368,34 @@ export const DECISIONS: DecisionDef[] = [
 ]
 
 /**
- * Strateji çalışması. Sekiz karardan biri değildir, kapısı yoktur.
- * Geçiş kapısından sonra açılır. Adım 19 ve 20'yi taşır.
+ * Strateji oluşturma. Sekiz karardan biri değildir. Geçiş kapısından sonra açılır.
+ * Beş zorunlu alt aşaması vardır: teşhis, seçenekler, sınama, seçim ve vazgeçiş, ana hamleler.
+ * Çıkış kapısı strateji belgesidir. Karar sahibi belgeyi onaylayınca strateji uygulama açılır.
+ * Alt aşamaların dayanağı docs/sonraki-ana-asamalar-plani.md dosyasındadır.
  */
 export const STRATEGY_N = 9
 export const STRATEGY: DecisionDef = {
   n: STRATEGY_N,
-  title: 'Strateji çalışması',
-  question: 'Hangi müşteriye, hangi yolla, neyle kazanacaksınız?',
+  title: 'Strateji oluşturma',
+  question: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?',
   icon: 'signpost',
   who: 'Stratej, karar sahibi ve ekip. Devir raporu masada durur.',
   time: '1 ile 2 hafta.',
-  intro: 'Bu çalışma geçiş kapısından sonra başlar. Seçimler devir raporundaki kanıtlara dayanır. Seçim hafif tutulur. Yeni kanıt gelince yeniden açılır.',
+  intro: 'Bu aşama geçiş kapısından sonra başlar. Önce asıl güçlüğü yazarsınız. Sonra yolları sınar, birini seçer ve ana hamleleri belirlersiniz.',
   example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı.',
-  steps: ['19', '20'],
+  steps: ['S21', 'S22', 'S23', '19', 'S25', '20'],
   gate: {
     n: STRATEGY_N,
-    title: 'Strateji çalışması tamam mı?',
+    title: 'Strateji oluşturma tamam mı?',
     maxRetries: 0,
+    /* Ölçütler adım denetimlerini çağırır. Adımı tamamlatmayan kayıt kapıyı da geçmez. */
     criteria: [
+      c('teshis', 'Teşhis yazıldı. Asıl güçlük ve dayanağı belli.', (p) => (p.steps['S21'] ? filled(v(p, 'S21', 'diagnosis')) && filled(v(p, 'S21', 'diagnosisWhy')) : null)),
+      c('secenek', 'En az iki farklı yol masada.', (p) => (p.steps['S22'] ? optionIssues(p.steps['S22'].values).length === 0 : null)),
+      c('sinama', 'Her yol sınandı. Koşullar ve en zayıf koşul yazıldı.', (p) => (p.steps['S23'] ? testIssues(p.steps['S23'].values, p).length === 0 : null)),
       c('yol', 'Yol seçildi. Gerekçe ve vazgeçilenler yazıldı.', (p) => (p.steps['19'] ? filled(v(p, '19', 'chosenPath')) && filled(v(p, '19', 'choiceReason')) && filled(v(p, '19', 'givenUp')) : null)),
-      c('hedef', '90 günlük yol yazıldı.', (p) => (p.steps['19'] ? p.steps['19'].status === 'tamam' : null)),
-      c('dosya', 'Strateji karar dosyası tam.', (p) => {
-        const q = (v(p, '20', 'qualityCheck') as string[]) ?? []
-        return q.length === 0 ? null : q.length >= 5
-      }),
+      c('hamle', 'Ana hamleler ve gereken yetkinlikler yazıldı.', (p) => (p.steps['S25'] ? moveIssues(p.steps['S25'].values).length === 0 : null)),
+      c('dosya', 'Strateji belgesi dolduruldu. Kalite kontrolü işaretlendi. Karar sahibi onayladı.', (p) => (p.steps['20'] ? dossierComplete(p.steps['20'].values) : null)),
     ],
     rows: [],
   },

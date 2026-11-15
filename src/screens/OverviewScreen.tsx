@@ -6,6 +6,7 @@ import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { stepsOf } from '@/data/registry'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, STAGES, type StageKey } from '@/data/stages'
+import { CLUSTER_STATE_LABEL, clusterOf, clusterState } from '@/data/clusters'
 import { decisionLocked, gatePassed, effectiveOutcome, lastDecision, retriesLeft } from '@/engine/gate'
 import { LEVELS, effectiveTransition, lastTransition, transitionPassed } from '@/engine/readiness'
 import { stepApplies } from '@/engine/conditions'
@@ -129,7 +130,7 @@ export function OverviewScreen() {
   const retryTotal = Math.min(retriesPerDecision ?? retryMax, retryMax)
   const retryLeft = retriesLeft(plan, current.n, retryMax)
 
-  /* Hero sıradaki işi gösterir. Sıra: temel kararı, geçiş kapısı, strateji çalışması, uygulama kararı. */
+  /* Hero sıradaki işi gösterir. Sıra: temel kararı, geçiş kapısı, strateji oluşturma, uygulama kararı. */
   const stageTitle = (key: StageKey) => STAGES.find((x) => x.key === key)?.title ?? ''
   const decisionTask = (kicker: string, stage: StageKey) => ({
     kicker,
@@ -144,30 +145,39 @@ export function OverviewScreen() {
     position.stage === 'gecis'
       ? { kicker: 'Sıradaki iş', count: '', title: 'Geçiş kapısı', text: 'Dayanak yeterli mi? Kararı kaydedin.', long: false, button: 'Geçiş kapısını aç', to: '/gecis' }
       : position.stage === 'strateji'
-        ? { kicker: 'Sıradaki iş', count: '', title: STRATEGY.title, text: 'Sahayı, kazanma yolunu ve 90 günlük yolu seçin.', long: false, button: 'Strateji çalışmasını aç', to: '/strateji' }
+        ? { kicker: 'Sıradaki iş', count: '', title: STRATEGY.title, text: 'Asıl güçlüğü yazın. Yolları sınayın ve birini seçin.', long: false, button: 'Strateji oluşturmayı aç', to: '/strateji' }
         : position.stage === 'bitti'
           ? decisionTask('Son karar geçildi', 'uygulama')
           : decisionTask('Açık karar', position.stage)
   /* Bağlantıların hedefi sıradaki iştir. "Kaldığım yer" yalnız hero düğmesindedir. */
   const nextPath = position.stage === 'gecis' ? '/gecis' : position.stage === 'strateji' ? '/strateji' : `/karar/${current.n}`
 
-  /* Yol: dört bölüm. Her bölüm kendi ekranına gider. */
+  /* Dört bölümün durumu. Yol kartı ve karar rotası bu durumu kümelere göre gösterir. */
   const stageState: Record<StageKey, { text: string; status: StepStatus }> = {
     temel: { text: `${foundationPassed} / ${FOUNDATION_DECISIONS.length} kapı`, status: foundationDone ? 'finish' : 'process' },
     gecis: { text: gecisText, status: transitionOk ? 'finish' : position.stage === 'gecis' ? 'process' : 'wait' },
-    strateji: { text: `${strategyDone} / ${strategyTotal} adım`, status: !transitionOk ? 'wait' : position.strategyComplete ? 'finish' : 'process' },
+    strateji: { text: !transitionOk ? 'Kilitli' : `${strategyDone} / ${strategyTotal} adım`, status: !transitionOk ? 'wait' : position.strategyComplete ? 'finish' : 'process' },
     uygulama: {
       text: decisionLocked(plan, EXECUTION_DECISIONS[0]) ? 'Kilitli' : executionPassed === EXECUTION_DECISIONS.length ? 'Tamamlandı' : 'Açık',
       status: executionPassed === EXECUTION_DECISIONS.length ? 'finish' : position.stage === 'uygulama' ? 'process' : 'wait',
     },
   }
-  const stageItems = STAGES.map((st) => {
-    const state = stageState[st.key]
-    /* Yatayda durum başlığın altında, dikeyde başlığın yanında durur. Böylece telefonda satır kısa kalır. */
-    return bp.md ? { key: st.key, title: st.title, content: state.text, status: state.status } : { key: st.key, title: st.title, subTitle: state.text, status: state.status }
-  })
+  /* Yol kartı üç ana kümeyi gösterir. Her küme kendi ekranına gider. Birinci küme sıradaki temel işine gider. */
+  const clusterRoad: { key: string; title: string; text: string; status: StepStatus; to: string }[] = [
+    {
+      key: 'hazirlik',
+      title: clusterOf('hazirlik').title,
+      text: transitionOk ? `Geçiş: ${gecisText}` : `${stageState.temel.text}. ${gecisText === 'Karar yok' ? 'Geçiş kararı yok' : `Geçiş: ${gecisText}`}`,
+      status: transitionOk ? 'finish' : 'process',
+      to: transitionOk || foundationDone ? '/gecis' : `/karar/${current.n}`,
+    },
+    { key: 'olusturma', title: clusterOf('olusturma').title, text: stageState.strateji.text, status: stageState.strateji.status, to: '/strateji' },
+    { key: 'uygulama', title: clusterOf('uygulama').title, text: stageState.uygulama.text, status: stageState.uygulama.status, to: '/uygulama' },
+  ]
+  /* Yatayda durum başlığın altında, dikeyde başlığın yanında durur. Böylece telefonda satır kısa kalır. */
+  const stageItems = clusterRoad.map((c) => (bp.md ? { key: c.key, title: c.title, content: c.text, status: c.status } : { key: c.key, title: c.title, subTitle: c.text, status: c.status }))
 
-  /* Karar rotası: üç grup. Kilit tek kuraldan gelir (decisionLocked). */
+  /* Karar rotasının satırları. Kilit tek kuraldan gelir (decisionLocked). */
   const decisionRoute = (n: number) => {
     const d = DECISIONS.find((x) => x.n === n)!
     const isPassed = gatePassed(plan, n)
@@ -178,21 +188,33 @@ export function OverviewScreen() {
     const state = isPassed && last ? OUTCOME_LABEL[effectiveOutcome(last)] : isCurrent ? 'Açık' : decisionLocked(plan, n) ? 'Kilitli' : 'Bekliyor'
     return { key: `karar-${n}`, title: `${two(n)} ${d.title}`, content: `${done} / ${steps.length} adım, ${state}`, status: (isPassed ? 'finish' : isCurrent ? 'process' : 'wait') as StepStatus, to: `/karar/${n}` }
   }
+  /* Karar rotası üç ana kümeye göre dizilir. Kümeler `clusters.ts` dosyasından gelir. */
+  const executionLocked = decisionLocked(plan, EXECUTION_DECISIONS[0])
   const routeGroups = [
-    { key: 'temel', title: 'Temel', summary: stageState.temel.text, items: FOUNDATION_DECISIONS.map(decisionRoute) },
     {
-      key: 'gecis',
-      title: 'Geçiş',
-      summary: gecisText,
+      key: 'hazirlik',
+      title: `1. ${clusterOf('hazirlik').title}`,
+      summary: transitionOk ? 'Tamam' : stageState.temel.text,
+      items: [...FOUNDATION_DECISIONS.map(decisionRoute), { key: 'gecis-kapisi', title: 'Geçiş kapısı', content: gecisText, status: stageState.gecis.status, to: '/gecis' }],
+    },
+    {
+      key: 'olusturma',
+      title: `2. ${clusterOf('olusturma').title}`,
+      summary: CLUSTER_STATE_LABEL[clusterState(plan, 'olusturma')],
+      items: [{ key: 'strateji', title: STRATEGY.title, content: `${strategyDone} / ${strategyTotal} adım, ${strategyLocked ? 'Kilitli' : position.strategyComplete ? 'Tamam' : 'Açık'}`, status: stageState.strateji.status, to: '/strateji' }],
+    },
+    {
+      key: 'uygulama',
+      title: `3. ${clusterOf('uygulama').title}`,
+      summary: CLUSTER_STATE_LABEL[clusterState(plan, 'uygulama')],
       items: [
-        { key: 'gecis-kapisi', title: 'Geçiş kapısı', content: gecisText, status: stageState.gecis.status, to: '/gecis' },
-        { key: 'strateji', title: STRATEGY.title, content: `${strategyDone} / ${strategyTotal} adım, ${strategyLocked ? 'Kilitli' : position.strategyComplete ? 'Tamam' : 'Açık'}`, status: stageState.strateji.status, to: '/strateji' },
+        { key: 'uygulama-ozeti', title: 'Uygulama özeti', content: executionLocked ? 'Kilitli' : 'Beş alt aşama', status: (executionLocked ? 'wait' : 'process') as StepStatus, to: '/uygulama' },
+        ...EXECUTION_DECISIONS.map(decisionRoute),
       ],
     },
-    { key: 'uygulama', title: 'Uygulama', summary: stageState.uygulama.text, items: EXECUTION_DECISIONS.map(decisionRoute) },
   ]
   /* Telefonda yalnız sıradaki işin grubu açık başlar. Geniş ekranda üç grup da açıktır. */
-  const currentGroup = position.stage === 'temel' ? 'temel' : position.stage === 'gecis' || position.stage === 'strateji' ? 'gecis' : 'uygulama'
+  const currentGroup = position.stage === 'temel' || position.stage === 'gecis' ? 'hazirlik' : position.stage === 'strateji' ? 'olusturma' : 'uygulama'
   const activeGroups = openGroups ?? (bp.md ? routeGroups.map((g) => g.key) : [currentGroup])
 
   const timelineItems = recent.map((d) => {
@@ -319,7 +341,7 @@ export function OverviewScreen() {
       ) : null}
       {transitionExpired ? (
         <Callout tone="uyari" danger title="Koşullu geçiş kararının süresi doldu">
-          Açık soru son tarihe kadar kapanmadı. Strateji çalışması yeniden kilitlendi. <Link to="/gecis">Geçiş kapısında yeni karar kaydedin.</Link>
+          Açık soru son tarihe kadar kapanmadı. Strateji oluşturma yeniden kilitlendi. <Link to="/gecis">Geçiş kapısında yeni karar kaydedin.</Link>
         </Callout>
       ) : null}
       {transitionStale ? (
@@ -362,16 +384,19 @@ export function OverviewScreen() {
           </div>
         </section>
 
-        <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel taşları</Link>}>
-          <Steps
-            className="pano-steps yol-steps"
-            size="small"
-            orientation={bp.md ? 'horizontal' : 'vertical'}
-            current={-1}
-            items={stageItems}
-            onChange={(i) => nav(STAGES[i].path)}
-          />
-        </Card>
+        {/* Telefonda karar rotası aynı üç kümeyi gösterir. Yol kartı yalnız geniş ekranda görünür, böylece bilgi iki kez yazılmaz. */}
+        {bp.md ? (
+          <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel taşları</Link>}>
+            <Steps
+              className="pano-steps yol-steps"
+              size="small"
+              orientation={bp.md ? 'horizontal' : 'vertical'}
+              current={-1}
+              items={stageItems}
+              onChange={(i) => nav(clusterRoad[i].to)}
+            />
+          </Card>
+        ) : null}
 
         <div className="ozet-side">
           <Card className="pano-card" title="Pist" extra={<Link to="/karar/1/adim/02">Sınırlar</Link>}>

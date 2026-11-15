@@ -16,7 +16,7 @@ const OPTIONS: { value: Entry; title: string; text: string; to: string; Icon: ty
 ]
 
 /** Aracın amacı üç kısa cümlede. İlk ekranda okunur. */
-const PURPOSE = ['Stratejik planlamadan önce yapılacak işleri yaptırır.', 'Her iddia için kanıt ister.', 'Sonunda dayanak yeterliyse strateji çalışmasını açar.']
+const PURPOSE = ['Stratejik planlamadan önce yapılacak işleri yaptırır.', 'Her iddia için kanıt ister.', 'Sonunda dayanak yeterliyse strateji oluşturmayı açar.']
 
 export function StartScreen() {
   const nav = useNavigate()

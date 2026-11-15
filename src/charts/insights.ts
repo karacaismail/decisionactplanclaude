@@ -9,7 +9,7 @@
  * Telefonda kaydırıcı yoktur. Sekiz çubuk 320 px'e sığar, kategori adı kısalır.
  */
 import { DECISIONS } from '@/data/decisions'
-import { STEPS, stepsOf } from '@/data/registry'
+import { STEPS, stepsOf, stepName } from '@/data/registry'
 import { OUTCOME_LABEL, type Measure, type Outcome, type PlanDoc } from '@/data/types'
 import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome } from '@/engine/gate'
@@ -104,7 +104,7 @@ type Row = Record<string, unknown>
 /** Adım kimliğinden adım ekranına bağlantı. */
 function stepLink(id: string, label?: string): InsightLink {
   const step = STEPS[id]
-  return { label: label ?? `Adım ${id}’yi doldurun`, to: step ? `/karar/${step.decision}/adim/${id}` : '/ozet' }
+  return { label: label ?? `${stepName(id)} adımını doldurun`, to: step ? `/karar/${step.decision}/adim/${id}` : '/ozet' }
 }
 
 const v = (p: PlanDoc, step: string, key: string): unknown => p.steps[step]?.values?.[key]
@@ -389,7 +389,7 @@ function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
       tooltip: { ...s.tooltip, valueFormatter: (x: number) => `%${x}` },
       grid: { ...GRID, top: 32 },
       xAxis: { type: 'value', ...s.valueAxis, axisLabel: { ...s.valueAxis.axisLabel, formatter: '%{value}', hideOverlap: true } },
-      yAxis: { type: 'category', inverse: true, data: items.map((i) => `${i.name} (Adım ${i.step})`), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 140, overflow: 'break' } },
+      yAxis: { type: 'category', inverse: true, data: items.map((i) => `${i.name} (${stepName(i.step)})`), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, width: 140, overflow: 'break' } },
       series: [{
         type: 'bar',
         name: 'Eşiğin yüzdesi',

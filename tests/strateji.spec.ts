@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Strateji çalışması ekranı (/strateji), Adım 19 kilidi, yol adayları tablosu ve öneriler.
+ * Strateji oluşturma ekranı (/strateji), Adım 19 kilidi, yol adayları tablosu ve öneriler.
  * Kabul ölçütleri docs/strateje-devir-uygulama-plani.md dosyasının 6. adımındadır.
  * Strateje devir raporu ekranı (/devir) bu dosyada sınanmaz.
  */
@@ -104,22 +104,22 @@ async function expectPathCompare(page: Page, label: string) {
   await noHorizontalOverflow(page, label)
 }
 
-test('geçiş kararı yokken strateji çalışması kilitli görünür', async ({ page }) => {
+test('geçiş kararı yokken strateji oluşturma kilitli görünür', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/strateji')
-  await expect(page.getByRole('heading', { level: 1, name: 'Hangi müşteriye, hangi yolla, neyle kazanacaksınız?' })).toBeVisible()
-  await expect(page.locator('.page-kicker')).toHaveText('Strateji çalışması')
-  const lock = page.getByRole('alert').filter({ hasText: 'Strateji çalışması kilitli' })
+  await expect(page.getByRole('heading', { level: 1, name: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?' })).toBeVisible()
+  await expect(page.locator('.page-kicker')).toHaveText('Strateji oluşturma')
+  const lock = page.getByRole('alert').filter({ hasText: 'Strateji oluşturma kilitli' })
   await expect(lock).toBeVisible()
   await expect(lock).toContainText('Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
   await expect(page.getByRole('button', { name: 'Geçiş kapısına git' })).toBeVisible()
-  // İki adım listelenir: 19 ve 20. Adım 18 bu grupta değildir. Kilitliyken dolu düğme yoktur.
-  await expect(page.locator('.karar-table .ant-table-tbody > tr.ant-table-row')).toHaveCount(2)
-  await expect(page.locator('.karar-table .route-dot')).toHaveText(['19', '20'])
-  await expect(page.locator('.karar-table').getByRole('link', { name: 'Seçim, hedefler ve 90 günlük yol' })).toHaveAttribute('href', '#/karar/9/adim/19')
-  await expect(page.locator('.karar-table .ant-tag', { hasText: 'Kilitli' })).toHaveCount(2)
+  // Beş alt aşama listelenir. Adım 18 bu kümede değildir. Kilitliyken dolu düğme yoktur.
+  await expect(page.locator('.substage')).toHaveCount(5)
+  await expect(page.locator('.substage-code')).toHaveText(['2.1', '2.2', '2.3', '2.4', '2.5'])
+  await expect(page.locator('.substage').nth(3).getByRole('link')).toHaveAttribute('href', '#/karar/9/adim/19')
+  await expect(page.locator('.substage').nth(3).getByRole('link')).toHaveText('2.4 Seçim ve vazgeçiş adımını incele')
   await expect(page.getByText('Adım 18', { exact: true })).toHaveCount(0)
-  await expect(page.locator('.karar-step-count')).toHaveText('0 / 2 tamam')
+  await expect(page.locator('.karar-step-count')).toHaveText('0 / 5 tamam')
   expect(await filledButtons(page)).toBe(0)
 
   // Dayanak özeti yerine stratej'in sorusu, ilk günü ve yol adayları durur.
@@ -142,14 +142,14 @@ test('geçiş kararı yokken strateji çalışması kilitli görünür', async (
 test('kilitli Adım 19 salt okunur açılır ve kayıt düğmeleri kapalıdır', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/karar/9/adim/19')
-  await expect(page.getByRole('heading', { name: /Adım 19\./ })).toBeVisible()
-  await expect(page.locator('.page-kicker')).toHaveText('Strateji çalışması')
+  await expect(page.getByRole('heading', { name: /2\.4\. Seçim ve vazgeçiş/ })).toBeVisible()
+  await expect(page.locator('.page-kicker')).toHaveText('Strateji oluşturma')
   await expect(page.getByRole('alert').filter({ hasText: 'Bu adım kilitli' })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeDisabled()
   await expect(page.getByRole('button', { name: 'Taslak bırak, ilerle' })).toBeDisabled()
   for (const key of ['chosenPath', 'choiceReason', 'givenUp']) await expect(page.locator(`#a19-${key}`)).toBeDisabled()
   // Kilitliyken öneri kartı, yol adayları kartı ve dayanak özeti açılmaz. Yazma yolu yoktur.
-  await expect(page.getByText('Temelden gelen öneriler')).toHaveCount(0)
+  await expect(page.getByText('Önceki adımlardan öneriler')).toHaveCount(0)
   await expect(page.locator('.path-compare')).toHaveCount(0)
   const bar = page.locator('.action-bar')
   expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
@@ -160,9 +160,9 @@ test('kilitli Adım 19 salt okunur açılır ve kayıt düğmeleri kapalıdır',
 
   // Eski adres de çalışır. Adım kendi grubunu bilir.
   await page.goto('/#/karar/5/adim/20')
-  await expect(page.getByRole('heading', { name: /Adım 20\./ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Çıkış kapısı\. Strateji belgesi/ })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeDisabled()
-  await page.getByRole('button', { name: 'Strateji özetine git' }).click()
+  await page.getByRole('button', { name: 'Strateji oluşturma özetine git' }).click()
   await expect(page).toHaveURL(/#\/strateji/)
 })
 
@@ -179,7 +179,7 @@ test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kapı 5\'e g
   await expect(note).not.toHaveClass(/is-warn|is-info|is-danger/)
   // Bu adımda seçim alanı ve öneri kartı yoktur.
   await expect(page.locator('#a18-chosenPath')).toHaveCount(0)
-  await expect(page.getByText('Temelden gelen öneriler')).toHaveCount(0)
+  await expect(page.getByText('Önceki adımlardan öneriler')).toHaveCount(0)
   // Puanlama isteğe bağlı sekmededir. Yol adları orada satır başlığı olarak görünür.
   await page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' }).click()
   await expect(page.getByText('Bugünkü durumu sürdürmek').first()).toBeAttached()
@@ -217,17 +217,19 @@ test('geçiş kararından sonra Adım 19 açılır, yazılım yolu seçmez, öne
   await openDemo(page)
   await recordTransition(page)
   await page.goto('/#/strateji')
-  await expect(page.getByRole('alert').filter({ hasText: 'Strateji çalışması kilitli' })).toHaveCount(0)
+  await expect(page.getByRole('alert').filter({ hasText: 'Strateji oluşturma kilitli' })).toHaveCount(0)
   await expect(page.locator('.strateji-outcome .ant-tag')).toHaveText('Planlamaya hazır')
   await expect(page.getByText('Dayanaklar incelendi. Zorunlu ölçütler tamam.')).toBeVisible()
   await expect(page.getByRole('link', { name: 'Devir raporunu aç' })).toBeVisible()
   // Tek dolu düğme sıradaki adımı açar.
-  const open = page.getByRole('button', { name: "Adım 19'u aç" })
+  const open = page.getByRole('button', { name: 'Sıradaki adım: 2.1. Teşhis' })
   await expect(open).toBeVisible()
   expect(await filledButtons(page)).toBe(1)
   await designRules(page, 'strateji açık')
 
   await open.click()
+  await expect(page).toHaveURL(/#\/karar\/9\/adim\/S21/)
+  await page.goto('/#/karar/9/adim/19')
   await expect(page).toHaveURL(/#\/karar\/9\/adim\/19/)
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeEnabled()
   // Yol adayları formun üstünde salt okunur durur.
@@ -247,19 +249,11 @@ test('geçiş kararından sonra Adım 19 açılır, yazılım yolu seçmez, öne
   const chosen = page.locator('#a19-chosenPath')
   for (const key of ['chosenPath', 'choiceReason', 'givenUp']) await expect(page.locator(`#a19-${key}`)).toHaveValue('')
   expect(await storedValue(page, '19', 'chosenPath')).toBeNull()
-  await expect(page.getByText('Temelden gelen öneriler')).toBeVisible()
-  for (const name of ['Seçilen yol', 'Seçimin gerekçesi', 'Vazgeçilenler']) await expect(page.getByRole('button', { name: `Alana yaz: ${name}` })).toHaveCount(0)
+  // Seçim adımında hiç öneri yoktur. Hedef ve iş alanları strateji uygulamadadır.
+  await expect(page.getByText('Önceki adımlardan öneriler')).toHaveCount(0)
+  for (const name of ['Seçilen yol', 'Seçimin gerekçesi', 'Vazgeçilenler', 'Kazanma hedefi', 'Saha']) await expect(page.getByRole('button', { name: `Alana yaz: ${name}` })).toHaveCount(0)
+  await expect(page.locator('#a19-objective')).toHaveCount(0)
   await designRules(page, 'adım 19 açık')
-
-  // Hedef önerisi kalır. "Alana yaz" kullanıcının onayıdır. Öneri alana yazılır ve öneri satırı kalkar.
-  const objective = page.locator('#a19-objective')
-  await expect(objective).toHaveValue('')
-  await page.getByRole('button', { name: 'Alana yaz: Hedef' }).click()
-  await expect(objective).toHaveValue('12 ay içinde 300 düzenli müşteri. Ayda en az 30.000 TL katkı.')
-  await expect(page.getByRole('button', { name: 'Alana yaz: Hedef' })).toHaveCount(0)
-  await expect.poll(() => storedValue(page, '19', 'objective')).toBe('12 ay içinde 300 düzenli müşteri. Ayda en az 30.000 TL katkı.')
-  // Öneri seçim alanına dokunmaz.
   await expect(chosen).toHaveValue('')
-  expect(await storedValue(page, '19', 'chosenPath')).toBeNull()
   await noHorizontalOverflow(page, 'adım 19 öneri sonrası')
 })

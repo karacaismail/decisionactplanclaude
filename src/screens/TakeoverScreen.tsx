@@ -12,7 +12,7 @@ const CHECKS: Check[] = [
   { key: 'problem', q: 'Problem gerçek müşteriyle doğrulandı mı?', yes: 'Kapı 2 geçildi sayılır.', no: "Adım 06'dan girin.", to: '/karar/2/adim/06' },
   { key: 'odeme', q: 'Ödeme veya depozito kanıtı var mı?', yes: 'Kapı 4 geçildi sayılır.', no: 'Problem doğrulandıysa Adım 15. Doğrulanmadıysa Adım 06.', to: '/karar/4/adim/15' },
   { key: 'yollar', q: 'Para hesabı, risk kuralları ve yol adayları yazılı mı?', yes: 'Kapı 5 geçildi sayılır. Geçiş kapısında karar kaydedin.', no: "Adım 16'dan girin.", to: '/karar/5/adim/16' },
-  { key: 'strateji', q: 'Yazılı bir strateji seçimi ve vazgeçiş listesi var mı?', yes: 'Strateji çalışması yapılmış sayılır. Seçimi Adım 19 ve 20\'ye yazın.', no: 'Önce geçiş kapısından geçin. Sonra Adım 19\'dan girin.', to: '/gecis' },
+  { key: 'strateji', q: 'Yazılı bir strateji seçimi ve vazgeçiş listesi var mı?', yes: 'Strateji oluşturma yapılmış sayılır. Seçimi strateji oluşturma adımlarına yazın.', no: 'Önce geçiş kapısından geçin. Sonra 2.1 Teşhis adımından başlayın.', to: '/gecis' },
   { key: 'olcum', q: 'Ölçüm düzeni ve eşikler var mı?', yes: 'Adım 22 tamam.', no: "Adım 22'den girin.", to: '/karar/6/adim/22' },
   { key: 'kapi', q: 'İlk ürün kapısı kararı yazılı mı?', yes: 'Kapı 6 geçildi sayılır.', no: 'Adım 22 eşiklerini şimdi yazın. 4 hafta ölçün. Sonra Adım 25.', to: '/karar/6/adim/22' },
   { key: 'uyum', q: 'Uyum ölçüldü mü?', yes: "Kapı 7'ye yakınsınız.", no: "Adım 28'den girin.", to: '/karar/7/adim/28' },

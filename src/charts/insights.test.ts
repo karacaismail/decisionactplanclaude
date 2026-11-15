@@ -29,7 +29,7 @@ describe('örnek plan', () => {
     }
   })
 
-  it('Adım 00-18 tamam, strateji çalışması adımları boş', () => {
+  it('Adım 00-18 tamam, strateji oluşturma adımları boş', () => {
     for (let i = 0; i <= 18; i++) expect(plan.steps[String(i).padStart(2, '0')]?.status).toBe('tamam')
     for (const id of ['19', '20']) expect(plan.steps[id]).toBeUndefined()
   })

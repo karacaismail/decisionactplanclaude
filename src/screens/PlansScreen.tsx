@@ -28,10 +28,10 @@ function toRow(plan: PlanDoc): Row {
 
 /** Planın yol üzerindeki yeri tek etikette. */
 function stageTag(p: PlanPosition): { label: string; color: string } {
-  if (p.stage === 'temel') return { label: `Temel, Karar ${p.decision} açık`, color: 'processing' }
+  if (p.stage === 'temel') return { label: `Strateji öncesi hazırlık, Karar ${p.decision} açık`, color: 'processing' }
   if (p.stage === 'gecis') return { label: 'Geçiş kapısı bekliyor', color: 'warning' }
-  if (p.stage === 'strateji') return { label: 'Strateji çalışması', color: 'processing' }
-  if (p.stage === 'uygulama') return { label: `Uygulama, Karar ${p.decision} açık`, color: 'processing' }
+  if (p.stage === 'strateji') return { label: 'Strateji oluşturma', color: 'processing' }
+  if (p.stage === 'uygulama') return { label: `Strateji uygulama, Karar ${p.decision} açık`, color: 'processing' }
   return { label: 'Tamamlandı', color: 'success' }
 }
 
@@ -58,6 +58,8 @@ export function PlansScreen() {
   const importPlan = usePlanStore((s) => s.importPlan)
   const markBackup = usePlanStore((s) => s.markBackup)
   const importPlanText = usePlanStore((s) => s.importPlanText)
+  /* Kayıt okunamadıysa yeni plan açılmaz. Açılırsa depoya yazılmaz ve kaybolur. */
+  const loadFailed = usePlanStore((s) => s.loadFailed)
   const { message } = AntApp.useApp()
   const bp = Grid.useBreakpoint()
   const [open, setOpen] = useState(false)
@@ -83,15 +85,24 @@ export function PlansScreen() {
 
   const create = () => {
     if (!name.trim()) return
-    createPlan(name.trim())
+    try {
+      createPlan(name.trim())
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : 'Plan açılamadı.')
+      return
+    }
     setOpen(false)
     setName('')
     goTop('/baslangic')
   }
 
   const openDemo = () => {
-    importPlan(buildDemoPlan())
-    goTop('/ozet')
+    try {
+      importPlan(buildDemoPlan())
+      goTop('/ozet')
+    } catch (err) {
+      message.error(err instanceof Error ? err.message : 'Örnek plan açılamadı.')
+    }
   }
 
   const openPlan = (id: string, to?: string) => {
@@ -197,10 +208,10 @@ export function PlansScreen() {
 
   const emptyActions = (
     <span className="empty-actions">
-      <Button icon={<Sparkle size={16} />} onClick={openDemo}>
+      <Button icon={<Sparkle size={16} />} onClick={openDemo} disabled={loadFailed}>
         Örnek planı aç
       </Button>
-      <Button type="text" icon={<UploadSimple size={16} />} onClick={() => fileInput.current?.click()}>
+      <Button type="text" icon={<UploadSimple size={16} />} onClick={() => fileInput.current?.click()} disabled={loadFailed}>
         JSON içe al
       </Button>
     </span>
@@ -214,11 +225,11 @@ export function PlansScreen() {
         description="Her iş fikri ayrı bir plandır. Plan bu tarayıcıda saklanır. İstediğinizde dosya olarak dışa aktarırsınız."
         actions={
           <>
-            <Button type="primary" icon={<Plus size={16} />} onClick={() => setOpen(true)}>
+            <Button type="primary" icon={<Plus size={16} />} onClick={() => setOpen(true)} disabled={loadFailed}>
               Yeni plan
             </Button>
-            <Dropdown menu={moreMenu} trigger={['click']}>
-              <Button icon={<CaretDown size={16} />} iconPlacement="end">
+            <Dropdown menu={moreMenu} trigger={['click']} disabled={loadFailed}>
+              <Button icon={<CaretDown size={16} />} iconPlacement="end" disabled={loadFailed}>
                 Daha fazla
               </Button>
             </Dropdown>

@@ -3,9 +3,14 @@ import { Anchor, Button, Card, Collapse, ConfigProvider, Dropdown, Grid, Input, 
 import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { STEPS, nextStepId, prevStepId, decisionOf, groupLabel, stepPath } from '@/data/registry'
+import { STEPS, nextStepId, prevStepId, decisionOf, groupLabel, stepHeading, stepPath } from '@/data/registry'
+import { subStageOfStep } from '@/data/clusters'
+import { cruxOf } from '@/engine/crux'
+import { distinctPaths } from '@/engine/integrity'
+import { GOALS_STEP, MOVES_STEP, movesOf, OPTIONS_STEP, optionsOf, RESOURCES_STEP, TASKS_STEP, tasksOf, TESTS_STEP, DIAGNOSIS_STEP } from '@/engine/strategy'
 import { STRATEGY_N } from '@/data/decisions'
-import { decisionLocked, lockReason } from '@/engine/gate'
+import { decisionLocked, lockReason, lockTarget } from '@/engine/gate'
+import { EXECUTION_DECISIONS } from '@/data/stages'
 import { uid } from '@/engine/format'
 import { stepApplies } from '@/engine/conditions'
 import { FormRenderer, requiredKeys, sectionStats, type SectionStat } from '@/components/FormRenderer'
@@ -44,16 +49,41 @@ const hasRows = (x: unknown, keys: string[]): boolean => Array.isArray(x) && x.s
 const PATHS_STEP = '18'
 /** Seçimin kaydedildiği adım. Stratej önerir, karar sahibi seçer. Yol adayları tablosu bu adımın üstünde salt okunur durur. */
 const CHOICE_STEP = '19'
+/** Yol adayları tablosunu gösteren adımlar: seçenekler ve seçim. */
+const PATH_VIEW_STEPS = [OPTIONS_STEP, CHOICE_STEP]
 
 /**
- * Adım 19 için hedef ve iş önerileri. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
+ * Önceki adımlardan gelen öneriler. Yalnız BOŞ alan için öneri üretilir. Dolu alana dokunulmaz.
  * "Seçilen yol", "Seçimin gerekçesi" ve "Vazgeçilenler" için öneri ÜRETİLMEZ. Stratej önerir, karar sahibi seçer.
- * Örnek: Adım 02'deki başarı cümlesi, Adım 19'daki "Hedef" alanı için önerilir.
+ * Öneri yalnız kullanıcının daha önce yazdığı cevabı taşır. Yazılım yeni içerik üretmez.
+ * Örnek: Adım 02'deki başarı cümlesi, "Hedef" alanı için önerilir.
  */
 function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<string, unknown>): Suggestion[] {
   const from = (step: string, key: string): unknown => plan.steps[step]?.values?.[key]
   const out: Suggestion[] = []
-  if (stepId === CHOICE_STEP) {
+  if (stepId === DIAGNOSIS_STEP) {
+    const crux = cruxOf(plan)
+    if (crux && !isFilled(values.diagnosis)) out.push({ key: 'diagnosis', label: 'Asıl güçlük', display: crux.text, source: 'Adım 18, asıl engel adayı', build: () => crux.text })
+  }
+  if (stepId === OPTIONS_STEP) {
+    const paths = distinctPaths(from(PATHS_STEP, 'paths')).map((r) => String(r.name).trim())
+    if (paths.length && !hasRows(values.options, ['name'])) {
+      out.push({
+        key: 'options',
+        label: 'Masadaki yollar',
+        display: paths.join('. '),
+        source: 'Adım 18, yol adayları',
+        build: () => paths.map((name) => ({ _id: uid('satir'), name, source: 'hazirlik' })),
+      })
+    }
+  }
+  if (stepId === TESTS_STEP) {
+    const options = optionsOf(plan).map((o) => o.name)
+    if (options.length && !hasRows(values.tests, ['option'])) {
+      out.push({ key: 'tests', label: 'Her yol için bir satır', display: options.join('. '), source: '2.2 Seçenekler', build: () => options.map((option) => ({ _id: uid('satir'), option, result: 'sinanmadi' })) })
+    }
+  }
+  if (stepId === GOALS_STEP) {
     const success = filledText(plan.limits.successSentence)
     if (success && !isFilled(values.objective)) {
       out.push({ key: 'objective', label: 'Hedef', display: success, source: 'Adım 02, başarı cümlesi', build: () => success })
@@ -62,11 +92,23 @@ function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<str
     if (typeof threshold === 'number' && !hasRows(values.keyResults, ['kr', 'target'])) {
       out.push({
         key: 'keyResults',
-        label: 'Anahtar sonuçlar, ilk satır',
+        label: 'Göstergeler, ilk satır',
         display: `Taahhüt veren müşteri sayısı. Hedef sayı: ${threshold}.`,
         source: 'Adım 15, talep testinin eşiği',
         build: () => [{ _id: uid('satir'), kr: 'Taahhüt veren müşteri sayısı', target: String(threshold) }],
       })
+    }
+  }
+  if (stepId === TASKS_STEP) {
+    const moves = movesOf(plan).map((m) => m.move)
+    if (moves.length && !hasRows(values.now, ['action'])) {
+      out.push({ key: 'now', label: 'Şimdi. İlk 90 gün.', display: moves.join('. '), source: `${stepHeading(MOVES_STEP)}`, build: () => moves.map((action) => ({ _id: uid('satir'), action })) })
+    }
+  }
+  if (stepId === RESOURCES_STEP) {
+    const tasks = tasksOf(plan).map((t) => t.action)
+    if (tasks.length && !hasRows(values.resources, ['item'])) {
+      out.push({ key: 'resources', label: 'Her ana iş için bir satır', display: tasks.join('. '), source: `${stepHeading(TASKS_STEP)}`, build: () => tasks.map((item) => ({ _id: uid('satir'), item })) })
     }
   }
   return out
@@ -79,7 +121,7 @@ function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<str
  * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
  * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
  * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
- * Adım 19 ve 20 strateji çalışmasıdır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
+ * Adım 19 ve 20 strateji oluşturmadır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
  * Adım 18 "Yol adayları" Karar 5'tedir ve kilitli değildir. Bu adımda yol seçilmez.
  * Adım 19 açıkken üstte yol adayları tablosu salt okunur durur. Yazılım "Seçilen yol" alanını doldurmaz.
  * Adresler adımın kendi grubundan üretilir (`stepPath`). Adresteki karar numarası okunmaz.
@@ -113,7 +155,7 @@ export function WorkScreen() {
   }, [step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   /* Yol adayları yalnız seçim adımında gösterilir. Başka adımda rapor hesaplanmaz. */
-  const showPaths = step?.id === CHOICE_STEP
+  const showPaths = PATH_VIEW_STEPS.includes(step?.id ?? '')
   const paths = useMemo(() => (plan && showPaths ? buildHandoffReport(plan).paths : []), [plan, showPaths])
 
   if (!plan || !step) return null
@@ -121,8 +163,15 @@ export function WorkScreen() {
   const applies = stepApplies(step.mandatory, plan)
   const wide = Boolean(bp.xl)
   const isStrategy = step.decision === STRATEGY_N
-  /* Strateji adımı geçiş kapısı kararı olmadan salt okunurdur. Hiçbir yazma işlemi yapılmaz. */
-  const locked = isStrategy && decisionLocked(plan, STRATEGY_N)
+  /*
+   * Kilitli bölüm okunur ama doldurulmaz. Kural süreç haritasının 2. bölümündedir.
+   * Strateji adımı geçiş kararı olmadan kilitlidir. Strateji uygulama adımı kendi kararı kilitliyken kilitlidir.
+   * Strateji öncesi adımlar kilitlenmez. Kullanıcı hazırlıkta istediği adıma dönebilir.
+   */
+  const lockGroup = isStrategy ? STRATEGY_N : step.decision
+  const locked = (isStrategy || EXECUTION_DECISIONS.includes(step.decision)) && decisionLocked(plan, lockGroup)
+  const lockTo = lockTarget(plan, lockGroup)
+  const subStage = subStageOfStep(step.id)
   const gatePath = isStrategy ? '/strateji' : `/karar/${step.decision}/kapi`
 
   const persist = (next: Record<string, unknown>, status?: 'tamam') => {
@@ -168,10 +217,10 @@ export function WorkScreen() {
   const nextInDecision = next && STEPS[next].decision === step.decision ? next : null
   const chartData = step.chart?.build(values, plan)
   const rec = plan.steps[step.id]
-  const title = `Adım ${step.id}. ${step.title}`
+  const title = stepHeading(step.id)
   const stats = sectionStats(step, plan, values)
   const example = decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null
-  const suggestions = isStrategy && !locked ? foundationSuggestions(step.id, plan, values) : []
+  const suggestions = !locked ? foundationSuggestions(step.id, plan, values) : []
   const applySuggestion = (s: Suggestion) => {
     onChange(s.key, s.build())
     message.success('Öneri alana yazıldı. Alanı düzenleyebilirsiniz.')
@@ -193,14 +242,25 @@ export function WorkScreen() {
 
       <div className="work-grid">
         <div className="work-main">
+          {subStage ? (
+            <Callout tone="bilgi" title={`Alt aşama ${subStage.code}. ${subStage.title}`}>
+              {subStage.does} {subStage.why}
+            </Callout>
+          ) : null}
           {step.whenNote ? <Callout tone="bilgi" title="Ne zaman yapılır?">{step.whenNote}</Callout> : null}
           {applies === 'gizli' ? <Callout tone="ipucu" title="Bu adım sizin profilinizde gerekmez">İsterseniz yine doldurabilirsiniz. Atlamak için alt şeritteki "Daha fazla" menüsünden "Bu adımı atla" seçeneğini kullanın.</Callout> : null}
           {locked ? (
             <Callout tone="uyari" title="Bu adım kilitli">
-              {lockReason(plan, STRATEGY_N)} Adımı okuyabilirsiniz. Alanlar ve kayıt düğmeleri kapalıdır.
+              {lockReason(plan, lockGroup)} Adımı okuyabilirsiniz. Alanlar ve kayıt düğmeleri kapalıdır.
               <span className="work-lock-links">
-                <Link to="/gecis">Geçiş kapısına git</Link>
-                <Link to="/strateji">Strateji özetine dön</Link>
+                {lockTo === 'kapi' ? (
+                  <Link to={`/karar/${lockGroup - 1}/kapi`}>Kapı {lockGroup - 1} ekranını aç</Link>
+                ) : (
+                  <>
+                    <Link to="/gecis">Geçiş kapısına git</Link>
+                    <Link to="/strateji">Strateji oluşturma özetine dön</Link>
+                  </>
+                )}
               </span>
             </Callout>
           ) : null}
@@ -229,8 +289,8 @@ export function WorkScreen() {
             />
           ) : null}
           {suggestions.length ? (
-            <Card className="step-card suggest-card" variant="borderless" title="Temelden gelen öneriler" extra={<Tag>{suggestions.length} öneri</Tag>}>
-              <p className="card-desc">Öneriler temel adımlarındaki cevaplarınızdan gelir. Öneri kendiliğinden kaydedilmez. "Alana yaz" düğmesine basarsanız öneri ilgili alana yazılır.</p>
+            <Card className="step-card suggest-card" variant="borderless" title="Önceki adımlardan öneriler" extra={<Tag>{suggestions.length} öneri</Tag>}>
+              <p className="card-desc">Öneriler önceki adımlardaki cevaplarınızdan gelir. Öneri kendiliğinden kaydedilmez. "Alana yaz" düğmesine basarsanız öneri ilgili alana yazılır.</p>
               <ul className="suggest-list">
                 {suggestions.map((s) => (
                   <li key={s.key} className="suggest-item">
@@ -339,7 +399,7 @@ export function WorkScreen() {
         {nextInDecision ? (
           <Button className="bar-draft" disabled={locked} onClick={() => { persist(values); nav(stepPath(nextInDecision)) }}>Taslak bırak, ilerle</Button>
         ) : (
-          <Button className="bar-draft" onClick={() => { persist(values); nav(gatePath) }}>{isStrategy ? 'Strateji özetine git' : 'Kapıya git'}</Button>
+          <Button className="bar-draft" onClick={() => { persist(values); nav(gatePath) }}>{isStrategy ? 'Strateji oluşturma özetine git' : 'Kapıya git'}</Button>
         )}
         <Button type="primary" disabled={locked} onClick={complete}>Adımı tamamla</Button>
       </div>

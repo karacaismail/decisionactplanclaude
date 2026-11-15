@@ -1,11 +1,11 @@
 /*
-  Strateji çalışması ekranı, yol adayları tablosu, dayanak özeti, temel belgesi ve adım ekranındaki öneri kartı.
+  Strateji oluşturma ekranı, yol adayları tablosu, dayanak özeti, temel belgesi ve adım ekranındaki öneri kartı.
   Kart görünümü screens-karar.css dosyasındaki `.page-karar` kurallarından gelir.
   Burada sabit renk yoktur. Renkler --color-* değişkenlerinden okunur. En küçük yazı 14 pikseldir.
 */
 
 /* ------------------------------------------------------------------ */
-/* Strateji çalışması: solda adımlar ve dayanak, sağda geçiş kararı     */
+/* Strateji oluşturma: solda adımlar ve dayanak, sağda geçiş kararı     */
 /* ------------------------------------------------------------------ */
 .strateji-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; align-items: start; }
 .strateji-main, .strateji-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
@@ -123,3 +123,45 @@ html[data-focus-mode='keyboard'] .path-compare:has(> .path-compare-scroll:focus-
 .suggest-label .ant-tag { margin: 0; font-weight: 400; }
 .suggest-value { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 .foundation-collapse .foundation-summary { padding-top: 4px; }
+
+/* ------------------------------------------------------------------ */
+/* Zorunlu alt aşamalar: kod solda, ad ve açıklama sağda. Telefonda tek sütun. */
+/* ------------------------------------------------------------------ */
+.substage-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+.substage { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: start; min-width: 0; }
+.substage-code { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; border-radius: var(--radius-control); background: var(--color-surface-context); color: var(--color-text-primary); font-size: 14px; font-weight: 600; }
+.substage-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+.substage-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+.substage-head .ant-tag { margin: 0; font-size: 14px; }
+.substage-title { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.substage-does { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; overflow-wrap: break-word; }
+.substage-body .helper { margin: 0; max-width: 72ch; }
+.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
+
+/* Ölçüt listesi: çıkış kapısının koşulları. */
+.criteria-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+.criteria-list > li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.criteria-list .is-met { color: var(--color-status-ok); }
+.criteria-list .is-open { color: var(--color-text-secondary); }
+
+/* Strateji uygulama: gözden geçirme formu ve kayıt listesi. */
+.renewal-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; max-width: 72ch; }
+.renewal-form .field-label { display: block; margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.renewal-form .ant-radio-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.renewal-form .ant-radio-wrapper { min-height: 44px; align-items: center; font-size: 16px; white-space: normal; }
+.renewal-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: 4px; font-size: 16px; line-height: 1.5; }
+.renewal-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+.renewal-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.renewal-item .ant-tag { margin: 0; font-size: 14px; }
+.renewal-item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.question-pair { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+.question-pair > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+.question-pair dt { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+.question-pair dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.decision-links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+.decision-links a { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 44px; font-size: 16px; }
+.decision-links .ant-tag { margin: 0; font-size: 14px; }
+
+/* Kart başlığı sayfanın ikinci düzey başlığıdır. Görünüm kart başlığıyla aynı kalır. */
+.card-heading { margin: 0; font: inherit; color: inherit; }
+.card-heading:focus { outline: 0; }

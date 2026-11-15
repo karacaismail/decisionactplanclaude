@@ -4,12 +4,12 @@ import type { StepDef } from '@/data/schema'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, type StageKey } from '@/data/stages'
 import type { PlanDoc } from '@/data/types'
 import { stepApplies } from './conditions'
-import { gatePassed, strategyDone } from './gate'
+import { gatePassed, strategyDone, strategyReopened } from './gate'
 import { transitionPassed, validationLevel } from './readiness'
 
 /**
  * Planın yol üzerindeki yeri. Tek kaynak budur.
- * Sıra: temel kapıları, geçiş kapısı, strateji çalışması, uygulama kapıları.
+ * Sıra: temel kapıları, geçiş kapısı, strateji oluşturma, uygulama kapıları.
  * Pano, planlar ekranı, menü ve kilit kuralı aynı sırayı kullanır.
  */
 export interface PlanPosition {
@@ -22,7 +22,7 @@ export interface PlanPosition {
   /** Tamamlanan strateji adımı sayısı. Yalnız gösterim içindir. */
   strategyDone: number
   strategyTotal: number
-  /** Strateji çalışması kural olarak bitti mi? Kilit bu değere bakar. */
+  /** Strateji oluşturma kural olarak bitti mi? Kilit bu değere bakar. */
   strategyComplete: boolean
 }
 
@@ -36,7 +36,8 @@ export function planPosition(plan: PlanDoc): PlanPosition {
     const status = plan.steps[s.id]?.status
     return status === 'tamam' || status === 'atlandi'
   }).length
-  const complete = strategyDone(plan)
+  /* Yeniden açılan strateji bitmiş sayılmaz. Sıradaki iş strateji oluşturmadır. */
+  const complete = strategyDone(plan) && !strategyReopened(plan)
   const base = { level: validationLevel(plan), strategyDone: done, strategyTotal: strategy.length, strategyComplete: complete }
   const openFoundation = FOUNDATION_DECISIONS.find((n) => !gatePassed(plan, n))
   if (openFoundation) return { ...base, stage: 'temel', decision: openFoundation }

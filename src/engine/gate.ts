@@ -160,7 +160,9 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
     }
   }
 
-  if (advancing && def.n === 6 && decisionLocked(plan, 6)) errors.push(lockReason(plan, 6) ?? 'Karar 6 kilitli.')
+  /* Uygulama kapıları kilitliyken kayıt yapılmaz. Kilidin nedeni geçiş kapısı ya da strateji oluşturma olabilir. */
+  const target = def.n >= 6 ? lockTarget(plan, def.n) : null
+  if (advancing && target && target !== 'kapi') errors.push(lockReason(plan, def.n) ?? `Karar ${def.n} kilitli.`)
   else if (advancing && def.n > 1 && def.n !== 6 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
 
   if (advancing) {
@@ -171,22 +173,38 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
   return errors
 }
 
-/** Strateji çalışması bitti mi? Yol seçildi, 90 günlük yol yazıldı ve karar dosyası tamam. */
-export function strategyDone(plan: PlanDoc): boolean {
-  return STRATEGY.gate.criteria.every((c) => c.check(plan) === true)
+/**
+ * Strateji yeniden açık mı? Karar sahibi "Yeniden aç" kararı verdiyse ve strateji belgesini sonra yeniden tamamlamadıysa açıktır.
+ * Son "Yeniden aç" kaydına bakılır. Sonraki bir "Düzelt" kaydı açık stratejiyi kapatmaz.
+ */
+export function strategyReopened(plan: PlanDoc): boolean {
+  const reopen = [...(plan.strategyReviews ?? [])].reverse().find((r) => r.decision === 'yenidenAc')
+  if (!reopen) return false
+  const dossier = plan.steps['20']
+  return !(dossier?.status === 'tamam' && dossier.updatedAt > reopen.decidedAt)
 }
 
 /**
- * Bir karar ya da strateji çalışması (9) kilitli mi?
- * Sıra şudur: Karar 1-5, geçiş kapısı, strateji çalışması, Karar 6-8.
- * Karar 2-5 önceki kapıya bağlıdır. Strateji çalışması geçiş kapısına bağlıdır.
- * Karar 6 geçiş kapısına ve biten strateji çalışmasına bağlıdır.
- * Karar 7-8 önceki kapıya bağlıdır. Karar 6 kilitliyse Karar 7-8 de kilitlidir.
+ * Strateji oluşturma bitti mi? Altı ölçütün hepsi karşılanmalı.
+ * Stratejisi eski sürümde tamamlanan plan da bitmiş sayılır. "Yeniden aç" kararı bu izni kaldırır.
  */
+export function strategyDone(plan: PlanDoc): boolean {
+  if (STRATEGY.gate.criteria.every((c) => c.check(plan) === true)) return true
+  return Boolean(plan.legacyStrategy) && !strategyReopened(plan)
+}
+
+/**
+ * Strateji uygulama açık mı? Strateji bittiyse ya da karar sahibi stratejiyi yeniden açtıysa açıktır.
+ * Yeniden açılan strateji uygulamayı kilitlemez. Uygulama eski seçimle sürer.
+ */
+export function strategyApproved(plan: PlanDoc): boolean {
+  return strategyDone(plan) || strategyReopened(plan)
+}
+
 export function decisionLocked(plan: PlanDoc, n: number): boolean {
   if (n <= 1) return false
   if (n === 9) return !transitionPassed(plan)
-  if (n === 6) return !transitionPassed(plan) || !strategyDone(plan)
+  if (n === 6) return !transitionPassed(plan) || !strategyApproved(plan)
   if (n > 6) return decisionLocked(plan, 6) || !gatePassed(plan, n - 1)
   return !gatePassed(plan, n - 1)
 }
@@ -196,7 +214,7 @@ export type LockTarget = 'gecis' | 'strateji' | 'kapi'
 export function lockTarget(plan: PlanDoc, n: number): LockTarget | null {
   if (!decisionLocked(plan, n)) return null
   if ((n === 9 || n >= 6) && !transitionPassed(plan)) return 'gecis'
-  if (n >= 6 && n !== 9 && !strategyDone(plan)) return 'strateji'
+  if (n >= 6 && n !== 9 && !strategyApproved(plan)) return 'strateji'
   return 'kapi'
 }
 
@@ -205,6 +223,6 @@ export function lockReason(plan: PlanDoc, n: number): string | null {
   const target = lockTarget(plan, n)
   if (!target) return null
   if (target === 'gecis') return 'Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
-  if (target === 'strateji') return 'Strateji çalışması bitmedi. Adım 19 ve Adım 20 tamamlanmalı.'
+  if (target === 'strateji') return 'Strateji oluşturma bitmedi. Beş alt aşama tamamlanmalı ve karar sahibi strateji belgesini onaylamalı.'
   return `Kapı ${n - 1} henüz geçilmedi.`
 }

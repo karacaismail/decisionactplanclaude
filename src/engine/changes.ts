@@ -38,7 +38,7 @@ function filled(v: unknown): boolean {
 
 /**
  * Adım değişince eskiyen ilk kapı. Profil ve sınırlar 1. karara bağlıdır.
- * Strateji çalışmasının adımları (19 ve 20) süreçte Karar 6'dan önce gelir.
+ * Strateji oluşturmanın adımları (19 ve 20) süreçte Karar 6'dan önce gelir.
  * Bu adımlar değişince Kapı 6, 7 ve 8'in kararları eskir. Geçiş kararı eskimez.
  */
 export function gateOfStep(step: string): number {

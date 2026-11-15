@@ -119,7 +119,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
   const future = plan.evidence.length - dated.length
   if (future > 0) warnings.push(`${future} kanıtın tarihi gelecekte. Bu kayıtlar kanıt sayılmadı. Tarihi düzeltin.`)
   if (refutedOpen.length > 0) warnings.push(`${refutedOpen.length} kritik varsayım çürüdü ve karşılığı yazılmadı. Varsayımlar ekranında sonuç notunu yazın.`)
-  else if (refuted.length > 0) warnings.push(`${refuted.length} varsayım çürüdü. Strateji çalışmasında bu varsayıma dayanmayın.`)
+  else if (refuted.length > 0) warnings.push(`${refuted.length} varsayım çürüdü. Strateji oluşturmada bu varsayıma dayanmayın.`)
   let suggested: TransitionOutcome
   if (mandatoryMet < mandatory.length) {
     suggested = 'degil'

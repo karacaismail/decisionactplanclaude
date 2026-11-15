@@ -3,7 +3,7 @@ import { Button, Card, Checkbox, Form, Grid, Input, Progress, Result, Select, St
 import { Link, useNavigate, useParams } from 'react-router'
 import { CheckCircle, XCircle, Question, CaretDown, Info, ArrowRight } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
-import { decisionOf, stepsOf, STEPS } from '@/data/registry'
+import { decisionOf, stepsOf, STEPS, stepHeading } from '@/data/registry'
 import type { GateCriterion, StepDef } from '@/data/schema'
 import { evaluateGate, lastDecision, effectiveOutcome } from '@/engine/gate'
 import { OutcomePanel, type OutcomeDraft } from '@/components/OutcomePanel'
@@ -132,7 +132,7 @@ export function ReviewScreen() {
       ) : null}
     </span>
   )
-  const stepLink = (s?: StepDef) => (s ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>Adım {s.id}. {s.title}</Link> : <span className="helper">Adım yok</span>)
+  const stepLink = (s?: StepDef) => (s ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>{stepHeading(s.id)}</Link> : <span className="helper">Adım yok</span>)
 
   const criteriaRows: CriterionRow[] = d.gate.criteria
     .map((c) => ({ key: c.id, c, value: evaluation.criteria[c.id], step: basisStep(c, d.n) }))

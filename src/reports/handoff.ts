@@ -173,8 +173,8 @@ export const NO_PATHS = 'Yol adayı henüz yazılmadı.'
 export const FIRST_DAY = [
   'Raporu sorgulayın. Hangi cümle kaynaklı, hangisi hesap, hangisi varsayım?',
   'Yolları yan yana karşılaştırın. Her yol neyle kazanır, neyden vazgeçer?',
-  'Bir yol önerin ya da yeni bir yol yazın. Gerekçeyi ve vazgeçilenleri yazın.',
-  'Öneriyi karar sahibine sunun. Karar sahibi seçince seçimi 90 günlük yola çevirin.',
+  'Asıl güçlüğü yazın. Sonra yolları sınayın ve bir yol önerin. Gerekçeyi ve vazgeçilenleri yazın.',
+  'Öneriyi karar sahibine sunun. Karar sahibi seçince ana hamleleri yazın.',
 ]
 
 type Row = Record<string, unknown>

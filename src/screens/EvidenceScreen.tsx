@@ -6,7 +6,7 @@ import { Link } from 'react-router'
 import { Plus, Check, PencilSimple, DotsThree, Trash } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import type { Evidence, EvidenceKind } from '@/data/types'
-import { STEPS } from '@/data/registry'
+import { STEPS, stepHeading } from '@/data/registry'
 import { EvidenceLadderPicker, LADDER } from '@/components/EvidenceLadderPicker'
 import { ChartFrame } from '@/charts/ChartFrame'
 import { formatDate } from '@/engine/format'
@@ -287,7 +287,7 @@ export function EvidenceScreen() {
               ) : (
                 <div className="tag-row">
                   {stepsOfEvidence(detail).map((s) => (
-                    <Tag key={s.id}><Link to={`/karar/${s.decision}/adim/${s.id}`} onClick={() => setPanel(null)}>Adım {s.id}. {s.title}</Link></Tag>
+                    <Tag key={s.id}><Link to={`/karar/${s.decision}/adim/${s.id}`} onClick={() => setPanel(null)}>{stepHeading(s.id)}</Link></Tag>
                   ))}
                 </div>
               )}

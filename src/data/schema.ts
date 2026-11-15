@@ -85,6 +85,11 @@ export interface ChartSpec {
 
 export interface StepDef {
   id: string
+  /**
+   * Ekranda görünen kod. Strateji oluşturma ve strateji uygulama adımları alt aşama kodunu taşır. Örneğin "2.1".
+   * Kod yoksa ekranda "Adım NN" yazar.
+   */
+  code?: string
   decision: number
   title: string
   question: string

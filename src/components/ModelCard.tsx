@@ -1,4 +1,5 @@
 import { Link } from 'react-router'
+import { stepHeading } from '@/data/registry'
 import { Badge, Card, Popover, Typography } from 'antd'
 import { ArrowSquareOut, ListNumbers } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
@@ -37,7 +38,7 @@ export function ModelCard({ model, steps, linkSteps, onHelp }: { model: ModelEnt
     <ul className="method-steps" aria-label="Kullanıldığı adımlar">
       {steps.map((s) => (
         <li key={s.id}>
-          {linkSteps ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>Adım {s.id}. {s.title}</Link> : <span>Adım {s.id}. {s.title}</span>}
+          {linkSteps ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>{stepHeading(s.id)}</Link> : <span>{stepHeading(s.id)}</span>}
         </li>
       ))}
     </ul>

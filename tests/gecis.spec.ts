@@ -63,7 +63,7 @@ async function fillCommon(page: Page) {
   await page.getByLabel(REPORT_READ).check()
 }
 
-test('örnek planda öneri görünür, karar kaydedilir ve strateji çalışması açılır', async ({ page }) => {
+test('örnek planda öneri görünür, karar kaydedilir ve strateji oluşturma açılır', async ({ page }) => {
   await openDemo(page)
   await openGate(page)
   await noHorizontalOverflow(page, 'geçiş kapısı')
@@ -85,7 +85,7 @@ test('örnek planda öneri görünür, karar kaydedilir ve strateji çalışmas�
   await expect(save).toBeEnabled()
   await save.click()
 
-  const open = page.getByRole('button', { name: 'Strateji çalışmasını aç' })
+  const open = page.getByRole('button', { name: 'Strateji oluşturmayı aç' })
   await expect(open).toBeVisible()
   await expect(page.getByText('Önceki geçiş kararları')).toBeVisible()
   await noHorizontalOverflow(page, 'kayıt sonrası')
@@ -123,20 +123,20 @@ test('"Koşullu hazır" dört alan ister ve açık soruyu iş listesine ekler', 
   await fillConditional(page)
   await expect(saveButton(page)).toBeEnabled()
   await saveButton(page).click()
-  await expect(page.getByRole('button', { name: 'Strateji çalışmasını aç' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Strateji oluşturmayı aç' })).toBeVisible()
   await expect(page.getByText('Açık soru: Günde 40 sipariş tutar mı?')).toBeVisible()
 
   await page.goto('/#/isler')
   await expect(page.getByText('Geçiş kapısı açık sorusu: Günde 40 sipariş tutar mı?').first()).toBeVisible()
 })
 
-test('"Henüz hazır değil" kaydı strateji çalışmasını açmaz ve eksik ölçüte götürür', async ({ page }) => {
+test('"Henüz hazır değil" kaydı strateji oluşturmayı açmaz ve eksik ölçüte götürür', async ({ page }) => {
   await openDemo(page)
   await openGate(page)
   await page.getByRole('radio', { name: /Henüz hazır değil/ }).check()
   await fillCommon(page)
   await saveButton(page).click()
-  await expect(page.getByRole('button', { name: 'Strateji çalışmasını aç' })).toHaveCount(0)
+  await expect(page.getByRole('button', { name: 'Strateji oluşturmayı aç' })).toHaveCount(0)
   await page.getByRole('button', { name: 'Eksik ölçütlere dön' }).click()
   await expect(page).toHaveURL(/#\/karar\/\d\/adim\/\d\d/)
 })

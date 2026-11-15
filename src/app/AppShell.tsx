@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react'
 import { Button, Drawer, Grid, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router'
-import { List, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
+import { List, ListChecks, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
 import { EXECUTION_DECISIONS, STAGES } from '@/data/stages'
@@ -64,16 +64,17 @@ export function AppShell() {
   /* Yer tek kaynaktan gelir. Pano, menü ve kilit aynı sırayı kullanır. */
   const position = plan ? planPosition(plan) : null
   const strategyState = !passedTransition ? 'Kilitli' : position?.strategyComplete ? 'Tamam' : 'Açık'
+  const executionState = plan && !decisionLocked(plan, EXECUTION_DECISIONS[0]) ? 'Açık' : 'Kilitli'
 
-  /* Yol dizini: Temel, Geçiş ve strateji, Uygulama. Yalnız yol ekranlarında görünür. */
+  /* Yol dizini üç ana kümeye göre dizilir: strateji öncesi, strateji oluşturma, strateji uygulama. Yalnız yol ekranlarında görünür. */
   const journeyItems = plan
     ? [
         { key: '/baslangic', icon: <Compass size={20} />, label: <Link to="/baslangic"><span className="label">Giriş</span></Link> },
-        { type: 'group' as const, label: 'Temel', children: stage('temel').decisions.map(decisionItem) },
         {
           type: 'group' as const,
-          label: 'Geçiş ve strateji',
+          label: '1. Strateji öncesi',
           children: [
+            ...stage('temel').decisions.map(decisionItem),
             {
               key: '/devir',
               icon: <FileText size={20} />,
@@ -93,23 +94,45 @@ export function AppShell() {
                 </Link>
               ),
             },
+          ],
+        },
+        {
+          type: 'group' as const,
+          label: '2. Strateji oluşturma',
+          children: [
             {
               key: '/strateji',
               icon: <Strategy size={20} />,
               label: (
-                <Link to="/strateji" aria-label={`Strateji çalışması, ${strategyState}`}>
-                  <span className="label">Strateji çalışması</span>
+                <Link to="/strateji" aria-label={`Strateji oluşturma, ${strategyState}`}>
+                  <span className="label">Strateji oluşturma</span>
                   <span className={`status-dot ${strategyState === 'Tamam' ? 'is-passed' : strategyState === 'Açık' ? 'is-current' : ''}`} aria-hidden />
                 </Link>
               ),
             },
           ],
         },
-        { type: 'group' as const, label: 'Uygulama', children: stage('uygulama').decisions.map(decisionItem) },
+        {
+          type: 'group' as const,
+          label: '3. Strateji uygulama',
+          children: [
+            {
+              key: '/uygulama',
+              icon: <ListChecks size={20} />,
+              label: (
+                <Link to="/uygulama" aria-label={`Strateji uygulama özeti, ${executionState}`}>
+                  <span className="label">Uygulama özeti</span>
+                  <span className={`status-dot ${executionState === 'Açık' ? 'is-current' : ''}`} aria-hidden />
+                </Link>
+              ),
+            },
+            ...stage('uygulama').decisions.map(decisionItem),
+          ],
+        },
       ]
     : []
 
-  /* Sıradaki iş: "Yol" sekmesi buraya gider. Sıra: temel kararı, geçiş kapısı, strateji çalışması, uygulama kararı. */
+  /* Sıradaki iş: "Yol" sekmesi buraya gider. Sıra: temel kararı, geçiş kapısı, strateji oluşturma, uygulama kararı. */
   const journeyHome = !position
     ? '/'
     : position.stage === 'gecis'
@@ -117,7 +140,7 @@ export function AppShell() {
       : position.stage === 'strateji'
         ? '/strateji'
         : `/karar/${position.decision ?? EXECUTION_DECISIONS[EXECUTION_DECISIONS.length - 1]}`
-  const isJourney = /^\/(karar|gecis|devir|strateji|baslangic|devralma)/.test(loc.pathname)
+  const isJourney = /^\/(karar|gecis|devir|strateji|uygulama|baslangic|devralma)/.test(loc.pathname)
   const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean }[] = [
     { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },
     { to: journeyHome, label: 'Yol', Icon: MapTrifold, active: isJourney, needsPlan: true },
@@ -187,7 +210,7 @@ export function AppShell() {
             <p className="journey-rail-title">
               <MapTrifold size={20} aria-hidden /> Yol dizini
             </p>
-            <p className="journey-rail-sub">Temel, geçiş ve uygulama.</p>
+            <p className="journey-rail-sub">Hazırlık, oluşturma ve uygulama.</p>
             {journeyMenu}
           </aside>
         ) : null}

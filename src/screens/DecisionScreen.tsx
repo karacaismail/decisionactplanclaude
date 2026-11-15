@@ -2,7 +2,7 @@ import { Button, Card, Collapse, Descriptions, Grid, List, Progress, Steps, Tabl
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowRight, ArrowLeft, BookOpen, CheckCircle, Question, XCircle } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
-import { decisionOf, stepsOf } from '@/data/registry'
+import { decisionOf, stepsOf, stepHeading, stepName } from '@/data/registry'
 import type { StepDef } from '@/data/schema'
 import type { PlanDoc } from '@/data/types'
 import { stepApplies } from '@/engine/conditions'
@@ -53,12 +53,12 @@ export function DecisionScreen() {
   const steps = stepsOf(d.n).filter((s) => !plan.shortPath || s.shortPath)
   const locked = decisionLocked(plan, d.n)
   const reason = lockReason(plan, d.n)
-  /* Karar 6 iki işe bağlıdır: geçiş kararı ve strateji çalışması. Öteki kararlar bir önceki kapıya bağlıdır. */
+  /* Karar 6 iki işe bağlıdır: geçiş kararı ve strateji oluşturma. Öteki kararlar bir önceki kapıya bağlıdır. */
   const target = lockTarget(plan, d.n)
   const lockedByTransition = target === 'gecis'
   const lockedByStrategy = target === 'strateji'
   const stage = STAGES.find((x) => x.key === stageOfDecision(d.n))
-  const kicker = stage ? `${stage.title} aşaması, Karar ${d.n}` : `Karar ${d.n}`
+  const kicker = stage ? `${stage.title}, Karar ${d.n}` : `Karar ${d.n}`
   /* Kapı 5 geçildiyse sıradaki iş geçiş kapısıdır. Geçiş kararı geçerliyse not gerekmez. */
   const transitionNext = d.n === 5 && gatePassed(plan, 5) && !transitionPassed(plan)
   const last = lastDecision(plan, d.n)
@@ -82,7 +82,7 @@ export function DecisionScreen() {
     </Button>
   ) : lockedByStrategy ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/strateji')}>
-      Strateji çalışmasına git
+      Strateji oluşturmaya git
     </Button>
   ) : locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav(`/karar/${d.n - 1}/kapi`)}>
@@ -105,12 +105,16 @@ export function DecisionScreen() {
         </Callout>
       ) : lockedByStrategy ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce strateji çalışmasını bitirin. <Link to="/strateji">Strateji çalışmasını açın.</Link>
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce strateji oluşturmayı bitirin. <Link to="/strateji">Strateji oluşturmayı açın.</Link>
         </Callout>
       ) : locked ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kapı {d.n - 1}
-          {prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.
+          {/* Strateji öncesi adımlar kilitlenmez. Yalnız kapı kararı bekler. Uygulama adımları ise kilitlidir. */}
+          {d.n <= 5 ? (
+            <>{reason} Bu kararın adımlarını şimdiden doldurabilirsiniz. Bu kararın kapısı için önce Kapı {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
+          ) : (
+            <>{reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kapı {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
+          )}
         </Callout>
       ) : null}
 
@@ -122,7 +126,7 @@ export function DecisionScreen() {
 
       <div className="karar-progress">
         <Progress percent={percent} format={() => `${done} / ${visible.length} adım`} strokeColor="var(--color-action-primary)" aria-label={`${done} / ${visible.length} adım tamamlandı`} />
-        <span className="karar-progress-next">{firstOpen ? `Sıradaki adım ${firstOpen.id}. ${firstOpen.title}` : 'Bütün adımlar tamamlandı.'}</span>
+        <span className="karar-progress-next">{firstOpen ? `Sıradaki adım: ${stepHeading(firstOpen.id)}` : 'Bütün adımlar tamamlandı.'}</span>
       </div>
 
       <div className="karar-grid">
@@ -155,7 +159,7 @@ export function DecisionScreen() {
               }}
               items={visible.map((s) => {
                 const st = stateOf(plan, s.id)
-                return { title: `Adım ${s.id}`, content: s.title, status: st === 'tamam' || st === 'atlandi' ? 'finish' : s === firstOpen ? 'process' : 'wait' }
+                return { title: stepName(s.id), content: s.title, status: st === 'tamam' || st === 'atlandi' ? 'finish' : s === firstOpen ? 'process' : 'wait' }
               })}
             />
             <Table<StepDef>
@@ -173,7 +177,7 @@ export function DecisionScreen() {
                   render: (_, s) => (
                     <Link to={`/karar/${d.n}/adim/${s.id}`} className="karar-step-link">
                       <span className="route-dot" aria-hidden>
-                        {s.id}
+                        {s.code ?? s.id}
                       </span>
                       <span>{s.title}</span>
                     </Link>

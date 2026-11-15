@@ -671,7 +671,7 @@ export function HandoffScreen() {
               {report.firstDay.map((s) => <li key={s}>{s}</li>)}
             </ol>
             <div className="no-print">
-              <Button onClick={() => navigate('/strateji')}>Strateji çalışmasına git</Button>
+              <Button onClick={() => navigate('/strateji')}>Strateji oluşturmaya git</Button>
             </div>
           </Card>
 

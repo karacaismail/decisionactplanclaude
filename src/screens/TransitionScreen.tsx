@@ -4,7 +4,7 @@ import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { CheckCircle, Flag, Question, XCircle } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
-import { STEPS, stepPath } from '@/data/registry'
+import { STEPS, stepPath, stepHeading } from '@/data/registry'
 import { TRANSITION_LABEL, type PlanDoc, type TransitionRecord } from '@/data/types'
 import { LEVELS, SUPPORTING_MIN, effectiveTransition, evaluateReadiness, lastTransition, transitionPassed, type ReadinessCriterion } from '@/engine/readiness'
 import { formatDate } from '@/engine/format'
@@ -63,7 +63,7 @@ export function TransitionScreen() {
       <>
         <span className="helper">{c.hint}</span>
         <span className="gecis-criterion-meta">
-          <span>Dayanak: <Link to={stepPath(c.step)}>Adım {c.step}. {step?.title ?? 'Adım bulunamadı'}</Link></span>
+          <span>Dayanak: <Link to={stepPath(c.step)}>{step ? stepHeading(c.step) : 'Adım bulunamadı'}</Link></span>
           <span>{n > 0 ? `Bu adıma ${n} kanıt bağlı.` : 'Bu adıma bağlı kanıt yok.'}</span>
         </span>
       </>
@@ -201,10 +201,10 @@ export function TransitionScreen() {
               {last.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
               {expired(last) ? <Tag color="error">Süresi doldu</Tag> : null}
             </span>
-            {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Strateji çalışması kapalıdır. Kararı yeniden kaydedin.</span> : null}
+            {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Strateji oluşturma kapalıdır. Kararı yeniden kaydedin.</span> : null}
             {!last.stale && expired(last) ? <span>Koşullu kararın son tarihi geçti. Sonuç "Henüz hazır değil" sayılır. Kararı yeniden kaydedin.</span> : null}
-            {transitionPassed(plan) ? <span>Strateji çalışması açık. <Link to="/strateji">Strateji çalışmasına gidin.</Link></span> : null}
-            {!last.stale && last.outcome === 'degil' ? <span>Strateji çalışması kapalıdır. Eksik kanıtı tamamlayın, sonra kararı yeniden kaydedin.</span> : null}
+            {transitionPassed(plan) ? <span>Strateji oluşturma açık. <Link to="/strateji">Strateji oluşturmaya gidin.</Link></span> : null}
+            {!last.stale && last.outcome === 'degil' ? <span>Strateji oluşturma kapalıdır. Eksik kanıtı tamamlayın, sonra kararı yeniden kaydedin.</span> : null}
           </div>
         </Callout>
       ) : null}

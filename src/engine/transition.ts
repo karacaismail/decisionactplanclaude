@@ -15,7 +15,7 @@ export function effectiveTransition(t: TransitionRecord, now = new Date()): Tran
   return t.outcome
 }
 
-/** Strateji çalışması açılabilir mi? Karar eskidiyse ya da süresi geçtiyse açılmaz. */
+/** Strateji oluşturma açılabilir mi? Karar eskidiyse ya da süresi geçtiyse açılmaz. */
 export function transitionPassed(plan: PlanDoc, now = new Date()): boolean {
   const t = lastTransition(plan)
   if (!t || t.stale) return false

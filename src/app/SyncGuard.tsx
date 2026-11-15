@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Alert, Button, Modal, Space, Typography } from 'antd'
-import { usePlanStore, useCurrentPlan } from '@/store/planStore'
+import { HYDRATION_ERROR, usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { detectConflict, downloadJson, formatDateTime, safeFileName, STORAGE_KEY } from '@/engine/sync'
 import type { PlanDoc } from '@/data/types'
 
@@ -33,6 +33,7 @@ export function SyncGuard() {
   const plan = useCurrentPlan()
   const saveState = usePlanStore((s) => s.saveState)
   const saveError = usePlanStore((s) => s.saveError)
+  const loadFailed = usePlanStore((s) => s.loadFailed)
   const setSaveState = usePlanStore((s) => s.setSaveState)
   const [incoming, setIncoming] = useState<PlanDoc | undefined>(undefined)
 
@@ -65,6 +66,16 @@ export function SyncGuard() {
     return () => window.removeEventListener('beforeunload', onBeforeUnload)
   }, [])
 
+  /* Okunamayan kaydı olduğu gibi dosyaya indirir. Kayıt değiştirilmez. */
+  const downloadRaw = () => {
+    const raw = window.localStorage.getItem(STORAGE_KEY) ?? ''
+    const url = URL.createObjectURL(new Blob([raw], { type: 'text/plain' }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'okunamayan-kayit.txt'
+    a.click()
+    URL.revokeObjectURL(url)
+  }
   const downloadMine = () => {
     if (plan) downloadJson(`${safeFileName(plan.name)}-kopya.json`, plan)
   }
@@ -82,7 +93,18 @@ export function SyncGuard() {
 
   return (
     <>
-      {saveState === 'kaydedilemedi' ? (
+      {loadFailed ? (
+        <Alert
+          type="error"
+          showIcon
+          role="alert"
+          message="Kayıtlı planlar okunamadı"
+          description={HYDRATION_ERROR}
+          action={<Button size="small" onClick={downloadRaw}>Ham kaydı indir</Button>}
+          style={{ position: 'fixed', top: 8, left: 8, right: 8, zIndex: 1100, fontSize: 14 }}
+        />
+      ) : null}
+      {saveState === 'kaydedilemedi' && !loadFailed ? (
         <Alert
           type="error"
           showIcon

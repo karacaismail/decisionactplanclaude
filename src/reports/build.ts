@@ -4,8 +4,11 @@
  * Boş değerler virgülle dizilmez. Tablolarda boş satır atlanır. Boş tablo çizilmez.
  */
 import type { Measure, PlanDoc } from '@/data/types'
+import { DIAGNOSIS_STEP, movesOf, TASKS_STEP } from '@/engine/strategy'
+import { lastStrategyReview } from '@/engine/renewal'
+import { RENEWAL_LABEL } from '@/data/types'
 import { OUTCOME_LABEL } from '@/data/types'
-import { DECISIONS } from '@/data/decisions'
+import { DECISIONS, STRATEGY } from '@/data/decisions'
 import { STEPS, stepsOf } from '@/data/registry'
 import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome, lastDecision } from '@/engine/gate'
@@ -148,6 +151,7 @@ function summaryFacts(latest: Decided, runway: number | null, p: PlanDoc, firstG
 }
 
 export function buildExecutiveReport(p: PlanDoc): Report {
+  const review = lastStrategyReview(p)
   const latest = [...p.decisions].sort((a, b) => b.decidedAt.localeCompare(a.decidedAt))[0]
   const runway = runwayMonths(p)
   const pays = rows(p, '16', 'paymentDays')
@@ -205,9 +209,13 @@ export function buildExecutiveReport(p: PlanDoc): Report {
       {
         title: 'Açık karar ve gelecek',
         lines: [
+          labelled('Asıl güçlük', v(p, DIAGNOSIS_STEP, 'diagnosis')),
           labelled('Seçilen yol', v(p, '19', 'chosenPath')),
           labelled('Seçimin gerekçesi', v(p, '19', 'choiceReason')),
+          labelled('Kazanma hedefi', v(p, '19', 'winningAim')),
           labelled('Vazgeçilenler', v(p, '19', 'givenUp')),
+          labelled('Ana hamleler', movesOf(p).map((m) => m.move).join('. ') || undefined),
+          ...(review ? [`Son strateji gözden geçirme: ${RENEWAL_LABEL[review.decision]}. ${review.reason}`] : ['Strateji henüz gözden geçirilmedi.']),
           labelled('İşin yönü', v(p, '33', 'direction'), 'seçilmedi'),
           ...(latest?.counterView ? [`Karşı görüş: ${latest.counterView}`] : []),
           ...(latest?.reopenWhen ? [`Yeniden açılma koşulu: ${latest.reopenWhen}`] : []),
@@ -225,19 +233,20 @@ export function buildExecutiveReport(p: PlanDoc): Report {
 
 export function buildActionPlan(p: PlanDoc): Report {
   const openTasks = p.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
-  const stepRows = DECISIONS.flatMap((d) =>
+  /* Adımlar süreç sırasıyla: strateji öncesi, strateji oluşturma, strateji uygulama. */
+  const stepRows = [...DECISIONS.filter((d) => d.n <= 5), STRATEGY, ...DECISIONS.filter((d) => d.n > 5)].flatMap((d) =>
     stepsOf(d.n).map((s) => {
       const a = stepApplies(s.mandatory, p)
       const rec = p.steps[s.id]
       const status = rec?.status === 'tamam' ? 'Bitti' : rec?.status === 'atlandi' ? `Atlandı: ${rec.skipReason}` : a === 'gizli' ? 'Bu profilde gerekmez' : rec?.status === 'taslak' ? 'Taslak' : 'Açık'
-      return [s.id, s.title, a === 'zorunlu' ? 'Zorunlu' : 'Koşullu', status]
+      return [s.code ?? s.id, s.title, a === 'zorunlu' ? 'Zorunlu' : 'Koşullu', status]
     }),
   )
   /* İş adı boş olan yol haritası satırı atlanır. */
-  const roadmap = (k: string) => rows(p, '19', k).filter((r) => text(r.action) !== null).map((r) => [str(r.action), str(r.owner, 'Eksik'), r.dueDate ? formatDate(String(r.dueDate), false) : 'Tarih belirlenmedi'])
+  const roadmap = (k: string) => rows(p, TASKS_STEP, k).filter((r) => text(r.action) !== null).map((r) => [str(r.action), str(r.owner, 'Eksik'), r.dueDate ? formatDate(String(r.dueDate), false) : 'Tarih belirlenmedi'])
   const roadmapRows = [...roadmap('now'), ...roadmap('next'), ...roadmap('later')]
   const stop = p.limits.stopRules?.map((r) => r.rule).filter((r) => text(r) !== null) ?? []
-  const modelRows = Object.values(STEPS).filter((s) => p.steps[s.id]?.status === 'tamam' && s.models.length).map((s) => [s.id + '. ' + s.title, String(s.models.length)])
+  const modelRows = Object.values(STEPS).filter((s) => p.steps[s.id]?.status === 'tamam' && s.models.length).map((s) => [(s.code ?? s.id) + '. ' + s.title, String(s.models.length)])
   const profileLines = [
     labelled('Başarı cümlesi', p.limits.successSentence),
     money('Toplam harcama sınırı', p.limits.budgetKurus),
@@ -261,7 +270,7 @@ export function buildActionPlan(p: PlanDoc): Report {
       { title: 'Profil ve sınırlar', lines: profileLines, facts: profileFacts },
       { title: 'İlk iş ve engel', lines: openTasks.length ? [`${openTasks[0].action}. Sorumlu: ${openTasks[0].owner ?? 'eksik'}. Tarih: ${openTasks[0].dueDate ? formatDate(openTasks[0].dueDate, false) : 'belirlenmedi'}.`] : ['Açık iş yok. Sıradaki adımı doldurun.'] },
       { title: 'Yapılacak adımlar', lines: [], table: { head: ['Adım', 'Ad', 'Tür', 'Durum'], rows: stepRows } },
-      { title: '90 günlük çalışma', lines: roadmapRows.length ? ['Şimdi kutusu ilk 90 gündür.'] : ['Yol haritası henüz yazılmadı. Adım 19’da işleri yazın.'], table: roadmapRows.length ? { head: ['İş', 'Sorumlu', 'Tarih'], rows: roadmapRows } : undefined },
+      { title: '90 günlük çalışma', lines: roadmapRows.length ? ['Şimdi kutusu ilk 90 gündür.'] : ['Yol haritası henüz yazılmadı. İşleri 3.2 Ana işler ve sorumlular adımında yazın.'], table: roadmapRows.length ? { head: ['İş', 'Sorumlu', 'Tarih'], rows: roadmapRows } : undefined },
       {
         title: 'Doldurulmuş kayıtlar',
         lines: [

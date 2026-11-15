@@ -5,6 +5,9 @@ import { parsePlanImport, prepareImportedPlan, validatePlanDoc } from '@/data/va
 import { uid } from '@/engine/format'
 import { applyLimits, applyProfile, applySkip, applyStepValues, gateOfStep, markStale, markStaleAfterGate, reviewChange as reviewChangeIn } from '@/engine/changes'
 import { createGuardedStorage, STORAGE_KEY, type SaveResult } from '@/engine/sync'
+import { applyStrategyReview, reviewBlocked, validateReview, type ReviewDraft } from '@/engine/renewal'
+import { CHOICE_STEP, DIAGNOSIS_STEP, DOSSIER_STEP, GOALS_STEP, goalIssues, TASKS_STEP, taskIssues } from '@/engine/strategy'
+import { RENEWAL_LABEL } from '@/data/types'
 
 export type SaveState = 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
 
@@ -24,6 +27,8 @@ interface PlanState {
   importPlan: (doc: unknown) => string
   /** Dosya metnini denetleyip içe alır. 8 MB sınırı vardır. */
   importPlanText: (text: string, byteLength?: number) => string
+  /** Kayıt okunamadı. Bu sırada yeni plan açılmaz ve depoya yazılmaz. */
+  loadFailed: boolean
   /** Her planın son yedek tarihi. Yedek, JSON dosyasını indirmektir. */
   backups: Record<string, string>
   /** Planın şimdi yedeklendiğini kaydeder. */
@@ -43,6 +48,8 @@ interface PlanState {
   /** Geçiş kapısı kararını kaydeder. Yeni sürüm alınır. */
   recordTransition: (t: Omit<TransitionRecord, 'id' | 'decidedAt' | 'revision' | 'stale'>) => string
   recordDecision: (d: Omit<Decision, 'id' | 'decidedAt' | 'revision'>, label: string) => string
+  /** Strateji gözden geçirme kararını kaydeder. Geçersiz taslakta Türkçe hata listesi döndürür. */
+  recordStrategyReview: (draft: ReviewDraft) => string[]
   /** Sınır değişikliğine ikinci görüş yazar. Sorun varsa Türkçe hata metni döndürür. */
   reviewChange: (id: string, reviewer: string) => string | null
   addTask: (t: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => string
@@ -67,7 +74,24 @@ function onSaveResult(r: SaveResult) {
   }, 0)
 }
 
-const storage = createJSONStorage<PlanState>(() => createGuardedStorage(typeof window !== 'undefined' ? window.localStorage : undefined, onSaveResult))
+const baseStorage = createJSONStorage<PlanState>(() => createGuardedStorage(typeof window !== 'undefined' ? window.localStorage : undefined, onSaveResult))
+
+/**
+ * Kayıt okunamadıysa bu bayrak açılır. Bayrak açıkken depoya hiçbir şey yazılmaz.
+ * Böylece okunamayan kayıt, boş durumla ezilmez. Kullanıcının verisi tarayıcıda olduğu gibi durur.
+ */
+let hydrationFailed = false
+export const HYDRATION_ERROR = 'Kayıtlı planlar okunamadı. Yazılım kayıtlı veriyi değiştirmedi. Önce ham kaydı indirin. Bu sırada yeni plan açmak ve dosya içe almak kapalıdır.'
+export const LOAD_BLOCKED = 'Kayıtlı planlar okunamadı. Önce ham kaydı indirin. Yeni plan bu sırada kaydedilemez.'
+const storage = baseStorage
+  ? {
+      ...baseStorage,
+      setItem: (name: string, value: Parameters<typeof baseStorage.setItem>[1]) => {
+        if (hydrationFailed) return
+        return baseStorage.setItem(name, value)
+      },
+    }
+  : undefined
 
 export const usePlanStore = create<PlanState>()(
   persist(
@@ -76,11 +100,13 @@ export const usePlanStore = create<PlanState>()(
       currentId: undefined,
       theme: 'system',
       backups: {},
+      loadFailed: false,
       markBackup: (id) => set((s) => ({ backups: { ...s.backups, [id]: new Date().toISOString() } })),
       saveState: 'kaydedildi',
       saveError: undefined,
       setSaveState: (saveState, saveError) => set({ saveState, saveError }),
       createPlan: (name) => {
+        if (get().loadFailed) throw new Error(LOAD_BLOCKED)
         const id = uid('plan')
         set((s) => ({ plans: { ...s.plans, [id]: emptyPlan(id, name) }, currentId: id, saveState: 'kaydediliyor' }))
         return id
@@ -95,8 +121,10 @@ export const usePlanStore = create<PlanState>()(
         }),
       selectPlan: (id) => set({ currentId: id }),
       importPlan: (doc) => {
+        if (get().loadFailed) throw new Error(LOAD_BLOCKED)
         if (!validatePlanDoc(doc)) throw new Error('Bu dosya bir plan dosyası değil. Plan dosyasını bu uygulamadan dışa aktarın.')
-        const copy = doc.example ? doc : prepareImportedPlan(doc)
+        /* Eski sürümden dışa aktarılan dosya da güncel alan yerleşimine taşınır. */
+        const copy = migratePlan(doc.example ? doc : prepareImportedPlan(doc))
         set((s) => ({ plans: { ...s.plans, [copy.id]: copy }, currentId: copy.id, saveState: 'kaydediliyor' }))
         return copy.id
       },
@@ -156,6 +184,17 @@ export const usePlanStore = create<PlanState>()(
         })
         return id
       },
+      recordStrategyReview: (draft) => {
+        const blocked = reviewBlocked(get().currentId ? get().plans[get().currentId!] : undefined)
+        const errors = [...validateReview(draft), ...(blocked ? [blocked] : [])]
+        if (errors.length) return errors
+        get().update((p) => {
+          const record = applyStrategyReview(p, draft)
+          if (!record) return false
+          p.revisions.push({ id: uid('surum'), label: `Strateji gözden geçirme: ${RENEWAL_LABEL[record.decision]}`, createdAt: record.decidedAt, snapshot: JSON.stringify({ ...p, revisions: [] }) })
+        })
+        return []
+      },
       reviewChange: (id, reviewer) => {
         let error: string | null = null
         get().update((p) => {
@@ -183,13 +222,19 @@ export const usePlanStore = create<PlanState>()(
     {
       name: STORAGE_KEY,
       storage,
-      version: 2,
+      version: 3,
       migrate: (persisted) => {
         const st = persisted as { plans?: Record<string, PlanDoc> }
-        for (const plan of Object.values(st?.plans ?? {})) migrateChoiceFields(plan)
+        for (const plan of Object.values(st?.plans ?? {})) migratePlan(plan)
         return st as unknown as PlanState
       },
       partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme, backups: s.backups }) as unknown as PlanState,
+      /* Okuma ya da taşıma hata verirse hata görünür olur ve kayıt korunur. Hata sessizce yutulmaz. */
+      onRehydrateStorage: () => (_state, error) => {
+        /* Başarılı bir yeniden okuma kilidi kaldırır. Hata kayıt durumunu değiştirmez, ayrı bir bayrak açar. */
+        hydrationFailed = Boolean(error)
+        setTimeout(() => usePlanStore.setState({ loadFailed: Boolean(error) }), 0)
+      },
     },
   ),
 )
@@ -211,6 +256,60 @@ export function migrateChoiceFields(plan: PlanDoc): PlanDoc {
   to.values = { ...moved, ...to.values }
   plan.steps['19'] = to
   return plan
+}
+
+/**
+ * Sürüm 3 taşıması: hedef ve iş alanları Adım 19'dan uygulama planı adımlarına geçti.
+ * Adım 19 artık yalnız seçimi ve vazgeçişi taşır.
+ * Kurallar:
+ * 1. Boş değer taşınmaz. Boş değer dolu bir değerin üstüne de yazılmaz.
+ * 2. Yeni adımda dolu değer varsa eski değer atılır. Yeni adım kullanıcının son sözüdür.
+ * 3. Yeni adım "tamam" olur, ancak eski adım tamamdıysa ve yeni adımın denetimi geçiyorsa.
+ * 4. Eski sürümde strateji tamamdıysa plan `legacyStrategy` izni alır. Strateji uygulama kilitlenmez.
+ * 5. Yeni zorunlu alanı boş kalan eski adım "taslak" olur. Ekran yanlış "Tamam" göstermez.
+ * İki kez çalışınca sonuç değişmez.
+ */
+export function migratePlanSteps(plan: PlanDoc): PlanDoc {
+  /*
+   * Bu sabitler işlevin içindedir. Taşıma, depo kurulurken çalışır.
+   * Dosyanın altında tanımlanan bir sabit o anda henüz hazır olmaz ve taşıma sessizce başarısız olur.
+   */
+  const GOAL_KEYS = ['objective', 'keyResults']
+  const TASK_KEYS = ['now', 'next', 'later', 'weeklyBottleneck']
+  const filledValue = (x: unknown) => (Array.isArray(x) ? x.length > 0 : typeof x === 'string' ? x.trim() !== '' : x !== undefined && x !== null)
+  const from = plan.steps?.[CHOICE_STEP]
+  if (!from?.values) return plan
+  const dossier = plan.steps[DOSSIER_STEP]
+  const oldFormat = GOAL_KEYS.some((k) => k in from.values) || TASK_KEYS.some((k) => k in from.values) || (from.status === 'tamam' && !filledValue(from.values.winningAim))
+  const oldChoiceDone = from.status === 'tamam' && ['chosenPath', 'choiceReason', 'givenUp'].every((k) => filledValue(from.values[k]))
+  const oldDossierDone = dossier?.status === 'tamam' && Array.isArray(dossier.values.qualityCheck) && dossier.values.qualityCheck.length >= 5
+  if (oldFormat && oldChoiceDone && oldDossierDone && !plan.steps[DIAGNOSIS_STEP] && !plan.legacyStrategy) plan.legacyStrategy = { migratedAt: new Date().toISOString() }
+
+  const move = (keys: readonly string[], target: string, required: string[], issues: (v: Record<string, unknown>) => string[]) => {
+    const moved: Record<string, unknown> = {}
+    for (const key of keys) {
+      if (filledValue(from.values[key])) moved[key] = from.values[key]
+      delete from.values[key]
+    }
+    if (Object.keys(moved).length === 0) return
+    const existed = Boolean(plan.steps[target])
+    const to = plan.steps[target] ?? { values: {}, status: 'taslak' as const, updatedAt: from.updatedAt }
+    const kept = Object.fromEntries(Object.entries(to.values).filter(([, x]) => filledValue(x)))
+    to.values = { ...to.values, ...moved, ...kept }
+    const complete = required.every((k) => filledValue(to.values[k])) && issues(to.values).length === 0
+    if (from.status === 'tamam' && complete && !existed) to.status = 'tamam'
+    plan.steps[target] = to
+  }
+  move(GOAL_KEYS, GOALS_STEP, ['objective', 'keyResults'], goalIssues)
+  move(TASK_KEYS, TASKS_STEP, ['now'], (v) => taskIssues(v, plan))
+  if (oldFormat && from.status === 'tamam' && !['winningAim', 'playField'].every((k) => filledValue(from.values[k]))) from.status = 'taslak'
+  if (oldFormat && dossier?.status === 'tamam' && !filledValue(dossier.values.approvedBy)) dossier.status = 'taslak'
+  return plan
+}
+
+/** Bütün taşımalar. İçe alınan dosya ve depodaki eski kayıt aynı yoldan geçer. İki kez çalışması veriyi bozmaz. */
+export function migratePlan(plan: PlanDoc): PlanDoc {
+  return migratePlanSteps(migrateChoiceFields(plan))
 }
 
 export function useCurrentPlan(): PlanDoc | undefined {

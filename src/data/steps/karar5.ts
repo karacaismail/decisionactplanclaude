@@ -3,6 +3,7 @@ import { ADVANTAGE_LEVELS, STRENGTH_LABEL, strengthsOf } from '@/engine/strength
 import { CROSS_QUESTIONS, ORIGIN_OPTIONS } from '@/engine/situation'
 import { conditionsCalc, DEPENDENCY_OPTIONS, STAKEHOLDER_OPTIONS, DISSENT_OPTIONS, freeBudget, RELATION_OPTIONS, VEHICLE_OPTIONS } from '@/engine/crux'
 import { pathsCalc } from '@/engine/integrity'
+import { DOSSIER_KEYS } from '@/engine/strategy'
 import type { StepDef } from '../schema'
 import { formatDate, formatMoney } from '@/engine/format'
 
@@ -363,7 +364,7 @@ export const KARAR5: StepDef[] = [
     output: 'Ön ölüm listesi. Risk tablosu. Kritik riskler için kural listesi. Geri dönülemez kararlar listesi.',
     outcomeTable: [
       { condition: 'Bir riskin önlemi yok ve etkisi işi bitiriyor', result: 'Bu riski durdurma kuralı yapın. Ya da önce koruyucu bir deney tasarlayın.' },
-      { condition: 'Geri dönülemez bir karar strateji çalışmasından önce gerekiyor', result: 'Kararı küçültün. Kısa kira, küçük stok ve deneme ortaklığı seçin.' },
+      { condition: 'Geri dönülemez bir karar strateji oluşturmadan önce gerekiyor', result: 'Kararı küçültün. Kısa kira, küçük stok ve deneme ortaklığı seçin.' },
     ],
     models: [41, 33],
     completeWhen: ['premortem', 'risks'],
@@ -416,7 +417,7 @@ export const KARAR5: StepDef[] = [
       'Her yol için neyden vazgeçeceğinizi yazın. Bedelini ve geri alınıp alınamayacağını yazın.',
       'Puanlamadan önce ölçütlerin ağırlığını yazın. Ağırlıkları kilitleyin. Sonra her yolu puanlayın.',
       'İsterseniz asıl engeli ve başarı koşullarını yazın. Kanıtı defterden seçin.',
-      'Yol seçmeyin. Strateji çalışmasında verilecek açık kararları listeye yazın.',
+      'Yol seçmeyin. Strateji oluşturmada verilecek açık kararları listeye yazın.',
     ],
     sections: [
       {
@@ -529,7 +530,7 @@ export const KARAR5: StepDef[] = [
       {
         title: 'Açık kararlar',
         optional: true,
-        description: 'Strateji çalışmasında verilecek kararları yazın. Kararı bu adımda vermeyin. Seçenekleri ve dayanağı yazın.',
+        description: 'Strateji oluşturmada verilecek kararları yazın. Kararı bu adımda vermeyin. Seçenekleri ve dayanağı yazın.',
         fields: [
           { key: 'openDecisions', type: 'repeater', label: 'Açık karar defteri', addLabel: 'Karar ekle', columns: [
             { key: 'question', type: 'text', label: 'Karar sorusu', placeholder: 'Hangi fiyat modelini deneyeceğiz?' },
@@ -586,104 +587,54 @@ export const KARAR5: StepDef[] = [
   },
   {
     id: '19',
+    code: '2.4',
     decision: 9,
-    title: 'Seçim, hedefler ve 90 günlük yol',
-    question: 'Hangi yolu seçiyorsunuz? Önümüzdeki 90 günde ne başaracaksınız?',
+    title: 'Seçim ve vazgeçiş',
+    question: 'Hangi yolu seçiyorsunuz? Neyden vazgeçiyorsunuz?',
     mandatory: true,
-    who: 'Stratej ve karar sahibi.',
-    timebox: '2 veya 3 gün.',
-    shortPath: false,
+    who: 'Stratej önerir. Karar sahibi seçer.',
+    timebox: '1 gün.',
+    shortPath: true,
     intro: 'Strateji bir seçimdir. Seçim vazgeçiş içerir. Vazgeçiş yoksa strateji değil dilek listesi vardır.',
     howTo: [
-      'Devir raporundaki yol adaylarını yan yana okuyun. Gerekirse yeni bir yol yazın.',
+      'Sınama sonuçlarını yan yana okuyun. Koşulu tutmayan yola dikkat edin.',
       'Stratej bir yol önerir. Karar sahibi yolu seçer. Gerekçeyi ve dayandığı kanıtı yazın.',
+      'Kazanma hedefini tek cümleyle yazın. Hedef bir dilek değil, bir sonuç olsun.',
+      'Sahayı yazın. Hangi müşteri, hangi yer, hangi ürün?',
       'Neyden vazgeçtiğinizi yazın. Hangi müşteri, bölge, kanal ya da özellik.',
-      'Bir hedef yazın. Üç anahtar sonuç yazın. Her sonuç bir sayı olsun.',
-      'Yolu üç kutuya bölün. Şimdi, sonra ve daha sonra. Şimdi kutusu ilk 90 gündür.',
-      'Her 90 günlük maddeye sahip ve bitiş tarihi yazın.',
     ],
     sections: [
       {
         title: 'Seçim',
         fields: [
-          { key: 'chosenPath', type: 'text', label: 'Seçilen yol', required: true, maxLength: 160, help: 'Yol adaylarından birinin adını yazın ya da yeni bir yol yazın.' },
+          { key: 'chosenPath', type: 'text', label: 'Seçilen yol', required: true, maxLength: 160, help: 'Sınadığınız yollardan birinin adını yazın.' },
           { key: 'choiceReason', type: 'textarea', label: 'Seçimin gerekçesi', required: true, rows: 3, placeholder: 'Bu yolu hangi kanıta dayanarak seçtiniz? Öteki yollar neden elendi?' },
+          { key: 'winningAim', type: 'text', label: 'Kazanma hedefi', required: true, maxLength: 200, help: 'Bu yolla neyi kazanmak istiyorsunuz? Tek cümle yazın.', placeholder: 'Mahallenin sabah kahvesinde ilk tercih olmak.' },
+          { key: 'playField', type: 'textarea', label: 'Saha', required: true, rows: 2, help: 'Hangi müşteriye, hangi yerde, hangi ürünle hizmet vereceksiniz?', placeholder: 'Sabah 7 ile 10 arası işe giden mahalle sakinleri. Durak çevresi. Kahve ve hazır kahvaltı.' },
+        ],
+      },
+      {
+        title: 'Vazgeçiş',
+        fields: [
           { key: 'givenUp', type: 'textarea', label: 'Vazgeçilenler', required: true, rows: 3, placeholder: 'Hangi müşteriden, bölgeden, kanaldan veya özellikten vazgeçtiniz?' },
         ],
       },
-      {
-        title: 'Hedef ve anahtar sonuçlar',
-        fields: [
-          { key: 'objective', type: 'text', label: 'Hedef', required: true, maxLength: 160, placeholder: 'İlk 10 ödeyen müşteriyi kazanmak.' },
-          { key: 'keyResults', type: 'repeater', label: 'Üç anahtar sonuç', addLabel: 'Anahtar sonuç ekle', minRows: 1, maxRows: 3, columns: [
-            { key: 'kr', type: 'text', label: 'Anahtar sonuç', placeholder: 'Ödeyen müşteri sayısı' },
-            { key: 'target', type: 'text', label: 'Hedef sayı', placeholder: '30' },
-          ] },
-        ],
-      },
-      {
-        title: 'Şimdi, sonra, daha sonra',
-        fields: [
-          { key: 'now', type: 'repeater', label: 'Şimdi. İlk 90 gün.', addLabel: 'İş ekle', minRows: 1, columns: [
-            { key: 'action', type: 'text', label: 'İş' },
-            { key: 'owner', type: 'text', label: 'Sahibi' },
-            { key: 'dueDate', type: 'date', label: 'Bitiş tarihi' },
-          ] },
-          { key: 'next', type: 'repeater', label: 'Sonra. 90 günden sonraki 3 ay.', addLabel: 'İş ekle', columns: [
-            { key: 'action', type: 'text', label: 'İş' },
-            { key: 'owner', type: 'text', label: 'Sahibi' },
-            { key: 'dueDate', type: 'date', label: 'Bitiş tarihi' },
-          ] },
-          { key: 'later', type: 'repeater', label: 'Daha sonra. 6 aydan sonrası.', addLabel: 'İş ekle', columns: [
-            { key: 'action', type: 'text', label: 'İş' },
-            { key: 'owner', type: 'text', label: 'Sahibi' },
-            { key: 'dueDate', type: 'date', label: 'Bitiş tarihi' },
-          ] },
-        ],
-      },
-      {
-        title: 'Haftalık soru',
-        fields: [
-          { key: 'weeklyBottleneck', type: 'toggle', label: 'Haftalık darboğaz sorusu takvimde mi?', help: 'Soru şudur: "Bu hafta ilerlememi engelleyen tek şey ne?"', onLabel: 'Evet, takvimde', offLabel: 'Hayır' },
-        ],
-      },
     ],
-    output: 'Seçilen yol ve gerekçesi. Vazgeçilenler. Hedef ve 3 anahtar sonuç. 90 günlük liste.',
+    output: 'Seçilen yol ve gerekçesi. Kazanma hedefi ve saha. Vazgeçilenler.',
     models: [65, 64, 123],
-    completeWhen: ['chosenPath', 'choiceReason', 'givenUp', 'objective', 'keyResults', 'now'],
-    chart: {
-      kind: 'bar',
-      title: '90 günlük zaman çizelgesi',
-      summary: (v) => {
-        const items = rows(v.now).filter((r) => r.dueDate)
-        if (!items.length) return ''
-        const late = items.filter((r) => new Date(String(r.dueDate)).getTime() < Date.now()).length
-        return late ? `${late} işin tarihi geçti. Tarihleri gözden geçirin.` : `${items.length} iş tarihli. Hepsi ileride.`
-      },
-      build: (v) => {
-        const items = rows(v.now).filter((r) => r.dueDate && r.action)
-        if (!items.length) return null
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        const days = items.map((r) => Math.round((new Date(String(r.dueDate)).getTime() - today.getTime()) / 86400000))
-        const labels = items.map((r) => String(r.action))
-        return {
-          option: { grid: { left: 160, right: 40, top: 16, bottom: 32 }, xAxis: { type: 'value', name: 'gün', max: Math.max(90, ...days) }, yAxis: { type: 'category', data: labels }, series: [{ type: 'bar', data: days, label: { show: true, position: 'right' }, markLine: { symbol: 'none', data: [{ xAxis: 90, name: '90 gün' }] } }] },
-          table: { head: ['İş', 'Sahibi', 'Bitiş tarihi', 'Kaç gün kaldı?'], rows: items.map((r, i) => [labels[i], String(r.owner ?? ''), formatDate(String(r.dueDate)), days[i]]) },
-        }
-      },
-    },
+    completeWhen: ['chosenPath', 'choiceReason', 'winningAim', 'playField', 'givenUp'],
   },
   {
     id: '20',
+    code: 'Çıkış kapısı',
     decision: 9,
-    title: 'Strateji karar dosyası',
+    title: 'Strateji belgesi',
     question: 'Kararınızı iki sayfada anlatabiliyor musunuz?',
     mandatory: true,
-    who: 'Kurucu.',
+    who: 'Stratej yazar. Karar sahibi onaylar.',
     timebox: '1 gün.',
-    shortPath: false,
-    intro: 'Karar dosyası, bu plandaki bütün cevapların kısa özetidir. En çok 2 sayfa olur. Dış göz bu dosyayı okur.',
+    shortPath: true,
+    intro: 'Strateji belgesi, teşhisin, seçimin ve ana hamlelerin kısa özetidir. En çok 2 sayfa olur. Karar sahibi bu belgeyi onaylar.',
     howTo: [
       'On bir başlığı sırayla doldurun. Her başlığa iki veya üç cümle yazın.',
       'Önceki adımlardaki cevapları kullanın. Yeni bilgi uydurmayın.',
@@ -697,12 +648,12 @@ export const KARAR5: StepDef[] = [
           { key: 'dossier1', type: 'textarea', label: '1. Profil ve niyet', rows: 2, span: 12 },
           { key: 'dossier2', type: 'textarea', label: '2. Problem ve ilk segment', help: 'Kanıt basamağını da yazın.', rows: 2, span: 12 },
           { key: 'dossier3', type: 'textarea', label: '3. Talep testi sonucu', rows: 2, span: 12 },
-          { key: 'dossier4', type: 'textarea', label: '4. Seçilen yol ve vazgeçilenler', help: 'Adım 19\'daki seçimi ve gerekçesini yazın.', rows: 2, span: 12 },
+          { key: 'dossier4', type: 'textarea', label: '4. Seçilen yol ve vazgeçilenler', help: 'Seçim adımındaki yolu ve gerekçesini yazın.', rows: 2, span: 12 },
           { key: 'dossier5', type: 'textarea', label: '5. Para mantığı', help: 'Üç durumla yazın.', rows: 2, span: 12 },
           { key: 'dossier6', type: 'textarea', label: '6. Kritik varsayımlar ve test planı', rows: 2, span: 12 },
           { key: 'dossier7', type: 'textarea', label: '7. Kritik riskler ve kurallar', rows: 2, span: 12 },
           { key: 'dossier8', type: 'textarea', label: '8. Durdurma kuralları', rows: 2, span: 12 },
-          { key: 'dossier9', type: 'textarea', label: '9. Hedef ve 90 günlük liste', rows: 2, span: 12 },
+          { key: 'dossier9', type: 'textarea', label: '9. Teşhis ve ana hamleler', help: 'Asıl güçlüğü ve seçimi hayata geçirecek hamleleri yazın.', rows: 2, span: 12 },
           { key: 'dossier10', type: 'textarea', label: '10. Açık sorular', rows: 2, span: 12 },
           { key: 'dossier11', type: 'textarea', label: '11. İlk teslim ve geri dönüş', help: 'İlk teslimi kim, ne zaman, hangi bütçeyle yapacak? Hangi koşulda kim önceki düzene dönecek?', rows: 3, span: 12 },
         ],
@@ -721,13 +672,21 @@ export const KARAR5: StepDef[] = [
           { key: 'counterView', type: 'textarea', label: 'Karşı görüş', required: true, rows: 3, placeholder: 'Bu karar neden yanlış olabilir? Hangi kanıt bizi durdurur?' },
         ],
       },
+      {
+        title: 'Onay',
+        description: 'Strateji oluşturma bu onayla biter. Onaydan sonra strateji uygulama açılır.',
+        fields: [
+          { key: 'approvedBy', type: 'text', label: 'Onaylayan karar sahibi', required: true, maxLength: 120, span: 12 },
+          { key: 'approvedAt', type: 'date', label: 'Onay tarihi', span: 12 },
+        ],
+      },
     ],
-    output: '2 sayfalık karar dosyası.',
+    output: '2 sayfalık strateji belgesi. Karar sahibinin onayı.',
     outcomeTable: [
-      { condition: 'Dosya eksik ama kurucu geçmek istiyor', result: 'Geçmeyin. Eksiği dış göze gösterin.' },
-      { condition: 'Beş sorudan birine "hayır" diyorsunuz', result: 'O başlığı düzeltin. Sonra strateji özetine dönün.' },
+      { condition: 'Belge eksik ama kurucu geçmek istiyor', result: 'Geçmeyin. Eksiği dış göze gösterin.' },
+      { condition: 'Beş sorudan birine "hayır" diyorsunuz', result: 'O başlığı düzeltin. Sonra strateji oluşturma özetine dönün.' },
     ],
     models: [20],
-    completeWhen: ['dossier1', 'dossier2', 'dossier3', 'dossier4', 'dossier5', 'dossier6', 'dossier7', 'dossier8', 'dossier9', 'dossier11', 'qualityCheck', 'counterView'],
+    completeWhen: [...DOSSIER_KEYS, 'qualityCheck', 'approvedBy'],
   },
 ]

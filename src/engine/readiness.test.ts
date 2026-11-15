@@ -58,7 +58,7 @@ describe('evaluateReadiness', () => {
 })
 
 describe('geçiş kararı', () => {
-  it('karar yokken strateji çalışması ve Karar 6 kilitlidir', () => {
+  it('karar yokken strateji oluşturma ve Karar 6 kilitlidir', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = [1, 2, 3, 4, 5].map((n) => decision(n))
     expect(transitionPassed(p)).toBe(false)
@@ -70,7 +70,7 @@ describe('geçiş kararı', () => {
     p.transitions = [transition()]
     expect(transitionPassed(p)).toBe(true)
     expect(decisionLocked(p, 9)).toBe(false)
-    // Karar 6 ayrıca biten strateji çalışmasını bekler.
+    // Karar 6 ayrıca biten strateji oluşturmayı bekler.
     expect(decisionLocked(p, 6)).toBe(true)
   })
   it('"Henüz hazır değil" kararı kilidi açmaz', () => {

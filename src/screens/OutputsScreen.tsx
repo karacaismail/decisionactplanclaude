@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
 import { Link, useSearchParams } from 'react-router'
-import { usePlanStore, useCurrentPlan } from '@/store/planStore'
+import { usePlanStore, useCurrentPlan, migratePlan } from '@/store/planStore'
 import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
 import { buildHandoffReport, handoffToMarkdown, type HandoffReport } from '@/reports/handoff'
 import { formatDate, uid } from '@/engine/format'
@@ -35,7 +35,8 @@ function download(name: string, content: string, type: string) {
 function parseSnapshot(r: Revision): PlanDoc | null {
   try {
     const doc = JSON.parse(r.snapshot) as PlanDoc
-    return doc && typeof doc === 'object' && Array.isArray(doc.decisions) ? { ...doc, revisions: [] } : null
+    /* Eski sürümün anlık görüntüsü de güncel alan yerleşimine taşınır. Böylece rapor aynı yerden okur. */
+    return doc && typeof doc === 'object' && Array.isArray(doc.decisions) ? migratePlan({ ...doc, revisions: [] }) : null
   } catch {
     return null
   }
