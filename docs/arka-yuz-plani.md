@@ -35,6 +35,7 @@ Bu kararları karar sahibi 15 Kasım 2026 Pazar günü verdi. Plan bu kararlara 
 | iPhone | Kullanıcıdan uygulamayı ana ekrana eklemesi istenir. |
 | Oturum süresi | 7 gün |
 | Arka yüz deposu | Ayrı bir public depo. Ön yüz deposu aynı kalır. |
+| TLS sertifikasının yenilenmesi | Otomatik. Yöntem 9.1 bölümündedir. |
 
 ### 1.2. Terimler
 
@@ -494,20 +495,41 @@ Bu işler yazılım işi değildir. Sunucu ve alan adı işidir. İş sırası �
 | 2 | Alt alan adları için DNS kaydının türünü, adını ve değerini yazar. | Hüseyin Cengiz | 1. iş ve ana alan adı kararı | Kayıt bilgisi yazılı olarak Asistan Hüseyin'e verildi. |
 | 3 | DNS kaydını GoDaddy'de açar. | Asistan Hüseyin | 2. iş | Kayıt GoDaddy'de görünüyor. |
 | 4 | DNS kaydının doğru çalıştığını doğrular. | Hüseyin Cengiz | 3. iş | İki deneme alt adı sunucuya ulaşıyor. |
-| 5 | TLS sertifikası için gereken DNS doğrulama kaydının bilgisini yazar. | Hüseyin Cengiz | 4. iş | Bilgi yazılı olarak Asistan Hüseyin'e verildi. |
-| 6 | Doğrulama kaydını GoDaddy'de açar. | Asistan Hüseyin | 5. iş | Kayıt GoDaddy'de görünüyor. |
-| 7 | Sertifikayı kurar ve doğrular. | Hüseyin Cengiz | 6. iş | Bir deneme alt adı güvenli bağlantıyla açılıyor. |
+| 5 | Doğrulama sunucusunu kurar. Doğrulama kaydının yönlendirme bilgisini yazar. | Hüseyin Cengiz | 4. iş | Bilgi yazılı olarak Asistan Hüseyin'e verildi. |
+| 6 | Yönlendirme kaydını GoDaddy'de bir kez açar. | Asistan Hüseyin | 5. iş | Kayıt GoDaddy'de görünüyor. |
+| 7 | Yönlendirmeyi doğrular. Sertifikayı ilk kez alır ve kurar. | Hüseyin Cengiz | 6. iş | Bir deneme alt adı güvenli bağlantıyla açılıyor. |
 | 8 | Frappe'de alan adına göre site seçimini açar. | Hüseyin Cengiz | 7. iş | İki deneme sitesi iki farklı adreste açılıyor. |
 | 9 | Kurum açma adımlarını yazar. | Hüseyin Cengiz | 8. iş | Yeni bir kurum yazılı adımlarla açılıyor. Süre ölçüldü. |
 | 10 | Her site için yedek kurar. Yedek özel dosyaları ve sitenin şifreleme anahtarını da kapsar. | Hüseyin Cengiz | 8. iş | Bir sitenin yedeği başka bir sunucuya geri yüklendi ve açıldı. |
 | 11 | İki ayrı kurulum hazırlar: deneme ve üretim. | Hüseyin Cengiz | 8. iş | Deneme kurulumunda bir ya da iki deneme sitesi var. |
 | 12 | Yayın akışını kurar. Akış önce deneme kurulumuna, sonra üretime çıkar. Akış her yayından önce yedek alır. | Hüseyin Cengiz | 10. ve 11. iş | Bir güncelleme önce denemeye, sonra üretime çıktı. |
 | 13 | Geri dönüş adımlarını yazar ve dener. | Hüseyin Cengiz | 12. iş | Bozuk bir güncelleme deneme kurulumunda geri alındı. |
-| 14 | İzleme ve uyarı kurar. | Hüseyin Cengiz | 8. iş | Bir site kapanınca uyarı geliyor. |
+| 14 | İzleme ve uyarı kurar. | Hüseyin Cengiz | 8. iş | Bir site kapanınca uyarı geliyor. Sertifikanın bitmesine 30 gün kalınca uyarı geliyor. |
+| 15 | Otomatik yenileme işini kurar. Önce karar sahibinin açık onayını alır. | Hüseyin Cengiz | 7. iş ve karar sahibinin onayı | Deneme yenilemesi hatasız geçiyor. |
 
 Bir Frappe kurulumundaki bütün siteler aynı kodu kullanır. Bu yüzden bir güncelleme bütün sitelere aynı anda geçer. Deneme kurulumu bu riski azaltır.
 
-TLS sertifikası en geç 90 günde bir yenilenir. Bütün alt adları kapsayan sertifika her yenilemede yeni bir DNS doğrulama kaydı ister. Bu yenilemenin nasıl yapılacağına siz karar verirsiniz. Seçenekler 12. bölümdedir.
+### 9.1. TLS sertifikasının otomatik yenilenmesi
+
+Sertifika en geç 90 günde bir yenilenir. Bütün alt adları kapsayan sertifika her yenilemede yeni bir DNS doğrulama kaydı ister. Karar sahibi 15 Kasım 2026 Pazar günü otomatik yenilemeyi seçti.
+
+**Bir engel buldum.** GoDaddy, DNS kayıtlarını yazılımla değiştirme izni olan erişim anahtarını 2024'te kısıtladı. Kaynaklara göre anahtar yalnız belirli koşullarda veriliyor. Örneğin hesapta en az 10 alan adı olmalı ya da ücretli bir üyelik olmalı. Kaynaklar koşul konusunda birbiriyle çelişiyor. Bu yüzden GoDaddy erişim anahtarına dayanmıyoruz.
+
+**Önerdiğim yöntem: doğrulama kaydını bir kez yönlendirmek.**
+
+1. Hüseyin Cengiz kendi sunucumuzda küçük bir doğrulama sunucusu kurar. Bu sunucunun adı acme-dns'tir.
+2. Asistan Hüseyin GoDaddy'de bir kez bir yönlendirme kaydı açar. Kayıt, doğrulama sorusunu bizim doğrulama sunucumuza gönderir.
+3. Her yenilemede sertifika aracı doğrulama kaydını kendi sunucumuza yazar. GoDaddy'ye dokunmaz.
+
+Bu yöntemin üç faydası var:
+
+1. GoDaddy erişim anahtarı gerekmez.
+2. Sunucuda GoDaddy hesabını değiştirebilen bir anahtar durmaz. Sunucu ele geçirilse de alan adı güvende kalır.
+3. Asistan Hüseyin yalnız bir kez iş yapar.
+
+**Zamanlanmış iş kuralı.** Otomatik yenileme bir zamanlanmış iştir. Sertifika aracı kurulurken böyle bir işi kendiliğinden de kurabilir. Karar sahibinin kalıcı kuralı şudur: zamanlanmış iş ancak karar sahibi açıkça "cron kur" derse kurulur. "Otomatik yenilensin" cevabı yöntemi seçer. Kurulum izni değildir. Hüseyin Cengiz 15. işten önce bu onayı alır.
+
+Yenileme başarısız olursa izleme uyarı verir. Sertifikanın bitmesine 30 gün kala uyarı gelir. Böylece elle müdahale için zaman kalır.
 
 ## 10. Yapım sırası
 
@@ -544,9 +566,8 @@ Her aşama bir öncekine dayanır. Her aşamada önce başarısız olan test yaz
 1. **Oturum süresi kaç gün olsun?** Bu soruyu cevapladınız. Cevabınız 7 gün oldu. Süre dolunca kullanıcı internet gelince yeniden giriş yapar.
 2. **Ana alan adı ne olacak?** Kurumlar bu adın alt adlarında açılır. Bu karar 2. kurulum işinden önce gerekir.
 3. **Arka yüz kodu ayrı bir depoda mı dursun?** Bu soruyu cevapladınız. Cevabınız "ayrı bir public depo" oldu. Deponun adı ve lisansı 1. aşamadan önce sizinle belirlenir. Lisansı siz seçersiniz.
-4. **TLS sertifikası nasıl yenilensin?** İki seçenek var:
-   - Asistan Hüseyin her yenilemede doğrulama kaydını GoDaddy'de elle açar. Bu iş en geç 90 günde bir tekrarlanır.
-   - Yenileme otomatik yapılır. Bu seçenek bir zamanlanmış iş ve GoDaddy erişim anahtarı ister. Zamanlanmış iş için açık onayınız gerekir.
+4. **TLS sertifikası nasıl yenilensin?** Bu soruyu cevapladınız. Cevabınız "otomatik" oldu. Yöntem 9.1 bölümündedir.
+5. **Otomatik yenileme işi kurulsun mu?** Bu iş bir zamanlanmış iştir. Kalıcı kuralınıza göre işin kurulması için açıkça "cron kur" demeniz gerekir. Bu karar 15. kurulum işinden önce gerekir.
 
 ## 13. İlk sürümden bu yana ne değişti?
 
@@ -589,3 +610,10 @@ Bu konuları kaynak kodda okudum ya da önerdim. Çalışan bir sunucuda sınama
 5. Tarayıcının şifreleme anahtarını IndexedDB'de saklayabildiği Chrome ve Safari'de denenmeli.
 6. Akış sayacının iki eşzamanlı işlemde doğru çalıştığı 4. aşamada denenmeli.
 7. Plan gerçek okurla denenmedi.
+
+## Kaynaklar
+
+- [Let's Encrypt topluluğu, GoDaddy erişim kısıtı, 2024](https://community.letsencrypt.org/t/godaddy-no-longer-allows-api-access-to-clients-e-g-for-dns-based-cert-renewal-if-you-have-less-than-50-domains/219377)
+- [Let's Encrypt topluluğu, GoDaddy erişim kuralı güncellemesi](https://community.letsencrypt.org/t/godaddy-api-access-policy-update/246372)
+- [Let's Encrypt topluluğu, doğrulama kaydının yönlendirilmesi](https://community.letsencrypt.org/t/help-understanding-dns-01-domain-delegation/149196)
+
