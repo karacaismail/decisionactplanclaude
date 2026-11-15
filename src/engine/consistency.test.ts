@@ -14,9 +14,10 @@ import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, STAGES } from '@/data/stages
 import { emptyPlan, type Decision, type PlanDoc, type TransitionRecord } from '@/data/types'
 import { buildHandoffReport } from '@/reports/handoff'
 import { buildActionPlan, buildExecutiveReport } from '@/reports/build'
-import { applyStepValues, markStaleAfterGate } from './changes'
+import { applyStepValues, markStaleAfterGate, applySkip } from './changes'
 import { decisionLocked, evaluateGate, gatePassed, lockReason, lockTarget, strategyDone } from './gate'
 import { requiredKeys, sectionStats } from '@/components/FormRenderer'
+import { PLAN_STEPS } from './strategy'
 import decisionsSrc from '@/data/decisions.ts?raw'
 import transitionSrc from './transition.ts?raw'
 import readinessSrc from './readiness.ts?raw'
@@ -355,6 +356,25 @@ describe('eskime kuralı süreç sırasını izler', () => {
     expect(EXECUTION_DECISIONS.map((n) => gatePassed(p, n))).toEqual([false, false, false])
     expect(FOUNDATION_DECISIONS.every((n) => gatePassed(p, n))).toBe(true)
     expect(transitionPassed(p)).toBe(true)
+  })
+  it('uygulama planı adımı (3.1, 3.2, 3.3) değişince hiçbir karar eskimez', () => {
+    for (const step of PLAN_STEPS) {
+      const p = fullPlan()
+      applyStepValues(p, step, { objective: 'Yeni hedef', now: [{ action: 'İş', owner: 'Ali' }], resources: [{ item: 'Tezgâh' }] })
+      expect([step, EXECUTION_DECISIONS.map((n) => gatePassed(p, n))]).toEqual([step, [true, true, true]])
+      expect(transitionPassed(p)).toBe(true)
+      applySkip(p, step, 'Bu adım bu işte gerekmiyor.')
+      expect([step, EXECUTION_DECISIONS.map((n) => gatePassed(p, n))]).toEqual([step, [true, true, true]])
+    }
+  })
+  it('hiçbir kapı, geçiş kapısı ya da strateji ölçütü uygulama planı adımlarını okumaz', () => {
+    const p = fullPlan()
+    const all = [...DECISIONS.map((d) => d.gate), STRATEGY.gate]
+    const read = stepsRead(p, (x) => {
+      for (const g of all) g.criteria.forEach((c) => c.check(x))
+      evaluateReadiness(x)
+    })
+    expect(PLAN_STEPS.filter((id) => read.has(id))).toEqual([])
   })
   it('yol adayları (Adım 18) değişince Kapı 5, geçiş kararı ve uygulama eskir', () => {
     const p = fullPlan()

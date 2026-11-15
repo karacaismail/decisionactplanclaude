@@ -343,3 +343,20 @@ test('3.5 bağlantısı gözden geçirme kartına gider ve odağı oraya taşır
   await page.getByRole('link', { name: 'Gözden geçirme kaydını aç' }).click()
   await expect(page.locator('#yenileme h2')).toBeFocused()
 })
+
+test('3.1 adımını değiştirmek uygulama kapılarının kararlarını eskitmez', async ({ page }) => {
+  await openDemo(page)
+  await patchPlan(
+    page,
+    `${TRANSITION}${STRATEGY_DONE}
+     plan.decisions.push({ id: 'k6', gate: 6, scope: '', criteria: [], suggested: 'ilerle', chosen: 'ilerle', reason: 'Ölçüler geçti.', retriesLeft: 1, decidedBy: 'Kurucu', decidedAt: new Date().toISOString(), revision: plan.revision })
+     plan.steps['U31'] = { values: { objective: 'İlk 10 müşteri', keyResults: [{ _id: 'g1', kr: 'Müşteri', baseline: '0', target: '10' }] }, status: 'tamam', updatedAt: new Date().toISOString() }`,
+  )
+  await page.goto('/#/karar/6/adim/U31')
+  await page.locator('#aU31-objective').fill('İlk 12 müşteri')
+  await expect.poll(() => stored(page, `plan.steps['U31'].values.objective`)).toBe('İlk 12 müşteri')
+  expect(await stored(page, `plan.decisions.find((d) => d.gate === 6).stale ?? false`)).toBe(false)
+  // Karar 7 açık kalır. Kapı 6 kararı geçerlidir.
+  await page.goto('/#/karar/7')
+  await expect(page.getByRole('alert').filter({ hasText: 'Bu karar kilitli' })).toHaveCount(0)
+})

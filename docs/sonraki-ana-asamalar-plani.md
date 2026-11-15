@@ -239,7 +239,7 @@ On alt aşamanın onu da artık yazılımda bir yere sahiptir.
 2. "Organizasyonu hizalama"yı eledim. Çok kişili ekipte gerekirse 3.2'ye eklerim.
 3. "Yeniden aç" kararı uygulamayı kilitlemiyor. Uygulama eski seçimle sürüyor. Kilitlemesini isterseniz kuralı değiştiririm.
 4. Adım 18'deki "Asıl engel" bölümü kalsın mı? Önerim: gerçek deneme bitene kadar kalsın.
-5. 3.1, 3.2 ya da 3.3 adımında bir alan değişince Kapı 6, 7 ve 8'in kararları eskir. Örneğin bir sorumlunun adını düzeltmek de bu kararları eskitir. Bunu istiyor musunuz? Önerim: istemeyin. Bu adımları Kapı 6 okumuyor. Onayınızla eskimeyi kaldırırım.
+5. 3.1, 3.2 ya da 3.3 adımı değişince kapı kararları eskisin mi? Bu soruyu cevapladınız. Cevabınız "hayır" oldu. Kural 15 Kasım 2026 Pazar günü uygulandı.
 
 ## 8. Sınırlar
 
@@ -331,7 +331,7 @@ Birinci ve ikinci hata için kural testlere girdi: hiçbir kapı kısa yolda giz
 | Ekranda eski adlar kalmıştı. Örneğin "Temel, geçiş ve uygulama." | Yedi yerdeki adı düzelttim. |
 | Erişilebilirlik ve metin bulguları | Kart başlıkları sayfa başlığı oldu. Form alanları hata ve yardım metnine bağlandı. Dokuz cümleyi yeniden yazdım. |
 
-Bir bulguyu karara bıraktım. 7. bölümün 5. sorusu odur.
+Bir bulguyu karara bıraktım. 7. bölümün 5. sorusu odur. Siz bu soruyu cevapladınız. Uygulama planı adımları artık hiçbir kararı eskitmez.
 
 ### 9.6. Yazılım neyi yapmaz?
 

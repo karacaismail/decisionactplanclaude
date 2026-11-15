@@ -3,6 +3,7 @@
  * Sınır değişiklikleri kayda geçer. Tek kurucuda artış ikinci görüş ister.
  * Bu dosyadaki işlevler planı yerinde değiştirir ve "değişti mi?" döndürür.
  */
+import { PLAN_STEPS } from './strategy'
 import { STRATEGY_N } from '@/data/decisions'
 import { STEPS } from '@/data/registry'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS } from '@/data/stages'
@@ -38,12 +39,20 @@ function filled(v: unknown): boolean {
 
 /**
  * Adım değişince eskiyen ilk kapı. Profil ve sınırlar 1. karara bağlıdır.
- * Strateji oluşturmanın adımları (19 ve 20) süreçte Karar 6'dan önce gelir.
+ * Strateji oluşturmanın adımları süreçte Karar 6'dan önce gelir.
  * Bu adımlar değişince Kapı 6, 7 ve 8'in kararları eskir. Geçiş kararı eskimez.
+ * Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kapı okumaz. Bu adımlar değişince hiçbir karar eskimez: null döner.
  */
-export function gateOfStep(step: string): number {
+export function gateOfStep(step: string): number | null {
+  if (PLAN_STEPS.includes(step)) return null
   const n = STEPS[step]?.decision ?? 1
   return n === STRATEGY_N ? EXECUTION_DECISIONS[0] : n
+}
+
+/** Adımın kapısından başlayarak kararları eskitir. Hiçbir kapının okumadığı adımda bir şey yapmaz. */
+function markStaleForStep(plan: PlanDoc, step: string): number {
+  const gate = gateOfStep(step)
+  return gate === null ? 0 : markStale(plan, gate)
 }
 
 export function isSingleFounder(plan: PlanDoc): boolean {
@@ -132,7 +141,7 @@ export function applyStepValues(plan: PlanDoc, step: string, values: StepValues,
   plan.steps[step] = { values: merged, status: nextStatus, updatedAt: new Date().toISOString() }
   if (valuesChanged) {
     if (step === LIMITS_STEP) recordChanges(plan, LIMITS_STEP, prev?.values ?? {}, merged)
-    markStale(plan, gateOfStep(step))
+    markStaleForStep(plan, step)
   }
   return true
 }
@@ -161,7 +170,7 @@ export function applySkip(plan: PlanDoc, step: string, reason: string): boolean 
   const prev = plan.steps[step]
   if (prev?.status === 'atlandi' && prev.skipReason === reason) return false
   plan.steps[step] = { values: prev?.values ?? {}, status: 'atlandi', skipReason: reason, updatedAt: new Date().toISOString() }
-  markStale(plan, gateOfStep(step))
+  markStaleForStep(plan, step)
   return true
 }
 

@@ -20,6 +20,11 @@ export const DOSSIER_STEP = '20'
 export const GOALS_STEP = 'U31'
 export const TASKS_STEP = 'U32'
 export const RESOURCES_STEP = 'U33'
+/**
+ * Uygulama planı adımları: 3.1, 3.2 ve 3.3. Hiçbir kapı bu adımları okumaz.
+ * Bu yüzden bu adımlar değişince hiçbir kapı kararı eskimez. Kullanıcı kararı, 15 Kasım 2026.
+ */
+export const PLAN_STEPS = [GOALS_STEP, TASKS_STEP, RESOURCES_STEP]
 /** Strateji belgesinde dolu olması gereken alanlar. Adımın tamamlanması ve çıkış kapısı aynı listeyi okur. */
 export const DOSSIER_KEYS = ['dossier1', 'dossier2', 'dossier3', 'dossier4', 'dossier5', 'dossier6', 'dossier7', 'dossier8', 'dossier9', 'dossier11', 'counterView']
 export const QUALITY_MIN = 5

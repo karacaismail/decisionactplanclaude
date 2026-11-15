@@ -118,9 +118,11 @@ Bir veri değişirse o veriye dayanan kararlar eskir. Eskiyen karar yeniden ince
 | Bir temel adımına bağlı kanıt silindi | O adımın kapısı, sonraki kapılar ve geçiş kararı | Önceki kapılar |
 | Bir temel kapısı yeniden karara bağlandı | Sonraki kapılar ve geçiş kararı | O kapı ve önceki kapılar |
 | Bir strateji oluşturma adımı, örneğin 2.4 | Kapı 6, 7 ve 8 | Temel kapıları ve geçiş kararı |
-| Bir uygulama planı adımı, örneğin 3.2 | Kapı 6, 7 ve 8 | Temel kapıları ve geçiş kararı |
+| Bir uygulama planı adımı, örneğin 3.2 | Hiçbir karar | Bütün kapı kararları ve geçiş kararı |
 | Karar sahibi stratejiyi yeniden açtı | Kapı 6, 7 ve 8 | Temel kapıları ve geçiş kararı |
 | Bir uygulama adımı, örneğin Adım 24 | O adımın kapısı ve sonraki kapılar | Temel kapıları ve geçiş kararı |
+
+Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kapı okumaz. Bu yüzden bu adımlar değişince hiçbir karar eskimez. Örneğin bir sorumlunun adını düzeltmek Karar 7'yi kilitlemez. Bu kural kullanıcının 15 Kasım 2026 Pazar günü verdiği karardır. Bir kapı ileride bu adımları okursa kural testte kırılır.
 
 Bir örnek verelim. Karar sahibi Adım 18'e yeni bir yol adayı ekler. Kapı 5 ve geçiş kararı eskir. Karar sahibi ikisini yeniden kaydeder.
 

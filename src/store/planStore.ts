@@ -160,9 +160,12 @@ export const usePlanStore = create<PlanState>()(
           const gone = p.evidence.filter((e) => ids.includes(e.id))
           if (gone.length === 0) return
           p.evidence = p.evidence.filter((e) => !ids.includes(e.id))
-          const gates = gone.flatMap((e) => e.linkedSteps.map((st) => gateOfStep(st)))
+          const linked = gone.flatMap((e) => e.linkedSteps)
+          const gates = linked.map((st) => gateOfStep(st)).filter((g): g is number => g !== null)
           // Bağlı adım yazılmadıysa kanıt bütün temeli ilgilendirir.
-          markStale(p, gates.length > 0 ? Math.min(...gates) : 1)
+          if (linked.length === 0) markStale(p, 1)
+          // Kanıt yalnız hiçbir kapının okumadığı adımlara bağlıysa hiçbir karar eskimez.
+          else if (gates.length > 0) markStale(p, Math.min(...gates))
         }),
       recordTransition: (t) => {
         const id = uid('gecis')
