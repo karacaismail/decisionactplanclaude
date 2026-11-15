@@ -432,6 +432,8 @@ Aynı Git sürümünden dört çıktı çıkar. Bunlar bir Frappe paketi, bir PW
 
 ## 4. Planda kalanlar
 
+**Güncellik notu.** Bu eleştiri 15 Kasım 2026 Pazar günü bütünleşik rapora işlendi. Bütünleşik raporda iki parça değişti. Kilitli genel akış sayacı, plan başına Akış Başlığı oldu. Gösterge Ölçümü, Hedef ve Gözlem kayıtları oldu. Güncel tasarım bütünleşik rapordadır.
+
 Bu parçalar yeni hedeflerle de geçerli kalır:
 
 - Altı modül ve tek yazar ilkesi
