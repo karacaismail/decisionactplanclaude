@@ -84,6 +84,72 @@ Sunucu sürümünde bu bağ Plan modülünün içinde kalır. İş ve hedef ayn�
 - İşi olmayan bir hedef için uyarı çıkar.
 - 3.1, 3.2 ya da 3.3 değişince hiçbir kapı kararı eskimez. Bu davranışı bugünkü koruma testleri de denetler.
 
+## Not 3. İhtiyaç, zamanlama, hazırlık ve kapsam ayrı sorulur
+
+Ürün sahibi bu notu 16 Kasım 2026 Pazartesi günü verdi.
+
+### Notun kendisi
+
+Uzmanlar stratejik planlama ihtiyacını çalışan sayısına ya da ciroya göre ölçmüyor. Uzmanlar üç açıdan bakıyor:
+
+| Açı | Uzmanlar | Soru |
+|---|---|---|
+| Ortam | Ansoff ve Mintzberg | Ortam ne kadar hızlı değişiyor? Ne kadar durağan? |
+| Büyüme evresi | Churchill ve Lewis, Greiner, Gersick | Şirket hangi evrede? Aile şirketiyse sahiplik hangi kuşakta? |
+| Önündeki zorluk | Rumelt | Şirketin önünde çözmesi gereken hangi zorluk var? |
+
+"Hangi işletmede yapılmaz" listesindeki maddelerin çoğu ihtiyaç ölçütü değildir. Bu maddeler zamanlama, hazırlık ya da kapsam ölçütüdür:
+
+| Madde | Türü |
+|---|---|
+| Nakit krizi | Zamanlama |
+| Seçim yapma imkânı yok | İhtiyaç. Uzman desteği zayıf. |
+| Fikir çok yeni | Zamanlama. Kanıtlar çelişkili. |
+| Patron karar vermek istemiyor | Hazırlık |
+| Karar başka yerde veriliyor | Kapsam |
+| İş kısa ömürlü | Hiçbir uzman desteklemiyor. |
+
+Bu bilgiler `reports/Stratejik planlama ihtiyacı sınıflaması.md` dosyasından geliyor.
+
+### Bugün kodda ne var?
+
+- Plan açılırken bir profil soruluyor. Profilde pazar, düzenleme, ekip, finansman, başlangıç türü ve gruba bağlılık var. Kaynak: `src/data/types.ts`.
+- Pazarın yeni ya da var olan olduğu soruluyor. Ortamın değişim hızı sorulmuyor.
+- Büyüme evresi ve aile şirketinin sahiplik kuşağı sorulmuyor.
+- Başlangıç ekranında "Acil zarar tehlikesi var" seçeneği var. Bu seçenek işi durdurmayı öneriyor. Kaynak: `src/screens/StartScreen.tsx`.
+- Nakdin kaç ay yettiği plan açılırken sorulmuyor. Para hesabı ancak Adım 16'da yapılıyor.
+- Önündeki zorluk ancak 2.1 "Teşhis" adımında yazılıyor.
+- Karar sahibinin seçmeye hazır olup olmadığı hiçbir yerde sorulmuyor.
+- Kapsam yalnız "gruba bağlı mı?" sorusuyla kısmen soruluyor. Kararın gerçekten kimde olduğu sorulmuyor.
+
+### Geliştirmede ne yapılacak?
+
+1. Plan açılışına kısa bir ön değerlendirme eklenir. Ön değerlendirme dört ayrı ekran parçasıyla gösterilir.
+2. **İhtiyaç parçası** üç soru sorar:
+   - Şirketin önündeki zorluk nedir? Kullanıcı bir cümle yazar.
+   - Ortam ne kadar hızlı değişiyor?
+   - Şirket hangi büyüme evresinde? Aile şirketiyse sahiplik hangi kuşakta?
+3. **Zamanlama parçası** şunu sorar: Nakit kaç ay yetiyor? Nakit çok kısa süre yetiyorsa ekran önce kriz yönetimini önerir.
+4. **Hazırlık parçası** iki soru sorar: Karar sahibi belli mi? Karar sahibi seçim yapmaya hazır mı?
+5. **Kapsam parçası** kararın kimde olduğunu sorar. Kararı şirket verebilir. Kararı başka bir yer de verebilir. Örneğin grup merkezi.
+6. Ekran dört sonucu ayrı gösterir. Örneğin "İhtiyaç var ama zaman uygun değil" der. Dört sonuç tek bir puanda birleştirilmez.
+7. Ön değerlendirme kullanıcıyı durdurmaz. Yalnız öneri verir. Devam etme kararı karar sahibindedir. Bugünkü "Acil zarar tehlikesi" yolu olduğu gibi kalır.
+8. "İş kısa ömürlü" maddesi kullanılmaz. Çünkü hiçbir uzman bu maddeyi desteklemiyor.
+9. İlk kez yazılan zorluk cümlesi 2.1 "Teşhis" adımına taslak olarak taşınır. Stratej bu taslağı düzeltir.
+
+**Teknik not.** Bugün profil değişince bütün kapı kararları eskiyor. Nakit süresi gibi bilgiler sık değişir. Bu yüzden ön değerlendirmenin cevapları profile yazılmaz. Cevaplar ayrı bir kayıtta durur. Bu kaydın değişmesi hiçbir kapı kararını eskitmez.
+
+**Satış için not.** Aynı ayrım ICP puan tablosuna da işlenmeli. Sınıflama raporu bir eksik buldu: tabloda zamanlama filtresi yok. Bu yüzden nakit krizindeki bir şirket de yüksek puan alabiliyor. Bu bir yazılım işi değildir. Ama satış ile ürün aynı dili konuşmalıdır.
+
+### Ne olunca bitmiş sayılır?
+
+- Yeni plan açılınca dört ekran parçası görünür.
+- Nakit süresi çok kısa yazılınca ekran kriz yönetimini önerir. Kullanıcı yine devam edebilir.
+- Karar sahibi "hazır değilim" derse ekran hazırlık uyarısı gösterir.
+- Ön değerlendirme cevabı değişince hiçbir kapı kararı eskimez.
+- Zorluk cümlesi 2.1 adımında taslak olarak görünür.
+- Eski planlar açılınca veri kaybolmaz.
+
 ## Bekleyen iş: kısa yoldaki D5 ve D7 sorunu
 
 Ürün sahibi bu işi 15 Kasım 2026 Pazar günü erteledi. Geliştirme başlayınca ilk ele alınacak iş budur.
