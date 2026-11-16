@@ -4,7 +4,7 @@ Bu dosya Karar Atlası için yazılan bütün belgelerin haritasıdır. Bir belg
 
 ## Bu harita nasıl çalışır?
 
-Belgeler yedi çekmeceye ayrıldı. Her belge yalnız bir çekmecede durur. Her konunun tek bir güncel kaynağı vardır.
+Belgeler sekiz çekmeceye ayrıldı. Her belge yalnız bir çekmecede durur. Her konunun tek bir güncel kaynağı vardır.
 
 Her belgenin bir durumu vardır:
 
@@ -118,16 +118,13 @@ Bu notlar raporların dayandığı ham bilgidir. Notlar İngilizce yazıldı. Ra
 | [Stratejik planlama ihtiyacı sınıflaması](<../research_notes/Stratejik planlama ihtiyacı sınıflaması/>) | Danışmanlık firmaları ve akademisyenler |
 | [Strateji ekibi ve kabul ölçütleri](<../research_notes/Strateji ekibi ve kabul ölçütleri/>) | Ekip ve kabul |
 
-## Yalnız sohbette kalanlar
+## Çekmece 8. Kavramlar ve analizler
 
-Bu konular sohbette cevaplandı. Henüz bir dosyaya yazılmadı:
+Bu konular önce sohbette cevaplandı. 16 Kasım 2026 Pazartesi günü dosyaya yazıldı.
 
-| Konu | Not |
-|---|---|
-| GAP analizi | Konuşulmayan konular ve bekleyen kararlar |
-| Bilinmeyen bilinmeyenler nedir? | Kavramın açıklaması. Ürüne uygulanmış hâli raporda var. |
-| Kırmızı ekip | Nedir, kim kurdu, nasıl yapılır? |
-| OKR nedir, KPI'dan farkı | Kavramlar. Ürünle karşılaştırma raporda var. |
-| SMART ve OKR | İkisinin ilişkisi |
-| Strateji ne sıklıkla güncellenir? | 5/2, 4/2 ve 2/2 tartışması |
-| Big Four firmalarının hedef kitleleri | Bu konuda ayrı bir rapor yok. Firmaların sınıflama modelleri sınıflama raporunda var. |
+| Belge | Ne anlatır? | Durum |
+|---|---|---|
+| [GAP analizi](gap-analizi.md) | Konuşulmayanlar, bekleyen kararlar ve öncelik sırası | Tek kaynak |
+| [Strateji kavramları](strateji-kavramlari.md) | OKR ve KPI, SMART, güncelleme sıklığı, bilinmeyen bilinmeyenler, kırmızı ekip | Tek kaynak |
+
+Big Four firmalarının hedef kitleleri için ayrı bir rapor yok. Bu firmaların sınıflama modelleri [Stratejik planlama ihtiyacı sınıflaması](<../reports/Stratejik planlama ihtiyacı sınıflaması.md>) raporundadır.
