@@ -1,5 +1,7 @@
 # Karar Atlası: bilinmeyen bilinmeyenler
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Karar Atlası bilinmeyen bilinmeyenler güncel](<Karar Atlası bilinmeyen bilinmeyenler güncel.md>) aldı.
+
 ## Kısa cevap
 
 Bu rapor tek bir soruya cevap verir. Neyi gözden kaçırıyor olabiliriz?
