@@ -197,6 +197,20 @@ Bu sorular henüz cevaplanmadı. Cevap gelince ilgili not güncellenir.
 | 1 | Strateji hangi aralıkla incelenir? 5/2, 4/2, 2/2 ya da her şirketin kendi seçimi mi? | Ürün sahibinin kararını bekliyor. | Not 4'e göre aralık bir ayar olarak tutulur. Karar gelene kadar kodda sabit aralık olmaz. |
 | 2 | Deloitte, PwC, EY ve KPMG kendi hizmetlerini kime satıyor? | Bu konuda ayrı bir rapor yok. Mevcut notlar yalnız bu firmaların strateji yöntemlerini inceliyor. | Doğrudan bir etkisi yok. Sonuç danışman kanalını ve rakip haritasını etkileyebilir. |
 | 3 | Müşteri ilk karardan sonra hangi somut iş için geri döner? | Aday nedenler var: sonucu yeniden incelemek, yeni saha bulgusu ve yeni karar. Doğrulanmadı. | Tekrar kullanım ile ücretli yenileme ayrı ölçülmelidir. Ölçüm, sunucu sürümüyle birlikte tasarlanır. |
+| 4 | Mobilde küçük kod düzeltmeleri uzaktan mı gönderilir? | Sizin hedefiniz küçük düzeltmeleri uzaktan dağıtmaktır. Codex her kod düzeltmesini mağazadan göndermeyi, uzaktan yalnız içerik ve ayar göndermeyi öneriyor. | Karar gelene kadar uzaktan yalnız sürümlü ayar gönderilir. Kod düzeltmesi için bütünleşik raporun 10.3 bölümündeki kurallar geçerlidir. |
+| 5 | İnceleme aralığı ayarı şirket düzeyinde mi, plan düzeyinde mi? Ayarda iki değer mi, üç değer mi olur? | Codex "her şirket iki aralık seçer" diye yazdı. Bizde Not 4 üç değerli bir ayar öneriyor. | Not 4'teki ayar karar gelene kadar plan düzeyinde ve üç değerli tasarlanır. |
+
+## Bekleyen iş: hazırlık kapısında olası üç boşluk
+
+Codex kendi uygulamasında üç boşluk buldu. Claude'un kodu okununca aynı boşlukların burada da olabileceği görüldü. Bu bilgi 16 Kasım 2026 Pazartesi günü Codex belgelerinin incelemesinden geldi. Her boşluk önce başarısız olan bir testle doğrulanır. Test başarısız olursa boşluk düzeltilir.
+
+1. **Talep kanıtının eşleşmesi.** Talep kanıtı kapıda sayılıyor. Kanıtın müşteri grubuna, yere, döneme ve teklife uyup uymadığına bakılmıyor.
+2. **Eski kanıt.** Eski bir kanıt hiçbir zaman eskimiş sayılmıyor. Yalnız gelecek tarihli kanıt dışarıda kalıyor.
+3. **Sınanmamış kritik varsayım.** Sınanmamış kritik varsayım kapıyı durdurmuyor. Yalnız çürüyen varsayım kapıyı durduruyor.
+
+Kaynak: `src/engine/readiness.ts` ve `research_notes/Codex belgelerinden alınanlar/codex_aktarim_listesi.md`.
+
+**Ne olunca bitmiş sayılır?** Her boşluk için bir test vardır. Boşluk gerçekse test önce başarısız olur. Düzeltmeden sonra test geçer.
 
 ## Bekleyen iş: kısa yoldaki D5 ve D7 sorunu
 

@@ -23,6 +23,8 @@ Yeni bir belge yazılınca üç kural uygulanır:
 
 Bütün belgelerin bir kopyası Documents klasöründe de durur. Kopyaların adı "act_" ile başlar ve "-claude.md" ile biter. Klasör şudur: `/Users/w6x/Documents/Developer/DEV/thedecissionbook`.
 
+Codex de projeyi paralel olarak araştırıyor. Codex'in kendi belge haritası şu dosyadadır: `/Users/w6x/Documents/Codex/2026-11-13/files-mentioned-by-the-user-codex/outputs/00-karar-atlasi-belge-haritasi.md`. Codex belgelerinden alınanlar 7. çekmecedeki listede durur.
+
 ## Okuma sırası
 
 Kafanız karıştıysa belgeleri bu sırayla okuyun:
@@ -134,6 +136,7 @@ Bu notlar raporların dayandığı ham bilgidir. Notlar İngilizce yazıldı. Ra
 | [Derin planlama ihtiyacı sınıflaması](<../research_notes/Derin planlama ihtiyacı sınıflaması/>) | Kaynak doğrulama ve Türkiye çalışmaları |
 | [Derin strateji ekibi ve vaka analizi](<../research_notes/Derin strateji ekibi ve vaka analizi/>) | Kaynak doğrulama, çırak hukuku ve vaka senaryoları |
 | [Derin rakip analizi](<../research_notes/Derin rakip analizi/>) | Claude, Codex ve Gemini rakip taramaları |
+| [Codex belgelerinden alınanlar](<../research_notes/Codex belgelerinden alınanlar/>) | Codex belgelerindeki bulguların bizim belgelerle karşılaştırması |
 
 ## Çekmece 8. Kavramlar ve analizler
 

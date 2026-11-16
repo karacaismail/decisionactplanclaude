@@ -160,7 +160,7 @@ Codex'in birkaç küçük fikrini de aldım:
 
 **Bizim kuralımız.** Karar sahibi 15 Kasım 2026 Pazar günü "Yeniden aç" kararının izinleri geri çekmemesini seçti. Bu kural korunur. Ancak bir boşluk vardı. Strateji yeniden onaylanınca eski onaya bağlı izinler açık kalıyordu. Böylece eski stratejinin parası yeni stratejide de kullanılabiliyordu.
 
-**Kapanan boşluk.** Yeni strateji onayı verilince eski onaya bağlı izinler yeni kullanıma kapanır. Geçmiş kullanımlar kalır. Yeniden açma tek başına hiçbir izni kapatmaz. Ayrıntı 7.2 bölümündedir.
+**Kapanan boşluk.** Yeni strateji onayı verilince eski onaya bağlı izinler yeni kullanıma kapanır. Geçmiş kullanımlar kalır. Yeniden açma tek başına hiçbir izni kapatmaz. Ayrıntı 7.2 bölümündedir. Bu kural Claude'un önerisidir. Ürün sahibi bu kuralı henüz onaylamadı. Onay gelene kadar kural tasarımda öneri olarak durur.
 
 ### 2.4. Alınmayan fikirler
 

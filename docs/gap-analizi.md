@@ -99,7 +99,7 @@ Girişimin kendi risk analizi yapılmadı. Örneğin şu soru sorulmadı: "Bu gi
 2. Verinin duracağı ülke
 3. Marka adı
 4. Ana alan adı
-5. Tek kurucunun ikinci görüşü danışmandan alması. Bu Claude'un önerisidir.
+5. Tek kurucunun ikinci görüşü danışmandan alması. Bu Claude'un önerisidir. Codex genel bir danışman zorunluluğu olmamasını öneriyor. Codex'in gerekçesi daha güçlü.
 6. Yeni strateji onayının eski kaynak izinlerini kapatması. Bu da Claude'un önerisidir.
 7. Kısa yoldaki D5 ve D7 sorunu. [Geliştirme karar notlarında](gelistirme-karar-notlari.md) bekliyor.
 
