@@ -53,6 +53,12 @@ Bu kararları karar sahibi 15 Kasım 2026 Pazar günü verdi.
 | SSL sertifikası | Kendiliğinden yenilenir. İşi Hüseyin Cengiz kurar. |
 | Uygulama planı adımları | 3.1, 3.2 ve 3.3 hiçbir kapı kararını eskitmez. |
 
+Karar sahibi 16 Kasım 2026 Pazartesi günü bir karar daha verdi:
+
+| Konu | Karar |
+|---|---|
+| Mobilde yerel depo | Mobil uygulamada IndexedDB yerine SQLite kullanılır. Web ve PWA'da IndexedDB kalır. Ayrıntı 8.1 bölümündedir. |
+
 Karar sahibi aynı gün şu yeni hedefleri de verdi:
 
 | No | Hedef |
@@ -720,7 +726,7 @@ Yerel depo ortama göre değişir:
 | Web ve PWA | IndexedDB. Kitaplık olarak Dexie.js kullanılır. | Tarayıcının sakladığı anahtar |
 | Mobil uygulama | SQLite. Capacitor'ın topluluk eklentisi kullanılır. | SQLCipher ve telefonun güvenli kasası |
 
-**Neden mobilde SQLite?** Capacitor'ın kendi belgesine göre telefonda yer azalırsa iPhone web görünümünün verisini silebilir. IndexedDB de bundan etkilenir. Bu durumda gönderilmemiş değişiklikler kaybolur. SQLite dosyası bu silmeden etkilenmez. Önceki "yerel SQL şimdilik gerekmez" kararı web için geçerli kalır. Mobil için geçersiz olur.
+**Neden mobilde SQLite?** Capacitor'ın kendi belgesine göre telefonda yer azalırsa iPhone web görünümünün verisini silebilir. IndexedDB de bundan etkilenir. Bu durumda gönderilmemiş değişiklikler kaybolur. SQLite dosyası bu silmeden etkilenmez. Önceki "yerel SQL şimdilik gerekmez" kararı web için geçerli kalır. Mobil için geçersiz olur. Karar sahibi mobilde SQLite kullanılmasını 16 Kasım 2026 Pazartesi günü onayladı.
 
 ### 8.2. Uygulama kabuğu
 
