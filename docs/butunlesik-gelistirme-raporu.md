@@ -57,7 +57,7 @@ Karar sahibi 16 Kasım 2026 Pazartesi günü bir karar daha verdi:
 
 | Konu | Karar |
 |---|---|
-| Mobilde yerel depo | Mobil uygulamada IndexedDB yerine SQLite kullanılır. Web ve PWA'da IndexedDB kalır. Ayrıntı 8.1 bölümündedir. |
+| Mobilde internet kesintisinde veri kaydı | Mobil uygulama, internet kesildiğinde veriyi IndexedDB yerine SQLite'a yazar. Bu karar kesindir. Web ve PWA'da IndexedDB kalır. Ayrıntı 8.1 bölümündedir. |
 
 Karar sahibi aynı gün şu yeni hedefleri de verdi:
 
