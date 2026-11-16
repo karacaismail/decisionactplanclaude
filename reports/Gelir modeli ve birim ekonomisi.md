@@ -1,5 +1,7 @@
 # Bu ürün üç koşulla para kazandırır
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin gelir modeli analizi](<Derin gelir modeli analizi.md>) aldı. Güncel bilgi için o rapora bakın.
+
 **Kısa cevap.** Ürün para kazanabilir. Ama bu üç koşula bağlıdır. Birinci koşul fiyattır. Şirket başına ayda en az 15.000 TL istemelisiniz. İkinci koşul yapay zekâ kotasıdır. Sınırsız yapay zekâ kârı yer. Üçüncü koşul destek sınırıdır. Müşteri başına ayda yaklaşık 2 saat yeterli olmalı. Sunucu maliyeti sorun değildir. Bir müşterinin sunucu payı ayda 1 ile 3 dolar arasıdır (tahmin). Asıl gider ekibin maaşıdır. Bu gider araştırılmadı ve en büyük bilinmeyendir. Temel senaryoda yaklaşık 100 ücretli şirket 5 ile 6 kişilik ekibi taşır. Müşteri tarafında da cevap koşulludur. Ürün büyük kararda kendini öder. Kararın parası en az 20 ile 30 milyon TL olmalıdır (tahmin). Daha küçük kararda ürünün parası geri dönmeyebilir.
 
 ## Bu raporu nasıl okursunuz?

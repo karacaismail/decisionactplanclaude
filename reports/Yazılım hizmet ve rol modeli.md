@@ -1,5 +1,7 @@
 # Yazılımı hizmetle satın, yetkiyi üç katmanda kurun
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin hizmet ve yetki modeli](<Derin hizmet ve yetki modeli.md>) aldı. Güncel bilgi için o rapora bakın.
+
 Bu raporu Claude 15 Kasım 2026 Pazar günü yazdı. Rapor üç soruya cevap verir:
 
 1. Strateji yazılımı tek başına yeter mi?

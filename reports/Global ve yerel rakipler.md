@@ -1,5 +1,7 @@
 # Rakipler seçimden sonra başlıyor
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin rakip analizi](<Derin rakip analizi.md>) aldı. Güncel bilgi için o rapora bakın.
+
 ## 1. Kısa cevap
 
 Rakiplerin çoğu stratejinin zaten var olduğunu varsayar. Bu rakipler işe hedef takibiyle başlar. Ürününüz ise seçimden önce başlar. Hazırlık, seçim ve kaynak izni zincirini tek üründe kuran rakip bulunmadı. Bu zincir hem global pazarda hem Türkiye'de boştur. Türkçe arayüz ve Türkiye'de veri yalnız yerli satıcılarda vardır. Yerli satıcılar ise strateji oluşturma işini yapmaz.

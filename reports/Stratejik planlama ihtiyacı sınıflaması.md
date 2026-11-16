@@ -1,5 +1,7 @@
 # Uzmanlar şirketi değil, durumu sınıflıyor
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin planlama ihtiyacı sınıflaması](<Derin planlama ihtiyacı sınıflaması.md>) aldı. Güncel bilgi için o rapora bakın.
+
 ## 1. Kısa cevap
 
 **Hiçbir tanınmış uzman hazır bir ihtiyaç sınıflaması yayımlamıyor.** Böyle bir sınıflama "Hangi şirket stratejik planlama yapmalı?" sorusunu cevaplardı. İki araştırma notu da bu sonuca vardı. McKinsey, BCG ve Bain böyle bir liste vermiyor. Dört büyük denetim firması da vermiyor. Drucker, Mintzberg ve Ansoff da vermiyor.

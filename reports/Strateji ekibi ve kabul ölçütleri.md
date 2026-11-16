@@ -1,5 +1,7 @@
 # Strateji ekibini uzmanların ilkeleriyle kurun
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin strateji ekibi ve vaka analizi](<Derin strateji ekibi ve vaka analizi.md>) aldı. Güncel bilgi için o rapora bakın.
+
 Bu raporu Claude 16 Kasım 2026 Pazartesi günü yazdı. Rapor Karar Atlası için yazıldı. Karar Atlası bir strateji planlama yazılımıdır.
 
 Raporun temel ilkesi şudur: Burada bizim değil, uzmanların söylediği önemlidir. Bu yüzden her bilgide yazar, eser, yıl ve bağlantı vardır. Bizim yorumumuz yalnız 8. bölümdedir.

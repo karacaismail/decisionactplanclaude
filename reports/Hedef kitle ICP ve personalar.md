@@ -1,5 +1,7 @@
 # Hedef kitle, ICP ve personalar: tek büyük kararla başlayın
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Derin ICP ve persona analizi](<Derin ICP ve persona analizi.md>) aldı. Güncel bilgi için o rapora bakın.
+
 ## 1. Kısa cevap
 
 İlk ücretli müşteriniz Türkiye'deki aile kökenli orta ölçekli şirket olmalı. Bu şirketin önünde parası büyük ve sınırı belli bir stratejik karar olmalı. Yeni bir iş kolu bu tür bir karardır. Yeni bir ihracat pazarı, büyük bir yatırım ve kuşak devri de böyledir. Ürününüz bugün şirketin bütün yıllık planını yönetmiyor. Ürününüz tek bir büyük kararı hazırlıktan uygulamaya kadar yönetiyor. Bu yüzden satışı tek bir kararla açın. Sonra aynı şirkette yeni planlarla büyüyün. Parayı çoğu zaman ikinci kuşak genel müdür öder. Satın almayı kurumsal gelişim müdürü ya da mali işler müdürü yürütür. Şirkette stratej yoksa bu rolü dış danışman üstlenir. Bu yüzden danışman hem satış kanalıdır hem de ideal müşteri profilinin (ICP) bir parçasıdır. Tek kurucular bugünkü tarayıcı sürümünü ücretsiz ya da düşük ücretle kullanmalı. Kamu kurumları sonraki ayrı teklif olmalı. Bankalar, yalnız hedef takip aracı arayanlar ve yapay zekânın seçim yapmasını isteyenler şimdilik dışarıda kalmalı. Aşağıdaki bütün personalar hipotezdir. Bölüm 7'deki görüşmeler bu hipotezleri doğrular ya da çürütür.

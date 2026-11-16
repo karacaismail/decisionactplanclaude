@@ -1,6 +1,6 @@
 # Belge haritası
 
-Bu dosya Karar Atlası için yazılan bütün belgelerin haritasıdır. Bir belgeyi aramadan önce buraya bakın. Harita 16 Kasım 2026 Pazartesi günü kuruldu.
+Bu dosya Karar Atlası için yazılan bütün belgelerin haritasıdır. Bir belgeyi aramadan önce buraya bakın. Harita 16 Kasım 2026 Pazartesi günü kuruldu. Aynı gün derin raporlarla güncellendi.
 
 ## Bu harita nasıl çalışır?
 
@@ -28,10 +28,10 @@ Bütün belgelerin bir kopyası Documents klasöründe de durur. Kopyaların ad�
 Kafanız karıştıysa belgeleri bu sırayla okuyun:
 
 1. [Süreç haritası](surec-haritasi.md). Ürünün adımlarını ve kurallarını anlatır.
-2. [Hedef kitle, ICP ve personalar](<../reports/Hedef kitle ICP ve personalar.md>). Ürünü kime satacağımızı anlatır.
+2. [Derin ICP ve persona analizi](<../reports/Derin ICP ve persona analizi.md>). Ürünü kime satacağımızı sayılarla anlatır.
 3. [Bütünleşik geliştirme raporu](butunlesik-gelistirme-raporu.md). Ürünün nasıl yapılacağını anlatır.
 4. [Geliştirme karar notları](gelistirme-karar-notlari.md). Koda işlenecek notlarınızı toplar.
-5. [Karar Atlası bilinmeyen bilinmeyenler](<../reports/Karar Atlası bilinmeyen bilinmeyenler.md>). Gözden kaçırabileceklerimizi anlatır.
+5. [Karar Atlası bilinmeyen bilinmeyenler güncel](<../reports/Karar Atlası bilinmeyen bilinmeyenler güncel.md>). Gözden kaçırabileceklerimizi anlatır.
 
 ## Çekmece 1. Strateji öncesi aksiyon planı
 
@@ -78,23 +78,31 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 
 | Belge | Ne anlatır? | Durum |
 |---|---|---|
-| [Bütünleşik geliştirme raporu](butunlesik-gelistirme-raporu.md) | Frappe 16, modüller, eşitleme, mobil, yayın, DevOps | Tek kaynak |
+| [Bütünleşik geliştirme raporu](butunlesik-gelistirme-raporu.md) | Frappe 16, modüller, eşitleme, mobil, yayın, DevOps. Yetki bölümleri 16 Kasım 2026 Pazartesi günü Frappe 16 koduna göre düzeltildi. | Tek kaynak |
 | [İnternetsiz çalışma araştırması](cevrimdisi-calisma-arastirmasi.md) | İnternet kesilince uygulama nasıl çalışır? | Güncel |
 | [Mobil ve SaaS dağıtımı eleştirisi](elestiri-mobil-saas-dagitim.md) | Mobil hedeflerin gerekçeleri | Güncel. Bütünleşik rapora işlendi. |
-| [Yazılım, hizmet ve rol modeli](<../reports/Yazılım hizmet ve rol modeli.md>) | Rollerin sıklığı ve yetki modeli | Tek kaynak |
+| [Derin hizmet ve yetki modeli](<../reports/Derin hizmet ve yetki modeli.md>) | Hizmet modeli, iş ortakları, rollerin sıklığı ve Frappe 16 koduna göre yetki tasarımı | Tek kaynak |
+| [Yazılım, hizmet ve rol modeli](<../reports/Yazılım hizmet ve rol modeli.md>) | Önceki hizmet ve rol raporu | Tarihsel |
 | [Arka yüz planı](arka-yuz-plani.md) | Bütünleşik rapora taşındı. | Yönlendirme |
 
 ## Çekmece 5. Pazar, müşteri ve iş modeli
 
 | Belge | Ne anlatır? | Durum |
 |---|---|---|
-| [Hedef kitle, ICP ve personalar](<../reports/Hedef kitle ICP ve personalar.md>) | İlk müşteri, puan tablosu ve sekiz persona | Tek kaynak |
-| [Hedef kitle, ICP ve AI konumlandırma](<../reports/Hedef kitle ICP ve AI konumlandırma.md>) | İlk kitle önerisi ve AI'ın yapacakları | Güncel. Kitle kısmını personalar raporu geçti. |
-| [Stratejik planlama ihtiyacı sınıflaması](<../reports/Stratejik planlama ihtiyacı sınıflaması.md>) | Uzmanlar şirketleri nasıl sınıflıyor? | Tek kaynak |
-| [Strateji ekibi ve kabul ölçütleri](<../reports/Strateji ekibi ve kabul ölçütleri.md>) | Ekip, çalıştay, kabul ölçütleri, ayakkabı şirketi örneği | Tek kaynak |
-| [Gelir modeli ve birim ekonomisi](<../reports/Gelir modeli ve birim ekonomisi.md>) | Para kazandırır mı? Fiyat ve maliyet | Tek kaynak |
-| [Global ve yerel rakipler](<../reports/Global ve yerel rakipler.md>) | Rakiplerin haritası | Tek kaynak |
-| [Karar Atlası bilinmeyen bilinmeyenler](<../reports/Karar Atlası bilinmeyen bilinmeyenler.md>) | Gözden kaçabilecekler ve saha izleme düzeni | Tek kaynak |
+| [Derin ICP ve persona analizi](<../reports/Derin ICP ve persona analizi.md>) | Türkiye verisiyle ICP, sektör alt grupları, pazar büyüklüğü, tetikleyiciler ve personalar | Tek kaynak |
+| [Derin AI ve marka konumlandırma](<../reports/Derin AI ve marka konumlandırma.md>) | Ürün ve marka konumu, ad çakışması, AI tasarımı ve maliyeti | Tek kaynak |
+| [Hedef kitle, ICP ve personalar](<../reports/Hedef kitle ICP ve personalar.md>) | Önceki ICP raporu | Tarihsel |
+| [Hedef kitle, ICP ve AI konumlandırma](<../reports/Hedef kitle ICP ve AI konumlandırma.md>) | İlk kitle ve AI raporu | Tarihsel |
+| [Derin planlama ihtiyacı sınıflaması](<../reports/Derin planlama ihtiyacı sınıflaması.md>) | Uzmanlar şirketleri nasıl sınıflıyor? Türkiye kanıtı ve ön değerlendirme soruları | Tek kaynak |
+| [Stratejik planlama ihtiyacı sınıflaması](<../reports/Stratejik planlama ihtiyacı sınıflaması.md>) | Önceki sınıflama raporu | Tarihsel |
+| [Derin strateji ekibi ve vaka analizi](<../reports/Derin strateji ekibi ve vaka analizi.md>) | Ekip, çalıştay dizisi, kabul ölçütleri, beş vaka ve çırak protokolü | Tek kaynak |
+| [Strateji ekibi ve kabul ölçütleri](<../reports/Strateji ekibi ve kabul ölçütleri.md>) | Önceki ekip raporu | Tarihsel |
+| [Derin gelir modeli analizi](<../reports/Derin gelir modeli analizi.md>) | Doğrulanmış maliyetler, fiyat, senaryolar ve başa baş noktası | Tek kaynak |
+| [Gelir modeli ve birim ekonomisi](<../reports/Gelir modeli ve birim ekonomisi.md>) | Önceki gelir raporu | Tarihsel |
+| [Derin rakip analizi](<../reports/Derin rakip analizi.md>) | Claude, Codex ve Gemini taramalarıyla rakip haritası | Tek kaynak |
+| [Global ve yerel rakipler](<../reports/Global ve yerel rakipler.md>) | Önceki rakip raporu | Tarihsel |
+| [Karar Atlası bilinmeyen bilinmeyenler güncel](<../reports/Karar Atlası bilinmeyen bilinmeyenler güncel.md>) | Derin raporlardan sonra gözden kaçabilecekler ve saha izleme düzeni | Tek kaynak |
+| [Karar Atlası bilinmeyen bilinmeyenler](<../reports/Karar Atlası bilinmeyen bilinmeyenler.md>) | Önceki bilinmeyenler raporu | Tarihsel |
 
 ## Çekmece 6. Kararlar ve notlar
 
@@ -119,6 +127,13 @@ Bu notlar raporların dayandığı ham bilgidir. Notlar İngilizce yazıldı. Ra
 | [Global ve yerel rakipler](<../research_notes/Global ve yerel rakipler/>) | Rakipler |
 | [Stratejik planlama ihtiyacı sınıflaması](<../research_notes/Stratejik planlama ihtiyacı sınıflaması/>) | Danışmanlık firmaları ve akademisyenler |
 | [Strateji ekibi ve kabul ölçütleri](<../research_notes/Strateji ekibi ve kabul ölçütleri/>) | Ekip ve kabul |
+| [Derin ICP ve persona analizi](<../research_notes/Derin ICP ve persona analizi/>) | Şirket sayıları, ihracat, tetikleyiciler, satın alma, kanallar, ICP yöntemi |
+| [Derin AI ve marka konumlandırma](<../research_notes/Derin AI ve marka konumlandırma/>) | Ürün ve marka konumu, AI tasarımı |
+| [Derin gelir modeli analizi](<../research_notes/Derin gelir modeli analizi/>) | Maliyetler, gelir ve fiyat |
+| [Derin hizmet ve yetki modeli](<../research_notes/Derin hizmet ve yetki modeli/>) | Frappe 16 yetki kodu, hizmet ve ortaklık |
+| [Derin planlama ihtiyacı sınıflaması](<../research_notes/Derin planlama ihtiyacı sınıflaması/>) | Kaynak doğrulama ve Türkiye çalışmaları |
+| [Derin strateji ekibi ve vaka analizi](<../research_notes/Derin strateji ekibi ve vaka analizi/>) | Kaynak doğrulama, çırak hukuku ve vaka senaryoları |
+| [Derin rakip analizi](<../research_notes/Derin rakip analizi/>) | Claude, Codex ve Gemini rakip taramaları |
 
 ## Çekmece 8. Kavramlar ve analizler
 
@@ -129,4 +144,4 @@ Bu konular önce sohbette cevaplandı. 16 Kasım 2026 Pazartesi günü dosyaya y
 | [GAP analizi](gap-analizi.md) | Konuşulmayanlar, bekleyen kararlar ve öncelik sırası | Tek kaynak |
 | [Strateji kavramları](strateji-kavramlari.md) | OKR ve KPI, SMART, güncelleme sıklığı, bilinmeyen bilinmeyenler, kırmızı ekip | Tek kaynak |
 
-Big Four firmalarının hedef kitleleri için ayrı bir rapor yok. Bu firmaların sınıflama modelleri [Stratejik planlama ihtiyacı sınıflaması](<../reports/Stratejik planlama ihtiyacı sınıflaması.md>) raporundadır.
+Big Four firmalarının hedef kitleleri için ayrı bir rapor yok. Bu firmaların sınıflama modelleri [Stratejik planlama ihtiyacı sınıflaması](<../reports/Derin planlama ihtiyacı sınıflaması.md>) raporundadır.

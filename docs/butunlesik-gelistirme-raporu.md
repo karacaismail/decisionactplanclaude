@@ -2,6 +2,8 @@
 
 Bu raporu Claude 15 Kasım 2026 Pazar günü hazırladı. Rapor bir tasarımdır. Hiçbir arka yüz kodu yazılmadı.
 
+16 Kasım 2026 Pazartesi günü Frappe 16 kaynak kodu okundu. Yetki bölümleri bu okumaya göre düzeltildi. Kod çalışan bir kurulumda denenmedi. Ayrıntılar [`reports/Derin hizmet ve yetki modeli.md`](../reports/Derin%20hizmet%20ve%20yetki%20modeli.md) dosyasındadır.
+
 Bu sürüm iki yeni kaynağı da işler:
 
 1. Mobil uygulama ve SaaS dağıtımı eleştirisi. Dosya: [elestiri-mobil-saas-dagitim.md](elestiri-mobil-saas-dagitim.md). Eleştiri gerekçe kaynağı olarak kalır.
@@ -103,6 +105,8 @@ Karar sahibi aynı gün şu yeni hedefleri de verdi:
 | Kurum dizini | Kullanıcının hangi kurum sitesine bağlanacağını söyleyen merkezi liste |
 | Dalga | Yayının kurumlara gruplar hâlinde uygulanması |
 | Erişim anahtarı | Girişten sonra sunucunun verdiği kısa ömürlü anahtar. Cihaz her istekte bu anahtarı gönderir. |
+| Yetki işlevi | Bütün yetki kararlarını veren tek işlev. Erişim modülünde durur. |
+| Giriş kancası | Frappe'nin her istekte anahtar denetiminden sonra çalıştırdığı uygulama işlevi. Frappe'deki adı `auth_hooks`'tur. |
 
 Bu raporda "internetsiz" sözü tek anlamda kullanılır. Bu söz, cihazın sunucuya ulaşamadığını anlatır. "Cihaz" sözü hem tarayıcıyı hem mobil uygulamayı anlatır.
 
@@ -214,6 +218,7 @@ Bu parçalar bugün olmazsa olmaz değildir. İhtiyaç doğarsa eklenir.
 | Arka plan işleri için bildirim kutusu | Ağır bir iş çıkarsa. Örneğin PDF üretimi ya da e-posta. | Eşitleme modülü |
 | Davet | Kurum yöneticisi kullanıcıları davetle eklemek isterse | Frappe'nin kendi davet özelliği |
 | Dış muhasebe bağlantısı | Kurum gerçek ödemeyi muhasebe kaydıyla doğrulamak isterse | Ayrı bir bağlantı modülü. Kaynak iznini yine Karar modülü verir. |
+| Yapay Zekâ Önerisi | Kurum yapay zekâyı açarsa. Kayıt yalnız eklenir. İçinde Yapay Zekâ Dayanağı alt tablosu olur. | Modülü ürün ekibi seçer. Kaydı Yapay Zekâ Hizmeti rolü yazar. Bu rolün hiçbir karar türünde yazma izni yoktur. |
 
 ### 3.4. Codex'in dokuz modülü bizde nereye düşüyor?
 
@@ -251,9 +256,9 @@ Bir gün bir aşama kendine özgü kayıtlar biriktirirse o aşama ayrı modül 
 | Danışman | Plan | Yalnız okur ve ikinci görüş verir. Tek kurucunun ikinci görüş alabilmesi için gerekir. |
 | Okur | Plan | Yalnız okur. |
 
-Bir kişi birden çok role sahip olabilir. Tek kurucuda karar sahibi ile stratej aynı kişi olabilir. Bir kişi bir planda karar sahibi, başka bir planda ekip üyesi olabilir.
+Bir kişi birden çok role sahip olabilir. Tek kurucuda karar sahibi ile stratej aynı kişi olabilir. Bir kişi bir planda karar sahibi, başka bir planda ekip üyesi olabilir. Plan rolleri Frappe rolü değildir. Frappe rolleri bütün sitede geçerlidir. Plan rolü yalnız Plan Üyeliği satırında durur.
 
-**Karar sahibi kuralı.** Bir planda aynı anda tek karar sahibi olur. Yeni karar sahibi atanınca önceki atamanın bitiş zamanı aynı işlemde yazılır. İki atamanın süreleri çakışmaz. Atamayı yapan kişi de saklanır.
+**Karar sahibi kuralı.** Bir planda aynı anda tek karar sahibi olur. Yeni karar sahibi atanınca önceki atamanın bitiş zamanı aynı işlemde yazılır. İki atamanın süreleri çakışmaz. Atamayı yapan kişi de saklanır. Atama plan kilidi altında yapılır. Atama "Karar sahibi atandı" olayını yayar.
 
 **İkinci görüş kuralı değişiyor.** Bugün ikinci görüş veren kişinin adı serbest metindir. Sunucuda ikinci görüşü başka bir plan üyesi kendi hesabıyla verir. Tek kurucunun başka üyesi yoksa ikinci görüş alamaz. Bu durumda "İlerle" önerisinin dışına çıkamaz ve sınır artıramaz. Bu yüzden tek kurucu plana bir danışman ekler. Öneri 14. bölümdedir.
 
@@ -304,7 +309,8 @@ Kurum dizini kurum sitelerindeki hiçbir modülü çağırmaz. Kurum siteleri de
 | Kaynak hareketi eklendi | Karar | Denetim kaydı, Eşitleme | Denetim kaydı yazar. Eşitleme akışa satır ekler. |
 | Strateji yeniden açıldı | Karar | Denetim kaydı, Eşitleme | Strateji onayı Karar modülünün içinde, aynı işlemde geçersiz olur. Kaynak izinleri açık kalır. Strateji belgesini taslağa döndürme komutu ise iş akışından Plan'a gider. |
 | Strateji yeniden onaylandı | Karar | Rapor, Denetim kaydı, Eşitleme | Eski onaya bağlı izinler Karar modülünün içinde, aynı işlemde kapanır. Rapor anlık görüntü alır. |
-| Cihaz iptal edildi | Erişim | Denetim kaydı, Eşitleme | Erişim, cihazın anahtarlarını dar bir yetkiye indirir. Eşitleme cihazın değişikliklerini incelemeye ayırır. |
+| Karar sahibi atandı | Erişim | Denetim kaydı, Eşitleme | Denetim kaydı yazar. Eşitleme akışa satır ekler. Plan sağlığı listesi bu olayı okur. |
+| Cihaz iptal edildi | Erişim | Denetim kaydı, Eşitleme | Erişim, Cihaz kaydını iptal edildi diye işaretler. Uygulamanın giriş kancası her istekte bu işarete bakar. İptal edilen cihaz yalnız iki uca ulaşır. Eşitleme cihazın değişikliklerini incelemeye ayırır. |
 
 Olaylar aynı işlemde çalışır. Bunun bir bedeli var. Dinleyici hata verirse olayı yayan modülün yazması da geri alınır. Bu bağ bilerek seçildi. Çünkü cevap ile kararın birbirini tutması gerekir.
 
@@ -316,8 +322,9 @@ Olaylar bir zincir kurabilir. Örneğin "Yeniden aç" kararı strateji belgesini
 2. **Tablo adı denetimi.** Küçük bir betik her modülün kodunu tarar. Bir modül başka bir modülün kayıt türünün adını kullanırsa denetim kırılır.
 3. **Okunan girdi denetimi.** Her kapı hangi adımları okuduğunu bildirir. Bir test, gerçekten okunan adımları bu listeyle karşılaştırır. Örneğin bir kapı 3.1 adımını okumaya başlarsa test kırılır.
 4. **Ön yüz katman denetimi.** Ön yüzün çekirdek katmanı hiçbir ekran kodunu içe aktaramaz. Bir test bunu denetler. Katmanlar 10.4 bölümündedir.
+5. **Yasak çağrı taraması.** Karar türlerinde `db_set`, `frappe.db.set_value`, `ignore_validate` ve `ignore_validate_update_after_submit` aranır. Plan modüllerinde izni atlayan okuma çağrıları aranır. `ignore_permissions` kullanan her ucun önce yetki işlevini (`yetki_ver`) çağırdığı denetlenir. Bu çağrılar iki koruma katmanını da atlar. 6.3 bölümüne bakın.
 
-Dört denetim de her kod gönderiminde çalışır. Biri kırılırsa yayın yapılmaz.
+Beş denetim de her kod gönderiminde çalışır. Biri kırılırsa yayın yapılmaz.
 
 ## 5. DocType'lar
 
@@ -326,13 +333,13 @@ Dört denetim de her kod gönderiminde çalışır. Biri kırılırsa yayın yap
 | DocType | Tür | Önemli alanlar | Not |
 |---|---|---|---|
 | Plan Üyeliği | Normal | plan, kullanıcı, rol, başlangıç, bitiş, etkin, atayan | Bir kişinin bir plandaki rolü. Bitiş tarihli eski satırlar rol geçmişini tutar. Karar sahibi atamalarının süreleri çakışmaz. |
-| Cihaz | Normal | kullanıcı, ad, platform, kabuk sürümü, web paketi sürümü, anahtar kimlikleri, son eşitleme, iptal, iptal eden, sil komutu | Cihaza verilen anahtarların kimlikleri burada durur. İptalde bu anahtarlar dar bir yetkiye iner. |
+| Cihaz | Normal | kullanıcı, ad, platform, kabuk sürümü, web paketi sürümü, anahtar kimlikleri, son eşitleme, iptal, iptal eden, sil komutu | Cihaza verilen anahtarların kimlikleri burada durur. İptalde anahtar silinmez. Uygulamanın giriş kancası anahtarı Cihaz kaydına bağlar ve yalnız iki uca izin verir. |
 
 "Sistem yöneticisi" Frappe'nin kendi rolüdür. "Kurum yöneticisi" ise yeni bir roldür. Bu rol uygulamayla birlikte kurulan bir rol kaydı olarak gelir.
 
 Giriş istemcileri ve erişim anahtarları Frappe'nin kendi OAuth kayıtlarıdır. Frappe bu anahtarları kullanıcıya ve istemciye bağlar, cihaza bağlamaz. Bu yüzden sunucu, anahtarı verirken anahtarın kimliğini Cihaz kaydına yazar.
 
-**İptal edilen cihaz ne yapabilir?** Anahtar tümden silinirse cihaz sunucuya hiç ulaşamaz. O zaman bekleyen değişiklikler gelmez. Yerel veriyi silme komutu da gitmez. Bu yüzden iptal edilen cihazın anahtarı dar bir yetkiye iner. Bu yetkiyle cihaz yalnız iki iş yapabilir:
+**İptal edilen cihaz ne yapabilir?** Anahtar tümden silinirse cihaz sunucuya hiç ulaşamaz. O zaman bekleyen değişiklikler gelmez. Yerel veriyi silme komutu da gitmez. Bu yüzden iptalde anahtar silinmez. Frappe anahtarın kapsamını uçlarda denetlemez. Bu yüzden uygulamanın giriş kancası her istekte Cihaz kaydına bakar. İptal edilen cihaz yalnız iki iş yapabilir:
 
 1. Bekleyen değişikliklerini incelemeye gönderir.
 2. "Yerel veriyi sil" komutunu alır ve uygular.
@@ -390,7 +397,7 @@ Bütün karar türlerinde "dayanağı değişti" işareti de onaydan sonra deği
 
 Kaynak Hareketi onaylanan bir kayıt değildir. Yalnız eklenir. Tek istisna inceleme durumudur. Bu alanı yalnız karar sahibi değiştirir. İnceleme durumu dört değer alır: yok, incelemede, kabul edildi ve reddedildi.
 
-Bu alanlar Frappe'nin olaylarını atlayan kısa yazma yoluyla yazılmaz. Böylece her değişiklik akışa ve denetim kaydına düşer.
+Bu alanlar yalnız iş akışı uçlarından yazılır. Böylece her değişiklik akışa ve denetim kaydına düşer. `db_set`, `frappe.db.set_value`, `ignore_validate` ve `ignore_validate_update_after_submit` karar türlerinde yasaktır. Bunu kod taraması denetler.
 
 Strateji Gözden Geçirme'deki "sapmanın nedeni" alanı üç seçenek taşır:
 
@@ -470,8 +477,8 @@ Böylece dizin, e-postayla kurum listesini dışarı sızdırmaz. Sunucu istek h
 
 | Kayıt | Kimliği |
 |---|---|
-| Plan, görev, kanıt, kanıt sürümü, hedef, gözlem, bütün kararlar, kaynak hareketi, rapor sürümü, plan üyeliği, cihaz | UUID. Cihaz kimliği kendisi seçer. Bu tür kimlik sütunu Frappe 16'da var. |
-| Adım Kaydı | Planın kimliğinden ve adımın kodundan hesaplanan UUID. Bu tür UUID'nin adı UUIDv5'tir. İki cihaz aynı adımı internetsiz açsa bile aynı kimliği üretir. Böylece iki ayrı satır oluşmaz. |
+| Plan, görev, kanıt, kanıt sürümü, hedef, gözlem, bütün kararlar, kaynak hareketi, rapor sürümü, plan üyeliği, cihaz | UUID. Cihaz kimliği kendisi seçer. Frappe 16 istemcinin UUID'sini olduğu gibi saklar. Sunucu adı küçük harfli ve tireli standart biçime çevirir. |
+| Adım Kaydı | Planın kimliğinden ve adımın kodundan hesaplanan UUID. Bu tür UUID'nin adı UUIDv5'tir. İki cihaz aynı adımı internetsiz açsa bile aynı kimliği üretir. Böylece iki ayrı satır oluşmaz. Sunucu adı yeniden hesaplar. Gelen ad hesaplanan adla aynı değilse kayıt reddedilir. Ad alanı sabiti API sözleşmesinde yazılır. |
 | İşlenen Değişiklik | Tekrar anahtarının kendisi |
 | Değişiklik Akışı | UUID. Plan ve sıra numarası ayrıca tekildir. |
 | Akış Başlığı | Planın kimliği |
@@ -494,7 +501,7 @@ Böylece dizin, e-postayla kurum listesini dışarı sızdırmaz. Sunucu istek h
 
 **Plan neden istisnadır?** Plan bütün kayıtların köküdür. Plan'a bağlantı alanı üç şey kazandırır:
 
-1. Frappe'nin kullanıcı izinleri yalnız bağlantı alanında çalışır.
+1. Frappe'nin kullanıcı izinleri yalnız bağlantı alanında çalışır. Plan üyeliği için kullanıcı izni kullanılmaz. Kullanıcı izninde zaman aralığı yoktur.
 2. Frappe, bağlı kaydı olan bir planın silinmesini engeller. Planlar zaten silinmez, arşivlenir.
 3. Frappe'nin rapor oluşturucusu ve "Bağlantılar" paneli plana bağlanabilir.
 
@@ -560,18 +567,20 @@ Frappe her kayıt türü için bir denetleyici sınıf açar. Haberleşme bu sı
 
 Plan, kanıt, kanıt sürümü, hedef, gözlem, kararlar ve kaynak hareketleri silinmez. Bunlar arşivlenir, geri çekilir, düzeltilir ya da geçersiz kılınır.
 
-İzinler iki yerde denetlenir. İki denetimi de yalnız Erişim modülü yazar. Erişim modülü bu denetimleri `hooks.py` ile bütün kayıt türlerine bağlar.
+İzinler iki yerde denetlenir. İki denetimi de yalnız Erişim modülü yazar. Erişim modülü bu denetimleri `hooks.py` ile bütün kayıt türlerine bağlar. Bütün yetki kararlarını tek bir işlev verir. Bu işleve yetki işlevi denir.
 
 1. **Liste izni.** Frappe'nin liste sorgusuna bir koşul eklenir. Kullanıcı yalnız üye olduğu planların kayıtlarını görür.
-2. **Kayıt izni.** Tek bir kayıt açılırken de üyelik ve rol denetlenir. Örneğin okur rolü karar yazamaz. Liste koşulu tek başına bu korumayı vermez.
+2. **Kayıt izni.** Tek bir kayıt açılırken yetki işlevi çağrılır. Kayıt denetimi kancası (`has_permission`) izin verirken açıkça `True` döner. `None` dönmez, çünkü Frappe 16'da `None` red demektir. Frappe'nin resmî belgesi hâlâ eski davranışı anlatır. Örneğin okur rolü karar yazamaz. Liste koşulu tek başına bu korumayı vermez.
 
 Plan Üyeliği'nin kendi listesi ayrıdır. Kullanıcı kendi satırlarını görür. Karar sahibi kendi planlarının satırlarını görür.
 
-Liste koşulu Plan Üyeliği tablosunun adını kullanır. Bu, tablo adı denetiminin tek açık istisnasıdır. İstisna yalnız Erişim modülünün izin işlevi içindir. Plan Üyeliği'nin plan ve etkin alanları için veritabanı dizini açılır.
+Liste koşulu metin SQL değil, sorgu koşulu nesnesi döner. Koşul yetki işleviyle aynı üyelik kuralından üretilir. Kayıt denetimi aynı koşulu tek kayıt üzerinde çalıştırır. Frappe'nin liste sorgusu kayıt denetimini çağırmaz. İki denetim ayrışırsa kayıt sızar. Koşul Plan Üyeliği tablosunu okur. Bu okuma, tablo adı denetiminin tek açık istisnasıdır. İstisna yalnız Erişim modülünün yetki işlevi içindir. Plan Üyeliği'nin plan ve etkin alanları için veritabanı dizini açılır.
 
-Okuma işlevleri her zaman izin denetimli okuma yolunu kullanır. İzni atlayan okuma yolu yalnız sistem işlerinde kullanılır.
+Okuma işlevleri her zaman izin denetimli okuma yolunu kullanır. İzni atlayan okuma yolu yalnız sistem işlerinde kullanılır. İzni atlayan yollar şunlardır: `frappe.get_all`, `frappe.db.get_all`, `frappe.db.get_value`, `frappe.db.sql`, bayraksız `frappe.qb.get_query` ve denetimsiz `frappe.get_doc`.
 
-**Tek komut yolu.** Karar kayıt türlerine kullanıcı rolleri doğrudan oluşturma ve onaylama izni almaz. Kararlar yalnız iş akışları katmanındaki uçlardan yazılır. Böylece Frappe'nin hazır kayıt ucu ve yönetim ekranı iş akışını atlayamaz. Önemli denetimler ayrıca onay öncesi adımında (`before_submit`) da çalışır. Bu, ikinci bir koruma katmanıdır.
+**Tek komut yolu.** Karar kayıt türlerinde kullanıcı rolleri oluşturma, yazma ve onaylama izni almaz. Kararlar yalnız iş akışları katmanındaki uçlardan yazılır. Böylece Frappe'nin hazır kayıt ucu ve yönetim ekranı iş akışını atlayamaz. İş akışı ucu `ignore_permissions` ile yazar. Bu bayrak kancayı da atlar. Bu yüzden uç önce yetki işlevini kendisi çağırır. Önemli denetimler ayrıca onay öncesi adımında (`before_submit`) da çalışır. Bu, ikinci bir koruma katmanıdır. Hiçbir uç `ignore_validate` kullanmaz. Bu bayrak `before_submit` adımını atlar.
+
+**Belge paylaşımı kapalıdır.** Frappe'nin belge paylaşımı kanca reddini aşar. Paylaşılan kayıt listeye de girer. Bu yüzden plan kayıtları paylaşılmaz. Her plan kayıt türü `validate_share` ile yeni paylaşımı reddeder. Rol izin satırlarında paylaşma izni yoktur. Frappe'nin atama aracı plan kayıtlarında kullanılmaz. Bir denetim, plan kayıtlarında paylaşım satırı olmadığını doğrular.
 
 ## 7. Kurallar ve karar akışları
 
@@ -618,7 +627,7 @@ Birden çok kaydı aynı işlemde değiştiren yedi iş akışı var. Her iş ak
 
 **Kararı onayla:**
 
-1. Sunucu kullanıcının karar sahibi olduğunu denetler.
+1. Sunucu yetki işlevini çağırır. İşlev üyeliği sunucu saatine göre ve plan kilidi altında okur. İşlev "hayır" derse karar yazılmaz.
 2. Sunucu kapı kurallarını Python ile çalıştırır.
 3. Sunucu, kararın gördüğü son kararın hâlâ son karar olduğunu denetler. Değilse "çakışma" der.
 4. Sunucu okunan adımları, kanıt sürümlerini ve okunan değerleri Karar Dayanağı'na yazar. Kural sürümünü de kararın içine yazar.
@@ -762,11 +771,11 @@ Cihaz her istekte iki sürüm bilgisi gönderir: web paketinin sürümü ve kabu
 
 Gönder ucunda her değişiklik şu sırayla işlenir:
 
-1. Sunucu cihazın ve kullanıcının iptal edilip edilmediğine bakar.
+1. Sunucu cihazın ve kullanıcının iptal edilip edilmediğine bakar. Aynı denetim uygulamanın giriş kancasında her istekte çalışır. Hazır REST uçları da bu denetimden geçer.
 2. Sunucu tekrar anahtarıyla bir İşlenen Değişiklik kaydı açmayı dener. İçerik özeti ham içerikten ve biçim sürümünden hesaplanır. Kayıt zaten varsa sunucu özete bakar. Özet aynıysa önceki sonucu döner. Özet farklıysa reddeder.
 3. Sunucu istemcinin uyumluluk penceresinde olduğuna bakar. Değişiklik eski biçimdeyse çeviriciyle yeni biçime çevirir.
 4. Sunucu bir ara kayıt noktası koyar.
-5. Sunucu kullanıcının izinlerine bakar.
+5. Sunucu yetki işlevini çağırır.
 6. Sunucu cevabı süreç tanımına göre denetler.
 7. Sunucu kaydın değişiklik zamanını karşılaştırır. Kayıt bu arada değiştiyse "çakışma" döner.
 8. Sunucu değişikliği yazar. Olaylar aynı işlemde çalışır.
@@ -943,7 +952,9 @@ Uygulamanın içine hiçbir gizli anahtar gömülmez.
 | Anahtar kaybı | Şifre çözülemezse yazılım veriyi silmez. Kullanıcıya gösterir. |
 | Çıkış | Yerel veri silinir. Gönderilmemiş değişiklik varsa uygulama önce uyarır. |
 | Ortak bilgisayar | "Ortak cihaz" modunda veri tarayıcıda saklanmaz. Bu modda internetsiz çalışılamaz. |
-| İptal edilen cihaz | Sunucu cihazın anahtarlarını dar bir yetkiye indirir. Cihaz yalnız bekleyen değişikliklerini incelemeye gönderebilir ve silme komutunu alabilir. Planın karar sahibi değişiklikleri inceler. Sonra cihazın yerel verisi silinir. |
+| İptal edilen cihaz | Anahtar geçerli kalır. Uygulamanın giriş kancası bu cihazdan gelen her isteği reddeder. Yalnız iki uç açıktır. Cihaz bu uçlarla bekleyen değişikliklerini incelemeye gönderir ve silme komutunu alır. Planın karar sahibi değişiklikleri inceler. Sonra cihazın yerel verisi silinir. |
+| MCP ucu | Bu uç yapay zekâ araçlarına kayıt okuma ve yazma yolu açar. Kurum sitelerinde `enable_mcp` kapalıdır. Bir test `/api/v2/mcp` adresinin 404 döndüğünü doğrular. |
+| API anahtarı | Anahtar kullanıcının bütün rolleriyle çalışır. Yapay Zekâ Hizmeti rolü karar türlerinde izin taşımaz. Yapay zekâ hizmet hesabı belli IP adresleriyle sınırlanır. |
 | Kimlik alanları | Karar sahibi, onaylayan, ikinci görüş veren, inceleyen ve atayan kişi erişim anahtarından alınır. |
 | İzinli adresler | Her kurum sitesi yalnız bilinen ön yüz adreslerine ve dönüş adreslerine izin verir. |
 | Kurum dizini | E-postayla gelen istekte adres göstermez. Giriş bağlantısını e-postaya gönderir. İstek hızını sınırlar. |
@@ -1226,7 +1237,7 @@ Her adımda önce başarısız olan test yazılır. Sonra kod yazılır.
 | 1 | Sürümleri sabitlemek. API sözleşmesinin ilk hâli ve destek tablosu. Küçük bir internetsiz deneme. | Destek tablosu hangi tarayıcının, telefonun ve kabuk sürümünün desteklendiğini yazıyor. İki deneme sitesinde aynı kullanıcı adı farklı yetkilerle çalışıyor. Tek bir taslak kesintiden sonra bir kez ulaşıyor. |
 | 2 | Kural ağacı betiği, örnek dosyası ve Python kuralları | Python kuralları bütün örneklerde TypeScript ile aynı sonucu veriyor. 3.1, 3.2 ve 3.3 için koruma testleri geçiyor. |
 | 3 | Tek depo düzeni, Frappe uygulama iskeleti, altı modül ve dört bağ denetimi | Bilerek yazılan yasak bir içe aktarma denetimi kırıyor. Press uygulamayı depo kökünden kuruyor. |
-| 4 | Erişim modülü, OAuth ile giriş, PKCE ve kurum dizini | A kurumunun üyesi B kurumunun planını açamıyor. Okur rolü karar kaydedemiyor. Telefon girişi telefonun tarayıcısında yapılıyor. |
+| 4 | Erişim modülü, OAuth ile giriş, PKCE ve kurum dizini | A kurumunun üyesi B kurumunun planını açamıyor. Okur rolü karar kaydedemiyor. Kayıt denetimi kancası hiçbir durumda `None` dönmüyor. Liste ile kayıt denetimi aynı cevabı veriyor. Paylaşım satırı yazılamıyor. Hazır REST ucuyla karar oluşturulamıyor. MCP ucu 404 dönüyor. Telefon girişi telefonun tarayıcısında yapılıyor. |
 | 5 | Plan modülü, kanıt sürümleri, hedefler ve gözlemler | Hedef 5, gerçekleşen 8 dakika olarak ayrı görünüyor. Kanıt düzeltilince yeni sürüm ekleniyor ve eski sürüm okunuyor. Düzeltilen gözlem iki kez sayılmıyor. |
 | 6 | Eşitleme uçları, bağlanırken anlaşma, tekrar tablosu, akış başlığı ve değişiklik akışı | Aynı değişiklik iki kez gönderilince bir kez yazılıyor. İki eşzamanlı işlemde hiçbir akış satırı kaçmıyor. Reddedilen değişiklik ötekileri geri almıyor. Eski biçimdeki değişiklik çeviriciyle yazılıyor. Aynı değişiklik yayından sonra tekrar gelince aynı özeti veriyor. Yedekten dönüşte akış dönemi değişiyor ve cihaz baştan indiriyor. |
 | 7 | Ön yüzde depo bağdaştırıcısı, giden kutusu, durum çubuğu ve dosyayla taşıma. PWA ve Capacitor deneme paketleri. | İnternet kesilip gelince bütün değişiklikler sunucuya ulaşıyor. Bugünkü bir plan dosyası kayıpsız taşınıyor. Aynı kod web'de IndexedDB, telefonda SQLite kullanıyor. |
@@ -1308,8 +1319,8 @@ Bu konuları kaynak kodda ya da belgede okudum ya da önerdim. Çalışan bir su
 12. Press'in kendi sunucumuzda nasıl çalıştığı belgeden doğrulanamadı. Bilgi forum yazılarından geliyor. Press'in üç kayıt türünü Codex kaynak koddan okudu. Ben ayrıca okumadım.
 13. Capgo ve Capawesome bilgileri satıcıların kendi belgelerinden geliyor.
 14. Hüseyin Cengiz, Frappe'nin sertifika komutunun yenilemeyi nasıl kurduğunu doğrulamalı.
-15. Frappe 16'nın cihazın seçtiği UUID adını olduğu gibi sakladığı 1. adımda denenmeli.
-16. OAuth anahtarının kimliğinin Cihaz kaydına yazılabildiği ve dar bir yetkiye indirilebildiği 4. adımda denenmeli.
+15. Frappe 16'nın cihazın UUID'sini olduğu gibi sakladığı kodda okundu. Davranış 1. adımda gerçek kurulumda denenmeli.
+16. Frappe OAuth kapsamını uçlarda denetlemez. Bu kodda okundu. 4. adımda giriş kancasının iptal edilen cihazı her istekte durdurduğu denenmeli.
 17. `before_commit` adımının, geri alınan bir ara kayıt noktasından sonra doğru çalıştığı 6. adımda denenmeli.
 18. MariaDB'nin ara kayıt noktasına dönünce kilitleri nasıl tuttuğu 6. adımda denenmeli.
 19. Rapor gerçek okurla denenmedi.

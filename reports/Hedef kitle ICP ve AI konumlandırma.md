@@ -1,5 +1,7 @@
 # Orta ölçekli şirketle başlayın, kararı insana bırakın
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Kitle bölümünün yerini [Derin ICP ve persona analizi](<Derin ICP ve persona analizi.md>) aldı. Konumlandırma ve yapay zekâ bölümlerinin yerini [Derin AI ve marka konumlandırma](<Derin AI ve marka konumlandırma.md>) aldı.
+
 Bu rapor, Türkiye çıkışlı strateji planlama yazılımınız için ilk müşteriyi seçiyor. İlk ücretli pazar, aile kökenli orta ölçekli şirketler olmalı. Bu şirketler kurumsal yönetime geçmeye çalışıyor. Yeni kurucular ücretsiz ya da ucuz bir giriş paketiyle gelmeli. Danışmanlar satış kanalı olarak çalışmalı. Kamu kurumları sonraki ayrı bir teklif olmalı. Bütün kitlelere aynı anda aynı mesajla gitmeyin. Ürünü “strateji yazan yapay zekâ” diye konumlandırmayın. Ürünü bir strateji yazılımı olarak konumlandırın. Bu yazılım kanıtı ve kararı kayıt altına alır. Asıl rakip Cascade ya da WorkBoard değildir. Asıl rakip Excel, sunum dosyası, danışman ve genel yapay zekâ sohbet aracıdır. Yapay zekâ her aşamada taslak yazmalı, seçenekleri genişletmeli ve eksikleri göstermeli. Yapay zekâ seçim yapmamalı, kapı onaylamamalı ve kaynak izni vermemelidir. Bu sınır hem araştırmayla hem mevzuatla hem de güven ihtiyacıyla uyumludur.
 
 ## Bu raporu nasıl okuyacaksınız
