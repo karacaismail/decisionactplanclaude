@@ -58,6 +58,7 @@ Karar sahibi 16 Kasım 2026 Pazartesi günü bir karar daha verdi:
 | Konu | Karar |
 |---|---|
 | Mobilde internet kesintisinde veri kaydı | Mobil uygulama, internet kesildiğinde veriyi IndexedDB yerine SQLite'a yazar. Bu karar kesindir. Web ve PWA'da IndexedDB kalır. Ayrıntı 8.1 bölümündedir. |
+| Kabul senaryosu | 12.1 bölümündeki gece yayını senaryosu ve ters hâli kabul ölçütüdür. Mimari bu iki senaryoyu geçmeden toplu yayına çıkmaz. |
 
 Karar sahibi aynı gün şu yeni hedefleri de verdi:
 
