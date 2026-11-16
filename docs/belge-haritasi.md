@@ -100,8 +100,10 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 
 | Belge | Ne anlatır? | Durum |
 |---|---|---|
-| [Geliştirme karar notları](gelistirme-karar-notlari.md) | Koda işlenecek notlarınız ve bekleyen işler | Tek kaynak |
+| [Geliştirme karar notları](gelistirme-karar-notlari.md) | Koda işlenecek notlarınız, açık sorular ve bekleyen işler | Tek kaynak |
 | [Bütünleşik raporun 1. bölümü](butunlesik-gelistirme-raporu.md) | Verdiğiniz mimari kararların tablosu | Tek kaynak |
+
+Açık sorular [geliştirme karar notlarının](gelistirme-karar-notlari.md) "Açık sorular" bölümünde durur. Örneğin stratejinin inceleme aralığı henüz seçilmedi.
 
 ## Çekmece 7. Ham araştırma notları
 

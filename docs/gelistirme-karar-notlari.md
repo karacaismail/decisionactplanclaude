@@ -150,6 +150,54 @@ Bu bilgiler `reports/Stratejik planlama ihtiyacı sınıflaması.md` dosyasında
 - Zorluk cümlesi 2.1 adımında taslak olarak görünür.
 - Eski planlar açılınca veri kaybolmaz.
 
+## Not 4. Strateji inceleme takvimi koda sabit yazılmaz
+
+Ürün sahibi bu notu 16 Kasım 2026 Pazartesi günü verdi.
+
+### Notun kendisi
+
+Stratejinin ne sıklıkla inceleneceği henüz seçilmedi. Konuşulan seçenekler 5/2, 4/2 ve 2/2 yıllık aralıklardır. İlk sayı genel yönün bakış süresidir. İkinci sayı stratejinin güncellenme aralığıdır.
+
+Uzmanlar yılda en az bir sınama öneriyor. Ayrıntı [strateji kavramları](strateji-kavramlari.md) belgesinin 3. bölümündedir.
+
+Codex'in belge haritası bu konuyu şöyle kaydetti: her şirket inceleme aralığını kendisi seçer. Yıl çiftleri yalnız örnektir. Ürün sahibi bu yaklaşımı henüz onaylamadı. Bu yüzden konu bir açık soru olarak kalır.
+
+### Bugün kodda ne var?
+
+- 3.5 adımında bir gözden geçirme kaydı var. Kayıt "Seçim hâlâ doğru mu?" sorusunu sorar.
+- Bir sonraki gözden geçirmenin tarihi için hatırlatma yok.
+- Genel yönün bakış süresi ve güncelleme aralığı için bir ayar yok.
+
+### Geliştirmede ne yapılacak?
+
+Karar verilene kadar şu kurallar geçerlidir:
+
+1. Hiçbir inceleme aralığı koda sabit yazılmaz. Örneğin "2 yıl" ya da "5 yıl" kodda geçmez.
+2. Aralıklar bir ayar olarak tutulur. Ayarda üç değer vardır: genel yönün bakış süresi, stratejinin güncellenme aralığı ve ara sınamaların aralığı.
+3. Ayarın sahibi karar sahibidir. Ayar bir kapı kararı değildir. Ayar değişince hiçbir karar eskimez.
+4. Ekran örnek seçenekler gösterebilir. Örneğin 5/2, 4/2 ve 2/2. Ekran bu seçenekleri yalnız örnek olarak sunar.
+5. Hatırlatma bu ayardan hesaplanır. Hatırlatmayı sunucudaki zamanlanmış iş gönderir. Bu iş ürünün bir özelliğidir. İşi DevOps sorumlusu kurar.
+6. Sunucu sürümünde ayar plan kaydının profiline yazılmaz. Çünkü profil değişince bütün kapı kararları eskiyor. Ayar ayrı bir kayıtta durur.
+
+Ürün sahibi karar verince bu not güncellenir. Örneğin sabit bir varsayılan seçilebilir. Ya da her şirketin kendi seçimi kesinleşebilir.
+
+### Ne olunca bitmiş sayılır?
+
+- Kodda sabit bir inceleme aralığı yoktur. Bunu bir test denetler.
+- Karar sahibi aralıkları ayardan değiştirebilir.
+- Aralık değişince hiçbir kapı kararı eskimez.
+- Bir sonraki gözden geçirme tarihi ekranda görünür.
+
+## Açık sorular
+
+Bu sorular henüz cevaplanmadı. Cevap gelince ilgili not güncellenir.
+
+| No | Soru | Durum | Geliştirmeye etkisi |
+|---|---|---|---|
+| 1 | Strateji hangi aralıkla incelenir? 5/2, 4/2, 2/2 ya da her şirketin kendi seçimi mi? | Ürün sahibinin kararını bekliyor. | Not 4'e göre aralık bir ayar olarak tutulur. Karar gelene kadar kodda sabit aralık olmaz. |
+| 2 | Deloitte, PwC, EY ve KPMG kendi hizmetlerini kime satıyor? | Bu konuda ayrı bir rapor yok. Mevcut notlar yalnız bu firmaların strateji yöntemlerini inceliyor. | Doğrudan bir etkisi yok. Sonuç danışman kanalını ve rakip haritasını etkileyebilir. |
+| 3 | Müşteri ilk karardan sonra hangi somut iş için geri döner? | Aday nedenler var: sonucu yeniden incelemek, yeni saha bulgusu ve yeni karar. Doğrulanmadı. | Tekrar kullanım ile ücretli yenileme ayrı ölçülmelidir. Ölçüm, sunucu sürümüyle birlikte tasarlanır. |
+
 ## Bekleyen iş: kısa yoldaki D5 ve D7 sorunu
 
 Ürün sahibi bu işi 15 Kasım 2026 Pazar günü erteledi. Geliştirme başlayınca ilk ele alınacak iş budur.
