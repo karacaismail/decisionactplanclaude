@@ -1,5 +1,7 @@
 # Girişimci Aksiyon Planı
 
+Bütün belgelerin haritası [docs/belge-haritasi.md](docs/belge-haritasi.md) dosyasındadır. Bir belgeyi aramadan önce oraya bakın.
+
 Bu araç üç işi sırayla yaptırır. Önce strateji öncesi hazırlığı yaptırır. Sonra stratejiyi oluşturtur. Sonra stratejiyi uygulatır.
 
 Araç her iddia için kanıt ister. Dayanak yeterliyse araç strateji oluşturmayı açar.
