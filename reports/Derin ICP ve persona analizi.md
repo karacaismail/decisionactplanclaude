@@ -1,5 +1,7 @@
 # Karar Atlası'nın ilk müşterisini sayılarla bulun
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış ICP ve persona analizi](<Doğrulanmış ICP ve persona analizi.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 ## 1. Kısa cevap
 
 İlk ücretli müşteriniz bir aile şirketidir. Ama her aile şirketi değildir. Bu rapor müşteriyi sektör, büyüklük, il, olay ve kişiyle tarif eder.

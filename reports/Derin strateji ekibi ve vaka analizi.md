@@ -1,5 +1,7 @@
 # Stratejiyi ekiple hazırlayın, tek kişiyle seçin
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış strateji ekibi ve vaka analizi](<Doğrulanmış strateji ekibi ve vaka analizi.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 Bu raporu Claude 16 Kasım 2026 Pazartesi günü yazdı. Rapor Karar Atlası için yazıldı. Karar Atlası bir strateji planlama yazılımıdır.
 
 Bu rapor "Strateji ekibi ve kabul ölçütleri" raporunun yerini alır. Eski rapordaki bilgiler burada yeniden sınandı. Bazı bilgiler düzeltildi. Yeni kanıtlar eklendi. Eski raporu okumanız gerekmez.

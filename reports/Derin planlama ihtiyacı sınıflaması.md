@@ -1,5 +1,7 @@
 # Planlama ihtiyacını olaylar ve evreler gösterir
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış planlama ihtiyacı sınıflaması](<Doğrulanmış planlama ihtiyacı sınıflaması.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 ## 1. Kısa cevap
 
 **Hiçbir tanınmış uzman hazır bir planlama ihtiyacı sınıflaması yayımlamıyor.** Böyle bir sınıflama üç soruyu birlikte cevaplardı:

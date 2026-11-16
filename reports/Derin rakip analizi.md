@@ -1,5 +1,7 @@
 # Rakipler seçime yaklaşıyor, Türkçe boşluk açık
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış rakip analizi](<Doğrulanmış rakip analizi.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 ## 1. Kısa cevap
 
 Karar Atlası'nın işini baştan sona yapan bir rakip yine bulunmadı. Bu iş hazırlıkla başlar. Sonra seçim ve karar kaydı gelir. En sonda seçime bağlı kaynak izni gelir. Ama boşluk önceki rapordan bu yana daraldı. Üç yeni bulgu bunu gösterir:

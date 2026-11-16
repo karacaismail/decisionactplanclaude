@@ -1,5 +1,7 @@
 # Önce adı doğrulatın, sonra gerekçeyi satın
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış AI ve marka konumlandırma](<Doğrulanmış AI ve marka konumlandırma.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 **Kısa cevap.** "Karar Atlası" adı Türkiye'de başka bir işte zaten kullanılıyor. Bu yüzden ada yeni para harcamadan önce bir marka vekili kayıtları aramalı. Ürünü resmî belgelerde "strateji planlama yazılımı" diye tanıtın. Tanıtımın başında ise kategoriyi değil, tek büyük şirket kararını anlatın. Rakipler hız ve yapay zekâ ajanı satıyor. Tek bir kararın gerekçesini savunulur kılan rakip yok. Boş alan budur. Yapay zekâ bugün üründe yoktur. Gelirse stratej'e yardım eder. Kanıt sürümlerine dayanarak taslak yazar, karşı görüş kurar ve eksikleri gösterir. Yapay zekâ seçmez, kapı onaylamaz, kaynak izni vermez ve çalışan puanlamaz. Bu sınır bir yetki kuralıdır. Yapay zekâ rolünün karar kayıtlarına yazma izni olmaz. Müşteri dört yapay zekâ düzeyinden birini seçer. Olağan bir müşterinin yapay zekâ maliyeti ayda yaklaşık 8 ile 11 dolardır. Bu tutar bizim hesabımızdır ve gelir raporundaki 18 dolarlık kotanın altında kalır.
 
 ## Bu raporu nasıl okursunuz?

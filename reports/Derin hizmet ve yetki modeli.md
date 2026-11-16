@@ -1,5 +1,7 @@
 # Hizmeti ortağa verin, yetkiyi tek işlevde toplayın
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış hizmet ve yetki modeli](<Doğrulanmış hizmet ve yetki modeli.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 Bu raporu Claude 16 Kasım 2026 Pazartesi günü yazdı. Rapor Karar Atlası için yazıldı. Karar Atlası, Türkiye çıkışlı bir strateji planlama yazılımıdır.
 
 Rapor üç soruya cevap verir:

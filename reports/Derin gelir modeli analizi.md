@@ -1,5 +1,7 @@
 # Karar Atlası kâra 115 müşteride ulaşır
 
+> **Güncellik notu, 16 Kasım 2026 Pazartesi günü.** Bu rapor tarihseldir. Yerini [Doğrulanmış gelir modeli analizi](<Doğrulanmış gelir modeli analizi.md>) aldı. O rapor kaynakları asıl metinlerinden doğrular.
+
 **Kısa cevap.** Karar Atlası satan şirkete para kazandırabilir. Ama doğrulanmış maliyetlerle eşik yükseldi. Temel senaryoda şirket yıl 3'te yaklaşık 115 ücretli müşteriyle başa baş olur. Önceki rapor bu sayıyı 102 bulmuştu. Yıl 1'de eşik 32'den 47 müşteriye çıktı. Nedeni ekip maliyetidir. Türkiye maaş anketleri ve 2026 SGK oranları yıl 1 ekibini ayda yaklaşık 10.000 dolar gösteriyor. Yıl 3 ekibi ayda yaklaşık 25.000 dolardır. Sunucu, mobil ve ödeme ücretleri toplam giderin yüzde 5'inden azdır. Bu yüzden kâr dört şeye bağlıdır: fiyat, müşteri tutma, destek saati ve satış hızı. Müşteri için de cevap koşulludur. Ürün, parası en az 20 ile 30 milyon TL olan kararda kendini öder. Bu eşik TL ile yazılırsa her yıl enflasyonla güncellenmelidir. Yapay zekâ bugün üründe yoktur. Rapordaki yapay zekâ maliyeti bir plandır.
 
 Şirket şu koşullarda para kazanır:

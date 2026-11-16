@@ -14,7 +14,7 @@ Routes used when a page was blocked: direct WebFetch, direct curl, Wayback Machi
 ## Verification table for flagged global items
 
 ### Takeaway
-Of 52 checked items, 31 were confirmed, 17 were corrected, 3 were partly confirmed and 1 was unreachable but substituted. The corrections that matter most are these. Smartsheet vsActual now has a general-availability target of early 2027, its own option-and-trade-off view and a "gap flag" for goals without targets. Success.co really advertises offline mode on all plans. BSC Designer's Turkish interface dates from April 2025 and it now has MCP. StrategyFrame.AI hosts in Germany or the EU and its entry price was reported as 15,000 euros a year. WorkBoard's "55%" figure is from September 2025, not June 2026.
+Of 67 checked items, 41 were confirmed (some with added detail or a small fix), 16 were corrected, 7 were partly confirmed, 1 stays in conflict and 2 were unreachable but given a substitute source. The corrections that matter most are these. Smartsheet vsActual now has a general-availability target of early 2027, its own option-and-trade-off view and a "gap flag" for goals without targets. Success.co really advertises offline mode on all plans. BSC Designer's Turkish interface dates from April 2025 and it now has MCP. StrategyFrame.AI hosts in Germany or the EU and its entry price was reported as 15,000 euros a year. WorkBoard's "55%" figure is from September 2025, not June 2026.
 
 ### Cited Findings
 
@@ -239,7 +239,7 @@ G2, Capterra and TrustRadius block direct fetches (HTTP 403). Wayback snapshots 
 
 ### Inferences
 - The report's WorkBoard figure (about 103 reviews, 4.7) is outdated. Use 306 reviews, 4.6.
-- The report's sentence "Global araçlarda dert eksik özellik değildir" still holds. Learning curve tags outnumber missing-feature tags for ClearPoint (35 learning-related vs 0 missing-feature tags) and for Cascade (setup in summary, 7 missing-feature tags).
+- The report's sentence "Global araçlarda dert eksik özellik değildir" still holds. For ClearPoint, learning-related con tags (Learning Curve, Learning Difficulty, Difficult Learning Curve, Not Intuitive) total 35, against 7 for Limited Customization. For Cascade, the G2 summary names setup complexity, and Missing Features has 7 tags.
 
 ### Gaps
 - No TrustRadius snapshot after August 2025 for WorkBoard. No snapshots found for Cascade or ClearPoint on TrustRadius.
