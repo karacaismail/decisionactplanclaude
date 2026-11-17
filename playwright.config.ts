@@ -1,18 +1,21 @@
 import { defineConfig, devices } from '@playwright/test'
 
 /** Chromium ve WebKit. Firefox çalıştırılmaz (kalıcı kullanıcı kararı). */
+
+/** Her çalışma kopyası kendi portunu kullanır. Örneğin PW_PORT=$PANE_PORT verilir. */
+const port = Number(process.env.PW_PORT ?? 5179)
 export default defineConfig({
   testDir: './tests',
   timeout: 60_000,
   retries: 0,
   reporter: [['list']],
   use: {
-    baseURL: 'http://localhost:5179',
+    baseURL: `http://localhost:${port}`,
     trace: 'retain-on-failure',
   },
   webServer: {
-    command: 'npm run dev -- --port 5179 --strictPort',
-    url: 'http://localhost:5179',
+    command: `npm run dev -- --port ${port} --strictPort`,
+    url: `http://localhost:${port}`,
     reuseExistingServer: true,
     timeout: 60_000,
   },
