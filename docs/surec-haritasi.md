@@ -63,6 +63,20 @@ Alt aşama 3.5'te karar sahibi üç karardan birini verir:
 
 "Yeniden aç" kararından sonra strateji belgesi taslağa döner ve onay silinir. Kontrol 6, 7 ve 8'in kararları eskir. Uygulama kilitlenmez ve eski seçimle sürer. Karar sahibi strateji belgesini yeniden onaylayınca strateji kapanır. Sonraki bir "Düzelt" kaydı açık stratejiyi kapatmaz.
 
+### Hedef takibi
+
+Hedef takibi isteğe bağlıdır. Karar sahibi "Strateji uygulama" ekranındaki anahtarla açar. Strateji uygulama kilitliyken anahtar görünmez. Hedef takibi bir alt aşama değildir. Hedef takibi olmadan da strateji tamamdır.
+
+Hedef takibi açıkken sıra şöyledir:
+
+1. Ekip 2.5 adımındaki ana hamlelerden en çok 3 hedef yazar.
+2. Ekip her hedefe en çok 5 gösterge yazar. Üçten çok göstergede uyarı çıkar.
+3. Ekip her hafta göstergelerin bugünkü sayısını yazar.
+4. Dönem 3 ay sonra kapanır. Ekip ne öğrendiğini yazar.
+5. Karar sahibi 3.5 alt aşamasında "Seçim hâlâ doğru mu?" sorusunu cevaplar. Yazılım bu kararı vermez.
+
+Hiçbir kontrol hedef takibi kaydını okumaz. Anahtar hiçbir kararı eskitmez.
+
 Stratejisi eski sürümde tamamlanan plan bir izin alır. Strateji uygulama bu planda kilitlenmez. "Yeniden aç" kararı bu izni kaldırır.
 
 Temel bölümündeki kararlar şunlardır:
