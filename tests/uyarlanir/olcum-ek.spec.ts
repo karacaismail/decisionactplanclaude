@@ -25,7 +25,10 @@ test('Kartı kaplayan bağlantının ek basma alanı ölçülür', async ({ page
 })
 
 test('Toplu ölçüm tekli ölçümle aynı küçük kontrolü bulur', async ({ page }) => {
-  await page.setContent('<button id="kucuk" style="width:24px;height:24px">A</button><button id="buyuk" style="width:44px;height:44px">B</button>')
+  // Sayfa uygulamanın viewport etiketini taşır. Etiket yoksa mobil WebKit sayfayı küçültür.
+  // Küçültülen sayfada 44 piksellik kutu 43,99 piksel ölçülür.
+  await page.setContent('<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"><button id="kucuk" style="width:24px;height:24px">A</button><button id="buyuk" style="width:44px;height:44px">B</button>')
+  expect(await page.evaluate(() => window.visualViewport?.scale ?? 1)).toBe(1)
   await installProbe(page)
   const expected = await measureTarget(page, '#kucuk')
   expect(expected).toMatchObject({ rule: 'dokunma', measured: '24.00 × 24.00 CSS px' })
