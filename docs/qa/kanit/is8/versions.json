@@ -1,0 +1,42 @@
+{
+  "node": "v24.21.0",
+  "npm": "11.19.0",
+  "os": "macOS-26.5.1-arm64-arm-64bit",
+  "packages": {
+    "@playwright/test": {
+      "manifest": "^1.64.1",
+      "lock": "1.64.1",
+      "installed": "1.64.1"
+    },
+    "typescript": {
+      "manifest": "^5.9.3",
+      "lock": "5.9.3",
+      "installed": "5.9.3"
+    },
+    "vite": {
+      "manifest": "^8.3.8",
+      "lock": "8.3.8",
+      "installed": "8.3.8"
+    },
+    "vitest": {
+      "manifest": "^5.1.0",
+      "lock": "5.1.0",
+      "installed": "5.1.0"
+    },
+    "react": {
+      "manifest": "^19.3.1",
+      "lock": "19.3.1",
+      "installed": "19.3.1"
+    },
+    "antd": {
+      "manifest": "^6.7.0",
+      "lock": "6.7.0",
+      "installed": "6.7.0"
+    },
+    "echarts": {
+      "manifest": "^6.1.0",
+      "lock": "6.1.0",
+      "installed": "6.1.0"
+    }
+  }
+}

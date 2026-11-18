@@ -1,0 +1,173 @@
+{
+  "at": "2026-11-18T05:16:28.591465+00:00",
+  "workers": [
+    {
+      "id": "01-config",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.562Z"
+      },
+      "text": "• Working (22s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "02-routes",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.547Z"
+      },
+      "text": "• Working (21s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "03-mouse",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.541Z"
+      },
+      "text": "• Working (20s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "04-touch",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.547Z"
+      },
+      "text": "• Working (19s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "05-keyboard",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.541Z"
+      },
+      "text": "• Working (4m 49s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "06-rotation",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.541Z"
+      },
+      "text": "• Working (4m 19s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "07-overlays",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.562Z"
+      },
+      "text": "• Working (0s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "08-preferences",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.566Z"
+      },
+      "text": "• Working (3m 18s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "09-probe",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.576Z"
+      },
+      "text": "• Working (2m 48s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "10-audit-review",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.576Z"
+      },
+      "text": "• Working (2m 18s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "11-owners",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.573Z"
+      },
+      "text": "• Working (1m 48s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    },
+    {
+      "id": "12-coverage",
+      "state": {
+        "initialized": true,
+        "running": true,
+        "isAlternateScreen": false,
+        "activityStatus": "active",
+        "isCliReady": true,
+        "isCliPanel": true,
+        "agentType": "codex",
+        "lastActivity": "2026-11-18T05:16:28.562Z"
+      },
+      "text": "• Working (1m 18s • esc to interrupt)\n \n \n› Ask Codex to do anything\n \n  gpt-6-astra xhigh · ~/Developer/decisionactplanclaude/worktrees/mobil-qa-1"
+    }
+  ]
+}

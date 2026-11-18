@@ -1,0 +1,66 @@
+{
+  "applicationSourceCommit": "c6736e9a29c999648d96a580dff01ffdb538bcbb",
+  "testCommit": "df28240",
+  "sourceHashesUnchanged": true,
+  "routeCount": 77,
+  "projects": {
+    "chromium-320": 77,
+    "chromium-360": 77,
+    "chromium-375": 77,
+    "chromium-390": 77,
+    "chromium-landscape": 77,
+    "chromium-tablet": 77,
+    "chromium-1280": 77,
+    "chromium-1920": 77,
+    "webkit-320": 77,
+    "webkit-360": 77,
+    "webkit-375": 77,
+    "webkit-390": 77,
+    "webkit-landscape": 77,
+    "webkit-tablet": 77,
+    "webkit-1280": 77,
+    "webkit-1920": 77
+  },
+  "checks": {
+    "lint": "pass",
+    "unit": "pass",
+    "unitTests": 337,
+    "build": "pass",
+    "qaTypes": "pass",
+    "fixtureTests": 32,
+    "fixtures": "pass",
+    "ciCommand": "fail",
+    "remoteCI": "not_run",
+    "applicationSourceModified": false,
+    "push": "not_run"
+  },
+  "matrixChromium": {
+    "passed": 162,
+    "failed": 462,
+    "skipped": 8
+  },
+  "matrixWebKit": {
+    "startTime": "2026-11-18T05:51:41.127Z",
+    "duration": 1199490.73,
+    "expected": 162,
+    "skipped": 8,
+    "unexpected": 462,
+    "flaky": 0
+  },
+  "ciFinal": {
+    "startTime": "2026-11-18T05:48:42.443Z",
+    "duration": 1322303.821,
+    "expected": 369,
+    "skipped": 14,
+    "unexpected": 89,
+    "flaky": 0
+  },
+  "matrixExecutedDependenciesUnchanged": true,
+  "matrixDependencyFiles": [
+    "playwright.config.ts",
+    "tests/uyarlanir/audit.ts",
+    "tests/uyarlanir/routes.ts",
+    "tests/uyarlanir/ekranlar.spec.ts",
+    "tests/uyarlanir/donus.spec.ts"
+  ]
+}

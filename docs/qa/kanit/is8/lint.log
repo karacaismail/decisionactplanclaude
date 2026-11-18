@@ -1,0 +1,5 @@
+
+> decisionactplanclaude@0.1.0 lint
+> tsc -b --noEmit && node scripts/check-ui.mjs
+
+Arayüz kapısı temiz. Yazı boyutu, hareket, odak, kenar ve cihaz bayrağı kuralları geçti.

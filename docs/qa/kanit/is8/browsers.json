@@ -1,0 +1,12 @@
+{
+  "chromium": {
+    "status": "pass",
+    "version": "156.0.8078.4",
+    "executable": "~/Library/Caches/ms-playwright/chromium-1248/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing"
+  },
+  "webkit": {
+    "status": "pass",
+    "version": "27.2",
+    "executable": "~/Library/Caches/ms-playwright/webkit-2370/pw_run.sh"
+  }
+}

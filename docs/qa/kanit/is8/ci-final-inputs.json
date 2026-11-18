@@ -1,0 +1,17 @@
+{
+  "playwright.config.ts": "e562a31aa16a183bc2a2b9b35f9438d0506a7114025f9dda8af89c3d648538ac",
+  "tests/uyarlanir/paneller.spec.ts": "2a8faf238038e8c8be6ae69eaca52e05be255755795860d410ee20a8946e103b",
+  "tests/uyarlanir/routes.ts": "005ba3f8c2b4c48d500ccff55a058440c0a964856f6fabbd970e808fc5c58569",
+  "tests/uyarlanir/klavye.spec.ts": "1278fd7e047f1d510b452e0db2c92b37fdfb7a687187fa9f04f4e2b14e0132b3",
+  "tests/uyarlanir/focus-audit.ts": "ec8346dc8370eef5870380e72259f684a2446c696a89f380ed511ecbeffd74ac",
+  "tests/uyarlanir/dokunma.spec.ts": "1fc6dd8a2a52b0a55d35c4a576ef14e75e729aced09dbfa79b47336103c3a51d",
+  "tests/uyarlanir/olcum-ek.spec.ts": "f3bd85be149500b15b955eb5f65b0fce84a1b06c0684400c609290723c110258",
+  "tests/uyarlanir/ekranlar.spec.ts": "7de77cd7733653948abdd25f36379ed0fc0a9897e3aa4fa3aea48c82b6629e7c",
+  "tests/uyarlanir/klavye-ana-yol.spec.ts": "88f6eff78050b5b0ff1da60313a432e6b86b26fe0b825c0c58a830a31bfb6e4a",
+  "tests/uyarlanir/fare.spec.ts": "d49b8de5c9f861cdb735bf7ac4912b11604debdaf84ccdef9ca8d880c53c81d1",
+  "tests/uyarlanir/tsconfig.json": "1af6c93ec832ad8d76fe1f76d8e6b2608a106f25c3d3bb856054df5b9611e37a",
+  "tests/uyarlanir/olcum.spec.ts": "be047a3bdffab48d599afbc4b69db72da10ba7811f4a4478c13cb04054ec8c45",
+  "tests/uyarlanir/tercihler.spec.ts": "237dbefe728a479434d251c29f4e5dbd04b62cf67f883575fe055aeb2c2b9ff4",
+  "tests/uyarlanir/audit.ts": "f6ddad86f04925404ac387788a5f4980aa8843abb1d8a91d8b1c7615c803cd6a",
+  "tests/uyarlanir/donus.spec.ts": "e2f03cc83bc6633bb0aadda5e2b7876abb627940e1a53293debe3bf29a440d13"
+}
