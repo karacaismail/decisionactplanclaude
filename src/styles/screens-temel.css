@@ -99,8 +99,7 @@ html[data-focus-mode='keyboard'] .stone-card .stone-link:focus-visible { positio
 .assumption-scores { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px 12px; margin: 0; min-width: 0; }
 .assumption-scores dt { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); }
 .assumption-scores dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; font-size: 14px; line-height: 1.4; color: var(--color-text-primary); font-variant-numeric: tabular-nums; min-width: 0; }
-.assumption-scores .ant-rate { font-size: 16px; line-height: 1; white-space: nowrap; }
-.assumption-scores .ant-rate .ant-rate-star:not(:last-child) { margin-inline-end: 4px; }
+.assumption-stars { display: inline-flex; gap: var(--space-1); color: var(--color-brand-accent); }
 .assumption-facts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin: 0; min-width: 0; }
 .assumption-facts dt { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); }
 .assumption-facts dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
