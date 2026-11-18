@@ -73,7 +73,7 @@ Her adımın cevapları `plan.steps["NN"].values` altında durur. Adım 00 ve Ad
 | S25 (2.5) | moves | repeater, satır alanları `move, serves, capability, have (select: var, kurulacak, disaridan)` | Strateji oluşturmanın bitişi, yönetici raporu |
 | 20 (çıkış kontrolü) | qualityCheck | checklist, 5 madde | Strateji oluşturmanın bitişi |
 | 20 (çıkış kontrolü) | approvedBy, approvedAt | text ve date | Strateji oluşturmanın bitişi |
-| U31 (3.1) | objective | text | Aksiyon planı |
+| U31 (3.1) | objective | text | Yalnız kayıt. Aksiyon planı bu alanı okumaz. |
 | U31 (3.1) | keyResults | repeater, satır alanları `kr, baseline, target` | Adımın denetimi |
 | U32 (3.2) | now, next, later | repeater, satır alanları `action, owner, dueDate` | Aksiyon planı, 3.3 adımının önerisi |
 | U33 (3.3) | resources | repeater, satır alanları `item, budgetKurus (money), people` | Kaynak hesabı |
@@ -136,3 +136,28 @@ Eski kayıtta hedef ve iş alanları Adım 19'da durur. Yazılım açılışta b
 - `now`, `next`, `later` ve `weeklyBottleneck` alanları U32 adımına geçer.
 
 Yeni adımda değer varsa yazılım üstüne yazmaz. İçe alınan eski dosya da aynı taşımadan geçer.
+
+## Hedef takibi kaydı
+
+Hedef takibi isteğe bağlıdır. Kayıt `plan.okr` alanında durur. Kayıt profilde, sınırlarda ya da U31 adımında durmaz. Kurallar [OKR araştırma raporundadır](okr-arastirma-raporu.md).
+
+Hiçbir kontrol bu alanı okumaz. Hazırlık ölçütleri, kümeler, bakılmayan alanlar ve teslim raporu da okumaz. `src/engine/okr-yalitim.test.ts` testi bunu sınar. Bu alanı yalnız aksiyon planı okur. Hedef takibi kapalıysa aksiyon planında bu bölüm görünmez. Hiç hedef yazılmadıysa da bölüm görünmez.
+
+| Alan | Tür | Anlamı |
+|---|---|---|
+| enabled | evet ya da hayır | Hedef takibi açık mı? Kayıt yoksa hedef takibi kapalıdır. |
+| changedAt | tarih | Anahtarın son değiştiği an |
+| periods | liste | Dönemler. Bir dönem 3 aydır. Son dönem kapanmadıysa açık dönemdir. |
+| periods[].objectives | liste, en çok 3 | Hedefler. Satır alanları `id, title, kind (kesin, zorlu), owner, sourceMove, indicators` |
+| objectives[].indicators | liste, en çok 5 | Göstergeler. Satır alanları `id, name, baseline, target, unit, owner, checkIns` |
+| indicators[].checkIns | liste | Haftalık durum. Satır alanları `at, value, confidence (evet, belki, hayir), note` |
+| periods[].taskLinks | nesne | 3.2 adımındaki iş ile göstergenin bağı. Anahtar işin satır kimliğidir. |
+| periods[].closedAt, learned | tarih ve metin | Dönemin kapandığı an ve öğrenilen |
+
+Kurallar şunlardır:
+
+1. Başlangıç değeri ve varılacak sayı ya sayıdır ya da boştur. Sayı olmayan değer boş sayılır.
+2. Anahtar karar sürümünü artırmaz. Anahtar hiçbir kararı eskitmez.
+3. Anahtar kapanınca kayıt silinmez. Plan dosyası indirilince kayıt dosyaya girer.
+4. Bozuk kayıt açılışta atılır. Plan reddedilmez. Şema sürümü değişmez.
+

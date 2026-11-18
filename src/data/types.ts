@@ -222,6 +222,64 @@ export interface TransitionRecord {
   stale?: boolean
 }
 
+/*
+ * Hedef takibi. İsteğe bağlı katmandır. İngilizce adı OKR'dir.
+ * Kayıt `plan.okr` alanında durur. Hiçbir kontrol, hazırlık ölçütü ya da teslim raporu bu alanı okumaz.
+ * Kurallar docs/okr-arastirma-raporu.md dosyasındadır.
+ */
+
+/** "Dönem sonunda bu sayıya ulaşır mısınız?" sorusunun cevabı. */
+export type OkrConfidence = 'evet' | 'belki' | 'hayir'
+/** Kesin hedefe tam ulaşılması beklenir. Zorlu hedef bilerek yüksek konur. */
+export type OkrKind = 'kesin' | 'zorlu'
+
+/** Haftalık durum. Bugünkü sayı, tahmin ve isteğe bağlı not. */
+export interface OkrCheckIn {
+  at: string
+  value: number
+  confidence: OkrConfidence
+  note?: string
+}
+
+/** Gösterge. Başlangıç değeri ve varılacak sayı bilinmiyorsa null olur. Sayı uydurulmaz. */
+export interface OkrIndicator {
+  id: string
+  name: string
+  baseline: number | null
+  target: number | null
+  unit?: string
+  owner?: string
+  checkIns: OkrCheckIn[]
+}
+
+export interface OkrObjective {
+  id: string
+  title: string
+  kind?: OkrKind
+  owner?: string
+  /** Hedef bir ana hamleden yazıldıysa hamlenin adı. */
+  sourceMove?: string
+  indicators: OkrIndicator[]
+}
+
+/** Varsayılan dönem 3 aydır. Kapanan dönem öğrenileni taşır. */
+export interface OkrPeriod {
+  id: string
+  startsAt: string
+  endsAt: string
+  objectives: OkrObjective[]
+  /** 3.2 adımındaki iş → hizmet ettiği gösterge. Anahtar işin satır kimliğidir. */
+  taskLinks?: Record<string, string>
+  closedAt?: string
+  learned?: string
+}
+
+export interface OkrState {
+  enabled: boolean
+  changedAt: string
+  periods: OkrPeriod[]
+}
+
 export interface PlanDoc {
   schemaVersion: '1.0'
   id: string
@@ -254,6 +312,8 @@ export interface PlanDoc {
   /** Örnek plan: ekranları tanıtır, raporda "Örnek" damgası taşır. */
   example?: boolean
   changes?: ChangeRecord[]
+  /** Hedef takibi. Kayıt yoksa hedef takibi kapalıdır. Anahtar kapanınca kayıt silinmez. */
+  okr?: OkrState
 }
 
 export function emptyPlan(id: string, name: string): PlanDoc {
