@@ -114,6 +114,8 @@ html[data-focus-mode='keyboard'] .path-compare:has(> .path-compare-scroll:focus-
 .work-lock { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; margin: 0; padding: 0; border: 0; }
 @media (max-width: 599px) { .work-lock { gap: var(--space-4); } }
 .work-lock-links { display: flex; flex-wrap: wrap; gap: 4px 20px; margin-top: 4px; }
+/* Kilit bağlantıları dokunma hedefidir. Kutu en az 44 CSS piksel olur. */
+.work-lock-links a { display: inline-flex; align-items: center; min-block-size: var(--target-touch); }
 .suggest-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
 .suggest-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; padding: 14px 0; border-bottom: 1px solid var(--color-border); min-width: 0; }
 .suggest-item:first-child { padding-top: 0; }

@@ -1,7 +1,7 @@
 import { useId, useState } from 'react'
-import { Button, Card, Empty, Grid, Input, Rate, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
+import { Button, Card, Empty, Grid, Input, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
 import { Link, useNavigate } from 'react-router'
-import { CheckCircle, HourglassMedium, PencilSimple, XCircle } from '@phosphor-icons/react'
+import { CheckCircle, HourglassMedium, PencilSimple, Star, XCircle } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { stepPath } from '@/data/registry'
 import { Callout } from '@/components/Callout'
@@ -72,7 +72,10 @@ export function AssumptionsScreen() {
         <dd>
           {n > 0 ? (
             <>
-              <span aria-hidden><Rate disabled count={5} value={n} /></span>
+              {/* Puan yalnız gösterilir. Seçilebilir yıldız denetimi kullanılmaz. */}
+              <span className="assumption-stars" aria-hidden>
+                {Array.from({ length: 5 }, (_, i) => <Star key={i} className="mt-icon-inline" weight={i < n ? 'fill' : 'regular'} />)}
+              </span>
               <span>{n} / 5</span>
             </>
           ) : 'Puan verilmedi'}

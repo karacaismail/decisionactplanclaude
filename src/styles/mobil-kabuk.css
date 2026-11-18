@@ -127,17 +127,6 @@ html[data-focus-mode='keyboard'] .topbar :focus-visible::before { background: va
 .cmdk-root .cmdk-searchbar .ant-btn { min-width: var(--target-touch); min-height: var(--target-touch); flex-shrink: 0; }
 .cmdk-root .cmdk-list { overscroll-behavior: contain; }
 .cmdk-root .cmdk-option-title, .cmdk-root .cmdk-option-sub { white-space: normal; overflow: visible; }
-html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before {
-  content: '';
-  position: absolute;
-  top: var(--space-2);
-  bottom: var(--space-2);
-  left: var(--space-1);
-  width: 3px;
-  background: var(--focus-marker);
-  visibility: visible;
-  pointer-events: none;
-}
 @media (max-width: 767px), (max-height: 500px) {
   .cmdk-root .cmdk-modal {
     top: 0;
@@ -202,7 +191,4 @@ html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before {
   .app-shell .shell-content { padding-top: var(--space-3); }
   .cmdk-root .cmdk-foot { padding-block: var(--space-1); }
   html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--target-touch) + var(--shell-safe-bottom)); }
-}
-@media (forced-colors: active) {
-  html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before { display: none; }
 }

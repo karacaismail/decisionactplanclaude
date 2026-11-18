@@ -537,7 +537,7 @@ test('rapor yükleme hatasından sonra yeniden açma kayıtlı planı korur', as
   await expectLoaded(network, 'reports')
   expect(attempts).toBeGreaterThan(blockedAttempts)
   await page.evaluate(() => { window.location.hash = '/' })
-  await expect(page.getByRole('button', { name: 'Ağ denetimi planı', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Aç: Ağ denetimi planı', exact: true })).toBeVisible()
 })
 
 test('ekran geçişi yalnız ziyaret edilen ekranları yükler', async ({ page, network }) => {
@@ -573,7 +573,13 @@ test('grafik gösteren ekran ECharts kodunu gerektiğinde yükler', async ({ pag
   expectNoRequest(network, 'charts')
   await page.evaluate(() => { window.location.hash = '/kanitlar' })
   await expect(page.getByRole('heading', { name: 'Kanıtlar', exact: true })).toBeVisible()
-  await expect(page.locator('canvas').first()).toBeVisible()
+  // Grafik ekrana girince yüklenir. Dar ekranda grafik ilk ekranın altında kalır.
+  const figure = page.getByRole('figure', { name: 'Basamak dağılımı' })
+  await expect(figure).toBeAttached()
+  const belowFold = await figure.evaluate((el) => el.getBoundingClientRect().top >= window.innerHeight)
+  if (belowFold) expectNoRequest(network, 'charts')
+  await figure.scrollIntoViewIfNeeded()
+  await expect(figure.locator('canvas').first()).toBeVisible()
   await expectLoaded(network, 'EvidenceScreen')
   await expectLoaded(network, 'charts')
   expectNoRequest(network, 'reports')
@@ -683,7 +689,7 @@ for (const navigation of ['direct', 'keyboard'] as const) {
     if (navigation === 'keyboard') await keyboardRoute(page, 'Planlar', browserName, testInfo)
     else await page.evaluate(() => { window.location.hash = '/' })
     await expect(page.getByRole('heading', { name: 'Planlar', exact: true })).toBeVisible()
-    await expect(page.getByRole('button', { name: 'Ağ denetimi planı', exact: true })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Aç: Ağ denetimi planı', exact: true })).toBeVisible()
   })
 }
 

@@ -127,8 +127,8 @@ export function ReviewScreen() {
     <span className="criterion-label">
       <span>{c.label}</span>
       {c.hint ? (
-        <Tooltip title={c.hint}>
-          <span className="hint-icon" tabIndex={0} role="img" aria-label={`İpucu: ${c.hint}`}><Info size={16} /></span>
+        <Tooltip title={c.hint} trigger={['hover', 'focus', 'click']}>
+          <button type="button" className="hint-icon" aria-label={`İpucu: ${c.hint}`}><Info size={16} aria-hidden /></button>
         </Tooltip>
       ) : null}
     </span>

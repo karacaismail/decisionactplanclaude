@@ -12,7 +12,6 @@
   --form-action-reserve: calc(var(--target-touch) * 3 + var(--space-8));
   --form-safe-bottom: env(safe-area-inset-bottom, 0px);
   --form-keyboard-inset: env(keyboard-inset-height, 0px);
-  --form-focus-marker-width: 3px;
   --form-calendar-width: calc(var(--target-touch) * 7 + var(--space-3));
   --form-action-line-height: 1.25;
 }
@@ -25,25 +24,12 @@
   scroll-margin-block-end: calc(var(--form-action-reserve) + var(--form-safe-bottom) + max(var(--form-keyboard-inset), var(--shell-nav-space, 0px)));
 }
 
-/* Girişin odak işareti, en yakın alan kabında çizilir. İç içe kaplar ikinci işaret üretmez. */
+/* Girişin odak işareti, en yakın alan kabında çizilir. Ortak kural mobil-token.css dosyasındadır. */
 .work-page :is(.field, .ant-form-item-control-input-content) { position: relative; }
-html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-input-content):has(:is(input:not([type='radio'], [type='checkbox']), textarea):focus-visible):not(:has(:is(.field, .ant-form-item-control-input-content) :focus-visible))::before {
-  content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2)); inset-block: var(--space-1);
-  width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
-}
-html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::before { display: none; }
-/* Plan adı gibi pencerelerdeki yalın girişlerde işaret, etiket kabında çizilir. */
 .ant-modal-body > label:has(> input.ant-input) { position: relative; }
 .ant-modal-body > label > input.ant-input { min-height: var(--target-touch); }
-html[data-focus-mode='keyboard'] .ant-modal-body > label:has(> input.ant-input:focus-visible)::before {
-  content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2)); inset-block: var(--space-1);
-  width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
-}
-html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus-visible::before { display: none; }
 @media (forced-colors: active) {
   html[data-focus-mode='keyboard'] .work-page :focus-visible { outline: 2px solid CanvasText !important; }
-  html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-input-content)::before { display: none; }
-  html[data-focus-mode='keyboard'] .ant-modal-body > label:has(> input.ant-input:focus-visible)::before { display: none; }
   html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus-visible { outline: 2px solid CanvasText !important; }
 }
 
@@ -162,12 +148,7 @@ html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus
 .choice-buttons.ant-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .choice-buttons .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; height: auto; min-height: var(--target-touch); min-width: var(--target-touch); line-height: 1.3; padding-block: var(--space-2); white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: var(--space-3); font-size: var(--form-text-body); color: var(--color-text-primary); border-color: var(--color-border-strong); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 .choice-buttons .ant-radio-button-wrapper::before { display: none; }
-html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wrapper:has(input:focus-visible)::before {
-  display: block; content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2));
-  inset-block: var(--space-1); width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
-}
 @media (forced-colors: active) {
-  html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wrapper:has(input:focus-visible)::before { display: none; }
   html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button:has(input:focus-visible) { position: static; }
   html[data-focus-mode='keyboard'] .work-page .choice-buttons input:focus-visible {
     position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
