@@ -265,3 +265,67 @@ test('çıktının başlangıçta açık bölümü dar ekranda kapanmaz', async 
   await expect(toggle).toBeFocused()
   await expect(page.getByRole('columnheader', { name: 'Sonuç', exact: true })).toBeVisible()
 })
+
+test('devir ve devralma bağlantılarının dokunma alanı en az 44 pikseldir', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page, 'devir')
+  for (const route of ['devir', 'devralma']) {
+    await page.goto(`/#/${route}`)
+    await expect(page.locator('main h1')).toBeVisible()
+    await page.evaluate(() => document.fonts.ready)
+    const links = page.locator('main a:visible')
+    expect(await links.count()).toBeGreaterThan(0)
+    for (const link of await links.all()) {
+      const box = (await link.boundingBox())!
+      expect(box.height, await link.innerText()).toBeGreaterThanOrEqual(44)
+      expect(box.width, await link.innerText()).toBeGreaterThanOrEqual(44)
+    }
+    await readable(page)
+  }
+  await page.goto('/#/devir')
+  const transition = page.getByRole('link', { name: 'Geçiş kapısını aç', exact: true })
+  await transition.scrollIntoViewIfNeeded()
+  const box = (await transition.boundingBox())!
+  const position = { x: box.width / 2, y: box.height - 2 }
+  if (testInfo.project.use.hasTouch) await transition.tap({ position })
+  else await transition.click({ position })
+  await expect(page).toHaveURL(/#\/gecis$/)
+})
+
+test('boş devir raporunda eksik adım bağlantıları dokunmaya uygundur', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 })
+  await page.goto('/')
+  await page.getByRole('button', { name: 'Yeni plan', exact: true }).first().click()
+  await page.getByPlaceholder('Örneğin Mahalle kafesi').fill('Devir bağlantı denemesi')
+  await page.getByRole('button', { name: 'Oluştur', exact: true }).click()
+  await expect(page).toHaveURL(/#\/baslangic/)
+  await page.goto('/#/devir')
+  const missing = page.locator('.devir-missing a')
+  await expect(missing.first()).toBeVisible()
+  for (const link of await missing.all()) {
+    const box = (await link.boundingBox())!
+    expect(box.height, await link.innerText()).toBeGreaterThanOrEqual(44)
+    expect(box.width, await link.innerText()).toBeGreaterThanOrEqual(44)
+  }
+  await readable(page)
+  const summary = page.getByRole('link', { name: 'Plan özetini aç', exact: true })
+  await summary.focus()
+  await summary.press('Enter')
+  await expect(page).toHaveURL(/#\/ozet$/)
+})
+
+test('yöntemlerin sayfa numarası telefonda okunur ve değiştirilebilir', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page, 'yontemler')
+  const number = page.locator('.method-pagination input')
+  await expect(number).toHaveValue('1')
+  expect(await number.evaluate((el) => parseFloat(getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(14)
+  const box = (await number.boundingBox())!
+  expect(box.height).toBeGreaterThanOrEqual(44)
+  expect(box.width).toBeGreaterThanOrEqual(44)
+  await number.fill('2')
+  await number.press('Enter')
+  await expect(number).toHaveValue('2')
+  await expect(page.getByText('128 yöntemden 25 ile 48 arası görünüyor.', { exact: true })).toBeVisible()
+  await readable(page)
+})
