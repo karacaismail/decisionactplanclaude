@@ -284,16 +284,26 @@ html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visib
 /* Sayı şeridinin iç boşlukları yoğunluk değişkenlerini izler. */
 .mt-stat-strip { container-type: inline-size; container-name: plan-stats; }
 
-@container plan-stats (max-width: 360px) {
-  .mt-stat-strip > .kpi.mt-stat-tile {
-    grid-template-columns: minmax(0, 1fr);
-    grid-template-areas: 'icon' 'label' 'value' 'note';
-  }
-}
-
 .mt-stat-strip > .kpi.mt-stat-tile {
   padding: var(--padding-panel);
   gap: var(--gap-control);
+}
+
+/* Dar şeritte etiket tam satırı alır. İkon kendi satırını açmaz, sayının yanında durur.
+   Kutu düğme gibi sıkı dikey boşluk kullanır. Metin boyutu ve dokunma alanı değişmez. */
+@container plan-stats (max-width: 360px) {
+  .mt-stat-strip > .kpi.mt-stat-tile {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'label label' 'value icon' 'note note';
+    gap: var(--gap-label) var(--gap-control);
+    padding-block: var(--padding-control-block);
+  }
+
+  /* İkon kutusu ikon kadar olur. Sayıya yer kalır. */
+  .mt-stat-strip > .mt-stat-tile > .kpi-icon {
+    inline-size: var(--icon-control);
+    block-size: var(--icon-control);
+  }
 }
 
 .mt-stat-strip > .kpi.mt-stat-tile.is-link {

@@ -2,7 +2,7 @@ import { useId } from 'react'
 import { Rate, Switch, Table, Tag } from 'antd'
 import { LockSimple, LockSimpleOpen, Star } from '@phosphor-icons/react'
 import '@/styles/mobil-kapi.css'
-
+import { scrollRegionWithKeyboard } from './keyboardScroll'
 export interface ScoreMatrixValue {
   weights: Record<string, number>
   locked: boolean
@@ -54,7 +54,7 @@ export function ScoreMatrix({ rows, criteria, value, onChange }: {
       {empty}
       <p className="helper" id={`${uid}-kaydir`}>Diğer ölçütleri görmek için tabloyu yana kaydırın.</p>
       <div className="score-table-frame">
-        <div className="score-table-scroll" role="region" aria-label="Ağırlık ve puan tablosu" aria-describedby={`${uid}-kaydir`} tabIndex={0}>
+        <div className="score-table-scroll" role="region" aria-label="Ağırlık ve puan tablosu" aria-describedby={`${uid}-kaydir`} tabIndex={0} onKeyDown={scrollRegionWithKeyboard}>
           <Table<MatrixRow>
             size="middle"
             pagination={false}
