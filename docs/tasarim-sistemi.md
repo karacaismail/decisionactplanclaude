@@ -1,83 +1,147 @@
-# Tasarım sistemi (kurumsal sürüm)
+# Tasarım sistemi
 
-Bu belge ekranların uyması gereken ortak kuralları anlatır. Kurallar [1. tur bağımsız eleştiriden](tasarim-elestirisi-1-tur.md) türedi. Kabul testleri `tests/tasarim.spec.ts` dosyasındadır. Test geçmezse ekran bitmiş sayılmaz.
+Bu belge ortak bileşenlerin güncel kurallarını anlatır.
+Renkler `src/theme/tokens.ts` dosyasından gelir.
+Ortak ölçüler `src/styles/tokens.css` dosyasında bulunur.
+Ant Design ayarları `src/theme/antdTheme.ts` dosyasında tutulur.
 
 ## Yazı
 
-| Öğe | Boyut | Ağırlık | Sınıf veya bileşen |
-|---|---|---|---|
-| Sayfa başlığı (h1) | 28 px | 600 | `PageHeader` |
-| Üst etiket (kicker) | 14 px, büyük harf, 0,08 em aralık | 600 | `.page-kicker` |
-| Bölüm başlığı (h2) | 20 px | 600 | `.section-head h2` |
-| Alt başlık (h3) | 16 px | 600 | `.section-head h3` |
-| Gövde | 16 px, satır 1,5 | 400 | varsayılan |
-| Yardımcı metin | 14 px | 400 | `.helper` |
+Varsayılan yazı tipi Outfit'tir. Gövde yazısı 16 pikseldir.
+Hiçbir okunabilir metin 14 pikselin altına inmez.
+Yoğunluk seçimi yazıyı küçültmez. Tarayıcının kök yazı boyutu korunur.
 
-Yalnız 400 ve 600 ağırlık kullanılır. 14 px altı metin yoktur.
-
-## Görünüm kararı (3. tur, 13 Kasım 2026)
-
-Kullanıcı düz bej görünümü "Windows 95 gibi" buldu. Karar: kurumsal yazılımların tanıdık dili kullanılır. Yan menü koyu lacivert, üst şerit beyaz ve gölgeli, bölümler beyaz kart ve yumuşak gölge, KPI kartlarında renkli ikon kutusu, giriş bloğu derin gradyan. Kenarlık yerine gölge ve yüzey tonu ayrım kurar. Bu karar bağımsız eleştirmenin "kart yok, ikon kutusu yok" önerisinin önüne geçer.
-
-## Yüzey ve köşe
-
-- Sayfa zemini `--color-surface-page`. İş yüzeyi `--color-surface-work`. Çukur yüzey `--color-surface-context` yalnız seçili durum ve giriş zemini için kullanılır.
-- Köşe yarıçapı iki değerdir: panel 8 px (`--radius-panel`), kontrol 6 px (`--radius-control`).
-- Kart yalnız tıklanabilir ya da seçilebilir nesne içindir: plan kartı, sonuç seçeneği. Sınıf `.surface-card`.
-- Kart içinde kart yasaktır. Bilgi blokları kart değildir.
-- Bölümler `.section` ile ayrılır. İkinci ve sonraki bölümün üstünde 1 px çizgi ve 32 px boşluk vardır.
-
-## Not bloğu
-
-Tek bileşen vardır: `Callout` (`.note`). Solda 3 px düz çizgi durur. Çizginin değdiği köşeler düzdür. Dolgu rengi yoktur. Çizgi rengi üç çeşittir: bilgi (nötr), uyarı (sarı), tehlike (kırmızı). "Günlük Hayattan" ve "Kısaca" gibi içerikler nötr not bloğudur.
-
-## Düğme
-
-- Ekranda bir tane dolu (primary) düğme olur.
-- İkincil düğme gri çerçevelidir. Turuncu çerçeveli düğme yoktur.
-- Üçüncül düğme yalnız metindir (`type="text"`).
-- İşlem grubu en çok üç düğmedir ve sağa yaslıdır. Fazlası "Daha fazla" menüsüne girer.
-- Adım ekranında düğmeler 64 px yüksek yapışkan alt şeritte durur (`.action-bar`). Şeridin üstünde 1 px çizgi vardır.
-- Silme düğmesi taşma menüsündedir.
-
-## Durum rengi
-
-| Durum | Renk | Nerede |
+| Öğe | Boyut | Kaynak |
 |---|---|---|
-| Geçti, İlerle, Koşullu ilerle | yeşil `statusOk` | etiket, rota, karar rozeti |
-| Açık | turuncu `actionPrimary` | rota, menü noktası |
-| Kilitli, Beklet | gri `textSecondary` / sarı `statusHold` | etiket, rozet |
-| Durdur | kırmızı `statusHarm` | rozet |
-| Yeniden dene | mavi `statusInfo` | rozet |
-| Yön değiştir | mor `tonePurple` | rozet |
+| Sayfa başlığı | 30 pikselden 44 piksele kadar | `--font-page-title` |
+| Bölüm başlığı | 22 piksel | `--font-section-title` |
+| Alt başlık | 17 piksel | `--font-subsection-title` |
+| Gövde | 16 piksel | `--font-body` |
+| Yardımcı metin | 14 piksel | `--font-helper` |
+| Özet sayısı | 36 piksel | `--font-stat-value` |
 
-"Zorunlu" ve "Koşullu" gereklilik bildirir, durum değildir. Nötr gri çerçeveli `.tag` ile gösterilir. Bir satırda en çok bir renkli etiket olur.
+Mevcut daha büyük yazılar korunur. Metinler doğal kelime sınırlarından sarılır.
+Model adları ve tablo başlıkları kelime ortasından bölünmez.
+Uzun eylem metni kesilmez. Düğme, metinle birlikte büyür.
 
-## KPI şeridi
+## Renk ve yüzey
 
-`KpiStrip` yalnız plan özetinde durur. Dört sayı tek satırdadır. Kutu yoktur. Sayılar arasında 1 px dikey çizgi vardır. Karar ve kapı ekranlarında aynı sayılar tek satır 14 px özet olarak yazılır (`LimitsBar` `compact`).
+Uygulama lacivert, beyaz ve mavi renklerini kullanır.
+Açık ve koyu temaların renkleri ayrı tanımlanır.
+Bileşenler `--color-*` değişkenlerini kullanır.
+Seçili durum, hata ve devre dışı durum kendi renklerini korur.
 
-## Tablo
+Ayrım için önce boşluk, hizalama ve yüzey tonu kullanılır.
+Kenarlık yalnız işlevi varsa eklenir.
+Yuvarlak köşeli kutuya tek kenarlı renkli vurgu çizgisi eklenmez.
+`Callout` düz çizgi kullanır. Çizgiye değen köşeler düz kalır.
 
-- Başlık satırı 36 px, 14 px büyük harf. Veri satırı 44 px.
-- Tablo kendi kabında yatay kayar. Sayfa kaymaz.
-- Hücre kelime ortasından bölünmez. İlk sütun en az 220 px.
+## Kontrol ve dokunma alanı
 
-## Grafik
+Görünen kontrol ile basılabilen alan ayrı ölçülür.
+`--control-visual-size` yalnız görsel gövdeyi tanımlar.
+`--hit-area-min` gerçek etkileşim alanını tanımlar.
+Bu projede bağımsız eylemlerin alanı en az 44 × 44 pikseldir.
+İkonun 16 piksel olması, düğmenin küçük olmasını gerektirmez.
 
-Çubuk 32 px, aralık 24 px, desen yok. Telefonda sekiz çubuk kısa adla sığar, kaydırıcı yoktur. Tamamlanan koyu mürekkep, kalan açık gri. Eksen yazısı 14 px. Kategori adı metin olur, sayı olmaz. Yükseklik 240 px.
+Ant Design'ın küçük kontrol yüksekliği de 44 pikseldir.
+`control.dense` eski tüketiciler için korunur. Bu değer yalnız görsel ölçüdür.
+Yeni etkileşim alanları `control.hitArea` değerini kullanır.
+Etkileşimsiz rozet ve ilerleme çizimi dokunma alanı sayılmaz.
+Takvim günleri de 44 piksel kalır. Dar ekranda takvimin iç boşluğu azalır.
+Sayı şeridi daralınca ikon, başlığın üstüne geçer. Böylece başlık kesilmez.
 
-## Kabuk
+## Yoğunluk
 
-- Yan menü 240 px. Madde 36 px. Menüde etiket yok. Durum 8 px nokta ile gösterilir.
-- Etkin maddenin sol kenarında 3 px düz çizgi vardır. Çizginin değdiği köşeler düzdür.
-- Üst şerit 56 px. Solda konum satırı (`nav aria-label="Konum"`). Sağda en çok iki durum etiketi ve tema düğmesi.
-- İkon boyutu satır içinde 16 px, menüde 20 px. Renkli ikon kutusu yoktur.
+Varsayılan düzen rahattır. Tüm ekran için `html` öğesinde `data-density` değerini ayarlayın.
+Bu seçim açılan panellere de uygulanır.
+Bir bölümdeki yerel seçim yalnız o bölümün HTML öğelerini etkiler.
+Sayfa kökünde açılan panel, bölümün yerel seçimini miras almaz.
+Sayfa kenar boşluğu ve dokunma alanı bu seçimle küçülmez.
 
-## Boşluk
+| Düzen | Değer | Görsel kontrol | Panel içi | İçerik arası | Bölüm arası |
+|---|---|---|---|---|---|
+| Rahat | `comfortable` | 44 px | 16 px | 16 px | 32 px |
+| Sıkı | `compact` | 36 px | 12 px | 12 px | 24 px |
+| Yoğun | `dense` | 32 px | 8 px | 8 px | 16 px |
 
-4 px taban. Bölüm arası 32 px. Blok arası 16 px. Satır içi 8 px. Kart iç boşluğu 20 px. Telefon kenar boşluğu 16 px. İçerik en çok 1.120 px.
+Örneğin şu değer tüm ekranı sıkı düzene geçirir:
 
-## Koyu tema
+```html
+<html lang="tr" data-density="compact">
+  <!-- Uygulama -->
+</html>
+```
 
-Zemin, yüzey ve yükseltilmiş yüzey arasında en az yüzde 6 parlaklık farkı vardır. Ana düğme koyu temada da doygun kiremit ve beyaz yazıdır. Seçili durum turuncunun yüzde 12 saydam katmanıdır. Kahverengi ton yoktur.
+## Boşlukların görevleri
+
+| Değişken | Görevi |
+|---|---|
+| `--padding-control-block` | Kontrolün üst ve alt iç boşluğu |
+| `--padding-control-inline` | Kontrolün iki yanındaki iç boşluk |
+| `--padding-panel` | İçerik yüzeyinin iç boşluğu |
+| `--gutter-page` | Sayfanın kenar boşluğu |
+| `--gap-control` | Komşu kontrollerin arası |
+| `--gap-content` | Aynı bölümdeki içeriklerin arası |
+| `--gap-section` | Bölümlerin arası |
+| `--gap-label` | Etiket ile açıklamanın arası |
+| `--gap-icon` | İkon ile metnin arası |
+
+İç boşluklar yalnız `--padding-*` değişkenlerini kullanır.
+Örneğin etiket içi boşluk, etiketler arası boşluktan bağımsızdır.
+Bileşenler bu değişkenleri kullanır. Yeni ham ölçü gerekiyorsa ortak kaynağa eklenir.
+TypeScript yoğunluk değerleri `density` nesnesinde bulunur.
+CSS ile TypeScript ölçülerinin eşitliği birim testiyle korunur.
+
+## Giriş türü
+
+CSS, `pointer`, `any-pointer` ve `hover` sorgularını ayrı değerlendirir.
+Fare desteği klavye varlığı anlamına gelmez.
+Dokunma desteği bulunan karma cihazda kontrollerin arası en az 8 piksel kalır.
+Fare ve hover birlikte varsa sayfa kenar ölçüsü 20 pikseldir.
+Diğer durumda sayfa kenar ölçüsü 16 pikseldir.
+Bu ölçü hazır bir değişkendir. Sayfa kabuğuna uygulanması kabuk işinin sorumluluğudur.
+
+Hiçbir eylem yalnız fare üzerine gelince erişilebilir olamaz.
+Düğmeler dokunma ve klavyeyle çalışır.
+Genişlik değişince form değeri ve odak korunur.
+Cihaz adı, `isMobile` veya `userAgent` ile davranış seçilmez.
+
+## Odak ve hareket
+
+Mevcut merkezi klavye modu korunur.
+Tab ve Shift+Tab görünür odak modunu açar.
+İşaretçi etkileşimi yalnız görünür modu kapatır.
+Normal temada çevreleyen odak halkası kullanılmaz.
+Klavye odağı çevrelemeyen görünür bir işaretle gösterilir.
+Yüksek karşıtlık istisnası ortak kullanıcı kuralına bağlıdır.
+
+Hareket, mevcut `--motion-*` değişkenlerini kullanır.
+Varsayılan eğri `cubic-bezier(.65, 0, .35, 1)` değeridir.
+Giriş ve çıkış aynı eğriyi kullanır.
+Kullanıcı hareketi azaltırsa mevcut azaltılmış hareket kuralı uygulanır.
+
+## Bileşenler ve yükleme
+
+İş 3 ortak bileşenleri `src/styles/mobil-token.css` dosyasını kullanır.
+Bu dosya `tokens.css` dosyasını yükler.
+Ant Design tema bağlantısı ortak ölçüleri uygulama başında yükler.
+Bu küçük ortak dosya, ayrı cihaz paketi değildir.
+
+Ortak bileşenler sayfa başlığı, sayı şeridi, not ve durum görünümleridir.
+Yöntem etiketi, yöntem kartı ve yöntem paneli de kapsamdadır.
+Kanıt bağlama, sınır özeti ve ilerleme göstergesi aynı ölçüleri kullanır.
+İş kuralları ve veri biçimleri değişmez.
+
+## Doğrulama
+
+Önce 320 piksel kabulü denetlenir. Sonra daha geniş görünümler denenir.
+Sayfa yana taşmaz. Geniş tablo yalnız kendi kapsayıcısında kayar.
+Dokunma alanı ve yazı boyutu gerçek tarayıcıda ölçülür.
+Statik denetim, tarayıcı ölçümünün yerine geçmez.
+
+Komutlar ve denetim sınırları [kalite kapıları belgesinde](kalite-kapilari.md) bulunur.
+İş 3 kaynak kapsamı yeni bir test dosyasına izin vermez.
+Mevcut birim testleri ve geçici tarayıcı kanıtları bu teslimi doğrular.
+Firefox kullanıcı kararıyla çalıştırılmaz.
+WebKit sonucu gerçek Safari veya gerçek telefon sonucu sayılmaz.
