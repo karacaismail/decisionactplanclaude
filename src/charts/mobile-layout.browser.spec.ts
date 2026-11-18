@@ -134,6 +134,48 @@ test('kanıt taslağı ve odak yatay görünümde korunur', async ({ page }, tes
   await expect(page.getByRole('dialog')).not.toBeVisible()
 })
 
+test('kanıt merdiveninde ok tuşları görünür odağı ve seçimi birlikte taşır', async ({ page }, testInfo) => {
+  await openDemo(page)
+  await page.goto('/#/kanitlar')
+  await page.getByRole('button', { name: 'Kanıt ekle', exact: true }).click()
+  const picker = page.locator('.mobil-ladder.ladder-picker')
+  const radios = picker.getByRole('radio')
+  await picker.locator('.ant-segmented-item').first().click()
+  await page.keyboard.press('Tab')
+  await radios.first().focus()
+
+  async function expectKeyboardChoice(index: number) {
+    const radio = radios.nth(index)
+    await expect(radio).toBeChecked()
+    await expect(radio).toBeFocused()
+    await expect.poll(() => radio.evaluate((element) => {
+      const label = element.nextElementSibling!
+      return {
+        mode: document.documentElement.getAttribute('data-focus-mode'),
+        visible: element.matches(':focus-visible'),
+        underline: getComputedStyle(label).textDecorationLine,
+        outline: getComputedStyle(label).outlineStyle,
+        shadow: getComputedStyle(label).boxShadow,
+      }
+    })).toEqual({ mode: 'keyboard', visible: true, underline: 'underline', outline: 'none', shadow: 'none' })
+  }
+
+  await expectKeyboardChoice(0)
+  for (const [key, index] of [['ArrowDown', 1], ['ArrowUp', 0], ['ArrowUp', 6], ['ArrowDown', 0], ['ArrowRight', 1], ['ArrowLeft', 0]] as const) {
+    await page.keyboard.press(key)
+    await expectKeyboardChoice(index)
+  }
+  for (const [width, height] of [[844, 390], [320, 720]]) {
+    await page.setViewportSize({ width, height })
+    await expectKeyboardChoice(0)
+  }
+  await picker.locator('.ant-segmented-item-label').first().scrollIntoViewIfNeeded()
+  await page.screenshot({ path: testInfo.outputPath('ladder-keyboard-320.png') })
+  await picker.locator('.ant-segmented-item').nth(3).tap()
+  await expect(radios.nth(3)).toBeChecked()
+  await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode', 'keyboard')
+})
+
 
 test('geçmiş filtresinin klavye odağı görünürdür', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })

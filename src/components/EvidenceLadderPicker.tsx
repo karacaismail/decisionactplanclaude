@@ -38,6 +38,21 @@ export function EvidenceLadderPicker({ value, onChange, id }: { value?: number; 
         aria-label="Kanıt basamağı"
         value={value ?? 0}
         onChange={(v) => onChange(Number(v))}
+        onKeyDownCapture={(event) => {
+          if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
+          if (!(event.target instanceof HTMLInputElement)) return
+          const inputs = Array.from(event.currentTarget.querySelectorAll<HTMLInputElement>('input[type="radio"]:not(:disabled)'))
+          const index = inputs.indexOf(event.target)
+          if (index < 0) return
+          // Yerel ok davranışı WebKit'te :focus-visible durumunu kaybediyor.
+          // Seçimi tek kez bildirirken görünür odağı sonraki girdiye taşıyoruz.
+          event.preventDefault()
+          event.stopPropagation()
+          const offset = ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : 1
+          const next = inputs[(index + offset + inputs.length) % inputs.length]
+          next.focus()
+          next.click()
+        }}
         options={LADDER.map((l) => ({
           value: l.level,
           label: (

@@ -93,4 +93,16 @@ describe('Mobil kanıt merdiveni', () => {
     await act(async () => root.render(createElement(EvidenceLadder)))
     expect(container.querySelector('[aria-current="true"]')).toBeNull()
   })
+
+  it('Boş seçimde ok tuşu odaktaki basamaktan ilerler ve tek değişiklik bildirir.', async () => {
+    const onChange = vi.fn()
+    await act(async () => root.render(createElement(EvidenceLadderPicker, { onChange })))
+    await act(async () => { radios()[1].focus() })
+    const event = new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true, cancelable: true })
+    await act(async () => { radios()[1].dispatchEvent(event) })
+    expect(event.defaultPrevented).toBe(true)
+    expect(document.activeElement).toBe(radios()[2])
+    expect(onChange).toHaveBeenCalledExactlyOnceWith(3)
+    expect(radios().some((radio) => radio.checked)).toBe(false)
+  })
 })
