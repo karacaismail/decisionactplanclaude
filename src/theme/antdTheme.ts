@@ -1,5 +1,5 @@
 import { theme as antTheme, type ThemeConfig } from 'antd'
-import { control, font, motion, palette, radius, type ThemeMode } from './tokens'
+import { control, font, motion, palette, radius, space, type ThemeMode } from './tokens'
 import '@/styles/mobil-token.css'
 
 /** Mağaza tercihi "system" ise işletim sistemi tercihine bakar. */
@@ -132,6 +132,15 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
       Table: { headerBg: p.surfaceContext, cellPaddingBlock: 14, cellPaddingInline: 16, headerSplitColor: 'transparent', rowHoverBg: p.surfaceContext, headerColor: p.textSecondary },
       Tag: { borderRadiusSM: 6, defaultBg: p.surfaceContext, defaultColor: p.textSecondary },
       Input: { paddingBlock: 8, activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong },
+      // Yedi gün 320 piksele sığar. Her günün dokunma alanı korunur.
+      DatePicker: {
+        cellWidth: control.hitArea,
+        cellHeight: control.hitArea,
+        textHeight: control.hitArea,
+        padding: space.xs,
+        paddingXS: space.xs,
+        paddingXXS: 0,
+      },
       InputNumber: { activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong },
       Select: { activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong, optionSelectedBg: p.selectedBg },
       Radio: { buttonSolidCheckedBg: p.actionPrimary, buttonSolidCheckedColor: p.onAction, buttonSolidCheckedHoverBg: p.actionHover },

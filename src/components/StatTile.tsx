@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
+import '@/styles/mobil-token.css'
 
 export type StatTone = 'teal' | 'purple' | 'orange' | 'navy'
 
@@ -39,11 +40,11 @@ export function StatTile({
       {note ? <span className="kpi-note">{note}</span> : null}
     </>
   )
-  if (!clickable) return <div className="kpi">{body}</div>
+  if (!clickable) return <div className="kpi mt-stat-tile">{body}</div>
   return (
     <button
       type="button"
-      className="kpi is-link"
+      className="kpi is-link mt-stat-tile"
       onClick={() => {
         onClick?.()
         if (to) nav(to)
@@ -57,7 +58,7 @@ export function StatTile({
 /** Dört KPI'yı tek satırda gösteren şerit. */
 export function KpiStrip({ children, label = 'Plan sayıları' }: { children: ReactNode; label?: string }) {
   return (
-    <div className="kpi-strip" role="group" aria-label={label}>
+    <div className="kpi-strip mt-stat-strip" role="group" aria-label={label}>
       {children}
     </div>
   )

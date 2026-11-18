@@ -1,21 +1,22 @@
 import type { ReactNode } from 'react'
 import '@/styles/screens-pano.css'
+import '@/styles/mobil-token.css'
 
 /**
  * Boş durum: başlık, tek cümle açıklama ve en çok iki düğme.
- * Kart değildir. İkon isteğe bağlıdır ve 16 px gri çizilir. Renkli ikon kutusu yoktur.
+ * İkon isteğe bağlıdır. Metin ve eylem ölçüleri ortak tasarım değişkenlerinden gelir.
  */
 export function EmptyState({ icon, title, text, actions }: { icon?: ReactNode; title: string; text?: ReactNode; actions?: ReactNode }) {
   return (
-    <div className="empty-state" role="status">
+    <div className="empty-state mt-empty-state" role="status">
       {icon ? (
-        <span className="empty-icon" aria-hidden>
+        <span className="empty-icon mt-empty-icon" aria-hidden>
           {icon}
         </span>
       ) : null}
       <h2>{title}</h2>
       {text ? <p>{text}</p> : null}
-      {actions ? <div className="empty-actions">{actions}</div> : null}
+      {actions ? <div className="empty-actions mt-empty-actions">{actions}</div> : null}
     </div>
   )
 }

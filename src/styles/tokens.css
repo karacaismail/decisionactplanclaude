@@ -2,9 +2,11 @@
 :root {
   --hit-area-min: 44px;
   --gutter-page: 16px;
+  --gutter-calendar: 2px;
   --font-body: 16px;
   --font-helper: 14px;
   --font-page-title: clamp(30px, 3.2vw, 44px);
+  --font-page-description: 17px;
   --font-section-title: 22px;
   --font-subsection-title: 17px;
   --font-stat-value: 36px;
@@ -16,11 +18,18 @@
   --line-control: 1.4;
   --weight-strong: 600;
   --padding-note-edge: 16px;
+  --padding-empty-block: 8px;
+  --padding-badge-inline: 4px;
+  --padding-tag-block: 4px;
+  --padding-selection-inline: 6px;
+  --padding-popup: 4px;
+  --padding-label-bottom: 4px;
   --gap-label: 4px;
   --gap-icon: 6px;
   --size-loading-label: 120px;
   --size-loading-copy: 70%;
   --size-loading-title: 50%;
+  --size-loading-head-max: 640px;
   --size-progress-ring: 96px;
   --size-step-marker: 28px;
 }

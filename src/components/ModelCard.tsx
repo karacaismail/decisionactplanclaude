@@ -4,6 +4,7 @@ import { Badge, Card, Popover, Typography } from 'antd'
 import { ArrowSquareOut, ListNumbers } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-rapor.css'
+import '@/styles/mobil-token.css'
 
 export interface ModelEntry {
   g: number
@@ -35,7 +36,7 @@ export function modelLink(m: ModelEntry): string {
 export function ModelCard({ model, steps, linkSteps, onHelp }: { model: ModelEntry; steps: StepDef[]; linkSteps: boolean; onHelp?: (m: ModelEntry) => void }) {
   const titleId = `yontem-${model.slug}`
   const usage = steps.length ? (
-    <ul className="method-steps" aria-label="Kullanıldığı adımlar">
+    <ul className="method-steps mt-method-steps" aria-label="Kullanıldığı adımlar">
       {steps.map((s) => (
         <li key={s.id}>
           {linkSteps ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>{stepHeading(s.id)}</Link> : <span>{stepHeading(s.id)}</span>}
@@ -43,27 +44,27 @@ export function ModelCard({ model, steps, linkSteps, onHelp }: { model: ModelEnt
       ))}
     </ul>
   ) : (
-    <p className="helper method-steps-empty">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
+    <p className="helper method-steps-empty mt-method-steps-empty">Bu yöntem adımlarda doğrudan kullanılmıyor.</p>
   )
   return (
     <Card
       hoverable
-      className="method-card"
+      className="method-card mt-method-card"
       title={<span id={titleId}>{model.title}</span>}
       actions={[
         ...(model.help && onHelp
           ? [
               <button key="yardim" type="button" className="method-action method-help" aria-haspopup="dialog" onClick={() => onHelp(model)}>
-                <ListNumbers size={16} aria-hidden />
+                <ListNumbers className="mt-method-action-icon" aria-hidden />
                 Nasıl uygulanır
               </button>,
             ]
           : []),
         <a key="kitap" className="method-action" href={modelLink(model)} target="_blank" rel="noreferrer">
-          <ArrowSquareOut size={16} aria-hidden />
+          <ArrowSquareOut className="mt-method-action-icon" aria-hidden />
           Karar Kitabı'nda aç
         </a>,
-        <Popover key="adimlar" title="Adımlarda kullanımı" content={usage} trigger={['click']} placement="top">
+        <Popover key="adimlar" title="Adımlarda kullanımı" content={usage} trigger={['click']} placement="top" classNames={{ root: 'mt-method-usage-popover' }}>
           <button type="button" className="method-action method-usage" aria-label={`Adımlarda kullanımı: ${steps.length} adım`}>
             Adımlarda kullanımı
             <Badge count={steps.length} showZero overflowCount={999} size="small" className="method-badge" />

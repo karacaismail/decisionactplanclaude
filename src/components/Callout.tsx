@@ -1,5 +1,6 @@
 import { Info, Lightbulb, Warning, ChatCircleText, FlagCheckered } from '@phosphor-icons/react'
 import type { ReactNode } from 'react'
+import '@/styles/mobil-token.css'
 
 export type CalloutTone = 'bilgi' | 'ipucu' | 'uyari' | 'ornek' | 'sonuc'
 
@@ -18,9 +19,9 @@ const META: Record<CalloutTone, { label: string; Icon: typeof Info; cls: string 
 export function Callout({ tone = 'bilgi', title, danger, children }: { tone?: CalloutTone; title?: string; danger?: boolean; children: ReactNode }) {
   const { label, Icon, cls } = META[tone]
   return (
-    <div role={tone === 'uyari' || danger ? 'alert' : 'note'} className={`note ${danger ? 'is-danger' : cls}`.trim()}>
+    <div role={tone === 'uyari' || danger ? 'alert' : 'note'} className={`note mt-callout ${danger ? 'is-danger' : cls}`.trim()}>
       <span className="note-title">
-        <Icon size={16} aria-hidden />
+        <Icon size="var(--icon-inline)" className="mt-callout-icon" aria-hidden />
         {title ?? label}
       </span>
       <div className="note-body">{children}</div>
