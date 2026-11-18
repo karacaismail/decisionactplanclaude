@@ -36,10 +36,11 @@ async function patchPlan(page: Page, patch: string) {
   await page.reload()
 }
 
-/** İsteğe bağlı bölümler ayrı sekmededir. Sekme varsa onu seçer. */
+/** İsteğe bağlı bölümler ayrı sekmededir. Yardımcı işlev, sekme hazır olunca seçer. */
 async function optionalTab(page: Page) {
   const tab = page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' })
-  if (await tab.count()) await tab.click()
+  await expect(tab).toBeVisible()
+  await tab.click()
 }
 
 /** Boş isteğe bağlı bölüm kapalı gelir. Kapalıysa açar. */

@@ -13,10 +13,12 @@ export interface HowTo {
 let cache: Promise<Map<number, HowTo>> | null = null
 
 export function loadHowTo(): Promise<Map<number, HowTo>> {
-  cache ??= import('./models-howto.json').then((m) => new Map((m.default as HowTo[]).map((h) => [h.g, h])))
-  /* İndirme başarısız olursa sonraki açılış yeniden dener. */
-  cache.catch(() => {
-    cache = null
-  })
+  if (!cache) {
+    cache = import('./models-howto.json').then((m) => new Map((m.default as HowTo[]).map((h) => [h.g, h])))
+    /* Hata temizliği her yükleme için bir kez bağlanır. */
+    cache.catch(() => {
+      cache = null
+    })
+  }
   return cache
 }

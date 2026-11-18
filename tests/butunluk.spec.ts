@@ -29,10 +29,11 @@ async function patchPlan(page: Page, patch: string) {
   await page.reload()
 }
 
-/** İsteğe bağlı bölümler ayrı sekmededir. Sekme varsa onu seçer. */
+/** İsteğe bağlı bölümler ayrı sekmededir. Yardımcı işlev, sekme hazır olunca seçer. */
 async function optionalTab(page: Page) {
   const tab = page.locator('.form-tabs .ant-segmented-item', { hasText: 'İsteğe bağlı bölümler' })
-  if (await tab.count()) await tab.click()
+  await expect(tab).toBeVisible()
+  await tab.click()
 }
 
 /** Boş isteğe bağlı bölüm kapalı gelir. Kapalıysa açar. */
@@ -113,6 +114,7 @@ test('ayrı görüş Adım 17\'de yazılır ve devir raporunda görünür', asyn
 test('işletmeye satışta alımı durdurabilen kişi sorulur', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/karar/2/adim/08')
+  await expect(page.locator('h1')).toContainText('Adım 08.')
   await expect(page.getByText('Alımı kim durdurabilir?', { exact: true })).toHaveCount(0)
   await patchPlan(page, `plan.profile.customer = 'isletme'`)
   await expect(page.getByText('Alımı kim durdurabilir?', { exact: true })).toBeVisible()

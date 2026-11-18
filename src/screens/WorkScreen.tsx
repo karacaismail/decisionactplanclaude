@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
 import { Anchor, Button, Card, Collapse, ConfigProvider, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
 import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -18,14 +18,16 @@ import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
-import { FoundationSummary } from '@/components/FoundationSummary'
+import { LoadingState } from '@/components/LoadingState'
 import { SituationSummary } from '@/components/SituationSummary'
-import { PathCompare } from '@/components/PathCompare'
-import { buildHandoffReport } from '@/reports/handoff'
 import { ChartFrame } from '@/charts/ChartFrame'
 import type { Limits, PlanDoc } from '@/data/types'
 import '@/styles/screens-form.css'
 import '@/styles/screens-strateji.css'
+
+// Rapor bileşenleri yalnız görünür içerik istendiğinde yüklenir.
+const FoundationSummary = lazy(() => import('@/components/FoundationSummary').then((module) => ({ default: module.FoundationSummary })))
+const WorkPaths = lazy(() => import('@/components/WorkPaths').then((module) => ({ default: module.WorkPaths })))
 
 const LIMIT_KEYS: (keyof Limits)[] = ['successSentence', 'stopRules', 'monthlyBurnKurus', 'cashKurus', 'budgetKurus', 'deadline', 'retriesPerDecision', 'hoursPerWeek']
 
@@ -156,7 +158,6 @@ export function WorkScreen() {
 
   /* Yol adayları yalnız seçim adımında gösterilir. Başka adımda rapor hesaplanmaz. */
   const showPaths = PATH_VIEW_STEPS.includes(step?.id ?? '')
-  const paths = useMemo(() => (plan && showPaths ? buildHandoffReport(plan).paths : []), [plan, showPaths])
 
   if (!plan || !step) return null
   const decision = decisionOf(step.decision)
@@ -278,14 +279,14 @@ export function WorkScreen() {
           {showPaths && !locked ? (
             <Card className="step-card" variant="borderless" title="Yol adayları" extra={<Link to={stepPath(PATHS_STEP)}>Adım 18'i aç</Link>}>
               <p className="card-desc">Seçimi karar sahibi yapar. Yazılım bu alanı sizin yerinize doldurmaz.</p>
-              <PathCompare paths={paths} />
+              <Suspense fallback={<LoadingState cards={1} label="Yol adayları yükleniyor" />}><WorkPaths plan={plan} /></Suspense>
             </Card>
           ) : null}
           {isStrategy && !locked ? (
             <Collapse
               className="aside-collapse foundation-collapse"
               expandIconPlacement="end"
-              items={[{ key: 'dayanak', label: 'Dayanak özeti', children: <FoundationSummary plan={plan} compact /> }]}
+              items={[{ key: 'dayanak', label: 'Dayanak özeti', children: <Suspense fallback={<LoadingState cards={1} label="Dayanak özeti yükleniyor" />}><FoundationSummary plan={plan} compact /></Suspense> }]}
             />
           ) : null}
           {suggestions.length ? (
