@@ -87,6 +87,7 @@ export function FoundationScreen() {
   return (
     <div className="page page-foundation">
       <PageHeader
+        newPath="/temel"
         kicker="Temel taşları"
         title="Strateji öncesi 20 temel taşı"
         description="Her taş bir soruya cevap verir. Eksik taşa tıklayın, ilgili adım açılır."

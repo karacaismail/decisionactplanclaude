@@ -67,7 +67,7 @@ export function StrategyScreen() {
 
   return (
     <div className="page mobil-kapi-page page-karar page-strateji">
-      <PageHeader kicker="Strateji oluşturma" title={STRATEGY.question} description={STRATEGY.intro} documentTitle={STRATEGY.title} actions={action} />
+      <PageHeader newPath="/strateji" kicker="Strateji oluşturma" title={STRATEGY.question} description={STRATEGY.intro} documentTitle={STRATEGY.title} actions={action} />
 
       {locked ? (
         <Callout tone="uyari" title="Strateji oluşturma kilitli">

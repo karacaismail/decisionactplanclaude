@@ -165,6 +165,7 @@ export function AssumptionsScreen() {
   return (
     <div className="page page-assumptions">
       <PageHeader
+        newPath="/varsayimlar"
         kicker="Varsayım panosu"
         title="Varsayımlar"
         description="Varsayım, doğru kabul ettiğiniz ama henüz denemediğiniz sözdür."

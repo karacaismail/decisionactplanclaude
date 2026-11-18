@@ -109,7 +109,7 @@ export const motion = {
 } as const
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, section: 48 } as const
-export const radius = { control: 6, panel: 10, hero: 10 } as const
+export const radius = { control: 6, panel: 10, hero: 10, pill: 999 } as const
 /** Görsel gövde ve gerçek etkileşim alanı birbirinden bağımsızdır. */
 export const control = {
   visual: { comfortable: 44, compact: 36, dense: 32 },
@@ -150,6 +150,7 @@ export function cssVariables(mode: ThemeMode): Record<string, string> {
   vars['--radius-control'] = `${radius.control}px`
   vars['--radius-panel'] = `${radius.panel}px`
   vars['--radius-hero'] = `${radius.hero}px`
+  vars['--radius-pill'] = `${radius.pill}px`
   vars['--focus-marker'] = p.actionPrimary
   return vars
 }

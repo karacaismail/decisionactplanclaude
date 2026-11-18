@@ -376,6 +376,7 @@ export function HandoffScreen() {
   return (
     <div className="page devir-page">
       <PageHeader
+        newPath="/devir"
         kicker="Geçiş"
         title="Strateje devir raporu"
         description="Stratej bu raporla başlar. Rapor seçim yapmaz. Soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir."

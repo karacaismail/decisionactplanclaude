@@ -1,6 +1,8 @@
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Button, Drawer, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
+import { NewPill } from '@/components/Pill'
+import { isNewPage } from '@/data/newPages'
 import { List, ListChecks, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
@@ -106,6 +108,9 @@ export function AppShell() {
   const strategyState = !passedTransition ? 'Kilitli' : position?.strategyComplete ? 'Tamam' : 'Açık'
   const executionState = plan && !decisionLocked(plan, EXECUTION_DECISIONS[0]) ? 'Açık' : 'Kilitli'
 
+  /* Yeni sayfanın bağlantı adına ", yeni" eklenir. Ekran okuyucu etiketi de duyurur. */
+  const newSuffix = (path: string) => (isNewPage(path) ? ', yeni' : '')
+
   /* Yol dizini üç ana kümeye göre dizilir: strateji öncesi, strateji oluşturma, strateji uygulama. Yalnız yol ekranlarında görünür. */
   const journeyItems = plan
     ? [
@@ -119,8 +124,9 @@ export function AppShell() {
               key: '/devir',
               icon: <FileText size={20} />,
               label: (
-                <Link to="/devir" aria-label="Strateje devir raporu">
+                <Link to="/devir" aria-label={`Strateje devir raporu${newSuffix('/devir')}`}>
                   <span className="label">Devir raporu</span>
+                  <NewPill path="/devir" />
                 </Link>
               ),
             },
@@ -128,8 +134,9 @@ export function AppShell() {
               key: '/gecis',
               icon: <DoorOpen size={20} weight={passedTransition ? 'fill' : 'regular'} />,
               label: (
-                <Link to="/gecis" aria-label={`Geçiş kapısı, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}`}>
+                <Link to="/gecis" aria-label={`Geçiş kapısı, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}${newSuffix('/gecis')}`}>
                   <span className="label">Geçiş kapısı</span>
+                  <NewPill path="/gecis" />
                   <span className={`status-dot ${passedTransition ? 'is-passed' : foundationDone ? 'is-current' : ''}`} aria-hidden />
                 </Link>
               ),
@@ -144,8 +151,9 @@ export function AppShell() {
               key: '/strateji',
               icon: <Strategy size={20} />,
               label: (
-                <Link to="/strateji" aria-label={`Strateji oluşturma, ${strategyState}`}>
+                <Link to="/strateji" aria-label={`Strateji oluşturma, ${strategyState}${newSuffix('/strateji')}`}>
                   <span className="label">Strateji oluşturma</span>
+                  <NewPill path="/strateji" />
                   <span className={`status-dot ${strategyState === 'Tamam' ? 'is-passed' : strategyState === 'Açık' ? 'is-current' : ''}`} aria-hidden />
                 </Link>
               ),
@@ -160,8 +168,9 @@ export function AppShell() {
               key: '/uygulama',
               icon: <ListChecks size={20} />,
               label: (
-                <Link to="/uygulama" aria-label={`Strateji uygulama özeti, ${executionState}`}>
+                <Link to="/uygulama" aria-label={`Strateji uygulama özeti, ${executionState}${newSuffix('/uygulama')}`}>
                   <span className="label">Uygulama özeti</span>
+                  <NewPill path="/uygulama" />
                   <span className={`status-dot ${executionState === 'Açık' ? 'is-current' : ''}`} aria-hidden />
                 </Link>
               ),
@@ -181,11 +190,11 @@ export function AppShell() {
         ? '/strateji'
         : `/karar/${position.decision ?? EXECUTION_DECISIONS[EXECUTION_DECISIONS.length - 1]}`
   const isJourney = /^\/(karar|gecis|devir|strateji|uygulama|baslangic|devralma)/.test(loc.pathname)
-  const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean }[] = [
+  const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean; newPath?: string }[] = [
     { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },
     { to: journeyHome, label: 'Yol', Icon: MapTrifold, active: isJourney, needsPlan: true },
-    { to: '/temel', label: 'Temel taşları', Icon: Stack, active: loc.pathname === '/temel', needsPlan: true },
-    { to: '/varsayimlar', label: 'Varsayımlar', Icon: Lightbulb, active: loc.pathname === '/varsayimlar', needsPlan: true },
+    { to: '/temel', label: 'Temel taşları', Icon: Stack, active: loc.pathname === '/temel', needsPlan: true, newPath: '/temel' },
+    { to: '/varsayimlar', label: 'Varsayımlar', Icon: Lightbulb, active: loc.pathname === '/varsayimlar', needsPlan: true, newPath: '/varsayimlar' },
     { to: '/kanitlar', label: 'Kanıtlar', Icon: Paperclip, active: loc.pathname === '/kanitlar', needsPlan: true },
     { to: '/isler', label: 'İşler', Icon: CheckSquare, active: loc.pathname === '/isler', needsPlan: true },
     { to: '/gostergeler', label: 'Göstergeler', Icon: ChartBar, active: loc.pathname === '/gostergeler', needsPlan: true },
@@ -237,6 +246,7 @@ export function AppShell() {
           {tabs.map((t) => (
             <Link key={t.label} to={t.to} aria-current={t.active ? 'page' : undefined}>
               <t.Icon size={18} weight={t.active ? 'fill' : 'regular'} aria-hidden /> {t.label}
+              {t.newPath ? <NewPill path={t.newPath} /> : null}
             </Link>
           ))}
         </nav>
@@ -284,6 +294,7 @@ export function AppShell() {
           {tabs.map((t) => (
             <Link key={t.label} to={t.to} aria-current={t.active ? 'page' : undefined} onClick={() => setOpen(false)}>
               <t.Icon size={20} aria-hidden /> {t.label}
+              {t.newPath ? <NewPill path={t.newPath} /> : null}
             </Link>
           ))}
         </nav>

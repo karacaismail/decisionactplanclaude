@@ -145,6 +145,7 @@ export function TransitionScreen() {
   return (
     <div className="page mobil-kapi-page gecis-page">
       <PageHeader
+        newPath="/gecis"
         kicker="Geçiş kapısı"
         title="Stratejik planlamaya hazır mısınız?"
         documentTitle="Geçiş kapısı"

@@ -87,7 +87,7 @@ export function ExecutionScreen() {
 
   return (
     <div className="page mobil-kapi-page page-karar page-strateji">
-      <PageHeader kicker="Strateji uygulama" title={cluster.question} description="Seçimi hedefe, işe ve kaynağa çevirirsiniz. Sonra yürütür, ölçer ve seçimi düzenli sınarsınız." documentTitle={cluster.title} actions={action} />
+      <PageHeader newPath="/uygulama" kicker="Strateji uygulama" title={cluster.question} description="Seçimi hedefe, işe ve kaynağa çevirirsiniz. Sonra yürütür, ölçer ve seçimi düzenli sınarsınız." documentTitle={cluster.title} actions={action} />
 
       {locked ? (
         <Callout tone="uyari" title="Strateji uygulama kilitli">

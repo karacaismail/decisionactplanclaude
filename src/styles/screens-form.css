@@ -332,7 +332,7 @@ html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wr
 /* Eşik: iki alan yan yana, dar ekranda alt alta */
 .threshold-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--form-threshold-column-min)), 1fr)); gap: var(--space-4); min-width: 0; align-items: start; }
 .threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); min-width: 0; }
-.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; min-width: 0; max-width: 100%; }
+.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; min-width: var(--hit-area-min); max-width: 100%; }
 
 /* Kanıt bağlama */
 .evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }

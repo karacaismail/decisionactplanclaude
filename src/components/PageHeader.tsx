@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react'
 import '@/styles/mobil-token.css'
+import { NewPill } from '@/components/Pill'
 
 const APP_NAME = 'Girişimci Aksiyon Planı'
 
@@ -14,6 +15,7 @@ export function PageHeader({
   description,
   actions,
   documentTitle,
+  newPath,
 }: {
   title: string
   kicker?: string
@@ -22,6 +24,8 @@ export function PageHeader({
   description?: ReactNode
   actions?: ReactNode
   documentTitle?: string
+  /** Sayfa yeniyse başlığın yanında "Yeni" etiketi görünür. Değer sayfanın yoludur. Örneğin "/gecis". */
+  newPath?: string
 }) {
   const tab = documentTitle ?? title
   useEffect(() => {
@@ -35,7 +39,14 @@ export function PageHeader({
     <header className="page-header mt-page-header">
       <div className="page-header-text mt-page-header-text">
         {kicker ? <span className="page-kicker">{kicker}</span> : null}
-        <h1>{title}</h1>
+        {newPath ? (
+          <div className="page-title-row">
+            <h1>{title}</h1>
+            <NewPill path={newPath} />
+          </div>
+        ) : (
+          <h1>{title}</h1>
+        )}
         {description ? <p>{description}</p> : null}
       </div>
       {actions ? <div className="page-header-actions mt-header-actions">{actions}</div> : null}
