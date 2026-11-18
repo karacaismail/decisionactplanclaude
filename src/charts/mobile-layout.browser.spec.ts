@@ -468,3 +468,36 @@ test('yol ve varsayılan rota bağlantıları daralmada odağı korur', async ({
     await expect(route).toBeFocused()
   }
 })
+
+for (const reduced of [false, true]) {
+test(`kısa yol anahtarı boşluk ve tıklamayla açılıp kapanır${reduced ? ' (azaltılmış hareket)' : ''}`, async ({ page }) => {
+  if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page)
+  const toggle = page.getByRole('switch')
+  await toggle.scrollIntoViewIfNeeded()
+  const start = (await toggle.getAttribute('aria-checked')) === 'true'
+  const opposite = String(!start)
+  await page.keyboard.press('Tab')
+  await toggle.focus()
+  await expect(toggle).toBeFocused()
+  await page.keyboard.press('Space')
+  await expect(toggle).toHaveAttribute('aria-checked', opposite)
+  await page.keyboard.press('Space')
+  await expect(toggle).toHaveAttribute('aria-checked', String(start))
+  await expect(toggle).toBeFocused()
+  const focus = await toggle.evaluate((element) => ({
+    mode: document.documentElement.getAttribute('data-focus-mode'),
+    outline: getComputedStyle(element).outlineStyle,
+    shadow: getComputedStyle(element).boxShadow,
+    marker: getComputedStyle(element, '::before').width,
+  }))
+  expect(focus).toEqual({ mode: 'keyboard', outline: 'none', shadow: 'none', marker: '3px' })
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-checked', opposite)
+  await toggle.click()
+  await expect(toggle).toHaveAttribute('aria-checked', String(start))
+  await page.reload()
+  await expect(page.getByRole('switch')).toHaveAttribute('aria-checked', String(start))
+})
+}

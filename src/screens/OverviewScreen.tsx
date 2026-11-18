@@ -505,7 +505,7 @@ export function OverviewScreen() {
       <Card className="pano-card" title="Sınırlar" extra={<Link to="/karar/1/adim/02">Düzenle</Link>}>
         <Descriptions className="pano-desc" bordered={false} column={{ xs: 1, sm: 2, md: 3 }} layout={bp.sm ? 'vertical' : 'horizontal'} colon={false} items={limitItems} />
         <div className="toggle-row">
-          <Switch checked={plan.shortPath} onChange={(v) => update((p) => (p.shortPath = v))} id="kisa-yol" />
+          <Switch checked={plan.shortPath} onChange={(v) => update((p) => { p.shortPath = v })} id="kisa-yol" />
           <label htmlFor="kisa-yol">En kısa yol. Yalnız zorunlu adımlar görünür.</label>
         </div>
       </Card>
