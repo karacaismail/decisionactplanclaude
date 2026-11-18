@@ -218,7 +218,7 @@ async function tabTo(page: Page, target: Locator, browserName: string) {
   await expect(target, 'Kontrole gerçek Tab gezinmesiyle ulaşılmalı.').toBeFocused()
 }
 
-async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, name: string) {
+async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, name: string, viewportTarget: Locator = target) {
   // Açılan menünün hareketi bitmeden ekran dışı geçici konumu ölçmeyin.
   await target.evaluate(async (element) => {
     const animations = new Set<Animation>()
@@ -227,15 +227,30 @@ async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, nam
     }
     await Promise.allSettled([...animations].map((animation) => animation.finished))
   })
-  await expect(target).toBeInViewport({ ratio: 1 })
+  await expect(viewportTarget).toBeInViewport({ ratio: 1 })
   const focus = await target.evaluate((element) => {
     const style = getComputedStyle(element)
     const marker = getComputedStyle(element, '::before')
     const rect = element.getBoundingClientRect()
+    const coveringElement = document.elementFromPoint(rect.x + rect.width / 2, rect.y + rect.height / 2)
+    const unobscured = coveringElement !== null && element.contains(coveringElement)
     const width = parseFloat(marker.width)
     const height = parseFloat(marker.height)
     const x = rect.x + parseFloat(style.borderLeftWidth) + parseFloat(marker.left)
     const y = rect.y + parseFloat(style.borderTopWidth) + parseFloat(marker.top)
+    // İşaret olay almaz. Ölçüm sırasında yalnız bu davranışı geçici değiştirin.
+    const probe = document.createElement('style')
+    probe.textContent = '[data-teslim-focus-probe]::before { pointer-events: auto !important; }'
+    element.setAttribute('data-teslim-focus-probe', '')
+    document.head.append(probe)
+    let markerUnobscured = false
+    try {
+      const markerCover = document.elementFromPoint(x + width / 2, y + height / 2)
+      markerUnobscured = markerCover !== null && element.contains(markerCover)
+    } finally {
+      probe.remove()
+      element.removeAttribute('data-teslim-focus-probe')
+    }
     let unclipped = x >= 0 && y >= 0 && x + width <= innerWidth && y + height <= innerHeight
     for (let parent = element.parentElement; parent; parent = parent.parentElement) {
       const parentStyle = getComputedStyle(parent)
@@ -244,10 +259,10 @@ async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, nam
       if (/(hidden|clip|auto|scroll)/.test(parentStyle.overflowY)) unclipped &&= y >= bounds.top && y + height <= bounds.bottom
     }
     return {
-      focused: element === document.activeElement, focusVisible: element.matches(':focus-visible'),
+      unobscured, focused: element === document.activeElement, focusVisible: element.matches(':focus-visible'),
       mode: document.documentElement.getAttribute('data-focus-mode'),
       outline: style.outlineStyle, outlineWidth: style.outlineWidth, shadow: style.boxShadow,
-      marker: { content: marker.content, display: marker.display, visibility: marker.visibility, opacity: marker.opacity, color: marker.backgroundColor, width, height, x, y, unclipped },
+      marker: { content: marker.content, display: marker.display, visibility: marker.visibility, opacity: marker.opacity, color: marker.backgroundColor, width, height, x, y, unclipped, unobscured: markerUnobscured },
     }
   })
   const path = testInfo.outputPath(`${name}.json`)
@@ -255,6 +270,7 @@ async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, nam
   await testInfo.attach(`${name}-metrics`, { path, contentType: 'application/json' })
   await captureState(page, testInfo, name)
   // Soft kontroller diğer durumların kanıtını da toplar. Her ihlal testi başarısız kılar.
+  expect.soft(focus.unobscured, name).toBe(true)
   expect.soft(focus.focused, name).toBe(true)
   expect.soft(focus.focusVisible, name).toBe(true)
   expect.soft(focus.mode, name).toBe('keyboard')
@@ -269,6 +285,7 @@ async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, nam
   expect.soft(focus.marker.width, name).toBeLessThanOrEqual(4)
   expect.soft(focus.marker.height, name).toBeGreaterThan(4)
   expect.soft(focus.marker.unclipped, name).toBe(true)
+  expect.soft(focus.marker.unobscured, name).toBe(true)
 }
 
 async function keyboardRoute(page: Page, name: string, browserName: string, testInfo: TestInfo) {
@@ -442,20 +459,47 @@ async function unlockStrategy(page: Page) {
   await expect(page.getByRole('heading', { name: 'Bugün nereden başlayacaksınız?' })).toBeVisible()
 }
 
-test('dayanak özeti kapalıyken rapor indirilmez, açılınca yüklenir', async ({ page, network }, testInfo) => {
+test('dayanak özeti kapalıyken rapor indirilmez, yüklenirken form ve odak korunur', async ({ page, network, browserName }, testInfo) => {
   await createPlan(page)
   await unlockStrategy(page)
   await page.evaluate(() => { window.location.hash = '/karar/9/adim/S21' })
   await expect(page.locator('h1')).toContainText('2.1')
+  const field = page.getByPlaceholder('Sabah müşterisi var ama öğleden sonra dükkân boş kalıyor.')
+  const draft = 'Gecikme sırasında korunan teşhis.'
+  await field.fill(draft)
+  await expect.poll(() => page.evaluate(() => {
+    const raw = JSON.parse(localStorage.getItem('decisionactplan-v1') ?? '{}')
+    return raw.state.plans[raw.state.currentId].steps.S21?.values.diagnosis
+  })).toBe(draft)
   const summary = page.getByRole('button', { name: 'Dayanak özeti' })
   await expect(summary).toHaveAttribute('aria-expanded', 'false')
   expectNoRequest(network, 'reports')
-  await summary.click()
-  await expect(summary).toHaveAttribute('aria-expanded', 'true')
-  await expectLoaded(network, 'reports')
-  await expect(page.locator('.foundation-summary')).toBeVisible()
-  await captureState(page, testInfo, 'foundation-summary-opened')
-  expect(network.errors).toEqual([])
+  let continueDownload = () => {}
+  const held = new Promise<void>((resolve) => { continueDownload = resolve })
+  await page.route((url) => matches('reports', url.href), async (route) => {
+    await held
+    await route.continue()
+  })
+  try {
+    await tabTo(page, summary, browserName)
+    // Yuvarlak panel köşesi düğmenin görünür alanını kırpar. Etiketi ve odak işaretini ayrı ölçeriz.
+    const label = summary.getByText('Dayanak özeti', { exact: true })
+    await captureFocus(page, summary, testInfo, 'foundation-summary-closed-focus', label)
+    await page.keyboard.press('Enter')
+    await expect(summary).toHaveAttribute('aria-expanded', 'true')
+    await expect(page.getByRole('status').filter({ hasText: 'Dayanak özeti yükleniyor' })).toBeVisible()
+    await expect(field).toHaveValue(draft)
+    await captureFocus(page, summary, testInfo, 'foundation-summary-loading-focus', label)
+    continueDownload()
+    await expectLoaded(network, 'reports')
+    await expect(page.locator('.foundation-summary')).toBeVisible()
+    await expect(field).toHaveValue(draft)
+    await expect(summary).toBeFocused()
+    await captureFocus(page, summary, testInfo, 'foundation-summary-loaded-focus', label)
+    expect(network.errors).toEqual([])
+  } finally {
+    continueDownload()
+  }
 })
 
 test('yol karşılaştırması gereken adım raporu yükler', async ({ page, network }, testInfo) => {
