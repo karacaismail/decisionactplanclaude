@@ -256,12 +256,13 @@ export function recordCheckIn(g: OkrIndicator, draft: CheckInDraft, now: Date = 
 
 /** Dönem sonu özeti. Yalnız sonucu yazar, karar önermez. */
 export function periodSummary(period: OkrPeriod): string {
-  return period.objectives
-    .map((o) => {
-      const s = objectiveScore(o)
-      return `${o.title.trim() || 'Adsız hedef'}: ${s === null ? 'puan hesaplanmadı' : `yüzde ${percent(s)} ilerledi`}.`
-    })
-    .join(' ')
+  return period.objectives.map(objectiveSummary).join(' ')
+}
+
+/** Tek hedefin sonucu. Örneğin "Aylık kart satmak: yüzde 30 ilerledi." */
+export function objectiveSummary(o: OkrObjective): string {
+  const s = objectiveScore(o)
+  return `${o.title.trim().replace(/\.$/, '') || 'Adsız hedef'}: ${s === null ? 'puan hesaplanmadı' : `yüzde ${percent(s)} ilerledi`}.`
 }
 
 /** Dönemi kapatır. Öğrenilen yazılmadan dönem kapanmaz. */

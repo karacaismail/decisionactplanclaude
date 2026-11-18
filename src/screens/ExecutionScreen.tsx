@@ -4,8 +4,8 @@ import '@/styles/desen/mobil-kapi-page.css'
 import '@/styles/desen/page-strateji.css'
 import '@/styles/desen/strateji.css'
 import '@/styles/ekran/ExecutionScreen.css'
-import { useEffect, useRef, useState } from 'react'
-import { Button, Card, Input, Radio, Tag, App as AntApp } from 'antd'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Button, Card, Input, Radio, Switch, Tag, App as AntApp } from 'antd'
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react'
 import { Link, useLocation, useNavigate } from 'react-router'
 import { useCurrentPlan, usePlanStore } from '@/store/planStore'
@@ -17,6 +17,8 @@ import { decisionLocked, gatePassed, lockReason, lockTarget } from '@/engine/gat
 import { REVIEW_REASON_MIN, strategyReopened, type ReviewDraft } from '@/engine/renewal'
 import { choiceOf } from '@/engine/strategy'
 import { formatDate } from '@/engine/format'
+import { okrEnabled } from '@/engine/okr'
+import { LoadingState } from '@/components/LoadingState'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { SubStageList } from '@/components/SubStageList'
@@ -28,6 +30,8 @@ const DECISION_HELP: Record<RenewalDecision, string> = {
 }
 const RENEWALS: RenewalDecision[] = ['surdur', 'duzelt', 'yenidenAc']
 const EMPTY: ReviewDraft = { decidedBy: '', reason: '', evidence: '' }
+/* Hedef takibi paneli ayrı yüklenir. Anahtar kapalıyken kodu ve CSS dosyası inmez. */
+const HedefTakibi = lazy(() => import('@/components/HedefTakibi').then((module) => ({ default: module.HedefTakibi })))
 
 /**
  * Strateji uygulama. Üçüncü ana kümedir. Beş zorunlu alt aşaması vardır ve çıkış kontrolü yoktur.
@@ -41,6 +45,7 @@ export function ExecutionScreen() {
   const loc = useLocation()
   const { message } = AntApp.useApp()
   const record = usePlanStore((s) => s.recordStrategyReview)
+  const setOkrEnabled = usePlanStore((s) => s.setOkrEnabled)
   const [draft, setDraft] = useState<ReviewDraft>(EMPTY)
   const [errors, setErrors] = useState<string[]>([])
 
@@ -66,6 +71,12 @@ export function ExecutionScreen() {
   const finite = cluster.subStages.filter((s) => s.code !== '3.5')
   const finiteDone = finite.filter((s) => s.state(plan) === 'tamam').length
   const showErrors = errors.length > 0
+  const okrOn = okrEnabled(plan)
+  /* Puan özeti yalnız karar sahibi düğmeye basınca dayanak alanına yazılır. Yazılım kararı vermez. */
+  const applySummary = (text: string) => {
+    setDraft((d) => ({ ...d, evidence: text }))
+    nav('#yenileme')
+  }
 
   const save = () => {
     const found = record(draft)
@@ -108,6 +119,26 @@ export function ExecutionScreen() {
           <p className="helper">Çıkış: {cluster.exit} Sayaç 3.5'i saymaz, çünkü 3.5 bir döngüdür.</p>
           <SubStageList plan={plan} items={cluster.subStages} locked={locked} />
         </Card>
+
+        {locked ? null : (
+          <Card className="okr-switch-card" title={<h2 className="card-heading">Hedef takibi</h2>}>
+            <div className="okr-toggle">
+              <Switch id="hedef-takibi" checked={okrOn} onChange={setOkrEnabled} aria-describedby="hedef-takibi-yardim" />
+              <label htmlFor="hedef-takibi">Hedef takibini aç</label>
+            </div>
+            <div id="hedef-takibi-yardim" className="okr-switch-help">
+              <p>Her 3 ayda bir hedef koyarsınız. Her hafta göstergelerin sayısını yazarsınız. Bu yöntemin İngilizce adı OKR'dir. İsteğe bağlıdır.</p>
+              <p>OKR olmadan da strateji tamamdır.</p>
+              <p>Hedefler maaşa bağlanmaz.</p>
+            </div>
+            <p className="helper">Anahtarı kapatırsanız kayıtlar silinmez. Plan dosyasını indirince hedef takibi kayıtları da dosyaya girer.</p>
+          </Card>
+        )}
+        {!locked && okrOn ? (
+          <Suspense fallback={<LoadingState cards={1} label="Hedef takibi yükleniyor" />}>
+            <HedefTakibi plan={plan} onUseSummary={applySummary} />
+          </Suspense>
+        ) : null}
 
         <Card title={<h2 className="card-heading">Yürütme kararları</h2>}>
           <p className="helper">Alt aşama 3.4 Karar 6 ve Karar 7 ile yürür. Karar 8 işin yönünü sorar ve 3.5'in parçasıdır. Her kararın sonunda bir kontrol vardır.</p>
