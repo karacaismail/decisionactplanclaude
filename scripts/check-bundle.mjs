@@ -2,8 +2,8 @@
 import assert from 'node:assert/strict'
 import { spawn } from 'node:child_process'
 import { EventEmitter } from 'node:events'
-import { readFileSync } from 'node:fs'
-import { resolve } from 'node:path'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
+import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { gzipSync } from 'node:zlib'
 
@@ -32,7 +32,58 @@ const SCREEN_NAMES = [
   'History', 'Insights', 'Methods', 'Outputs', 'Overview', 'Plans', 'Review',
   'Start', 'Strategy', 'Takeover', 'Tasks', 'Transition', 'Work',
 ]
-const SCREENS = SCREEN_NAMES.map((name) => `src/screens/${name}Screen.tsx`)
+const CORE_SCREENS = SCREEN_NAMES.map((name) => `src/screens/${name}Screen.tsx`)
+
+/**
+ * Modül ekranları bildirimden bulunur. Yeni modül için bu dosya değişmez.
+ * manifests: [bildirim yolu, içerik] çiftleri. exists: dosya var mı?
+ */
+export function discoverModuleScreens(manifests, exists) {
+  const screens = []
+  for (const [path, source] of manifests) {
+    const dir = path.replace(/\/manifest\.ts$/, '')
+    for (const match of source.matchAll(/import\(\s*['"](\.\/screens\/[^'"]+)['"]\s*\)/g)) {
+      const base = `${dir}/${match[1].slice(2)}`
+      const file = ['.tsx', '.ts'].map((ext) => base + ext).find(exists)
+      screens.push(file ?? `${base}.tsx`)
+    }
+  }
+  return screens.sort()
+}
+
+function readManifests(root) {
+  const modules = join(root, 'src/modules')
+  if (!existsSync(modules)) return []
+  return readdirSync(modules)
+    .filter((id) => existsSync(join(modules, id, 'manifest.ts')))
+    .map((id) => [`src/modules/${id}/manifest.ts`, readFileSync(join(modules, id, 'manifest.ts'), 'utf8')])
+}
+
+const ROOT = fileURLToPath(new URL('../', import.meta.url))
+export const MODULE_SCREENS = discoverModuleScreens(readManifests(ROOT), (file) => existsSync(join(ROOT, file)))
+const SCREENS = [...CORE_SCREENS, ...MODULE_SCREENS]
+
+/** Yalnız modülde geçen dosya adları. Vite ortak modül parçasına bu adı verir. Örneğin "PjBosEkran". */
+function moduleOnlyNames(root) {
+  const names = { module: new Set(), core: new Set() }
+  const walk = (dir, inModule) => {
+    if (!existsSync(dir)) return
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name)
+      if (entry.isDirectory()) walk(full, inModule || entry.name === 'modules')
+      else if (/\.(tsx?|jsx?)$/.test(entry.name) && !/\.(test|spec)\./.test(entry.name)) {
+        const base = entry.name.replace(/\.[^.]+$/, '')
+        ;(inModule ? names.module : names.core).add(base)
+      }
+    }
+  }
+  walk(join(root, 'src'), false)
+  return new Set([...names.module].filter((name) => name !== 'manifest' && !names.core.has(name)))
+}
+export const MODULE_CHUNK_NAMES = moduleOnlyNames(ROOT)
+
+/** Modül kaynağı mı? Bildirim dosyası ilk açılışta inebilir. Öteki modül kodu inemez. */
+const isModuleSource = (path) => typeof path === 'string' && path.startsWith('src/modules/') && !/\/manifest\.ts$/.test(path)
 
 export function inspectBundle(manifest, readAsset, budgets = BUDGETS) {
   const errors = []
@@ -110,6 +161,10 @@ export function inspectBundle(manifest, readAsset, budgets = BUDGETS) {
     for (const file of group) {
       if (initialFiles.has(file)) errors.push(`EAGER: İlk açılış ${name} parçasını yüklüyor: ${file}`)
     }
+  }
+  for (const key of initialKeys) {
+    const chunk = chunks.get(key)
+    if (isModuleSource(key) || isModuleSource(chunk.src) || MODULE_CHUNK_NAMES.has(chunk.name)) errors.push(`MODULE_EAGER: İlk açılış modül kodunu yüklüyor: ${chunk.src ?? key}`)
   }
   const screenFiles = new Map()
   for (const key of SCREENS) {
@@ -293,6 +348,48 @@ async function selfTest() {
       assert.deepEqual(inspect(f).errors, [], 'Ayrı yüklenen CSS toplam bütçede kalmalı')
       f.manifest['index.html'].css.push('assets/later.css')
       assert.match(inspect(f).errors.join('\n'), /BUDGET initialCss raw/)
+    }],
+    ['modül kodu ilk açılışa girerse reddedilir', () => {
+      const f = fixture()
+      f.manifest['src/modules/proje/model.ts'] = { file: 'assets/model.js', src: 'src/modules/proje/model.ts' }
+      f.assets.set('assets/model.js', Buffer.from('export const x = 1'))
+      assert.deepEqual(inspect(f).errors, [], 'Ayrı yüklenen modül kodu sorun değildir')
+      f.manifest['_shared.js'].imports = ['src/modules/proje/model.ts']
+      assert.match(inspect(f).errors.join('\n'), /MODULE_EAGER/)
+    }],
+    ['ortak modül parçası ilk açılışa girerse reddedilir', () => {
+      const f = fixture()
+      assert.ok(MODULE_CHUNK_NAMES.has('PjBosEkran'))
+      assert.ok(!MODULE_CHUNK_NAMES.has('lifecycle'), 'Çekirdekte de geçen ad modül parçası sayılmaz')
+      f.manifest['_PjBosEkran-a.js'] = { file: 'assets/PjBosEkran-a.js', name: 'PjBosEkran' }
+      f.assets.set('assets/PjBosEkran-a.js', Buffer.from('export const x = 1'))
+      f.manifest['_shared.js'].imports = ['_PjBosEkran-a.js']
+      assert.match(inspect(f).errors.join('\n'), /MODULE_EAGER/)
+    }],
+    ['modül bildirimi ilk açılışta inebilir', () => {
+      const f = fixture()
+      f.manifest['src/modules/proje/manifest.ts'] = { file: 'assets/manifest.js', src: 'src/modules/proje/manifest.ts' }
+      f.assets.set('assets/manifest.js', Buffer.from('export default {}'))
+      f.manifest['_shared.js'].imports = ['src/modules/proje/manifest.ts']
+      assert.deepEqual(inspect(f).errors, [])
+    }],
+    ['modül ekranı Planlar ile ilk açılışa girerse reddedilir', () => {
+      const f = fixture()
+      const screen = MODULE_SCREENS[0]
+      assert.ok(screen, 'En az bir modül ekranı bulunmalı')
+      f.manifest['src/screens/PlansScreen.tsx'].imports.push(screen)
+      assert.match(inspect(f).errors.join('\n'), /MODULE_EAGER|SCREEN/)
+    }],
+    ['modül ekranları bildirimden bulunur', () => {
+      const manifests = [['src/modules/proje/manifest.ts', "routes: [{ load: () => import('./screens/PjA') }, { load: () => import(\"./screens/PjB\") }], lifecycle: () => import('./lifecycle')"]]
+      assert.deepEqual(discoverModuleScreens(manifests, (file) => file.endsWith('PjA.tsx')), ['src/modules/proje/screens/PjA.tsx', 'src/modules/proje/screens/PjB.tsx'])
+      assert.ok(MODULE_SCREENS.includes('src/modules/proje/screens/PjProjelerScreen.tsx'))
+      assert.ok(MODULE_SCREENS.includes('src/modules/destek/screens/DtProgramlarScreen.tsx'))
+    }],
+    ['eksik modül ekranı reddedilir', () => {
+      const f = fixture()
+      delete f.manifest[MODULE_SCREENS[0]]
+      assert.match(inspect(f).errors.join('\n'), /SCREEN/)
     }],
     ['eksik grafik parçası', () => { const f = fixture(); delete f.manifest['_echarts.js']; assert.match(inspect(f).errors.join('\n'), /CHUNK/) }],
     ['eksik rapor parçası', () => { const f = fixture(); delete f.manifest['_report-build.js']; assert.match(inspect(f).errors.join('\n'), /CHUNK/) }],
