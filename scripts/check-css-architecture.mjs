@@ -7,6 +7,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { basename, join, posix, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { parseCss } from './check-ui.mjs'
 
 export const LAYERS = ['temel', 'kabuk', 'bilesen', 'ekran', 'desen', 'giris', 'yazdirma']
 
@@ -58,9 +59,45 @@ function topLevelBlocks(css) {
   return blocks
 }
 
-function allowedImporter(target, importer) {
+/*
+ * Modül CSS kuralları. Önekler modül bildiriminden okunur. Yeni modül için kapı değişmez.
+ * Örnek: "proje" modülünün öneki "pj-" ise CSS dosyaları "ekran/Pj*.css" ve "bilesen/Pj*.css" olur.
+ * Bu dosyaları yalnız src/modules/proje altındaki aynı adlı dosya içe aktarır.
+ */
+const MANIFEST_FILE = /^src\/modules\/([^/]+)\/manifest\.ts$/
+
+/** Modül bildirimlerinden kimlik ve öneki okur. Kod çalıştırılmaz. */
+export function modulePrefixes(files) {
+  const modules = []
+  for (const [path, source] of files) {
+    const id = MANIFEST_FILE.exec(path)?.[1]
+    if (!id) continue
+    const prefix = /cssPrefix\s*:\s*['"]([a-z]{2,4})-['"]/.exec(source)?.[1]
+    if (!prefix) continue
+    modules.push({ id, selector: `${prefix}-`, file: prefix[0].toUpperCase() + prefix.slice(1) })
+  }
+  return modules
+}
+
+const moduleOfFile = (path) => /^src\/modules\/([^/]+)\//.exec(path)?.[1]
+
+/** CSS dosyası bir modüle mi ait? Dosya adı modülün dosya önekiyle ve büyük harfle başlar. */
+function cssModule(target, modules) {
+  const layer = target.split('/')[2]
+  if (layer !== 'ekran' && layer !== 'bilesen') return undefined
+  const name = nameOf(target)
+  return modules.find((m) => name.startsWith(m.file) && /^[A-Z]/.test(name.slice(m.file.length)))
+}
+
+function allowedImporter(target, importer, modules = []) {
   const layer = target.split('/')[2]
   const name = nameOf(target)
+  const importerModule = moduleOfFile(importer)
+  if (layer === 'ekran' || layer === 'bilesen') {
+    const owner = cssModule(target, modules)
+    /* Modül dosyası yalnız kendi önekli CSS dosyasını alır. Çekirdek önekli dosyayı alamaz. */
+    if (importerModule || owner) return Boolean(owner && importerModule === owner.id && nameOf(importer) === name)
+  }
   switch (layer) {
     case 'temel':
       return importer === 'src/main.tsx'
@@ -72,9 +109,9 @@ function allowedImporter(target, importer) {
     case 'ekran':
       return nameOf(importer) === name
     case 'desen':
-      return /^src\/(screens|components|charts)\//.test(importer)
+      return /^src\/(screens|components|charts)\//.test(importer) || /^src\/modules\/[^/]+\/(screens|components)\//.test(importer)
     case 'yazdirma':
-      return importer.startsWith('src/screens/')
+      return importer.startsWith('src/screens/') || /^src\/modules\/[^/]+\/screens\//.test(importer)
     default:
       return false
   }
@@ -86,6 +123,7 @@ export function checkCssArchitecture(files) {
   const cssFiles = [...files.keys()].filter((path) => path.startsWith('src/') && path.endsWith('.css'))
   const sources = [...files.keys()].filter((path) => /^src\/.*\.(tsx?|jsx?)$/.test(path) && !/\.test\.|\.spec\./.test(path))
   const used = new Set()
+  const modules = modulePrefixes(files)
 
   for (const css of cssFiles) {
     const parts = css.split('/')
@@ -102,7 +140,7 @@ export function checkCssArchitecture(files) {
         continue
       }
       const layer = target.split('/')[2]
-      if (LAYERS.includes(layer) && !allowedImporter(target, file)) {
+      if (LAYERS.includes(layer) && !allowedImporter(target, file, modules)) {
         errors.push(`${file}: ${target.replace('src/styles/', '')} dosyasını bu dosya içe aktaramaz. Kural: ${layer} katmanı.`)
       }
     }
@@ -110,6 +148,17 @@ export function checkCssArchitecture(files) {
 
   for (const css of cssFiles) {
     if (!used.has(css)) errors.push(`${css}: Dosya hiçbir yerden içe aktarılmıyor. Dosya kullanılmıyor.`)
+  }
+
+  /* Modül CSS dosyasındaki her seçici modül önekiyle başlar. Böylece modül çekirdeğin görünümünü değiştiremez. */
+  for (const css of cssFiles) {
+    const owner = cssModule(css, modules)
+    if (!owner) continue
+    for (const rule of parseCss(files.get(css))) {
+      for (const selector of rule.selector.split(',').map((x) => x.trim()).filter(Boolean)) {
+        if (!selector.startsWith(`.${owner.selector}`)) errors.push(`${css}: "${selector}" seçicisi .${owner.selector} önekiyle başlamalı.`)
+      }
+    }
   }
 
   for (const [path, guard] of Object.entries(INPUT_GUARDS)) {
