@@ -1,0 +1,4 @@
+/* Klavye odağı, menünün sabit konumunu değiştirmemeli. */
+html[data-focus-mode='keyboard'] .ant-drawer:not(.ant-drawer-inline):not(.ant-drawer-pure):focus-visible {
+  position: fixed;
+}
