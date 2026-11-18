@@ -4,6 +4,7 @@ import { ArrowUpRight, ShieldCheck, Warning, Lightbulb, Lightning } from '@phosp
 import { stepPath } from '@/data/registry'
 import type { PlanDoc } from '@/data/types'
 import { buildSituation, SITUATION_EMPTY, SITUATION_TITLE, type SituationKind } from '@/engine/situation'
+import '@/styles/mobil-pano.css'
 import '@/styles/screens-durum.css'
 
 const ORDER: SituationKind[] = ['guclu', 'zayif', 'firsat', 'tehdit']
@@ -12,12 +13,12 @@ const ICON = { guclu: ShieldCheck, zayif: Warning, firsat: Lightbulb, tehdit: Li
 /**
  * Durum özeti: güçlü yönler, zayıf yönler, fırsatlar ve tehditler. Kart değildir, kartın içine konur.
  * Dört liste var olan adımlardan toplanır. Bileşen salt okunurdur. Her madde kaynak adımına gider.
- * Telefonda dört liste alt alta durur. Geniş ekranda ikişerli durur.
+ * Dar alanda dört liste alt alta durur. Özetin alanı genişleyince listeler ikişerli durur.
  */
 export function SituationSummary({ plan }: { plan: PlanDoc }) {
   const situation = buildSituation(plan)
   return (
-    <div className="durum">
+    <div className="durum mobil-pano-situation">
       <div className="durum-grid">
         {ORDER.map((kind) => {
           const items = situation[kind]
@@ -36,8 +37,8 @@ export function SituationSummary({ plan }: { plan: PlanDoc }) {
                     <li key={`${item.step}-${i}`} className="durum-item">
                       <span className="durum-text">{item.text}</span>
                       <span className="durum-meta">
-                        {item.note}.{' '}
-                        <Link to={stepPath(item.step)} aria-label={`${item.text}. Adım ${item.step} içinde düzelt`}>
+                        <span>{item.note}.</span>
+                        <Link className="durum-link" to={stepPath(item.step)} aria-label={`${item.text}. Adım ${item.step} içinde düzeltin`}>
                           Adım {item.step} <ArrowUpRight size={14} aria-hidden />
                         </Link>
                       </span>
@@ -46,7 +47,8 @@ export function SituationSummary({ plan }: { plan: PlanDoc }) {
                 </ul>
               ) : (
                 <p className="durum-empty">
-                  Bu liste boş. <Link to={stepPath(SITUATION_EMPTY[kind].step)}>{SITUATION_EMPTY[kind].text}</Link>
+                  <span>Bu liste boş.</span>
+                  <Link className="durum-link" to={stepPath(SITUATION_EMPTY[kind].step)}>{SITUATION_EMPTY[kind].text}</Link>
                 </p>
               )}
             </section>
@@ -54,8 +56,9 @@ export function SituationSummary({ plan }: { plan: PlanDoc }) {
         })}
       </div>
       {situation.unclassified > 0 ? (
-        <p className="helper durum-hint">
-          {situation.unclassified} dış etken henüz sınıflanmadı. <Link to={stepPath('04')}>Adım 04'te her etken için "Fırsat" ya da "Tehdit" seçin.</Link>
+        <p className="durum-hint">
+          <span>{situation.unclassified} dış etken henüz sınıflanmadı.</span>
+          <Link className="durum-link" to={stepPath('04')}>Adım 04'te her etken için "Fırsat" ya da "Tehdit" seçin.</Link>
         </p>
       ) : null}
     </div>

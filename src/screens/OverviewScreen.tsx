@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { Button, Card, Collapse, Descriptions, Empty, Grid, List, Progress, Statistic, Steps, Switch, Table, Tabs, Tag, Timeline, theme } from 'antd'
+import { useEffect, useMemo, useState } from 'react'
+import { Button, Card, Collapse, Descriptions, Empty, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, CheckSquare, DownloadSimple, Flag, Notebook, Path } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -22,10 +22,11 @@ import { cashDays, cashFlowOption, cashFlowTable } from '@/charts/overview'
 import { formatDate, formatMoney } from '@/engine/format'
 import { palette } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
-import { OUTCOME_LABEL, TRANSITION_LABEL, type ChangeRecord, type Evidence, type PlanDoc, type Task } from '@/data/types'
+import { OUTCOME_LABEL, TRANSITION_LABEL, type Evidence, type PlanDoc, type Task } from '@/data/types'
 import type { StepDef } from '@/data/schema'
 import '@/styles/screens-pano.css'
 import '@/styles/screens-form.css'
+import '@/styles/mobil-pano.css'
 
 const two = (n: number) => String(n).padStart(2, '0')
 const today = () => new Date().toISOString().slice(0, 10)
@@ -62,12 +63,6 @@ const KIND_TAG: Record<Evidence['kind'], { label: string; color?: string }> = {
   varsayim: { label: 'Varsayım', color: 'warning' },
 }
 
-/* Telefonda gerekçenin yalnız ilk cümlesi durur. Tam metin "Geçmiş" ekranındadır. */
-const firstSentence = (text: string): string => {
-  const m = /^[^.!?]*[.!?]/.exec(text.trim())
-  return m ? m[0] : text
-}
-
 const show = (v: unknown): string => {
   if (v === null || v === undefined || v === '') return 'Boş'
   if (typeof v === 'number') return v.toLocaleString('tr-TR')
@@ -86,16 +81,27 @@ export function OverviewScreen() {
   const bp = Grid.useBreakpoint()
   const mode = resolveMode(themePref)
   const p = palette(mode)
-  /* Kullanıcı bir rota grubunu açıp kapatınca seçim burada durur. Boşken varsayılan kullanılır. */
+  const position = plan ? planPosition(plan) : undefined
+  const currentStage = position?.stage
   const [openGroups, setOpenGroups] = useState<string[] | null>(null)
+  /* Başlangıç grupları ilk bilinen yerleşimde seçilir. Sonraki genişlik değişimleri seçimi değiştirmez. */
+  useEffect(() => {
+    if (bp.md === undefined || currentStage === undefined) return
+    setOpenGroups((groups) => {
+      if (groups !== null) return groups
+      if (bp.md) return ['hazirlik', 'olusturma', 'uygulama']
+      if (currentStage === 'gecis') return []
+      return [currentStage === 'temel' ? 'hazirlik' : currentStage === 'strateji' ? 'olusturma' : 'uygulama']
+    })
+  }, [bp.md, currentStage])
+  /* Bu seçim genişliğe bağlı değildir. Yön değişince içerikteki odak korunur. */
+  const [recentOpen, setRecentOpen] = useState(false)
   const days = useMemo(() => (plan ? cashDays(plan) : []), [plan])
   const chartOption = useMemo(
     () => cashFlowOption(days, { line: p.toneTeal, area: p.toneTealBg, axis: p.border, text: p.textSecondary, zero: p.statusHarm }),
     [days, p],
   )
-  if (!plan) return null
-
-  const position = planPosition(plan)
+  if (!plan || !position) return null
   const lastBackupAt = backups[plan.id]
   const backup = backupState(plan, lastBackupAt)
   const takeBackup = () => {
@@ -119,7 +125,7 @@ export function OverviewScreen() {
   const openTasks = plan.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
   const lateTasks = openTasks.filter((t) => t.dueDate && t.dueDate.slice(0, 10) < today())
   const observations = plan.evidence.filter((e) => e.kind === 'gozlem').length
-  const recent = [...plan.decisions].slice(bp.sm ? -3 : -2).reverse()
+  const recent = [...plan.decisions].slice(-3).reverse()
   const recentEvidence = [...plan.evidence].sort((a, b) => (b.date ?? b.createdAt).localeCompare(a.date ?? a.createdAt)).slice(0, 5)
   const changes = [...(plan.changes ?? [])].sort((a, b) => b.at.localeCompare(a.at)).slice(0, 6)
   const resumeTo = plan.lastLocation && plan.lastLocation !== '/ozet' ? plan.lastLocation : null
@@ -174,9 +180,6 @@ export function OverviewScreen() {
     { key: 'olusturma', title: clusterOf('olusturma').title, text: stageState.strateji.text, status: stageState.strateji.status, to: '/strateji' },
     { key: 'uygulama', title: clusterOf('uygulama').title, text: stageState.uygulama.text, status: stageState.uygulama.status, to: '/uygulama' },
   ]
-  /* Yatayda durum başlığın altında, dikeyde başlığın yanında durur. Böylece telefonda satır kısa kalır. */
-  const stageItems = clusterRoad.map((c) => (bp.md ? { key: c.key, title: c.title, content: c.text, status: c.status } : { key: c.key, title: c.title, subTitle: c.text, status: c.status }))
-
   /* Karar rotasının satırları. Kilit tek kuraldan gelir (decisionLocked). */
   const decisionRoute = (n: number) => {
     const d = DECISIONS.find((x) => x.n === n)!
@@ -213,9 +216,7 @@ export function OverviewScreen() {
       ],
     },
   ]
-  /* Telefonda yalnız sıradaki işin grubu açık başlar. Geniş ekranda üç grup da açıktır. */
-  const currentGroup = position.stage === 'temel' || position.stage === 'gecis' ? 'hazirlik' : position.stage === 'strateji' ? 'olusturma' : 'uygulama'
-  const activeGroups = openGroups ?? (bp.md ? routeGroups.map((g) => g.key) : [currentGroup])
+  const activeGroups = openGroups ?? []
 
   const timelineItems = recent.map((d) => {
     const def = DECISIONS[d.gate - 1]
@@ -233,33 +234,11 @@ export function OverviewScreen() {
           </span>
           <span className="helper">{formatDate(d.decidedAt)}</span>
           {d.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
-          {d.reason ? <span className="tl-reason">{bp.sm ? d.reason : firstSentence(d.reason)}</span> : null}
+          {d.reason ? <span className="tl-reason">{d.reason}</span> : null}
         </span>
       ),
     }
   })
-
-  const taskColumns = [
-    { title: 'İş', dataIndex: 'action', key: 'action', width: 320, render: (v: string) => <span className="cell-wrap">{v}</span> },
-    { title: 'Sorumlu', dataIndex: 'owner', key: 'owner', width: 140, render: (v?: string) => v || 'Yazılmadı' },
-    { title: 'Tarih', dataIndex: 'dueDate', key: 'dueDate', width: 180, render: (v?: string) => (v ? formatDate(v, false) : 'Tarih yok') },
-    {
-      title: 'Durum',
-      dataIndex: 'status',
-      key: 'status',
-      width: 140,
-      render: (s: Task['status'], t: Task) => {
-        const late = (s === 'acik' || s === 'taslak') && t.dueDate && t.dueDate.slice(0, 10) < today()
-        return <Tag color={late ? 'error' : TASK_TAG[s].color}>{late ? 'Gecikti' : TASK_TAG[s].label}</Tag>
-      },
-    },
-  ]
-  const evidenceColumns = [
-    { title: 'Kanıt', dataIndex: 'title', key: 'title', width: 320, render: (v: string) => <span className="cell-wrap">{v}</span> },
-    { title: 'Tür', dataIndex: 'kind', key: 'kind', width: 120, render: (k: Evidence['kind']) => <Tag color={KIND_TAG[k].color}>{KIND_TAG[k].label}</Tag> },
-    { title: 'Basamak', dataIndex: 'ladder', key: 'ladder', width: 110, render: (n: number) => <span className="tabular">{n}. basamak</span> },
-    { title: 'Tarih', dataIndex: 'date', key: 'date', width: 180, render: (v: string | undefined, e: Evidence) => formatDate(v ?? e.createdAt, false) },
-  ]
 
   const tabItems = [
     {
@@ -271,7 +250,24 @@ export function OverviewScreen() {
             <Link to="/isler">İş ekle</Link>
           </Empty>
         ) : (
-          <Table<Task> size="middle" rowKey="id" pagination={false} dataSource={openTasks} columns={taskColumns} scroll={{ x: 'max-content' }} />
+          <>
+            <ul className="overview-record-list" aria-label="Açık işler" role="list">
+              {openTasks.map((task) => {
+                const late = task.dueDate && task.dueDate.slice(0, 10) < today()
+                return (
+                  <li key={task.id}>
+                    <h3 className="overview-record-heading">{task.action}</h3>
+                    <dl className="overview-record-meta">
+                      <div><dt>Sorumlu</dt><dd>{task.owner || 'Yazılmadı'}</dd></div>
+                      <div><dt>Tarih</dt><dd>{task.dueDate ? formatDate(task.dueDate, false) : 'Tarih yok'}</dd></div>
+                      <div><dt>Durum</dt><dd><Tag color={late ? 'error' : TASK_TAG[task.status].color}>{late ? 'Gecikti' : TASK_TAG[task.status].label}</Tag></dd></div>
+                    </dl>
+                  </li>
+                )
+              })}
+            </ul>
+            <Link className="overview-record-actions" to="/isler">İşleri aç</Link>
+          </>
         ),
     },
     {
@@ -283,7 +279,21 @@ export function OverviewScreen() {
             <Link to="/kanitlar">Kanıt ekle</Link>
           </Empty>
         ) : (
-          <Table<Evidence> size="middle" rowKey="id" pagination={false} dataSource={recentEvidence} columns={evidenceColumns} scroll={{ x: 'max-content' }} />
+          <>
+            <ul className="overview-record-list" aria-label="Son kanıtlar" role="list">
+              {recentEvidence.map((evidence) => (
+                <li key={evidence.id}>
+                  <h3 className="overview-record-heading">{evidence.title}</h3>
+                  <dl className="overview-record-meta">
+                    <div><dt>Tür</dt><dd><Tag color={KIND_TAG[evidence.kind].color}>{KIND_TAG[evidence.kind].label}</Tag></dd></div>
+                    <div><dt>Basamak</dt><dd className="tabular">{evidence.ladder}. basamak</dd></div>
+                    <div><dt>Tarih</dt><dd>{formatDate(evidence.date ?? evidence.createdAt, false)}</dd></div>
+                  </dl>
+                </li>
+              ))}
+            </ul>
+            <Link className="overview-record-actions" to="/kanitlar">Kanıtları aç</Link>
+          </>
         ),
     },
     {
@@ -293,22 +303,21 @@ export function OverviewScreen() {
         changes.length === 0 ? (
           <Empty description="Sınır ve eşik değişikliği yok." />
         ) : (
-          <List<ChangeRecord>
-            dataSource={changes}
-            renderItem={(c) => (
-              <List.Item key={c.id}>
+          <ul className="overview-record-list" aria-label="Değişiklik kaydı" role="list">
+            {changes.map((c) => (
+              <li key={c.id}>
                 <div className="change-row">
-                  <span className="change-head">
-                    <strong>{c.label}</strong>
+                  <div className="change-head">
+                    <h3 className="overview-record-heading">{c.label}</h3>
                     {c.needsReview && !c.reviewer ? <Tag color="warning">İkinci görüş bekliyor</Tag> : null}
-                  </span>
-                  <span className="helper">
+                  </div>
+                  <p className="helper">
                     {show(c.before)} yerine {show(c.after)}. {formatDate(c.at, false)}.
-                  </span>
+                  </p>
                 </div>
-              </List.Item>
-            )}
-          />
+              </li>
+            ))}
+          </ul>
         ),
     },
   ]
@@ -323,7 +332,7 @@ export function OverviewScreen() {
   ]
 
   return (
-    <div className="page ozet">
+    <div className="page ozet mobil-overview">
       <PageHeader
         title={plan.name}
         documentTitle="Plan özeti"
@@ -384,19 +393,19 @@ export function OverviewScreen() {
           </div>
         </section>
 
-        {/* Telefonda karar rotası aynı üç kümeyi gösterir. Yol kartı yalnız geniş ekranda görünür, böylece bilgi iki kez yazılmaz. */}
-        {bp.md ? (
-          <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel taşları</Link>}>
-            <Steps
-              className="pano-steps yol-steps"
-              size="small"
-              orientation={bp.md ? 'horizontal' : 'vertical'}
-              current={-1}
-              items={stageItems}
-              onChange={(i) => nav(clusterRoad[i].to)}
-            />
-          </Card>
-        ) : null}
+        {/* Yol bağlantıları bütün genişliklerde aynı DOM içinde kalır. */}
+        <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel taşları</Link>}>
+          <ol className="overview-route-list overview-stage-list" aria-label="Yol" role="list">
+            {clusterRoad.map((cluster) => (
+              <li key={cluster.key} data-status={cluster.status}>
+                <Link className="overview-route-link" to={cluster.to}>
+                  <span className="overview-route-title">{cluster.title}</span>
+                  <span className="overview-route-status">{cluster.text}</span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+        </Card>
 
         <div className="ozet-side">
           <Card className="pano-card" title="Pist" extra={<Link to="/karar/1/adim/02">Sınırlar</Link>}>
@@ -442,7 +451,18 @@ export function OverviewScreen() {
                   <span className="route-group-summary">{g.summary}</span>
                 </span>
               ),
-              children: <Steps className="pano-steps" type="dot" orientation="vertical" current={-1} items={g.items.map(({ to: _to, ...item }) => item)} onChange={(i) => nav(g.items[i].to)} />,
+              children: (
+                <ol className="overview-route-list" aria-label={g.title} role="list">
+                  {g.items.map((item) => (
+                    <li key={item.key} data-status={item.status}>
+                      <Link className="overview-route-link" to={item.to} aria-current={item.to === nextPath ? 'step' : undefined}>
+                        <span className="overview-route-title">{item.title}</span>
+                        <span className="overview-route-status">{item.content}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ol>
+              ),
             }))}
           />
         </Card>
@@ -457,8 +477,24 @@ export function OverviewScreen() {
           )}
         </Card>
 
-        <Card className="pano-card" title="Son kararlar" extra={<Link to="/gecmis">Hepsi</Link>}>
-          {timelineItems.length === 0 ? <Empty description="Henüz karar kaydı yok. İlk kapıda kararı kaydedince burada görünür." /> : <Timeline className="pano-timeline" items={timelineItems} />}
+        <Card className="pano-card overview-recent-card">
+          <Collapse
+            className="overview-recent-collapse"
+            ghost
+            expandIconPlacement="end"
+            activeKey={recentOpen ? ['son-kararlar'] : []}
+            onChange={(keys) => setRecentOpen(keys.includes('son-kararlar'))}
+            items={[{
+              key: 'son-kararlar',
+              label: `Son kararlar (${timelineItems.length})`,
+              children: (
+                <>
+                  {timelineItems.length === 0 ? <Empty description="Henüz karar kaydı yok. İlk kapıda kararı kaydedince burada görünür." /> : <Timeline className="pano-timeline" items={timelineItems} />}
+                  <Link className="overview-record-actions" to="/gecmis">Hepsi</Link>
+                </>
+              ),
+            }]}
+          />
         </Card>
       </div>
 
