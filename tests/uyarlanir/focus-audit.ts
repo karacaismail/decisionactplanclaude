@@ -2,8 +2,15 @@ import { expect, type Page, type TestInfo } from '@playwright/test'
 import { writeFile } from 'node:fs/promises'
 import { type Finding } from './audit'
 
+/** Native girişin odak işaretini çizebilen alan kapları. Liste uygulamanın CSS kurallarıyla aynıdır. */
+export const FOCUS_FIELD_HOSTS = [
+  'label', '.ant-select', '.ant-input-affix-wrapper', '.ant-input-number', '.ant-picker',
+  '.ant-radio-wrapper', '.ant-radio-button-wrapper', '.ant-checkbox-wrapper', '.cmdk-input',
+  '.field', '.ant-form-item-control-input-content', '.assumption-field', '.ant-pagination-simple-pager',
+].join(', ')
+
 async function readFocus(page: Page, screenshot?: Buffer) {
-  return page.evaluate(async (base64) => {
+  return page.evaluate(async ({ base64, FIELD_HOSTS }) => {
     // Piksel kanıtı yalnız bellekte okunur. Uygulamanın DOM ağacı değişmez.
     const canvas = document.createElement('canvas')
     const context = canvas.getContext('2d')!
@@ -38,8 +45,33 @@ async function readFocus(page: Page, screenshot?: Buffer) {
       })
       return outline || shadow
     }
-    const chain: HTMLElement[] = []
-    for (let node: HTMLElement | null = el; node; node = node.parentElement) chain.push(node)
+    // Native giriş ::before çizemez. İşaret en yakın alan kabında aranır.
+    // Kap başka bir kontrol taşıyorsa işaret bu kontrole ait sayılmaz.
+    const nativeField = el.matches('input, textarea, select')
+    const supportsContent = !el.matches('input, textarea, select, img, iframe, video, canvas')
+    const tabbable = (node: Element) => node instanceof HTMLElement && node.tabIndex >= 0
+      && !(node as HTMLInputElement).disabled && (node as HTMLInputElement).type !== 'hidden'
+      && node.getClientRects().length > 0
+      && node.matches('a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])')
+    const fieldHosts: HTMLElement[] = []
+    let sharedHost: HTMLElement | null = null
+    if (nativeField) {
+      for (let node = el.parentElement; node && node !== document.body; node = node.parentElement) {
+        if (!node.matches(FIELD_HOSTS)) continue
+        if (Array.from(node.querySelectorAll('*')).some((other) => other !== el && tabbable(other))) {
+          sharedHost = node
+          break
+        }
+        fieldHosts.push(node)
+      }
+    }
+    const hosts = [...(supportsContent ? [el] : []), ...fieldHosts]
+    const chainOf = (start: HTMLElement) => {
+      const nodes: HTMLElement[] = []
+      for (let node: HTMLElement | null = start; node; node = node.parentElement) nodes.push(node)
+      return nodes
+    }
+    const chain = chainOf(el)
     const styleKey = (s: CSSStyleDeclaration) => Array.from(s).map((name) => [name, s.getPropertyValue(name)])
     // Görüntünün iki yanındaki aynı kayıt, font ve konum değişimini yakalar.
     const captureKey = JSON.stringify({
@@ -49,13 +81,9 @@ async function readFocus(page: Page, screenshot?: Buffer) {
         rect: node.getBoundingClientRect().toJSON(), scroll: [node.scrollLeft, node.scrollTop],
         style: styleKey(getComputedStyle(node)),
       })),
-      pseudos: ['::before', '::after'].map((pseudo) => styleKey(getComputedStyle(el, pseudo))),
+      pseudos: [el, ...fieldHosts, ...(sharedHost ? [sharedHost] : [])]
+        .flatMap((node) => ['::before', '::after'].map((pseudo) => styleKey(getComputedStyle(node, pseudo)))),
     })
-    const painted = chain.every((node) => {
-      const s = getComputedStyle(node)
-      return s.display !== 'none' && s.visibility === 'visible' && Number(s.opacity) > 0
-    })
-    const opacity = chain.reduce((value, node) => value * Number(getComputedStyle(node).opacity), 1)
     const rgb = (color: string) => {
       const parts = color.match(/^rgba?\(([^)]+)\)$/)?.[1].split(/[,\s/]+/).map(Number)
       return parts && parts.length >= 3 ? parts : null
@@ -82,9 +110,9 @@ async function readFocus(page: Page, screenshot?: Buffer) {
       const background = layers.reduce((back, layer) => blend(layer, back), [255, 255, 255])
       return ratio(blend(foreground, background), background)
     }
-    const inView = (rect: { left: number; top: number; right: number; bottom: number }) => {
+    const inViewOf = (nodes: HTMLElement[]) => (rect: { left: number; top: number; right: number; bottom: number }) => {
       if (rect.left < 0 || rect.top < 0 || rect.right > innerWidth || rect.bottom > innerHeight) return false
-      return chain.every((node) => {
+      return nodes.every((node) => {
         const s = getComputedStyle(node)
         const bounds = node.getBoundingClientRect()
         const clipsX = /(hidden|clip|auto|scroll)/.test(s.overflowX)
@@ -94,6 +122,13 @@ async function readFocus(page: Page, screenshot?: Buffer) {
           && s.clipPath === 'none' && s.clip === 'auto'
       })
     }
+    const inView = inViewOf(chain)
+    const paintedChain = (nodes: HTMLElement[]) => nodes.every((node) => {
+      const s = getComputedStyle(node)
+      return s.display !== 'none' && s.visibility === 'visible' && Number(s.opacity) > 0
+    })
+    const painted = paintedChain(chain)
+    const opacity = chain.reduce((value, node) => value * Number(getComputedStyle(node).opacity), 1)
     const length = (value: string, reference = 0) => {
       if (!/^-?(?:\d+\.?\d*|\.\d+)(?:px|%)?$/.test(value)) return NaN
       return parseFloat(value) * (value.endsWith('%') ? reference / 100 : 1)
@@ -117,17 +152,25 @@ async function readFocus(page: Page, screenshot?: Buffer) {
       }
     }
     // Üst öğelerin kayması box içinde vardır. Ölçekleri yerel uzaklıklara uygulanır.
-    const ancestorAxes = chain.map((node) => axes(getComputedStyle(node)))
+    const measureHost = (host: HTMLElement) => {
+    const hostStyle = getComputedStyle(host)
+    const hostBox = host.getBoundingClientRect()
+    const hostChain = chainOf(host)
+    const hostInView = inViewOf(hostChain)
+    const hostPainted = paintedChain(hostChain)
+    const hostOpacity = hostChain.reduce((value, node) => value * Number(getComputedStyle(node).opacity), 1)
+    const ancestorAxes = hostChain.map((node) => axes(getComputedStyle(node)))
     const hostScaleX = ancestorAxes.reduce((value, axis) => value * (axis?.x ?? NaN), 1)
     const hostScaleY = ancestorAxes.reduce((value, axis) => value * (axis?.y ?? NaN), 1)
-    const pseudos = ['::before', '::after'].map((pseudo) => {
-      const s = getComputedStyle(el, pseudo)
+    const hostCanPaint = !host.matches('input, textarea, select, img, iframe, video, canvas')
+    return ['::before', '::after'].map((pseudo) => {
+      const s = getComputedStyle(host, pseudo)
       const borderWidth = parseFloat(s.width) + (s.boxSizing === 'border-box' ? 0
         : parseFloat(s.paddingLeft) + parseFloat(s.paddingRight) + parseFloat(s.borderLeftWidth) + parseFloat(s.borderRightWidth))
       const borderHeight = parseFloat(s.height) + (s.boxSizing === 'border-box' ? 0
         : parseFloat(s.paddingTop) + parseFloat(s.paddingBottom) + parseFloat(s.borderTopWidth) + parseFloat(s.borderBottomWidth))
-      const localLeft = parseFloat(style.borderLeftWidth) + parseFloat(s.left) + parseFloat(s.marginLeft) - el.scrollLeft
-      const localTop = parseFloat(style.borderTopWidth) + parseFloat(s.top) + parseFloat(s.marginTop) - el.scrollTop
+      const localLeft = parseFloat(hostStyle.borderLeftWidth) + parseFloat(s.left) + parseFloat(s.marginLeft) - host.scrollLeft
+      const localTop = parseFloat(hostStyle.borderTopWidth) + parseFloat(s.top) + parseFloat(s.marginTop) - host.scrollTop
       const transform = axes(s)
       const origin = s.transformOrigin.split(/\s+/)
       const originX = length(origin[0], borderWidth)
@@ -137,16 +180,16 @@ async function readFocus(page: Page, screenshot?: Buffer) {
       const translateY = length(translate[1] ?? '0px', borderHeight)
       const scaleX = transform?.x ?? NaN
       const scaleY = transform?.y ?? NaN
-      const left = box.left + hostScaleX * (localLeft + translateX + originX * (1 - scaleX) + (transform?.offsetX ?? NaN))
-      const top = box.top + hostScaleY * (localTop + translateY + originY * (1 - scaleY) + (transform?.offsetY ?? NaN))
+      const left = hostBox.left + hostScaleX * (localLeft + translateX + originX * (1 - scaleX) + (transform?.offsetX ?? NaN))
+      const top = hostBox.top + hostScaleY * (localTop + translateY + originY * (1 - scaleY) + (transform?.offsetY ?? NaN))
       const width = borderWidth * scaleX * hostScaleX
       const height = borderHeight * scaleY * hostScaleY
       const rect = { left, top, right: left + width, bottom: top + height }
       const finite = [left, top, width, height].every(Number.isFinite)
       const geometrySupported = finite && ['border-box', 'view-box'].includes(s.transformBox)
-        && style.display !== 'inline' && style.position !== 'static'
+        && hostStyle.display !== 'inline' && hostStyle.position !== 'static'
       const color = rgb(s.backgroundColor)
-      const alpha = (color?.[3] ?? 1) * opacity * Number(s.opacity)
+      const alpha = (color?.[3] ?? 1) * hostOpacity * Number(s.opacity)
       // global.css işareti pointer-events:none ile çizer. Tıklama hedefi kanıt değildir.
       // Stil, konum ve kırpılma koşullarını çizilmiş piksellerle birlikte denetleriz.
       const singleEdge = width <= 4 || height <= 4
@@ -173,7 +216,7 @@ async function readFocus(page: Page, screenshot?: Buffer) {
               : [pixel(major, Math.floor(top) - 1), pixel(major, Math.ceil(rect.bottom))])
               .filter((value): value is number[] => value !== null)
             // Yalnız renk birleştirmesindeki bir basamaklık yuvarlama farkı kabul edilir.
-            const matches = major < majorEnd && inView(row) && backgrounds.length === 2 && color !== null
+            const matches = major < majorEnd && hostInView(row) && backgrounds.length === 2 && color !== null
               && foregrounds.every((foreground) => foreground !== null && backgrounds.some((background) =>
                 foreground.every((value, i) => Math.abs(value - (color[i] * alpha + background[i] * (1 - alpha))) <= 1)))
             if (matches) {
@@ -198,24 +241,23 @@ async function readFocus(page: Page, screenshot?: Buffer) {
       const pixelMatch = segments.length > 0
       const contrastRatio = pixelMatch ? Math.min(...segments.map((segment) => segment.contrastRatio)) : 0
       // Metin alanında hesaplanan ::before değeri, çizilen bir kutuyu kanıtlamaz.
-      const supportsContent = !el.matches('input, textarea, select, img, iframe, video, canvas')
-      const generated = supportsContent && !['none', 'normal', ''].includes(s.content)
+      const generated = hostCanPaint && !['none', 'normal', ''].includes(s.content)
       const candidate = generated && s.display !== 'none' && s.visibility === 'visible'
-        && Number(s.opacity) > 0 && opaque(s.backgroundColor) && painted
+        && Number(s.opacity) > 0 && opaque(s.backgroundColor) && hostPainted
       const geometryError = candidate && (!geometrySupported || s.position !== 'absolute')
       const checks = {
         style: candidate,
         geometry: geometrySupported && s.position === 'absolute'
           && Math.min(width, height) >= 2 && Math.max(width, height) >= 8,
         clipping: finite && s.clipPath === 'none' && s.clip === 'auto'
-          && segments.some((segment) => inView(segment.rect)),
+          && segments.some((segment) => hostInView(segment.rect)),
         pixels: pixelMatch,
         contrast: contrastRatio >= 3,
       }
       // Kontrast ayrı hata üretir. Görünür ama soluk işareti gizli diye raporlamayız.
       const visible = checks.style && checks.geometry && checks.clipping && checks.pixels
       return {
-        pseudo, visible, singleEdge, ring: generated && ring(s), rect, width, height, checks,
+        host: window.__mobileQA.selector(host), pseudo, visible, singleEdge, ring: generated && ring(s), rect, width, height, checks,
         pointerEvents: s.pointerEvents,
         geometryError, layout: { localLeft, localTop, borderWidth, borderHeight },
         transform: s.transform, translate: s.translate, scale: s.scale, rotate: s.rotate, transformOrigin: s.transformOrigin,
@@ -223,9 +265,12 @@ async function readFocus(page: Page, screenshot?: Buffer) {
         color: s.backgroundColor, contrastRatio, pixelMatch, longestPaintedRun, segments,
       }
     })
+    }
+    const pseudos = hosts.flatMap(measureHost)
+    const sharedPseudos = sharedHost ? measureHost(sharedHost) : []
     const wrapper = el.closest('.ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker')
-    const outlineOrShadow = ring(style) || pseudos.some((p) => p.ring)
-      || (wrapper !== null && wrapper !== el && ring(getComputedStyle(wrapper)))
+    const outlineOrShadow = ring(style) || pseudos.some((p) => p.ring) || sharedPseudos.some((p) => p.ring)
+      || [wrapper, ...fieldHosts].some((node) => node !== null && node !== el && ring(getComputedStyle(node)))
     // Bu hedef yalnız bağlantının alt çizgisine aittir. Pseudo kararına katılmaz.
     const center = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2)
     const underline = el.matches('a') && style.textDecorationLine.includes('underline')
@@ -244,12 +289,14 @@ async function readFocus(page: Page, screenshot?: Buffer) {
     if (indicatorCount === 0 && !geometryUncertain) issues.push('Görünür, çevrelemeyen odak işareti yok.')
     if (pseudos.some((p) => p.visible && p.singleEdge && p.contrastRatio < 3)) issues.push('Odak işaretinin komşu renkle farkı 3:1 altında.')
     if (indicatorCount > 1) issues.push('Kontrol birden fazla odak işareti gösteriyor.')
+    if (sharedPseudos.some((p) => p.visible && p.singleEdge)) issues.push('Odak işareti birden fazla kontrol taşıyan kapta çiziliyor.')
     return {
       selector: window.__mobileQA.selector(el), text: (el.getAttribute('aria-label') || el.textContent || '').trim().slice(0, 100),
       mode, issues, measurementIssues, captureKey, outline: style.outline, shadow: style.boxShadow, underline, pseudos,
+      hosts: hosts.map((node) => window.__mobileQA.selector(node)), sharedHost: sharedHost && window.__mobileQA.selector(sharedHost),
       hostRect: { left: box.left, top: box.top, right: box.right, bottom: box.bottom },
     }
-  }, screenshot?.toString('base64') ?? null)
+  }, { base64: screenshot?.toString('base64') ?? null, FIELD_HOSTS: FOCUS_FIELD_HOSTS })
 }
 
 export type FocusRecord = Omit<Awaited<ReturnType<typeof readFocus>>, 'captureKey'> & {
@@ -257,8 +304,51 @@ export type FocusRecord = Omit<Awaited<ReturnType<typeof readFocus>>, 'captureKe
 }
 export interface Audit { findings: Finding[]; samples: FocusRecord[]; dialogName: 'pass' | 'fail' | 'not_run' }
 
-export async function auditFocus(page: Page, info: TestInfo, audit: Audit, step: string, owner = 'İş 2') {
+/** Odaklı kontrolü, alan kabını ve açık pencereyi etkileyen sonlu animasyonlar biter.
+ *  Süre sınırı aşılırsa ölçüm sessizce devam etmez. Test açık bir hatayla durur. */
+export async function settleFocusAnimations(page: Page, timeout = 3000) {
+  const pending = await page.evaluate(async (limit) => {
+    const deadline = performance.now() + limit
+    const describe = (animation: Animation) => {
+      const effect = animation.effect instanceof KeyframeEffect ? animation.effect : null
+      const target = effect?.target
+      const name = animation instanceof CSSTransition ? animation.transitionProperty
+        : animation instanceof CSSAnimation ? animation.animationName : animation.id || 'animasyon'
+      return `${target ? window.__mobileQA?.selector(target) ?? target.localName : '?'}${effect?.pseudoElement ?? ''} ${name}`
+    }
+    for (;;) {
+      const el = document.activeElement
+      const dialog = el?.closest('.ant-modal-root, .ant-modal-wrap, .ant-drawer, [role="dialog"]') ?? null
+      const running = document.getAnimations().filter((animation) => {
+        // Duraklatılmış animasyon kararlı bir durumdur. Bitmiş animasyon da beklenmez.
+        if (animation.playState !== 'running') return false
+        const effect = animation.effect
+        // Sonsuz animasyon bitmez. Bu animasyonlar ölçümün kararlılık denetimine kalır.
+        if (!effect || !Number.isFinite(effect.getComputedTiming().endTime)) return false
+        const target = effect instanceof KeyframeEffect ? effect.target : null
+        if (!target || !el) return false
+        return target === el || target.contains(el) || el.contains(target) || Boolean(dialog?.contains(target))
+      })
+      if (running.length === 0) return []
+      const left = deadline - performance.now()
+      if (left <= 0) return running.map(describe)
+      let timer = 0
+      await Promise.race([
+        Promise.allSettled(running.map((animation) => animation.finished)),
+        new Promise<void>((resolve) => { timer = window.setTimeout(resolve, left) }),
+      ])
+      window.clearTimeout(timer)
+    }
+  }, timeout)
+  if (pending.length > 0) {
+    throw new Error(`Odak ölçümünden önce animasyonlar ${timeout} ms içinde bitmedi: ${pending.join(', ')}`)
+  }
+}
+
+/** Odağı kararlı görüntüyle okur. Sonucu kaydetmez ve beklenti kurmaz. */
+export async function captureFocus(page: Page) {
   await page.evaluate(async () => { await document.fonts.ready })
+  await settleFocusAnimations(page)
   let capture: { screenshotBytes: Buffer; reading: Awaited<ReturnType<typeof readFocus>> } | undefined
   let stableCapture = false
   let captureAttempts = 0
@@ -273,6 +363,11 @@ export async function auditFocus(page: Page, info: TestInfo, audit: Audit, step:
     if (stableCapture) break
   }
   if (!capture) throw new Error('Odak görüntüsü alınamadı.')
+  return { capture, stableCapture, captureAttempts }
+}
+
+export async function auditFocus(page: Page, info: TestInfo, audit: Audit, step: string, owner = 'İş 2') {
+  const { capture, stableCapture, captureAttempts } = await captureFocus(page)
   const { captureKey: _captureKey, ...reading } = capture.reading
   const screenshot = info.outputPath(`odak-${audit.samples.length + 1}.png`)
   const sample: FocusRecord = {
