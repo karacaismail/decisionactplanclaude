@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /*
  * CSS mimari kapısı. Kurallar docs/css-mimarisi.md belgesindedir.
- * Altı katman vardır: temel, kabuk, bilesen, ekran, giris ve yazdirma.
+ * Yedi katman vardır: temel, kabuk, bilesen, ekran, desen, giris ve yazdirma.
  * Kapı her CSS dosyasının doğru klasörde durduğunu ve doğru yerden yüklendiğini denetler.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { basename, join, posix, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export const LAYERS = ['temel', 'kabuk', 'bilesen', 'ekran', 'giris', 'yazdirma']
+export const LAYERS = ['temel', 'kabuk', 'bilesen', 'ekran', 'desen', 'giris', 'yazdirma']
 
 /* Giriş dosyasının bütün kuralları bu sorgunun içinde durmalıdır. */
 export const INPUT_GUARDS = {
@@ -71,6 +71,8 @@ function allowedImporter(target, importer) {
     case 'bilesen':
     case 'ekran':
       return nameOf(importer) === name
+    case 'desen':
+      return /^src\/(screens|components|charts)\//.test(importer)
     case 'yazdirma':
       return importer.startsWith('src/screens/')
     default:
@@ -140,5 +142,5 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     for (const error of errors) console.error(`  ${error}`)
     process.exit(1)
   }
-  console.log('CSS mimari kapısı temiz. Altı katman kuralı geçti.')
+  console.log('CSS mimari kapısı temiz. Yedi katman kuralı geçti.')
 }

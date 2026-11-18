@@ -12,7 +12,8 @@ const valid = {
   'src/app/AppShell.tsx': "import '@/styles/kabuk/kabuk.css'",
   'src/app/girisStilleri.ts': "const a = () => import('@/styles/giris/dokunma.css')\nconst b = () => import('@/styles/giris/fare.css')",
   'src/components/PageHeader.tsx': "import '@/styles/bilesen/PageHeader.css'",
-  'src/screens/WorkScreen.tsx': "import '@/styles/ekran/WorkScreen.css'",
+  'src/screens/WorkScreen.tsx': "import '@/styles/desen/pano-card.css'\nimport '@/styles/ekran/WorkScreen.css'",
+  'src/styles/desen/pano-card.css': '.pano-card { margin: 0; }',
   'src/screens/reports/OutputsContent.tsx': "import '@/styles/ekran/OutputsContent.css'\nimport '@/styles/yazdirma/yazdirma.css'",
   'src/styles/temel/temel.css': ':root { --a: 1px; }',
   'src/styles/kabuk/kabuk.css': '.topbar { color: red; }',
@@ -63,6 +64,11 @@ describe('CSS mimari kapısı', () => {
   it('giriş dosyasında yanlış sorguyu bulur', () => {
     const errors = check({ ...valid, 'src/styles/giris/dokunma.css': '@media (min-width: 600px) { .a { color: red; } }' })
     expect(errors.join('\n')).toMatch(/giris\/dokunma\.css.*sorgu/)
+  })
+
+  it('deseni kabuk ve temel dışındaki uygulama dosyasından içe aktarmayı bulur', () => {
+    const errors = check({ ...valid, 'src/data/x.ts': "import '@/styles/desen/pano-card.css'" })
+    expect(errors.join('\n')).toMatch(/data\/x\.ts.*desen\/pano-card\.css/)
   })
 
   it('hiçbir yerden içe aktarılmayan CSS dosyasını bulur', () => {
