@@ -1,100 +1,130 @@
 # Kalite kapıları
 
-Bu belge kalite kapılarını anlatır. Kapı, kodu denetleyen bir kontroldür. Kapı bir hata bulursa iş durur. Kapı temizse yayın devam eder.
+Kapı, kodu denetleyen bir kontroldür. Hata varsa kontrol başarısız olur.
+Kontrolü geçmek için testi silmeyin veya kuralı gevşetmeyin.
 
-Bütün kapılar tek komutla çalışır:
+## Komutlar
 
-```bash
-npm run ci
-```
+Komutları proje kökünde çalıştırın.
 
-Bu komut sırayla üç kapıyı çalıştırır. Her kapıyı tek başına da çalıştırabilirsiniz.
+| Komut | Denetim |
+|---|---|
+| `npm run lint` | TypeScript tipleri ve arayüz kaynakları |
+| `npm run check:ui` | Yalnız arayüz kaynakları |
+| `npm run test:unit` | Vitest birim testleri |
+| `npm run build` | Tip denetimi ve üretim derlemesi |
+| `npm run test:e2e:ci` | Chromium ile 320 ve 1280 piksel görünümleri |
+| `npm run test:e2e` | Yapılandırılmış Chromium ve WebKit projeleri |
+| `npm run ci` | Lint, birim testleri ve Chromium testleri |
 
-## 1. Tip denetimi ve arayüz kapısı
+`npm run ci` derleme komutunu içermez. Derlemeyi ayrıca çalıştırın.
+Firefox kullanıcı kararıyla çalıştırılmaz.
 
-Komut:
+## Arayüz denetimi
 
-```bash
-npm run lint
-```
+`scripts/check-ui.mjs` dosyası `src` altındaki CSS, TypeScript ve TSX dosyalarını tarar.
+TSX, React bileşenlerinin yazıldığı dosya biçimidir.
+Denetim yedi kuralı uygular.
 
-Bu komut önce TypeScript tip denetimini çalıştırır. Sonra arayüz kapısını çalıştırır. Arayüz kapısının dosyası `scripts/check-ui.mjs` dosyasıdır. Kapıyı tek başına şu komutla çalıştırırsınız:
+1. **Yazı boyutu.** Okunabilir yazı en az 14 piksel olmalıdır.
+   Denetim sabit CSS değerlerini ve satır içi yazı boyutlarını bulur.
+   `clamp()` işlevinin bilinen alt sınırını da denetler.
+2. **Hareket.** Süreler ve eğriler ortak hareket değişkenlerinden gelmelidir.
+   `transition: all` kullanılmaz. Hareket azaltma bloğunun mevcut istisnası korunur.
+3. **Odak.** Normal odak kuralında çevreleyen halka veya gölge kullanılmaz.
+   Yüksek karşıtlık istisnası ortak kullanıcı kuralına bağlıdır.
+   Görünür klavye odağı ayrıca tarayıcıda denenir.
+4. **Vurgu kenarı.** Aynı kutuda tek kenar çizgisi ve yuvarlatılmış köşe birleşmez.
+   Denetim CSS kurallarını ve satır içi nesneleri inceler.
+5. **Cihaz seçimi.** Kod davranışı `isMobile` veya `userAgent` ile seçmez.
+   Yerleşim, işaretçi ve hover desteği ayrı değerlendirilir.
+6. **Yalnız hover ile açılan eylem.** Hover, farenin öğenin üzerine gelmesidir.
+   Gizli eylemin dokunma ve klavye yolu da bulunmalıdır.
+   Denetim `opacity`, `display` ve `visibility` değişimlerini inceler.
+   Ant Design `Popover` ve `Dropdown` tetiklerini de inceler.
+   Yalnız hover tetikleyicisi varsa denetim hata verir.
+7. **Dokunma alanı.** Bağımsız kontrol en az 44 × 44 piksel alan sağlamalıdır.
+   Denetim bilinen genişlik, yükseklik ve alt sınırları inceler.
+   Mantıksal boyut adlarını ve satır içi ölçüleri de inceler.
+   Küçük Ant Design düğmesinde iki boyutun güvencesini arar.
 
-```bash
-npm run check:ui
-```
+İkon, rozet ve dekoratif SVG ölçüsü etkileşim alanı sayılmaz.
+SVG, vektör çizim biçimidir. Örneğin 16 piksellik ikon, 44 piksellik düğmenin içinde bulunabilir.
 
-Arayüz kapısı `src` klasöründeki `.css`, `.ts` ve `.tsx` dosyalarını tarar. Kapı beş kuralı denetler.
+Dokunma denetimi yüklenen CSS bağlantılarını izler.
+Yüklenmeyen CSS dosyası bir ihlali geçerli hâle getiremez.
+Denetim bilinen değişkenleri çözer. Yeterli alt sınırı ve geçersiz kılan kuralı birlikte değerlendirir.
+Statik olarak ölçülebilen ek tıklama alanları da değerlendirilir.
+Gerçek tıklama alanı ve komşu alanla çakışma ayrıca tarayıcıda ölçülür.
 
-1. **Yazı boyutu.** Hiçbir yazı 14 pikselden küçük olamaz. Kapı `font-size: 12px` gibi değerleri yakalar. Kapı `fontSize: 12` gibi satır içi değerleri de yakalar.
-2. **Hareket.** Geçiş ve animasyon süreleri ortak değişkenden gelir. Ortak değişkenler `var(--motion-...)` biçimindedir. Ham süre yazılamaz. Örneğin `200ms` yazılamaz. `transition: all` yazılamaz. Hareketi azaltma bloğu bu kuraldan muaftır. Bu blok `prefers-reduced-motion` ile başlar.
-3. **Odak halkası.** Odak kuralında `outline` yazılamaz. Odak kuralı `:focus` veya `:focus-visible` içeren kuraldır. Odak kuralında `box-shadow` da yazılamaz. Yalnız `outline: none` ve `outline: 0` serbesttir. Yüksek karşıtlık bloğu bu kuraldan muaftır. Bu blok `forced-colors: active` ile başlar.
-4. **Kavisli vurgu kenarı.** Bir kutunun tek kenarına renkli çizgi çizilebilir. Ancak aynı kutuda köşe yuvarlatma olamaz. Kapı `border-left` ile `border-radius` birlikteliğini yakalar. Kapı satır içi `borderLeft` ile `borderRadius` birlikteliğini de yakalar.
-5. **Cihaz bayrağı.** Kodda `isMobile` adlı bayrak olamaz. Kodda `userAgent` okuması da olamaz. Yerleşim alanını, giriş türünü ve hover desteğini ayrı ayrı sorgulayın.
+## Denetimin sınırı
 
-Kapı her ihlali `dosya:satır açıklama` biçiminde yazar. Örnek:
+Kaynak taraması tarayıcının bütün CSS hesaplarını taklit etmez.
+Dinamik sınıflar, karmaşık seçiciler ve çalışma anında üretilen değerler ek kontrol gerektirir.
+İçe aktarma sırası ve üçüncü taraf CSS üretimi de tarayıcıda doğrulanır.
+
+Denetim temizse bütün ekranların erişilebilir olduğu sonucu çıkarılmaz.
+Tablo taşması, kırpılma, gerçek yazı boyutu ve görünür odak tarayıcıda ölçülmelidir.
+Ekran okuyucu ve gerçek cihaz denemeleri ayrı kanıttır.
+
+Bir ihlal şu biçimde yazılır:
 
 ```text
-src/charts/EChart.tsx:22 animationDuration: 320 ham değer. motion tokenını kullanın.
+src/components/Ornek.tsx:12 Dokunma alanı height için 44px sınırı doğrulanamıyor.
 ```
 
-Kapı bir ihlal bulursa çıkış kodu 1 verir. Kapı temizse "Arayüz kapısı temiz." yazar.
+İhlal varsa çıkış kodu 1 olur. İhlal yoksa çıkış kodu 0 olur.
+`src/theme/tokens.ts` ham kaynak değerlerini taşır. Mevcut kaynak istisnası yalnız bu dosyadır.
 
-Token kaynağı `src/theme/tokens.ts` dosyasıdır. Bu dosya ham değer taşır. Bu yüzden kapı bu dosyayı atlar.
+## Birim testleri
 
-## 2. Birim testleri
+Arayüz denetiminin testleri `scripts/check-ui.test.ts` dosyasındadır.
+Testler hatalı ve geçerli örnekleri birlikte kullanır.
+Yeni anlamlı kural için önce başarısız test yazılır.
+Sonra uygulama düzeltilir. Önceki kurallar korunur.
 
-Komut:
+Ortak yoğunluk değerlerinin CSS ve TypeScript kaynakları birlikte korunur.
+Görsel kontrol boyutu, gerçek etkileşim alanından ayrı denenir.
+Yoğunluk seçimi yazıyı veya etkileşim alanını küçültemez.
+
+## Tarayıcı ve port
+
+Playwright varsayılan olarak 5179 portunu kullanır.
+Bu projedeki gerçek port değişkeni `PW_PORT` adını taşır.
+Örneğin İş 3 şu komutla çalışır:
 
 ```bash
-npm run test:unit
+PLAYWRIGHT_PORT=5203 PW_PORT=5203 npm run test:e2e:ci
 ```
 
-Bu komut Vitest ile birim testlerini çalıştırır. Testler `src` ve `scripts` klasörlerindedir. Test dosyalarının adı `.test.ts` ile biter. Arayüz kapısının kendi testi `scripts/check-ui.test.ts` dosyasındadır. Bu test her kuralı örnek kodla dener.
+`PLAYWRIGHT_PORT` görev metninde bulunur. Yapılandırma port için yalnız `PW_PORT` değerini okur.
+Port doluysa başka boş port seçin. Başka işin sunucusunu kullanmayın.
 
-## 3. Tarayıcı duman testi
+Önce 320 pikselde ana yol denenir. Sonra kabul sırasındaki genişliklere geçilir.
+Yoğunluk, dokunma, fare, klavye ve yön değişimi ayrıca denenir.
+Açılan panelde yazı ve kontrol ölçüleri yeniden ölçülür.
+Hareket azaltma, metin büyütme ve yüksek karşıtlık da denetlenir.
 
-Komut:
+İş 3 geçici kanıtları `.pane/scratch` altında tutulur.
+Koordinatörün sonraki denetim görevi, yeni hata testlerine izin verdi.
+`tests/mobil-ortak.spec.ts`, M02, M06, M09 ve M12 bulgularını denetler.
+Görünen odak, önceki ve sonraki görüntülerin boyanmış pikselleriyle karşılaştırılır.
+44 piksel alan, 14 piksel yazı ve sabit başlığın etkisi ayrıca ölçülür.
+Anahtarın şeffaf kenarları, gerçek ekran koordinatlarıyla tıklanır.
+Bu dosya `test:e2e:ci` komutunun kapsamındadır.
+Geniş kalıcı tarayıcı denetiminin sahibi teslim planındaki İş 8'dir.
+WebKit emülasyonu gerçek Safari veya gerçek telefon denemesi sayılmaz.
 
-```bash
-npm run test:e2e:ci
-```
+## CI ve teslim
 
-Bu komut Playwright ile tarayıcı testlerini çalıştırır. Testler `tests` klasöründedir. Komut yalnız Chromium kullanır. Komut iki ekran genişliğinde çalışır: 320 piksel ve 1280 piksel.
+CI, uzak ortamda çalışan otomatik denetimdir.
+Ayarı `.github/workflows/deploy.yml` dosyasındadır.
+Mevcut iş akışı kurulumdan sonra lint, birim testi ve Chromium testini çalıştırır.
+Ardından derleme ve GitHub Pages yayını gelir.
+Bir kapı başarısız olursa sonraki adım çalışmaz.
+Yerel başarı, uzak iş akışının başarısı değildir.
 
-Bütün tarayıcı projelerini şu komutla çalıştırırsınız:
-
-```bash
-npm run test:e2e
-```
-
-Bu komut Chromium ve WebKit projelerini çalıştırır. Firefox hiçbir zaman çalışmaz. Bu bir kullanıcı kararıdır.
-
-Playwright geliştirme sunucusunu kendisi başlatır. Sunucu `http://localhost:5179` adresinde çalışır. Sunucu zaten çalışıyorsa Playwright onu kullanır.
-
-## CI'da ne çalışır
-
-CI, kodu GitHub'da otomatik denetleyen sistemdir. Ayarı `.github/workflows/deploy.yml` dosyasındadır. `main` dalına her gönderimde CI şu sırayla çalışır:
-
-1. CI `npm ci` komutuyla bağımlılıkları kurar.
-2. CI `npm run lint` komutuyla tip denetimini ve arayüz kapısını çalıştırır.
-3. CI `npm run test:unit` komutuyla birim testlerini çalıştırır.
-4. CI `npx playwright install --with-deps chromium` komutuyla Chromium tarayıcısını kurar.
-5. CI `npm run test:e2e:ci` komutuyla duman testini çalıştırır.
-6. CI `npm run build` komutuyla uygulamayı derler.
-7. CI derlenen dosyaları GitHub Pages'e yayımlar.
-
-Bir adım kırmızı olursa sonraki adım çalışmaz. Yayın da yapılmaz. Duman testi kırmızı olursa CI test izlerini `playwright-test-results` adıyla saklar. İzleri GitHub'daki iş sayfasından indirirsiniz.
-
-## Yerel bilgisayarda ve CI'da fark
-
-Yerel bilgisayarda bütün kapılar aynı komutla çalışır. Ancak yerel sonuç CI sonucu değildir. CI temiz bir Linux makinede çalışır. Bu yüzden yayından önce CI sonucunu kontrol edin.
-
-## Yeni kural eklemek
-
-Yeni bir arayüz kuralı eklemek için iki adım gerekir:
-
-1. Önce `scripts/check-ui.test.ts` dosyasına başarısız olan bir test yazın.
-2. Sonra `scripts/check-ui.mjs` dosyasına kuralı ekleyin.
-
-Test yeşil olunca bu belgeye kuralı ekleyin.
+Teslim raporu gerçek komutları ve sonuçlarını içerir.
+Sonuçlar `pass`, `fail`, `not_run` veya `not_applicable` olarak yazılır.
+Çalıştırılmayan kontrol geçmiş sayılmaz.
+Ekran görüntüsü, test izi ve bilinen açık sorunlar rapora bağlanır.

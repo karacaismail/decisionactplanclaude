@@ -4,6 +4,7 @@ import { Paperclip, Plus } from '@phosphor-icons/react'
 import type { EvidenceKind, PlanDoc } from '@/data/types'
 import { usePlanStore } from '@/store/planStore'
 import { EvidenceLadderPicker } from './EvidenceLadderPicker'
+import '@/styles/mobil-token.css'
 
 const KIND_LABEL: Record<EvidenceKind, string> = { gozlem: 'Gözlem', tahmin: 'Tahmin', varsayim: 'Varsayım' }
 
@@ -28,9 +29,15 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
     setOpen(false)
   }
   return (
-    <div className="evidence-link">
+    <div className="evidence-link mt-evidence-link">
       <Select
         id={id}
+        className="mt-evidence-link-control"
+        classNames={{
+          item: 'mt-evidence-link-selection',
+          itemRemove: 'mt-evidence-link-remove',
+          popup: { root: 'mt-evidence-link-popup', listItem: 'mt-evidence-link-option' },
+        }}
         mode="multiple"
         showSearch
         optionFilterProp="label"
@@ -38,15 +45,16 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
         options={options}
         onChange={onChange}
         placeholder="Kanıt seçin"
-        suffixIcon={<Paperclip size={16} aria-hidden />}
+        suffixIcon={<Paperclip size="var(--icon-inline)" aria-hidden />}
         notFoundContent="Kanıt yok. Yeni kanıt ekleyin."
         maxTagCount="responsive"
       />
-      <div className="evidence-link-foot">
+      <div className="evidence-link-foot mt-evidence-link-foot">
         <Tag className="fill-tag">Seçili kanıt: {value.length}</Tag>
-        <Button icon={<Plus size={16} />} onClick={() => setOpen(true)}>Yeni kanıt</Button>
+        <Button className="mt-evidence-link-action" icon={<Plus size="var(--icon-inline)" />} onClick={() => setOpen(true)}>Yeni kanıt</Button>
       </div>
       <Drawer
+        rootClassName="mt-evidence-link-drawer"
         open={open}
         onClose={() => setOpen(false)}
         title="Yeni kanıt"
@@ -54,22 +62,22 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
         destroyOnHidden
         styles={{ wrapper: { maxWidth: '100vw' } }}
         footer={
-          <div className="drawer-foot">
-            <Button onClick={() => setOpen(false)}>Vazgeç</Button>
-            <Button type="primary" onClick={save} disabled={!title.trim()}>Kaydet</Button>
+          <div className="drawer-foot mt-evidence-link-actions">
+            <Button className="mt-evidence-link-action" onClick={() => setOpen(false)}>Vazgeç</Button>
+            <Button className="mt-evidence-link-action" type="primary" onClick={save} disabled={!title.trim()}>Kaydet</Button>
           </div>
         }
       >
         <Form layout="vertical" component={false} requiredMark={false}>
-          <div className="drawer-body">
+          <div className="drawer-body mt-evidence-link-fields">
             <Form.Item layout="vertical" label="Kanıtın adı" htmlFor={`${id}-yeni-ad`} extra="Örneğin 3 Kasım görüşme notu.">
-              <Input id={`${id}-yeni-ad`} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Kanıtın adı" />
+              <Input className="mt-evidence-link-control" id={`${id}-yeni-ad`} value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Kanıtın adı" />
             </Form.Item>
             <Form.Item layout="vertical" label="Türü" htmlFor={`${id}-yeni-tur`}>
-              <Select id={`${id}-yeni-tur`} value={kind} onChange={setKind} options={[{ value: 'gozlem', label: 'Gözlem. Kayda geçmiş olay.' }, { value: 'tahmin', label: 'Tahmin. Beklenen sonuç.' }, { value: 'varsayim', label: 'Varsayım. Doğru kabul edilen söz.' }]} />
+              <Select className="mt-evidence-link-control" classNames={{ popup: { root: 'mt-evidence-link-popup', listItem: 'mt-evidence-link-option' } }} id={`${id}-yeni-tur`} value={kind} onChange={setKind} options={[{ value: 'gozlem', label: 'Gözlem. Kayda geçmiş olay.' }, { value: 'tahmin', label: 'Tahmin. Beklenen sonuç.' }, { value: 'varsayim', label: 'Varsayım. Doğru kabul edilen söz.' }]} />
             </Form.Item>
             <Form.Item layout="vertical" label="Kaynak ve tarih" htmlFor={`${id}-yeni-kaynak`} extra="Kim, ne zaman, nerede söyledi veya yaptı?">
-              <Input id={`${id}-yeni-kaynak`} value={source} onChange={(e) => setSource(e.target.value)} placeholder="Kaynak" />
+              <Input className="mt-evidence-link-control" id={`${id}-yeni-kaynak`} value={source} onChange={(e) => setSource(e.target.value)} placeholder="Kaynak" />
             </Form.Item>
             <Form.Item layout="vertical" label="Kanıt basamağı" extra="Aynı haberin iki kopyası tek kaynaktır.">
               <EvidenceLadderPicker value={ladder} onChange={setLadder} />

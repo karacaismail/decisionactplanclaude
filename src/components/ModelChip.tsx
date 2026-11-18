@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import { Tag } from 'antd'
 import { BookOpen } from '@phosphor-icons/react'
 import models from '@/data/models.json'
+import '@/styles/mobil-token.css'
 import { ModelDrawer } from './ModelDrawer'
 import type { ModelEntry } from './ModelCard'
 
@@ -13,39 +13,40 @@ export function modelByIndex(g: number): Model | undefined {
 }
 
 /**
- * Adım içinde Karar Kitabı yöntemleri. Her yöntem tıklanabilir bir `Tag` etiketidir.
- * Tıklanınca ya da Enter ile yandan yöntem paneli açılır. Panel yöntem yardımını da gösterir. `showTitle` kapalıysa yalnız etiketler çizilir.
+ * Her yöntem bir düğmedir. Tıklama, Enter veya Space yöntem panelini açar.
+ * Panel yöntem yardımını da gösterir. `showTitle` kapalıysa yalnız düğmeler görünür.
  */
 export function ModelChips({ indexes, showTitle = true }: { indexes: number[]; showTitle?: boolean }) {
   const [open, setOpen] = useState<Model | null>(null)
   if (!indexes.length) return null
   return (
-    <div className="model-chips">
+    <div className="model-chips mt-model-chips">
       {showTitle ? (
-        <span className="helper model-chips-title">
-          <BookOpen size={16} aria-hidden /> Karar Kitabı'nda hangi yöntemler var?
+        <span className="helper model-chips-title mt-model-chips-title">
+          <BookOpen size="var(--icon-inline)" aria-hidden /> Karar Kitabı'nda hangi yöntemler var?
         </span>
       ) : null}
-      <div className="model-chip-row" role="list">
+      <ul className="model-chip-row mt-model-chip-row" role="list">
         {indexes.map((g) => {
           const m = modelByIndex(g)
           if (!m) return null
           return (
-            <Tag
-              key={g}
-              role="button"
-              tabIndex={0}
-              aria-haspopup="dialog"
-              className="model-chip"
-              icon={<BookOpen size={14} aria-hidden />}
-              onClick={() => setOpen(m)}
-              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setOpen(m) } }}
-            >
-              {m.title}
-            </Tag>
+            <li key={g} className="mt-model-chip-item">
+              <button
+                type="button"
+                aria-haspopup="dialog"
+                className="model-chip mt-model-chip"
+                onClick={() => setOpen(m)}
+              >
+                <span className="mt-model-chip-visual">
+                  <BookOpen className="mt-model-chip-icon" size="var(--icon-small)" aria-hidden />
+                  <span className="mt-model-chip-label">{m.title}</span>
+                </span>
+              </button>
+            </li>
           )
         })}
-      </div>
+      </ul>
       <ModelDrawer model={open} onClose={() => setOpen(null)} />
     </div>
   )

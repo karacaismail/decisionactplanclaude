@@ -1,0 +1,852 @@
+@import './tokens.css';
+
+/* Ortak düğmelerin gerçek etkileşim alanı yoğunlukla küçülmez. */
+.ant-btn {
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+}
+
+/* Form etiketleri gerçek basma alanıdır. Yoğunluk bu alanı küçültmez. */
+:root .ant-radio-group .ant-radio-button-wrapper,
+:root .ant-radio-wrapper,
+:root .ant-checkbox-wrapper {
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  align-items: center;
+}
+
+/* Anahtarın izi aynı kalır. Şeffaf kenarlar da düğmenin basma alanıdır. */
+.ant-switch {
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  border-block: calc((var(--hit-area-min) - var(--ant-switch-track-height)) / 2) solid transparent;
+  background-clip: padding-box !important;
+}
+
+.ant-switch.ant-switch-small {
+  border-block-width: calc((var(--hit-area-min) - var(--ant-switch-track-height-sm)) / 2);
+}
+
+.ant-input-affix-wrapper:has(> input.ant-input) { padding-block: 0; }
+.ant-input-affix-wrapper > input.ant-input {
+  min-block-size: var(--hit-area-min);
+  padding-inline-start: calc(var(--focus-marker-width) + var(--focus-marker-inset));
+}
+
+/* Sabit üst şerit, kaydırılan form odağını örtmemeli. */
+:is(input, textarea, .ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper) {
+  scroll-margin-block: var(--focus-scroll-clearance);
+}
+
+.ant-input-clear-icon,
+.ant-select .ant-select-clear,
+.ant-select .ant-select-selection-item-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  font-size: var(--font-helper);
+}
+
+.ant-select .ant-select-clear {
+  opacity: 1;
+  margin-block-start: 0;
+  inset-inline-end: 0;
+  transform: translateY(-50%);
+}
+
+.ant-select:has(.ant-select-clear) {
+  padding-inline-end: calc(var(--hit-area-min) + var(--gap-label));
+}
+
+.ant-select:has(.ant-select-clear) .ant-select-suffix { visibility: hidden; }
+
+.ant-pagination .ant-pagination-simple-pager input {
+  font-family: inherit;
+  font-size: var(--font-helper);
+}
+
+/* Native girişler ::before çizmez. İşaret doğrudan yüzeyde boyanır. */
+html[data-focus-mode='keyboard'] :is(input, textarea):not([type='radio']):not([type='checkbox']):focus-visible,
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+  background-image: linear-gradient(var(--focus-marker), var(--focus-marker)) !important;
+  background-size: var(--focus-marker-width) calc(100% - var(--focus-marker-inset) * 2) !important;
+  background-position: left center !important;
+  background-repeat: no-repeat !important;
+}
+
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Gizli native seçenek odağı, görünür etikette tek işaretle temsil edilir. */
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, .ant-checkbox-input):focus-visible::before {
+  content: none;
+}
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] :is(input, textarea):focus-visible,
+  html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+    background-image: none !important;
+  }
+
+  /* Halka yalnız odaktaki native öğeye aittir. Gizli giriş görünür alanı alır. */
+  html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, .ant-checkbox-input):focus-visible {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 1;
+    background: transparent;
+  }
+}
+
+/* Eski ekran kuralları daha sonra yüklenebilir. Alt sınır bütün yükleme sıralarında korunur. */
+.shell-menu .ant-menu-item,
+.devir-filter .ant-segmented-item-label,
+.durum-meta a,
+.chip,
+.model-chip.ant-tag,
+.chart-view .ant-segmented-item-label,
+.form-section-toggle.ant-btn,
+.gecis-criterion-more > summary,
+.history-filter .ant-segmented-item-label,
+.temel-filter .ant-segmented-item-label {
+  min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important;
+}
+
+/* Gerçek kutu artık yeterlidir. Komşu kontrole taşan eski alan kaldırılır. */
+.form-section-toggle.ant-btn::after { display: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] :focus-visible {
+    outline: 2px solid CanvasText !important;
+  }
+}
+
+/* Dialog odağı, sabit paneli normal belge akışına taşımamalı. */
+html[data-focus-mode='keyboard'] .ant-drawer.mt-model-drawer:focus-visible,
+html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visible {
+  position: fixed;
+}
+
+html[data-focus-mode='keyboard'] .ant-drawer.mt-model-drawer:focus-visible::before,
+html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visible::before {
+  left: auto;
+  right: var(--padding-panel);
+  top: var(--padding-panel);
+  bottom: auto;
+  height: var(--icon-control);
+}
+
+/* Sayfa ve bölüm başlıkları. Metin küçülmez, eylemler gerektiğinde sarılır. */
+.page-header.mt-page-header,
+.section-head.mt-section-head {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-content);
+}
+
+.mt-page-header .mt-page-header-text {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-label);
+}
+
+.mt-page-header .page-kicker {
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+}
+
+.mt-page-header h1,
+.mt-section-head > h2,
+.mt-section-head > h3 {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  word-break: normal;
+  overflow-wrap: normal;
+  font-weight: var(--weight-strong);
+}
+
+.mt-page-header h1 { font-size: var(--font-page-title); }
+.mt-section-head > h2 { font-size: var(--font-section-title); }
+.mt-section-head > h3 { font-size: var(--font-subsection-title); }
+
+.mt-page-header .mt-page-header-text > p,
+.mt-section-head > p {
+  min-inline-size: 0;
+  margin: 0;
+  line-height: var(--line-body);
+}
+
+.mt-section-head > p { font-size: var(--font-body); }
+
+.mt-page-header .mt-page-header-text > p { font-size: var(--font-page-description); }
+
+.mt-page-header .mt-header-actions,
+.mt-section-head .mt-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-control);
+}
+
+.mt-header-actions > *,
+.mt-header-actions :is(.ant-space, .ant-space-item) {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.mt-header-actions .ant-space { flex-wrap: wrap; gap: var(--gap-control); }
+
+.mt-header-actions :is(button, a[href], [role='button']) {
+  box-sizing: border-box;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  height: auto;
+  padding-block: var(--padding-control-block);
+  padding-inline: var(--padding-control-inline);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.mt-header-actions .ant-btn > span:not(.ant-btn-icon) {
+  min-inline-size: 0;
+  white-space: normal;
+}
+
+/* Sayı şeridinin iç boşlukları yoğunluk değişkenlerini izler. */
+.mt-stat-strip { container-type: inline-size; container-name: plan-stats; }
+
+@container plan-stats (max-width: 360px) {
+  .mt-stat-strip > .kpi.mt-stat-tile {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'icon' 'label' 'value' 'note';
+  }
+}
+
+.mt-stat-strip > .kpi.mt-stat-tile {
+  padding: var(--padding-panel);
+  gap: var(--gap-control);
+}
+
+.mt-stat-strip > .kpi.mt-stat-tile.is-link {
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+}
+
+.mt-stat-tile .kpi-label,
+.mt-stat-tile .kpi-value {
+  gap: var(--gap-icon);
+}
+
+.mt-stat-tile .kpi-value { flex-wrap: wrap; }
+
+.note.mt-callout,
+.work-aside .note.mt-callout {
+  gap: var(--gap-label);
+  padding: var(--padding-panel) var(--padding-note-edge);
+}
+
+.mt-callout > .note-title {
+  gap: var(--gap-icon);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+}
+
+.mt-callout > .note-title > .mt-callout-icon {
+  flex-shrink: 0;
+}
+
+.mt-callout > .note-body {
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.empty-state.mt-empty-state {
+  min-inline-size: 0;
+  gap: var(--gap-control);
+  padding-block: var(--padding-empty-block);
+}
+
+.empty-state.mt-empty-state > h2 {
+  font-size: var(--font-subsection-title);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-body);
+}
+
+.empty-state.mt-empty-state > p {
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.mt-empty-state > h2,
+.mt-empty-state > p {
+  min-inline-size: 0;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.mt-empty-state .mt-empty-icon > svg {
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline);
+}
+
+.empty-state.mt-empty-state .mt-empty-actions {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--gap-control);
+  margin-block-start: var(--gap-label);
+}
+
+.mt-empty-actions > * {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.empty-state.mt-empty-state .mt-empty-actions :is(button, a) {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-inline-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  min-block-size: var(--hit-area-min);
+  block-size: auto;
+  gap: var(--gap-icon);
+  padding-block: var(--padding-control-block);
+  padding-inline: var(--padding-control-inline);
+  font-family: inherit;
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-align: center;
+}
+
+.mt-empty-actions :is(button, a) > span {
+  min-inline-size: 0;
+  white-space: normal;
+}
+
+.mt-empty-actions :is(.ant-btn-icon, svg) {
+  flex-shrink: 0;
+}
+
+.loading-state.mt-loading-state {
+  gap: var(--gap-section);
+}
+
+.mt-loading-state .loading-head {
+  gap: var(--gap-control);
+  max-width: var(--size-loading-head-max);
+}
+
+.mt-loading-state .loading-grid {
+  gap: var(--gap-content);
+}
+
+.loading-state.mt-loading-state .ant-card .ant-card-body {
+  padding: var(--padding-panel);
+}
+
+.decision-badge.mt-decision-badge {
+  gap: var(--gap-icon);
+  height: var(--badge-visual-size);
+  padding: 0 var(--padding-control-inline);
+  border-radius: var(--radius-control);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-control);
+}
+
+.model-chips.mt-model-chips {
+  gap: var(--gap-control);
+}
+
+.model-chips-title.mt-model-chips-title {
+  gap: var(--gap-icon);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+}
+
+.mt-model-chips-title > svg {
+  flex-shrink: 0;
+}
+
+.model-chip-row.mt-model-chip-row {
+  gap: var(--gap-control);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mt-model-chip-item {
+  display: flex;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.mt-model-chip {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--hit-area-min);
+  min-inline-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: transparent;
+  color: var(--color-text-primary);
+  font: inherit;
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  text-align: start;
+  cursor: pointer;
+}
+
+.mt-model-chip-visual {
+  box-sizing: border-box;
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  gap: var(--gap-icon);
+  min-block-size: var(--control-visual-size);
+  min-inline-size: 0;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-context);
+  transition: background-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease);
+}
+
+.mt-model-chip:hover .mt-model-chip-visual,
+.mt-model-chip:active .mt-model-chip-visual {
+  background: var(--color-selected-bg);
+  color: var(--color-action-primary);
+}
+
+.mt-model-chip-icon {
+  flex-shrink: 0;
+  color: var(--color-text-secondary);
+}
+
+.mt-model-chip-label {
+  min-inline-size: 0;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+
+/* Yöntem eylemleri içerik genişliğine göre yeni satıra geçer. */
+.mt-method-card.method-card.ant-card > .ant-card-actions {
+  flex-wrap: wrap;
+  gap: var(--gap-control);
+  padding: var(--padding-control-block);
+}
+
+.mt-method-card.method-card.ant-card > .ant-card-actions > li {
+  flex: 1 1 max-content;
+  width: auto !important;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: 0;
+  border-inline-end: 0;
+}
+
+.mt-method-card.method-card.ant-card > .ant-card-actions > li > span {
+  inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.mt-method-card.method-card.ant-card > .ant-card-actions .method-action {
+  box-sizing: border-box;
+  display: inline-flex;
+  gap: var(--gap-icon);
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  color: var(--color-text-primary);
+  transition: color var(--motion-small) var(--motion-ease);
+}
+
+.mt-method-card.method-card.ant-card > .ant-card-actions .method-action:hover {
+  color: var(--color-action-primary);
+}
+
+.mt-method-card .mt-method-action-icon {
+  flex: none;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline);
+}
+
+.mt-method-card.method-card.ant-card .ant-card-head-title {
+  white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.mt-method-card .method-meta.ant-typography {
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+}
+
+.mt-method-card .method-body.ant-typography {
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.mt-method-card .method-body strong {
+  font-weight: var(--weight-strong);
+}
+
+.mt-method-card .method-badge .ant-badge-count {
+  min-inline-size: var(--badge-visual-size);
+  block-size: var(--badge-visual-size);
+  padding-inline: var(--padding-badge-inline);
+  font-size: var(--font-helper);
+  line-height: var(--badge-visual-size);
+}
+
+.mt-method-usage-popover {
+  max-inline-size: calc(100vw - var(--gutter-page) - var(--gutter-page));
+}
+
+.mt-method-steps.method-steps,
+.mt-method-steps-empty.method-steps-empty {
+  max-inline-size: 100%;
+  line-height: var(--line-body);
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.mt-method-steps.method-steps {
+  gap: var(--gap-control);
+}
+
+.mt-method-steps.method-steps a {
+  display: flex;
+  align-items: center;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  font-size: var(--font-body);
+}
+
+/* ModelDrawer: ortak ölçüler, doğal metin akışı ve ayrı dokunma alanı. */
+.mt-model-drawer .ant-drawer-content-wrapper {
+  max-inline-size: 100vw;
+}
+
+.mt-model-drawer .ant-drawer-header,
+.mt-model-drawer .ant-drawer-body {
+  padding: var(--padding-panel);
+  min-inline-size: 0;
+}
+
+.mt-model-drawer .ant-drawer-title {
+  min-inline-size: 0;
+  font-size: var(--font-subsection-title);
+  line-height: var(--line-control);
+  font-weight: var(--weight-strong);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.mt-model-drawer .ant-drawer-close {
+  flex-shrink: 0;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  inline-size: var(--hit-area-min);
+  block-size: var(--hit-area-min);
+  font-size: var(--icon-control);
+}
+
+.mt-model-drawer .ant-drawer-close:not(.ant-drawer-close-end) {
+  margin-inline-end: var(--gap-control);
+}
+
+.mt-model-drawer .drawer-body,
+.mt-model-drawer .howto,
+.mt-model-drawer .howto-steps,
+.mt-model-drawer .howto-step-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.mt-model-drawer .drawer-body {
+  align-content: start;
+  gap: var(--gap-content);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.mt-model-drawer .drawer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-control);
+  min-inline-size: 0;
+}
+
+.mt-model-drawer .drawer-tags .ant-tag {
+  margin: 0;
+  max-inline-size: 100%;
+  padding-inline: var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+  white-space: normal;
+  word-break: normal;
+}
+
+.mt-model-drawer .mt-model-drawer-question {
+  margin: 0;
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+}
+
+.mt-model-drawer .howto {
+  gap: var(--gap-control);
+}
+
+.mt-model-drawer .howto-title {
+  margin: 0;
+  font-size: var(--font-subsection-title);
+  line-height: var(--line-control);
+  font-weight: var(--weight-strong);
+  color: var(--color-text-primary);
+}
+
+.mt-model-drawer .howto-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--gap-content);
+  font-size: var(--font-body);
+}
+
+.mt-model-drawer .howto-step {
+  display: grid;
+  grid-template-columns: var(--size-step-marker) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gap-control);
+  min-inline-size: 0;
+}
+
+.mt-model-drawer .howto-no {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-step-marker);
+  block-size: var(--size-step-marker);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-context);
+  color: var(--color-text-primary);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-control);
+}
+
+.mt-model-drawer .howto-step-body {
+  gap: var(--gap-label);
+}
+
+.mt-model-drawer .howto-step-title,
+.mt-model-drawer .howto-step-text {
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word;
+}
+
+.mt-model-drawer .howto-step-title {
+  font-weight: var(--weight-strong);
+}
+
+.mt-model-drawer .mt-model-drawer-link {
+  justify-self: start;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+  text-align: start;
+}
+
+/* Kanıt bağlama alanı ve portalda açılan form. */
+.evidence-link.mt-evidence-link {
+  gap: var(--gap-control);
+}
+
+.evidence-link-foot.mt-evidence-link-foot,
+.drawer-foot.mt-evidence-link-actions {
+  flex-wrap: wrap;
+  gap: var(--gap-control);
+  min-width: 0;
+}
+
+.mt-evidence-link-foot .fill-tag {
+  margin: 0;
+  padding: var(--padding-tag-block) var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+  white-space: normal;
+}
+
+.mt-evidence-link-action.ant-btn {
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+}
+
+.mt-evidence-link-control.ant-select,
+.mt-evidence-link-control.ant-input {
+  width: 100%;
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+}
+
+.mt-evidence-link-control .mt-evidence-link-selection {
+  align-items: center;
+  min-height: var(--control-visual-size);
+  margin-block: 0;
+  margin-inline-end: var(--gap-control);
+  padding-inline: var(--padding-selection-inline) 0;
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+}
+
+.mt-evidence-link-control .mt-evidence-link-remove {
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  font-size: var(--icon-small);
+}
+
+.mt-evidence-link-popup.ant-select-dropdown {
+  padding: var(--padding-popup);
+}
+
+.mt-evidence-link-popup .mt-evidence-link-option {
+  align-items: center;
+  min-height: var(--hit-area-min);
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+  transition: background-color var(--motion-small) var(--motion-ease);
+}
+
+.mt-evidence-link-popup .ant-select-item-option-content {
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.mt-evidence-link-drawer .ant-drawer-header,
+.mt-evidence-link-drawer .ant-drawer-body,
+.mt-evidence-link-drawer .ant-drawer-footer {
+  padding: var(--padding-panel);
+}
+
+.mt-evidence-link-drawer .ant-drawer-close {
+  width: var(--hit-area-min);
+  height: var(--hit-area-min);
+  flex-shrink: 0;
+  font-size: var(--icon-control);
+  transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease);
+}
+
+.mt-evidence-link-drawer .ant-drawer-close:not(.ant-drawer-close-end) {
+  margin-inline-end: var(--gap-control);
+}
+
+.mt-evidence-link-drawer .mt-evidence-link-fields {
+  gap: var(--gap-content);
+}
+
+.mt-evidence-link-fields .ant-form-item {
+  margin-bottom: 0;
+  min-width: 0;
+}
+
+.mt-evidence-link-fields .ant-form-item-label {
+  padding-bottom: var(--padding-label-bottom);
+}
+
+.mt-evidence-link-fields .ant-form-item-label > label {
+  height: auto;
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+}
+
+.mt-evidence-link-fields .ant-form-item-extra {
+  margin-top: var(--gap-label);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+}
+
+/* Sınır özeti ortak boşluk ve yazı ölçülerini kullanır. */
+.limits-line.mt-limits-line {
+  gap: var(--gap-label) var(--gap-content);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+}
+
+.limits-line.mt-limits-line strong {
+  font-weight: var(--weight-strong);
+}
+
+/* İlerleme göstergesinin dış ölçüsü ortak tokendan gelir. */
+.ring.mt-compass-art,
+.ozet .ring.mt-compass-art {
+  width: var(--size-progress-ring);
+  height: var(--size-progress-ring);
+}
+
+/* Yedi günlük takvim dar alanda ekranın solundan taşmaz. */
+@media (max-width: 360px) {
+  .ant-picker-dropdown {
+    inset-inline-start: var(--gutter-calendar) !important;
+    inset-inline-end: auto !important;
+  }
+}

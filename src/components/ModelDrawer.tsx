@@ -4,6 +4,7 @@ import { ArrowSquareOut } from '@phosphor-icons/react'
 import { loadHowTo, type HowTo } from '@/data/howto'
 import { Callout } from './Callout'
 import { modelLink, type ModelEntry } from './ModelCard'
+import '@/styles/mobil-token.css'
 
 type HelpState = { status: 'bekliyor' } | { status: 'hazir'; help: HowTo | null } | { status: 'hata' }
 
@@ -30,21 +31,29 @@ export function ModelDrawer({ model, onClose }: { model: ModelEntry | null; onCl
 
   const help = g !== null && state.status === 'hazir' ? state.help : null
   return (
-    <Drawer open={Boolean(model)} onClose={onClose} title={model?.title} size="default" styles={{ wrapper: { maxWidth: '100vw' } }}>
+    <Drawer
+      open={Boolean(model)}
+      onClose={onClose}
+      title={model?.title}
+      size="default"
+      rootClassName="mt-model-drawer"
+      // Portal kökü klavye odağında da ekrana sabit kalır.
+      rootStyle={{ position: 'fixed' }}
+    >
       {model ? (
         <div className="drawer-body">
           <div className="drawer-tags">
             <Tag>{model.section}</Tag>
             <Tag>Bölümde {model.no}. sırada</Tag>
           </div>
-          <p className="helper" style={{ margin: 0 }}>{model.question}</p>
+          <p className="helper mt-model-drawer-question">{model.question}</p>
           <Callout tone="sonuc" title="Kısaca">{model.simple ?? model.summary}</Callout>
           {model.example ? <Callout tone="ornek" title={model.example.title}>{model.example.text}</Callout> : null}
 
           {g !== null && state.status === 'bekliyor' ? (
             <div role="status" aria-live="polite" aria-busy="true">
               <span className="visually-hidden">Yöntem yardımı yükleniyor</span>
-              <Skeleton active title={{ width: '40%' }} paragraph={{ rows: 4 }} />
+              <Skeleton active title={{ width: 'var(--size-loading-title)' }} paragraph={{ rows: 4 }} />
             </div>
           ) : null}
           {g !== null && state.status === 'hata' ? <Callout tone="uyari" title="Yardım yüklenemedi">Yöntem yardımı indirilemedi. Paneli kapatıp yeniden açın.</Callout> : null}
@@ -68,7 +77,7 @@ export function ModelDrawer({ model, onClose }: { model: ModelEntry | null; onCl
           {help?.warn.map((w, i) => <Callout key={`uyari-${i}`} tone="uyari" title="Dikkat">{w}</Callout>)}
           {help?.tip.map((t, i) => <Callout key={`ipucu-${i}`} tone="ipucu" title="İpucu">{t}</Callout>)}
 
-          <Button type="link" href={modelLink(model)} target="_blank" rel="noreferrer" icon={<ArrowSquareOut size={16} />} iconPlacement="end" style={{ padding: 0, justifySelf: 'start' }}>
+          <Button type="link" className="mt-model-drawer-link" href={modelLink(model)} target="_blank" rel="noreferrer" icon={<ArrowSquareOut size="var(--icon-inline)" aria-hidden />} iconPlacement="end">
             Karar Kitabı'nda aç
           </Button>
         </div>

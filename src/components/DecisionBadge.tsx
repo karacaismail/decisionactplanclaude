@@ -2,6 +2,7 @@ import { CheckCircle, PauseCircle, ArrowsClockwise, ArrowBendUpRight, ShieldChec
 import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { decisionColors } from '@/theme/tokens'
 import '@/styles/screens-kapi.css'
+import '@/styles/mobil-token.css'
 
 const ICON: Record<Outcome, typeof CheckCircle> = {
   ilerle: CheckCircle,
@@ -29,16 +30,15 @@ export function outcomeColor(o: Outcome, dark: boolean): string {
 }
 
 /**
- * Karar rozeti. 24 px yüksek, 14 px 600, 4 px köşe, 16 px ikon.
- * Renk durum sisteminden gelir: İlerle ve Koşullu ilerle yeşil (koşullu çerçeveli),
- * Yeniden dene mavi, Yön değiştir mor, Beklet sarı, Durdur kırmızı. Tema CSS değişkeniyle kendiliğinden değişir.
- * `size` eski çağrılar için tutulur; tek boy vardır.
+ * Karar rozetinin ölçüleri ortak tasarım değişkenlerinden gelir.
+ * Renkler mevcut durum sınıflarından gelir.
+ * `size` eski çağrılar için tutulur. Rozetin tek boyu vardır.
  */
 export function DecisionBadge({ outcome }: { outcome: Outcome; size?: 'sm' | 'md' | 'lg' }) {
   const Icon = ICON[outcome]
   return (
-    <span className={`decision-badge is-${outcome}`}>
-      <Icon size={16} weight={outcome === 'kosulluIlerle' ? 'regular' : 'fill'} aria-hidden />
+    <span className={`decision-badge mt-decision-badge is-${outcome}`}>
+      <Icon size="var(--icon-inline)" weight={outcome === 'kosulluIlerle' ? 'regular' : 'fill'} aria-hidden />
       {OUTCOME_LABEL[outcome]}
     </span>
   )

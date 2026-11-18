@@ -1,6 +1,9 @@
+import '@/styles/mobil-token.css'
+
 /**
- * 96 px ilerleme halkası. Geçilen karar sayısını ve sırayı gösterir.
- * Dış varlık kullanmaz. Süsleme değildir: içindeki sayı ekran okuyucuya açıktır.
+ * İlerleme halkası geçilen karar sayısını ve sırayı gösterir.
+ * Dış varlık kullanmaz. Ekran okuyucu ilerleme bilgisini okur.
+ * Aşağıdaki sabitler SVG koordinatlarını hesaplar. Dış ölçü CSS tokenından gelir.
  */
 const SIZE = 96
 const R = 42
@@ -10,7 +13,7 @@ export function CompassArt({ active, passed }: { active: number; passed: number[
   const done = passed.length
   const ratio = Math.min(1, Math.max(0, done / 8))
   return (
-    <div className="ring" role="img" aria-label={`${done} karar geçti, açık karar ${active}`}>
+    <div className="ring mt-compass-art" role="img" aria-label={`${done} karar geçti, açık karar ${active}`}>
       <svg viewBox={`0 0 ${SIZE} ${SIZE}`} aria-hidden="true" focusable="false">
         <circle cx={SIZE / 2} cy={SIZE / 2} r={R} fill="none" stroke="var(--color-hero-line)" strokeOpacity="0.35" strokeWidth="6" />
         <circle

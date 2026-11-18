@@ -2,6 +2,7 @@ import { Wallet, CalendarBlank, ArrowsClockwise, Gauge } from '@phosphor-icons/r
 import type { PlanDoc } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { KpiStrip, StatTile } from './StatTile'
+import '@/styles/mobil-token.css'
 
 function values(plan: PlanDoc, retriesLeft?: number) {
   const { budgetKurus, deadline, retriesPerDecision, monthlyBurnKurus, cashKurus } = plan.limits
@@ -16,14 +17,14 @@ function values(plan: PlanDoc, retriesLeft?: number) {
 
 /**
  * Üç sınır ve pist.
- * `compact` tek satır 14 px özettir; karar ve kapı ekranlarında kullanılır.
+ * `compact` karar ve kapı ekranlarında kısa özeti gösterir.
  * Şerit biçimi yalnız plan özetinde durur.
  */
 export function LimitsBar({ plan, retriesLeft, compact }: { plan: PlanDoc; retriesLeft?: number; compact?: boolean }) {
   const items = values(plan, retriesLeft)
   if (compact) {
     return (
-      <div className="limits-line" role="group" aria-label="Sınırlar">
+      <div className="limits-line mt-limits-line" role="group" aria-label="Sınırlar">
         {items.map((i) => (
           <span key={i.label}>
             {i.label}: <strong>{i.value}</strong>
@@ -35,7 +36,7 @@ export function LimitsBar({ plan, retriesLeft, compact }: { plan: PlanDoc; retri
   return (
     <KpiStrip label="Sınırlar">
       {items.map((i) => (
-        <StatTile key={i.label} icon={<i.Icon size={16} />} label={i.label} value={i.value} />
+        <StatTile key={i.label} icon={<i.Icon size="var(--icon-inline)" />} label={i.label} value={i.value} />
       ))}
     </KpiStrip>
   )
