@@ -21,9 +21,9 @@ export function MeasureInput({ value, onChange, defaultName, defaultUnit, idPref
   return (
     <div className="measure">
       <div className="field-group">
-        {item('ad', 'Ölçünün adı', <Input id={`${idPrefix}-ad`} value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder="Örneğin haftalık kayıp" />)}
-        {item('birim', 'Birim', <Input id={`${idPrefix}-birim`} value={m.unit} onChange={(e) => set({ unit: e.target.value })} placeholder="dakika, TL, adet" />)}
-        {item('donem', 'Dönem', <Input id={`${idPrefix}-donem`} value={m.period ?? ''} onChange={(e) => set({ period: e.target.value })} placeholder="hafta, ay" />)}
+        {item('ad', 'Ölçünün adı', <Input id={`${idPrefix}-ad`} inputMode="text" enterKeyHint="next" autoComplete="off" value={m.name} onChange={(e) => set({ name: e.target.value })} placeholder="Örneğin haftalık kayıp" />)}
+        {item('birim', 'Birim', <Input id={`${idPrefix}-birim`} inputMode="text" enterKeyHint="next" autoComplete="off" value={m.unit} onChange={(e) => set({ unit: e.target.value })} placeholder="dakika, TL, adet" />)}
+        {item('donem', 'Dönem', <Input id={`${idPrefix}-donem`} inputMode="text" enterKeyHint="next" autoComplete="off" value={m.period ?? ''} onChange={(e) => set({ period: e.target.value })} placeholder="hafta, ay" />)}
       </div>
       <Form.Item
         layout="vertical"
@@ -46,13 +46,13 @@ export function MeasureInput({ value, onChange, defaultName, defaultUnit, idPref
       </Form.Item>
       {m.status === 'olculdu' ? (
         <div className="field-group">
-          {item('baslangic', 'Başlangıç değeri', <InputNumber id={`${idPrefix}-baslangic`} value={m.baseline ?? undefined} onChange={(v) => set({ baseline: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
-          {item('deger', 'Ölçülen değer', <InputNumber id={`${idPrefix}-deger`} value={m.value ?? undefined} onChange={(v) => set({ value: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
-          {item('pay', 'Pay', <InputNumber id={`${idPrefix}-pay`} value={m.numerator ?? undefined} onChange={(v) => set({ numerator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
-          {item('payda', 'Payda', <InputNumber id={`${idPrefix}-payda`} value={m.denominator ?? undefined} onChange={(v) => set({ denominator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
+          {item('baslangic', 'Başlangıç değeri', <InputNumber id={`${idPrefix}-baslangic`} inputMode="decimal" enterKeyHint="next" autoComplete="off" decimalSeparator="," value={m.baseline ?? undefined} onChange={(v) => set({ baseline: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
+          {item('deger', 'Ölçülen değer', <InputNumber id={`${idPrefix}-deger`} inputMode="decimal" enterKeyHint="next" autoComplete="off" decimalSeparator="," value={m.value ?? undefined} onChange={(v) => set({ value: v ?? null })} suffix={m.unit ? <span className="unit-suffix">{m.unit}</span> : undefined} placeholder="Sayı" />)}
+          {item('pay', 'Pay', <InputNumber id={`${idPrefix}-pay`} inputMode="decimal" enterKeyHint="next" autoComplete="off" decimalSeparator="," value={m.numerator ?? undefined} onChange={(v) => set({ numerator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
+          {item('payda', 'Payda', <InputNumber id={`${idPrefix}-payda`} inputMode="decimal" enterKeyHint="next" autoComplete="off" decimalSeparator="," value={m.denominator ?? undefined} onChange={(v) => set({ denominator: v ?? null })} placeholder="Sayı" />, 'Oran ölçüyorsanız doldurun.')}
         </div>
       ) : null}
-      {m.status === 'uygulanmiyor' ? item('neden', 'Neden uygulanmıyor?', <Input id={`${idPrefix}-neden`} value={m.naReason ?? ''} onChange={(e) => set({ naReason: e.target.value })} placeholder="Kısa neden" />) : null}
+      {m.status === 'uygulanmiyor' ? item('neden', 'Neden uygulanmıyor?', <Input id={`${idPrefix}-neden`} inputMode="text" enterKeyHint="next" autoComplete="off" value={m.naReason ?? ''} onChange={(e) => set({ naReason: e.target.value })} placeholder="Kısa neden" />) : null}
       <Divider className="measure-divider" titlePlacement="start" styles={{ content: { margin: 0 } }} plain>Eşik ve dayanağı</Divider>
       <ThresholdInput
         idPrefix={`${idPrefix}-esik`}

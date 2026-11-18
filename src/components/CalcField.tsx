@@ -24,13 +24,19 @@ export function CalcField({ label, result, current, onApply, emptyText = 'Üstte
       </ul>
       {result.warn ? <span className="calc-warn">{result.warn}</span> : null}
       {result.apply ? (
-        applied ? (
-          <span className="helper">Bu sonuç alanda yazılı.</span>
-        ) : (
-          <Button icon={<ArrowBendDownRight size={16} />} onClick={() => onApply(result.apply!.key, result.apply!.value)}>
-            {result.apply.label}
+        <>
+          <Button
+            className="calc-apply"
+            icon={<ArrowBendDownRight size={16} aria-hidden />}
+            aria-disabled={applied}
+            onClick={() => {
+              if (!applied && result.apply) onApply(result.apply.key, result.apply.value)
+            }}
+          >
+            {applied ? 'Sonuç alana yazıldı' : result.apply.label}
           </Button>
-        )
+          {applied ? <span className="helper">Bu sonuç alanda yazılı.</span> : null}
+        </>
       ) : null}
     </div>
   )
