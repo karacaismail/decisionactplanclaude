@@ -44,6 +44,7 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 | [Süreç haritası](surec-haritasi.md) | Üç ana küme, adımlar, kontroller ve kurallar | Tek kaynak |
 | [Alan sözleşmesi](alan-sozlesmesi.md) | Her adımdaki alanların anlamı | Güncel |
 | [Terim sözlüğü](terim-sozlugu.md) | Ekranda görünen terimler. Eski ve yeni adlar | Tek kaynak |
+| [OKR araştırma raporu](okr-arastirma-raporu.md) | İsteğe bağlı hedef takibi önerisi ve açık kararlar | Öneri, henüz uygulanmadı |
 | [Girişimci Aksiyon Planı v5 Final, Claude](act_plan_v5_final-claude.md) | Planın son metin sürümü | Tarihsel |
 | [Girişimci Aksiyon Planı v5, Codex](act_plan_v5_final-codex.md) | Codex'in plan sürümü | Tarihsel |
 | [Gerçek deneme föyü](gercek-deneme-foyu.md) | Üç gerçek denemenin nasıl yapılacağı | Güncel |
