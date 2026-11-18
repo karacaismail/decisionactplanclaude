@@ -1,0 +1,67 @@
+[
+  {
+    "name": "adim33-320",
+    "route": "/karar/8/adim/33",
+    "project": "chromium-320",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-karar-8-adim-33-chromium-320/olcum.json",
+    "file": "docs/qa/kanit/is8/ornekler/adim33-320.png",
+    "visualReview": "pass",
+    "observation": "320 piksel ekranın sağında içerik taşması görünüyor. Ölçüm 348 piksel genişlik bildiriyor."
+  },
+  {
+    "name": "pano-320",
+    "route": "/ozet",
+    "project": "chromium-320",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-ozet-chromium-320/olcum.json",
+    "file": "docs/qa/kanit/is8/ornekler/pano-320.png",
+    "visualReview": "pass",
+    "observation": "Görüntü incelendi. Bu kayıt tüm görsel durumların kabulü değildir."
+  },
+  {
+    "name": "temel-320",
+    "route": "/temel",
+    "project": "chromium-320",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-temel-chromium-320/olcum.json",
+    "file": "docs/qa/kanit/is8/ornekler/temel-320.png",
+    "visualReview": "not_run"
+  },
+  {
+    "name": "adim20-320",
+    "route": "/karar/9/adim/20",
+    "project": "chromium-320",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-karar-9-adim-20-chromium-320/olcum.json",
+    "file": "docs/qa/kanit/is8/ornekler/adim20-320.png",
+    "visualReview": "not_run"
+  },
+  {
+    "name": "yontemler-320",
+    "route": "/yontemler",
+    "project": "chromium-320",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-yontemler-chromium-320/olcum.json",
+    "file": "docs/qa/kanit/is8/ornekler/yontemler-320.png",
+    "visualReview": "not_run"
+  },
+  {
+    "name": "arama-odak-320",
+    "project": "chromium-320",
+    "file": "docs/qa/kanit/is8/ornekler/arama-odak-320.png",
+    "visualReview": "pass",
+    "observation": "Odak alanı açık. Çevrelemeyen odak çizgisi görünmüyor."
+  },
+  {
+    "name": "pano-1280",
+    "project": "chromium-1280",
+    "file": "docs/qa/kanit/is8/ornekler/pano-1280.png",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-ozet-chromium-1280/olcum.json",
+    "visualReview": "pass",
+    "observation": "Pano ve yerel tablo yerleşimi incelendi. Sayfanın tamamında yatay taşma görülmedi."
+  },
+  {
+    "name": "pano-yatay",
+    "project": "chromium-landscape",
+    "file": "docs/qa/kanit/is8/ornekler/pano-yatay.png",
+    "source": ".pane/scratch/is8/matrix/uyarlanir-ekranlar-ekran-ozet-chromium-landscape/olcum.json",
+    "visualReview": "pass",
+    "observation": "Pano ve yerel tablo yerleşimi incelendi. Sayfanın tamamında yatay taşma görülmedi."
+  }
+]

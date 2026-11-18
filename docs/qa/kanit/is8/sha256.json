@@ -1,0 +1,147 @@
+[
+  {
+    "file": "browsers.json",
+    "bytes": 367,
+    "sha256": "e37d3a5e9a992f0ef36d328bb510a903398f4a2820853784da16afe4c1e4faf5"
+  },
+  {
+    "file": "build.log",
+    "bytes": 1923,
+    "sha256": "0d782c007f9d7b6cddd06af38fe7ce73c60f2c2b43d7aa9ead21db8540aa4566"
+  },
+  {
+    "file": "ci-final-inputs.json",
+    "bytes": 1555,
+    "sha256": "f545a4f33d9e04728546f1320a2f331b1bcffdfbd8e274f3d770859c597ee922"
+  },
+  {
+    "file": "ci-inputs.json",
+    "bytes": 1486,
+    "sha256": "1ef9a6138f97b7a217f80285030f1012fa150530716d4c684bd7395f22d47e85"
+  },
+  {
+    "file": "gates.json",
+    "bytes": 357,
+    "sha256": "f1ef1890f7514c2a747c6f15acdc205e322a3c7cc5bc25347c94f61e97add33b"
+  },
+  {
+    "file": "lint.log",
+    "bytes": 181,
+    "sha256": "35cbf48c677cae9e1ba418a842694b755fab1d27002de34d624f1e51645d1e50"
+  },
+  {
+    "file": "matrix-inputs.json",
+    "bytes": 1555,
+    "sha256": "98e50a17c5ea3102cec358820f47de35b519cd7492142bb0e2530b3e55cb807e"
+  },
+  {
+    "file": "measurements.json.gz",
+    "bytes": 468388,
+    "sha256": "febe47f241e211d4dcdae7ef5a9a5541d38846de0a7337a1c176ca309eea06a1"
+  },
+  {
+    "file": "ornekler/adim20-320.png",
+    "bytes": 201818,
+    "sha256": "fc57643deb6b25e146ddd93988d8feb02181a758c25dbdb7052dd7b411e9cafb"
+  },
+  {
+    "file": "ornekler/adim33-320-trace.zip",
+    "bytes": 800444,
+    "sha256": "0fc39219dafe8ddb1d438d7b90d9117b90668f971f7acdccdb28f1fae326a110"
+  },
+  {
+    "file": "ornekler/adim33-320.png",
+    "bytes": 186634,
+    "sha256": "0193c456d6b33a15182b54a47933faf143cea759a25b6ecf4c280ef9a2c18d64"
+  },
+  {
+    "file": "ornekler/arama-odak-320.png",
+    "bytes": 49857,
+    "sha256": "37d20189908d0706df9c02fc3856b7943ed11c092d238dac27180015ef4adeeb"
+  },
+  {
+    "file": "ornekler/manifest.json",
+    "bytes": 2601,
+    "sha256": "d40f830c4477d035e4588958e4ab19a673dc6a82c64ea979ecf9335a6f1c55bf"
+  },
+  {
+    "file": "ornekler/pano-1280.png",
+    "bytes": 293827,
+    "sha256": "84b0cefbb8b3ef542533d43462d30ad4360ba01b19c7f7080866c8e679b49b47"
+  },
+  {
+    "file": "ornekler/pano-320.png",
+    "bytes": 178999,
+    "sha256": "d676ffb95f951546907efbd0549cc497321de777579d601b2f61a3e8d3e5e75f"
+  },
+  {
+    "file": "ornekler/pano-yatay.png",
+    "bytes": 276270,
+    "sha256": "b70827804daac793b03891f72114267c16cbb1034360ce90bb891b421c58cde8"
+  },
+  {
+    "file": "ornekler/temel-320.png",
+    "bytes": 420621,
+    "sha256": "8dd050a2c9064d1ffc7022c4605e1acb99aed3bb2d1aca9823f365e925e8c91d"
+  },
+  {
+    "file": "ornekler/yontemler-320-trace.zip",
+    "bytes": 2293425,
+    "sha256": "f1365bf033381cbc308b8bf57b07698541293e60d2543eb380cde968036c66e3"
+  },
+  {
+    "file": "ornekler/yontemler-320.png",
+    "bytes": 1465295,
+    "sha256": "a09c7db03408c46897e1078dc70710a14e37ef97d94eb0bc89e871fb33d2376b"
+  },
+  {
+    "file": "parallel-proof-12.json",
+    "bytes": 6102,
+    "sha256": "33bcfccecab28e07846983e528e634921c30b5ff0e75297d6be8b75bf30ecf15"
+  },
+  {
+    "file": "qa-types.log",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "file": "route-checks.json",
+    "bytes": 3896,
+    "sha256": "d7af824c04b045dd4beb81dbcc7b44347fb5c049c5d7041e946657c4571a4530"
+  },
+  {
+    "file": "routes.json",
+    "bytes": 1064259,
+    "sha256": "aefc9e01b0a2e8fc868afb6e36bb2da8b0237c1e512f0261f5fb435b289a319e"
+  },
+  {
+    "file": "runs.json",
+    "bytes": 8680,
+    "sha256": "062a697de08369acaa06d9d5be5869721e93146c4fa185ae6582d90db6531748"
+  },
+  {
+    "file": "tests.json",
+    "bytes": 1052181,
+    "sha256": "e351731c36b16a65a7afd90580a8c101e4df6f02a8ffedc196cd0e2fdd8ab4ff"
+  },
+  {
+    "file": "turkce-denetim.log",
+    "bytes": 2234,
+    "sha256": "64dc4e531018933d136e207593c713af02a162559274f8b2fbf66be0ad4b60ea"
+  },
+  {
+    "file": "unit.log",
+    "bytes": 280,
+    "sha256": "8dbac92de48192c3d3bac84bf78fa482471a6f2524efce3da37e85c162f3777d"
+  },
+  {
+    "file": "verification.json",
+    "bytes": 1531,
+    "sha256": "208c1c15413086a9f03b0f5a0adcafe4b42987a2d8b7556f4804919ede797b4f"
+  },
+  {
+    "file": "versions.json",
+    "bytes": 828,
+    "sha256": "d8ad281a231a40233dffe70cb988a7e2200d5cc08ab21636ddeb0df59aaf9b4f"
+  }
+]

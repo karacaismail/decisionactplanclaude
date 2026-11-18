@@ -1,0 +1,252 @@
+{
+  "chromium-320": {
+    "overflow": {
+      "pass": 75,
+      "fail": 2
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 67,
+      "not_run": 10
+    }
+  },
+  "chromium-360": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 65,
+      "not_run": 12
+    }
+  },
+  "chromium-375": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 65,
+      "not_run": 12
+    }
+  },
+  "chromium-390": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 66,
+      "not_run": 11
+    }
+  },
+  "chromium-landscape": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 63,
+      "not_run": 14
+    }
+  },
+  "chromium-tablet": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 65,
+      "not_run": 12
+    }
+  },
+  "chromium-1280": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "not_applicable": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 68,
+      "not_run": 9
+    }
+  },
+  "chromium-1920": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "not_applicable": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 73,
+      "not_run": 4
+    }
+  },
+  "webkit-320": {
+    "overflow": {
+      "pass": 75,
+      "fail": 2
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 64,
+      "not_run": 13
+    }
+  },
+  "webkit-360": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 64,
+      "not_run": 13
+    }
+  },
+  "webkit-375": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 63,
+      "not_run": 14
+    }
+  },
+  "webkit-390": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 76,
+      "fail": 1
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 63,
+      "not_run": 14
+    }
+  },
+  "webkit-landscape": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 66,
+      "not_run": 11
+    }
+  },
+  "webkit-tablet": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "fail": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 64,
+      "not_run": 13
+    }
+  },
+  "webkit-1280": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "not_applicable": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 74,
+      "not_run": 3
+    }
+  },
+  "webkit-1920": {
+    "overflow": {
+      "pass": 77
+    },
+    "typography": {
+      "pass": 77
+    },
+    "touch": {
+      "not_applicable": 77
+    },
+    "canvasTypography": {
+      "not_applicable": 67,
+      "not_run": 10
+    }
+  }
+}

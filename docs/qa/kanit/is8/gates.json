@@ -1,0 +1,20 @@
+[
+  {
+    "command": "npm run lint",
+    "exit": 0,
+    "seconds": 3.5,
+    "log": ".pane/scratch/is8/lint.log"
+  },
+  {
+    "command": "npm run test:unit",
+    "exit": 0,
+    "seconds": 3.87,
+    "log": ".pane/scratch/is8/unit.log"
+  },
+  {
+    "command": "npm run build",
+    "exit": 0,
+    "seconds": 4.53,
+    "log": ".pane/scratch/is8/build.log"
+  }
+]

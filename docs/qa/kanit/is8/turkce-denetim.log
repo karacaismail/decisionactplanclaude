@@ -1,0 +1,13 @@
+docs/qa/mobil-bulgular.md:0 UYARI 5 ve daha çok heceli 88 farklı kelime var. Tanıdık olmayanlar için daha kısa karşılık arayın: bağlantıları (4), çalıştırıldı (3), koordinatör (2), birleştirdikten (2), tarayıcının (2), kullanılmadı (2), kontrollerinin (2), yüksekliğindedir (2), kayıtlarında (2), sunucusunu (2), incelemesi (2), uygulamanın, değiştirilmedi, denetimini, çalıştırmalıdır, kaynaklarını, bileşenine, verilerinden, üretiliyor, doğrulanıyor.
+docs/qa/calistirma.md:0 UYARI 5 ve daha çok heceli 27 farklı kelime var. Tanıdık olmayanlar için daha kısa karşılık arayın: dosyasındadır (2), kullanılmalıdır (2), çalıştırıldı, denetiminin, üretmediğini, düzeltmelerinden, alınmalıdır, tamamlanınca, genişliğinde, denemeleri, tamamlanmadı, kayıtlarındadır, koşullarını, başarısızdır, çalışmadaki, sayılmamalıdır, sayılarını, taramasının, kayıtlarını, kayıtlarının.
+.pane/rapor-is8.md:0 UYARI 5 ve daha çok heceli 23 farklı kelime var. Tanıdık olmayanlar için daha kısa karşılık arayın: çalıştırıldı (2), dosyasındadır (2), çalıştırılmadı (2), değiştirilmedi, gönderilmedi, sahiplikleri, incelemesinin, sahipleriyle, klasöründedir, dokunulmadı, başarısızlıklar, gevşetilerek, kapatılmadı, görünümleri, sayfasındaki, erişilebilir, yakınlaştırması, doğrulanmadı, karşılaştırma, koordinatör.
+
+docs/qa/mobil-bulgular.md: 199 cümle, cümle başına 5.7 kelime, kelime başına 2.82 hece. Ateşman puanı istenmedi.
+
+docs/qa/calistirma.md: 43 cümle, cümle başına 6.2 kelime, kelime başına 2.76 hece. Ateşman puanı istenmedi.
+
+.pane/rapor-is8.md: 48 cümle, cümle başına 5.8 kelime, kelime başına 2.83 hece. Ateşman puanı istenmedi.
+Bütün cümleler açıklama sayıldı.
+Elle denetlenecek konular: Fiilimsi zinciri ve iç içe bilgi, Üç ve daha çok isimden oluşan zincir, Belirsiz zamir, Mecaz ve resmî kalıp, İşi kimin yapacağı ve koşulun yeri, Terimin ve kısaltmanın okurca bilinmesi, Ekran adının doğruluğu ve tırnağı, Kısaltırken anlamın, sayının ve koşulun korunması.
+
+0 hata, 3 uyarı. Uyarılar karar değil, inceleme işaretidir.

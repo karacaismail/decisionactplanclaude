@@ -1,0 +1,424 @@
+{
+  "probe-red": {
+    "stats": {
+      "startTime": "2026-11-18T05:17:54.826Z",
+      "duration": 5209.9349999999995,
+      "expected": 15,
+      "skipped": 0,
+      "unexpected": 9,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 7,
+        "failed": 5
+      },
+      "webkit-320": {
+        "passed": 8,
+        "failed": 4
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-red.json"
+  },
+  "probe-green": {
+    "stats": {
+      "startTime": "2026-11-18T05:19:22.763Z",
+      "duration": 2957.237,
+      "expected": 24,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 12
+      },
+      "webkit-320": {
+        "passed": 12
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-green.json"
+  },
+  "left-red": {
+    "stats": {
+      "startTime": "2026-11-18T05:22:12.310Z",
+      "duration": 5359.621,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 2,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "failed": 1
+      },
+      "webkit-320": {
+        "failed": 1
+      }
+    },
+    "rawReport": ".pane/scratch/is8/left-red.json"
+  },
+  "probe-final": {
+    "stats": {
+      "startTime": "2026-11-18T05:23:04.397Z",
+      "duration": 22888.472,
+      "expected": 28,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 14
+      },
+      "webkit-320": {
+        "passed": 14
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-final.json"
+  },
+  "probe-fast": {
+    "stats": {
+      "startTime": "2026-11-18T05:36:33.489Z",
+      "duration": 20229.948,
+      "expected": 26,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 13
+      },
+      "webkit-320": {
+        "passed": 13
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-fast.json"
+  },
+  "probe-extra-red": {
+    "stats": {
+      "startTime": "2026-11-18T05:38:12.180Z",
+      "duration": 13604.408,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "failed": 2
+      },
+      "webkit-320": {
+        "failed": 2
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-extra-red.json"
+  },
+  "probe-extra-green": {
+    "stats": {
+      "startTime": "2026-11-18T05:40:26.268Z",
+      "duration": 26177.625,
+      "expected": 30,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 15
+      },
+      "webkit-320": {
+        "passed": 15
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-extra-green.json"
+  },
+  "probe-complete": {
+    "stats": {
+      "startTime": "2026-11-18T05:41:19.822Z",
+      "duration": 25694.906000000003,
+      "expected": 32,
+      "skipped": 0,
+      "unexpected": 0,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 16
+      },
+      "webkit-320": {
+        "passed": 16
+      }
+    },
+    "rawReport": ".pane/scratch/is8/probe-complete.json"
+  },
+  "journey-fixed": {
+    "stats": {
+      "startTime": "2026-11-18T05:21:04.441Z",
+      "duration": 55848.826,
+      "expected": 10,
+      "skipped": 5,
+      "unexpected": 9,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 4,
+        "skipped": 1,
+        "failed": 3
+      },
+      "chromium-1280": {
+        "skipped": 3,
+        "passed": 2,
+        "failed": 3
+      },
+      "webkit-320": {
+        "passed": 4,
+        "skipped": 1,
+        "failed": 3
+      }
+    },
+    "rawReport": ".pane/scratch/is8/journey-fixed.json"
+  },
+  "final-320": {
+    "stats": {
+      "startTime": "2026-11-18T05:23:31.036Z",
+      "duration": 222114.047,
+      "expected": 36,
+      "skipped": 2,
+      "unexpected": 164,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 18,
+        "failed": 82,
+        "skipped": 1
+      },
+      "webkit-320": {
+        "passed": 18,
+        "failed": 82,
+        "skipped": 1
+      }
+    },
+    "rawReport": ".pane/scratch/is8/final-320.json"
+  },
+  "ci": {
+    "stats": {
+      "startTime": "2026-11-18T05:24:40.617Z",
+      "duration": 1236151.2519999999,
+      "expected": 364,
+      "skipped": 14,
+      "unexpected": 88,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 145,
+        "skipped": 6,
+        "failed": 82
+      },
+      "chromium-1280": {
+        "passed": 219,
+        "skipped": 8,
+        "failed": 6
+      }
+    },
+    "rawReport": ".pane/scratch/is8/ci.json"
+  },
+  "matrix": {
+    "stats": {
+      "startTime": "2026-11-18T05:42:01.576Z",
+      "duration": 1048962.047,
+      "expected": 162,
+      "skipped": 638,
+      "unexpected": 464,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 2,
+        "failed": 77
+      },
+      "chromium-360": {
+        "passed": 2,
+        "failed": 77
+      },
+      "chromium-375": {
+        "passed": 2,
+        "failed": 77
+      },
+      "chromium-390": {
+        "passed": 2,
+        "failed": 77
+      },
+      "chromium-landscape": {
+        "skipped": 2,
+        "failed": 77
+      },
+      "chromium-tablet": {
+        "skipped": 2,
+        "failed": 77
+      },
+      "chromium-1280": {
+        "skipped": 2,
+        "passed": 77
+      },
+      "chromium-1920": {
+        "skipped": 2,
+        "passed": 77
+      }
+    },
+    "rawReport": ".pane/scratch/is8/matrix.json",
+    "selectedStats": {
+      "passed": 162,
+      "failed": 462,
+      "skipped": 8
+    },
+    "scope": "Chromium completed. Remaining WebKit work uses matrix-webkit. Raw report includes interrupted unselected work."
+  },
+  "matrix-webkit": {
+    "stats": {
+      "startTime": "2026-11-18T05:51:41.127Z",
+      "duration": 1199490.73,
+      "expected": 162,
+      "skipped": 8,
+      "unexpected": 462,
+      "flaky": 0
+    },
+    "projects": {
+      "webkit-320": {
+        "passed": 2,
+        "failed": 77
+      },
+      "webkit-360": {
+        "passed": 2,
+        "failed": 77
+      },
+      "webkit-375": {
+        "passed": 2,
+        "failed": 77
+      },
+      "webkit-390": {
+        "passed": 2,
+        "failed": 77
+      },
+      "webkit-landscape": {
+        "skipped": 2,
+        "failed": 77
+      },
+      "webkit-tablet": {
+        "skipped": 2,
+        "failed": 77
+      },
+      "webkit-1280": {
+        "skipped": 2,
+        "passed": 77
+      },
+      "webkit-1920": {
+        "skipped": 2,
+        "passed": 77
+      }
+    },
+    "rawReport": ".pane/scratch/is8/matrix-webkit.json"
+  },
+  "focus-final": {
+    "stats": {
+      "startTime": "2026-11-18T05:33:43.454Z",
+      "duration": 110269.371,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 8,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "failed": 2
+      },
+      "chromium-1280": {
+        "failed": 2
+      },
+      "webkit-320": {
+        "failed": 2
+      },
+      "webkit-1280": {
+        "failed": 2
+      }
+    },
+    "rawReport": ".pane/scratch/is8/focus-final.json"
+  },
+  "keyboard-final": {
+    "stats": {
+      "startTime": "2026-11-18T05:35:49.318Z",
+      "duration": 259691.07700000002,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 20,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "failed": 5
+      },
+      "chromium-1280": {
+        "failed": 5
+      },
+      "webkit-320": {
+        "failed": 5
+      },
+      "webkit-1280": {
+        "failed": 5
+      }
+    },
+    "rawReport": ".pane/scratch/is8/keyboard-final.json"
+  },
+  "keyboard-main-final": {
+    "stats": {
+      "startTime": "2026-11-18T05:41:34.830Z",
+      "duration": 106954.131,
+      "expected": 0,
+      "skipped": 0,
+      "unexpected": 4,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "failed": 1
+      },
+      "chromium-1280": {
+        "failed": 1
+      },
+      "webkit-320": {
+        "failed": 1
+      },
+      "webkit-1280": {
+        "failed": 1
+      }
+    },
+    "rawReport": ".pane/scratch/is8/keyboard-main-final.json"
+  },
+  "ci-final": {
+    "stats": {
+      "startTime": "2026-11-18T05:48:42.443Z",
+      "duration": 1322303.821,
+      "expected": 369,
+      "skipped": 14,
+      "unexpected": 89,
+      "flaky": 0
+    },
+    "projects": {
+      "chromium-320": {
+        "passed": 147,
+        "skipped": 6,
+        "failed": 83
+      },
+      "chromium-1280": {
+        "passed": 222,
+        "skipped": 8,
+        "failed": 6
+      }
+    },
+    "rawReport": ".pane/scratch/is8/ci-final.json"
+  }
+}

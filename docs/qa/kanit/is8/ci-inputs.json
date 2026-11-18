@@ -1,0 +1,19 @@
+{
+  "at": "2026-11-18T05:24:41.427774+00:00",
+  "head": "c6736e9a29c999648d96a580dff01ffdb538bcbb",
+  "files": {
+    "playwright.config.ts": "e562a31aa16a183bc2a2b9b35f9438d0506a7114025f9dda8af89c3d648538ac",
+    "tests/uyarlanir/paneller.spec.ts": "2a8faf238038e8c8be6ae69eaca52e05be255755795860d410ee20a8946e103b",
+    "tests/uyarlanir/routes.ts": "005ba3f8c2b4c48d500ccff55a058440c0a964856f6fabbd970e808fc5c58569",
+    "tests/uyarlanir/klavye.spec.ts": "199d44aa62637abdb9103fffdee920d1c763df3d335c1c44a36e1397460dd8fc",
+    "tests/uyarlanir/dokunma.spec.ts": "1fc6dd8a2a52b0a55d35c4a576ef14e75e729aced09dbfa79b47336103c3a51d",
+    "tests/uyarlanir/ekranlar.spec.ts": "aa34a7c2c1064a16cf646a121691b75afc4b2c8f88a50da8b311ff4702f9cac8",
+    "tests/uyarlanir/klavye-ana-yol.spec.ts": "45ba01b74af8ccd383dbc1f5fd0fdc3624194981ca1c8b658a1e87ca584479a0",
+    "tests/uyarlanir/fare.spec.ts": "d49b8de5c9f861cdb735bf7ac4912b11604debdaf84ccdef9ca8d880c53c81d1",
+    "tests/uyarlanir/tsconfig.json": "1af6c93ec832ad8d76fe1f76d8e6b2608a106f25c3d3bb856054df5b9611e37a",
+    "tests/uyarlanir/olcum.spec.ts": "be047a3bdffab48d599afbc4b69db72da10ba7811f4a4478c13cb04054ec8c45",
+    "tests/uyarlanir/tercihler.spec.ts": "7e8990d37e89e5b9880c2c0be33da1da5adb09b10e40bf404294b5672ab2b254",
+    "tests/uyarlanir/audit.ts": "0098a9597bf3180a0f7eec00352134c8a0e13ff4ec193ed1942a98468272dd71",
+    "tests/uyarlanir/donus.spec.ts": "e2f03cc83bc6633bb0aadda5e2b7876abb627940e1a53293debe3bf29a440d13"
+  }
+}
