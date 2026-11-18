@@ -2,23 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Empty, Input, List, Modal } from 'antd'
 import { useNavigate } from 'react-router'
 import { ArrowElbowDownLeft, BookOpen, Compass, Flag, ListChecks, MagnifyingGlass, SquaresFour } from '@phosphor-icons/react'
-import { create } from 'zustand'
+import { useCommandPalette } from './CommandPaletteButton'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { STEPS, stepPath, stepHeading } from '@/data/registry'
 import models from '@/data/models.json'
 import '@/styles/screens-karar.css'
-
-/** Açık/kapalı durumu. Düğme ile palet aynı mağazayı okur. */
-interface PaletteState {
-  open: boolean
-  setOpen: (open: boolean) => void
-  toggle: () => void
-}
-export const useCommandPalette = create<PaletteState>()((set) => ({
-  open: false,
-  setOpen: (open) => set({ open }),
-  toggle: () => set((s) => ({ open: !s.open })),
-}))
 
 type Group = 'Kararlar' | 'Adımlar' | 'Yöntemler' | 'Ekranlar'
 interface Item {
@@ -92,44 +80,14 @@ export function searchItems(query: string): Item[] {
     .map((x) => x.i)
 }
 
-function isMac(): boolean {
-  return typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
-}
-
-/** Üst şeritteki "Ara" düğmesi. Kısayol ipucu yanında durur. */
-export function CommandPaletteButton() {
-  const setOpen = useCommandPalette((s) => s.setOpen)
-  const mac = isMac()
-  return (
-    <Button className="cmdk-button" icon={<MagnifyingGlass size={16} aria-hidden />} onClick={(event) => { event.currentTarget.focus(); setOpen(true) }} aria-label={`Ara. Kısayol ${mac ? 'Komut K' : 'Kontrol K'}`} aria-haspopup="dialog">
-      <span className="cmdk-label">Ara</span>
-      <kbd className="cmdk-kbd" aria-hidden>
-        {mac ? '⌘K' : 'Ctrl K'}
-      </kbd>
-    </Button>
-  )
-}
-
-/** Komut paleti. Ctrl+K ya da Cmd+K açar. Ok tuşları gezer, Enter gider, Esc kapatır. */
-export function CommandPalette() {
+/** Komut paleti penceresi. Palet ilk kez açılınca iner. Ok tuşları gezer, Enter gider, Esc kapatır. */
+export default function CommandPalette() {
   const open = useCommandPalette((s) => s.open)
   const setOpen = useCommandPalette((s) => s.setOpen)
-  const toggle = useCommandPalette((s) => s.toggle)
   const nav = useNavigate()
   const [query, setQuery] = useState('')
   const [active, setActive] = useState(0)
   const listRef = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && !e.altKey && e.key.toLowerCase() === 'k') {
-        e.preventDefault()
-        toggle()
-      }
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [toggle])
 
   useEffect(() => {
     if (open) {

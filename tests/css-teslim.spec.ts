@@ -86,3 +86,26 @@ test.describe('ekran katmanı', () => {
     expect(screenCss.filter((path) => !allowed.some((name) => path.includes(name)))).toEqual([])
   })
 })
+
+test.describe('komut paleti', () => {
+  test('palet ilk açılışta inmez, Ara düğmesiyle iner ve açılır', async ({ page }) => {
+    const net = track(page)
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    const palette = () => net.seen.some((path) => path.endsWith('/src/components/CommandPalette.tsx') || /\/assets\/CommandPalette-[^/]+\.js$/.test(path))
+    expect(palette(), 'palet ilk açılışta inmemeli').toBe(false)
+    await page.getByRole('button', { name: /^Ara\. Kısayol/ }).click()
+    await expect(page.getByRole('dialog', { name: 'Komut paleti' })).toBeVisible()
+    await expect(page.getByPlaceholder('Adım, karar ya da yöntem ara…')).toBeFocused()
+    expect(palette(), 'palet açılınca inmeli').toBe(true)
+  })
+
+  test('kısayol tuşu paleti ilk seferde de açar', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForLoadState('networkidle')
+    await page.keyboard.press('Control+k')
+    await expect(page.getByRole('dialog', { name: 'Komut paleti' })).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(page.getByRole('dialog', { name: 'Komut paleti' })).toBeHidden()
+  })
+})

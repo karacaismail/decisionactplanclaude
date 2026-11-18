@@ -11,7 +11,7 @@ import { transitionPassed, lastTransition } from '@/engine/readiness'
 import { decisionLocked, gatePassed } from '@/engine/gate'
 import { planPosition } from '@/engine/position'
 import { SaveStatus } from '@/components/SaveStatus'
-import { CommandPalette, CommandPaletteButton } from '@/components/CommandPalette'
+import { CommandPaletteButton, CommandPaletteHost } from '@/components/CommandPaletteButton'
 import { cssVariables } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
 import '@/styles/mobil-kabuk.css'
@@ -285,7 +285,7 @@ export function AppShell() {
           <span>Menü</span>
         </button>
       </nav>
-      <CommandPalette />
+      <CommandPaletteHost />
       <Drawer rootClassName="shell-drawer" open={open} onClose={() => setOpen(false)} afterOpenChange={restoreMenuFocus} placement="left" title="Menü" size="var(--shell-drawer-width)">
         <nav className="drawer-nav" aria-label="Ana bölümler">
           <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined} onClick={() => setOpen(false)}>
