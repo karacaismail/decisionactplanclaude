@@ -116,6 +116,16 @@ Normal temada çevreleyen odak halkası kullanılmaz.
 Klavye odağı çevrelemeyen görünür bir işaretle gösterilir.
 Yüksek karşıtlık istisnası ortak kullanıcı kuralına bağlıdır.
 
+Metin alanı odağı, alanın solundaki tek çizgiyle gösterilir.
+Yazı için çizginin yanında kalıcı boşluk ayrılır.
+Gizli seçenek girişinin odağı, görünen seçim etiketinde gösterilir.
+Kaydırılan form kontrolleri sabit üst şeridin altında kalmaz.
+
+Ortak anahtar, seçenek ve temizleme eylemleri en az 44 piksel alan kullanır.
+Anahtarın görünen gövdesi bu alandan küçük kalabilir.
+Şeffaf üst ve alt kenarlara basmak da anahtarı çalıştırır.
+Küçük ekran sayfalamasındaki sayı alanı en az 14 piksel yazı kullanır.
+
 Hareket, mevcut `--motion-*` değişkenlerini kullanır.
 Varsayılan eğri `cubic-bezier(.65, 0, .35, 1)` değeridir.
 Giriş ve çıkış aynı eğriyi kullanır.
@@ -141,7 +151,8 @@ Dokunma alanı ve yazı boyutu gerçek tarayıcıda ölçülür.
 Statik denetim, tarayıcı ölçümünün yerine geçmez.
 
 Komutlar ve denetim sınırları [kalite kapıları belgesinde](kalite-kapilari.md) bulunur.
-İş 3 kaynak kapsamı yeni bir test dosyasına izin vermez.
-Mevcut birim testleri ve geçici tarayıcı kanıtları bu teslimi doğrular.
+Koordinatörün sonraki denetim görevi, yeni hata testlerine izin verdi.
+`tests/mobil-ortak.spec.ts`, M02, M06, M09 ve M12 bulgularını denetler.
+Mevcut birim testleri ve geçici tarayıcı kanıtları da teslimi doğrular.
 Firefox kullanıcı kararıyla çalıştırılmaz.
 WebKit sonucu gerçek Safari veya gerçek telefon sonucu sayılmaz.

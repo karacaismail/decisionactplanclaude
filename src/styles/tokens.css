@@ -1,6 +1,9 @@
 /* Ortak ölçüler. Yoğunluk metni ve dokunma alanını küçültmez. */
 :root {
   --hit-area-min: 44px;
+  --focus-marker-width: 3px;
+  --focus-marker-inset: 4px;
+  --focus-scroll-clearance: 120px;
   --gutter-page: 16px;
   --gutter-calendar: 2px;
   --font-body: 16px;

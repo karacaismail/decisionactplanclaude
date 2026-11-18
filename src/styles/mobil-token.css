@@ -6,6 +6,106 @@
   min-height: var(--hit-area-min);
 }
 
+/* Form etiketleri gerçek basma alanıdır. Yoğunluk bu alanı küçültmez. */
+:root .ant-radio-group .ant-radio-button-wrapper,
+:root .ant-radio-wrapper,
+:root .ant-checkbox-wrapper {
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  align-items: center;
+}
+
+/* Anahtarın izi aynı kalır. Şeffaf kenarlar da düğmenin basma alanıdır. */
+.ant-switch {
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  border-block: calc((var(--hit-area-min) - var(--ant-switch-track-height)) / 2) solid transparent;
+  background-clip: padding-box !important;
+}
+
+.ant-switch.ant-switch-small {
+  border-block-width: calc((var(--hit-area-min) - var(--ant-switch-track-height-sm)) / 2);
+}
+
+.ant-input-affix-wrapper:has(> input.ant-input) { padding-block: 0; }
+.ant-input-affix-wrapper > input.ant-input {
+  min-block-size: var(--hit-area-min);
+  padding-inline-start: calc(var(--focus-marker-width) + var(--focus-marker-inset));
+}
+
+/* Sabit üst şerit, kaydırılan form odağını örtmemeli. */
+:is(input, textarea, .ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper) {
+  scroll-margin-block: var(--focus-scroll-clearance);
+}
+
+.ant-input-clear-icon,
+.ant-select .ant-select-clear,
+.ant-select .ant-select-selection-item-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  font-size: var(--font-helper);
+}
+
+.ant-select .ant-select-clear {
+  opacity: 1;
+  margin-block-start: 0;
+  inset-inline-end: 0;
+  transform: translateY(-50%);
+}
+
+.ant-select:has(.ant-select-clear) {
+  padding-inline-end: calc(var(--hit-area-min) + var(--gap-label));
+}
+
+.ant-select:has(.ant-select-clear) .ant-select-suffix { visibility: hidden; }
+
+.ant-pagination .ant-pagination-simple-pager input {
+  font-family: inherit;
+  font-size: var(--font-helper);
+}
+
+/* Native girişler ::before çizmez. İşaret doğrudan yüzeyde boyanır. */
+html[data-focus-mode='keyboard'] :is(input, textarea):not([type='radio']):not([type='checkbox']):focus-visible,
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+  background-image: linear-gradient(var(--focus-marker), var(--focus-marker)) !important;
+  background-size: var(--focus-marker-width) calc(100% - var(--focus-marker-inset) * 2) !important;
+  background-position: left center !important;
+  background-repeat: no-repeat !important;
+}
+
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Gizli native seçenek odağı, görünür etikette tek işaretle temsil edilir. */
+html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, .ant-checkbox-input):focus-visible::before {
+  content: none;
+}
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] :is(input, textarea):focus-visible,
+  html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+    background-image: none !important;
+  }
+
+  /* Halka yalnız odaktaki native öğeye aittir. Gizli giriş görünür alanı alır. */
+  html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, .ant-checkbox-input):focus-visible {
+    appearance: none;
+    position: absolute;
+    inset: 0;
+    inline-size: 100%;
+    block-size: 100%;
+    margin: 0;
+    opacity: 1;
+    background: transparent;
+  }
+}
+
 /* Eski ekran kuralları daha sonra yüklenebilir. Alt sınır bütün yükleme sıralarında korunur. */
 .shell-menu .ant-menu-item,
 .devir-filter .ant-segmented-item-label,

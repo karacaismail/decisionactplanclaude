@@ -106,8 +106,13 @@ Açılan panelde yazı ve kontrol ölçüleri yeniden ölçülür.
 Hareket azaltma, metin büyütme ve yüksek karşıtlık da denetlenir.
 
 İş 3 geçici kanıtları `.pane/scratch` altında tutulur.
-İş 3 dosya sınırı yeni kalıcı tarayıcı test dosyasına izin vermez.
-Geniş kalıcı tarayıcı testlerinin sahibi teslim planındaki İş 8'dir.
+Koordinatörün sonraki denetim görevi, yeni hata testlerine izin verdi.
+`tests/mobil-ortak.spec.ts`, M02, M06, M09 ve M12 bulgularını denetler.
+Görünen odak, önceki ve sonraki görüntülerin boyanmış pikselleriyle karşılaştırılır.
+44 piksel alan, 14 piksel yazı ve sabit başlığın etkisi ayrıca ölçülür.
+Anahtarın şeffaf kenarları, gerçek ekran koordinatlarıyla tıklanır.
+Bu dosya `test:e2e:ci` komutunun kapsamındadır.
+Geniş kalıcı tarayıcı denetiminin sahibi teslim planındaki İş 8'dir.
 WebKit emülasyonu gerçek Safari veya gerçek telefon denemesi sayılmaz.
 
 ## CI ve teslim
