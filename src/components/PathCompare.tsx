@@ -1,12 +1,12 @@
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/strateji.css'
+import '@/styles/bilesen/PathCompare.css'
 import { useId, useSyncExternalStore } from 'react'
 import { Empty, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { stepPath } from '@/data/registry'
 import { DOOR_LABEL, NO_PATHS, pathBasis, type PathColumn } from '@/reports/handoff'
-import '@/styles/screens-strateji.css'
-import '@/styles/mobil-kapi.css'
-
 interface CompareRow {
   key: string
   label: string

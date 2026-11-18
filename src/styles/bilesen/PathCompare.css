@@ -1,0 +1,77 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 44px; padding: 8px 0; border-bottom: 1px solid var(--color-border); min-width: 0; box-sizing: border-box; }
+
+.row strong { font-weight: 600; }
+
+.row .helper { flex: 0 0 auto; }
+
+.path-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+
+.path-stack-item { display: grid; gap: var(--space-4); min-width: 0; }
+
+.path-stack-title { margin: 0; font-size: var(--kapi-title); line-height: 1.4; font-weight: 600; word-break: normal; overflow-wrap: normal; }
+
+.path-stack-measures { display: grid; gap: var(--space-4); margin: 0; min-width: 0; }
+
+.path-stack-measures > div { display: grid; gap: var(--space-1); min-width: 0; }
+
+.path-stack-measures dt { font-size: var(--kapi-text-label); font-weight: 600; color: var(--color-text-secondary); }
+
+.path-stack-measures dd { margin: 0; font-size: var(--kapi-text-body); }
+
+.path-stack .path-cell { overflow-wrap: normal; }
+
+.path-compare-empty .ant-empty-footer a { display: inline-flex; align-items: center; min-height: var(--target-touch); }
+
+.path-compare { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
+
+.path-compare-scroll { overflow-x: auto; max-width: 100%; min-width: 0; -webkit-overflow-scrolling: touch;
+  scrollbar-color: var(--color-border-strong) transparent;
+  background:
+    linear-gradient(to right, var(--color-surface-work) 40%, transparent) 0 0 / 48px 100%,
+    linear-gradient(to left, var(--color-surface-work) 40%, transparent) 100% 0 / 48px 100%,
+    linear-gradient(to right, var(--color-shadow), transparent) 0 0 / 24px 100%,
+    linear-gradient(to left, var(--color-shadow), transparent) 100% 0 / 24px 100%;
+  background-repeat: no-repeat;
+  background-attachment: local, local, scroll, scroll; }
+
+.path-compare-scroll .ant-table-wrapper, .path-compare-scroll .ant-table-content { overflow: visible; max-width: none; background: none; }
+
+.path-compare-scroll .ant-table-cell { word-break: normal; overflow-wrap: normal; white-space: normal; vertical-align: top; text-align: start; }
+
+.path-compare-scroll .ant-table-thead > tr > th { font-size: 16px !important; line-height: 1.35; }
+
+.path-compare-scroll .ant-table-tbody > tr > td, .path-compare-scroll .ant-table-tbody > tr > th { padding-top: 10px !important; padding-bottom: 10px !important; border-bottom: 1px solid var(--color-border) !important; }
+
+.path-compare-scroll .ant-table-tbody > tr:last-child > td, .path-compare-scroll .ant-table-tbody > tr:last-child > th { border-bottom: 0 !important; }
+
+.path-compare-scroll .ant-table-cell.path-measure { position: sticky; left: 0; z-index: 2; background: var(--color-surface-work) !important; box-shadow: inset -1px 0 0 var(--color-border); font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); }
+
+.path-compare-scroll .ant-table-thead > tr > th.path-measure { background: var(--color-surface-context) !important; font-size: 14px !important; }
+
+.path-cell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); min-width: 0; overflow-wrap: break-word; }
+
+.path-cell-empty { color: var(--color-text-secondary); }
+
+.path-compare-empty.ant-empty { margin: 8px 0; }
+
+.path-compare-empty .ant-empty-description { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.path-compare-empty .ant-empty-footer a { font-size: 16px; text-decoration: underline; text-underline-offset: 2px; }
+
+html[data-focus-mode='keyboard'] .path-compare-scroll:focus-visible::before { display: none; }
+
+html[data-focus-mode='keyboard'] .path-compare:has(> .path-compare-scroll:focus-visible)::before { content: ''; position: absolute; left: -10px; top: 2px; bottom: 2px; width: 3px; background: var(--focus-marker); pointer-events: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .path-compare:has(> .path-compare-scroll:focus-visible)::before { display: none; }
+}

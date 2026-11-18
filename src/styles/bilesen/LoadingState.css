@@ -1,0 +1,30 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.loading-state.mt-loading-state { gap: var(--gap-section); }
+
+.mt-loading-state .loading-head { gap: var(--gap-control);
+  max-width: var(--size-loading-head-max); }
+
+.mt-loading-state .loading-grid { gap: var(--gap-content); }
+
+.loading-state.mt-loading-state .ant-card .ant-card-body { padding: var(--padding-panel); }
+
+.loading-state .ant-card { border: 0; border-radius: var(--radius-panel); box-shadow: var(--shadow-card) !important; background: var(--color-surface-work); min-width: 0; }
+
+.devralma-table .ant-table-cell { font-size: 16px; vertical-align: top; }
+
+.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
+
+.loading-state { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+
+.loading-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; max-width: 640px; }
+
+.loading-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+@media (min-width: 860px) {
+  .loading-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.loading-state .ant-card .ant-card-body { padding: 20px 24px; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

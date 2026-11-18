@@ -1,0 +1,114 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.mt-method-card.method-card.ant-card > .ant-card-actions { flex-wrap: wrap;
+  gap: var(--gap-control);
+  padding: var(--padding-control-block); }
+
+.mt-method-card.method-card.ant-card > .ant-card-actions > li { flex: 1 1 max-content;
+  width: auto !important;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  margin: 0;
+  border-inline-end: 0; }
+
+.mt-method-card.method-card.ant-card > .ant-card-actions > li > span { inline-size: 100%;
+  min-inline-size: 0; }
+
+.mt-method-card.method-card.ant-card > .ant-card-actions .method-action { box-sizing: border-box;
+  display: inline-flex;
+  gap: var(--gap-icon);
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal;
+  color: var(--color-text-primary);
+  transition: color var(--motion-small) var(--motion-ease); }
+
+.mt-method-card.method-card.ant-card > .ant-card-actions .method-action:hover { color: var(--color-action-primary); }
+
+.mt-method-card .mt-method-action-icon { flex: none;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline); }
+
+.mt-method-card.method-card.ant-card .ant-card-head-title { white-space: normal;
+  overflow-wrap: normal;
+  word-break: normal; }
+
+.mt-method-card .method-meta.ant-typography { font-size: var(--font-helper);
+  line-height: var(--line-body); }
+
+.mt-method-card .method-body.ant-typography { font-size: var(--font-body);
+  line-height: var(--line-body); }
+
+.mt-method-card .method-body strong { font-weight: var(--weight-strong); }
+
+.mt-method-card .method-badge .ant-badge-count { min-inline-size: var(--badge-visual-size);
+  block-size: var(--badge-visual-size);
+  padding-inline: var(--padding-badge-inline);
+  font-size: var(--font-helper);
+  line-height: var(--badge-visual-size); }
+
+.mt-method-usage-popover { max-inline-size: calc(100vw - var(--gutter-page) - var(--gutter-page)); }
+
+.mt-method-steps.method-steps, .mt-method-steps-empty.method-steps-empty { max-inline-size: 100%;
+  line-height: var(--line-body);
+  word-break: normal;
+  overflow-wrap: normal; }
+
+.mt-method-steps.method-steps { gap: var(--gap-control); }
+
+.mt-method-steps.method-steps a { display: flex;
+  align-items: center;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  font-size: var(--font-body); }
+
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+
+.text-link:hover { text-decoration: underline; }
+
+.method-badge .ant-badge-count { background: var(--color-surface-sunken); color: var(--color-text-primary); box-shadow: none; font-weight: 400; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; }
+
+.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-primary); }
+
+.page-rapor .method-card.ant-card { display: flex; flex-direction: column; transition: box-shadow var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+
+.page-rapor .method-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+
+.page-rapor .method-card.ant-card > .ant-card-head { min-height: 0; padding: 16px 20px 0; border-bottom: 0; }
+
+.page-rapor .method-card.ant-card .ant-card-head-title { font-size: 18px; line-height: 1.3; padding: 0; }
+
+.page-rapor .method-card.ant-card > .ant-card-body { flex: 1 1 auto; padding: 8px 20px 20px; gap: 10px; align-content: start; }
+
+.method-card .method-meta.ant-typography { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+
+.method-card .method-body.ant-typography { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.method-card .method-body strong { font-weight: 600; }
+
+.method-card .method-example.ant-typography { color: var(--color-text-secondary); }
+
+.page-rapor .method-card.ant-card > .ant-card-actions { border-top: 1px solid var(--color-border); background: transparent; flex-wrap: wrap; }
+
+.page-rapor .method-card.ant-card > .ant-card-actions > li { margin: 0; flex: 1 1 150px; width: auto !important; min-width: 0; }
+
+.page-rapor .method-card.ant-card > .ant-card-actions > li > span { width: 100%; }
+
+.method-action { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 44px; padding: 6px 8px; font: inherit; font-size: 14px; line-height: 1.3; color: var(--color-text-primary); background: transparent; border: 0; cursor: pointer; text-decoration: none; }
+
+.method-action:hover { color: var(--color-action-primary); }
+
+.method-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; max-width: 320px; }
+
+.method-steps a { font-size: 16px; text-decoration: underline; text-underline-offset: 2px; }
+
+.method-steps-empty { max-width: 320px; }

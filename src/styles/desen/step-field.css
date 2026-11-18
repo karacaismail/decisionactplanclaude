@@ -1,0 +1,33 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.step-field.ant-form-item { margin-bottom: 0; min-width: 0; }
+
+.step-field .ant-form-item-label { padding-bottom: 6px; }
+
+.step-field .ant-form-item-label > label { height: auto; min-height: 24px; max-width: 100%; white-space: normal; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); align-items: flex-start; }
+
+.step-field .ant-form-item-label > label::after { display: none; }
+
+.step-field .ant-form-item-label > label[for] { min-height: var(--target-touch); align-items: center; }
+
+.step-field .ant-form-item-tooltip { display: inline-flex; align-items: center; color: var(--color-text-secondary); margin-inline-start: 6px; cursor: help; }
+
+.step-field .ant-form-item-tooltip svg { display: block; }
+
+.step-field .ant-form-item-extra { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
+
+.step-field .ant-input, .step-field .ant-input-number, .step-field .ant-select, .step-field .ant-picker, .step-field .ant-input-number-group-wrapper, .step-field .ant-input-affix-wrapper { width: 100%; }
+
+.step-field .ant-input-prefix { color: var(--color-text-secondary); margin-inline-end: 8px; }
+
+.step-field .ant-input-number-prefix { color: var(--color-text-secondary); }
+
+.step-field :is(.ant-form-item-control, .ant-form-item-control-input-content, .ant-input-number-input-wrap) { min-width: 0; }
+
+.step-field .ant-input-number-suffix { min-width: 0; max-width: 50%; }
+
+.step-field .ant-input-number-group-addon { color: var(--color-text-secondary); font-size: 14px; background: var(--color-surface-context); }
+
+.step-field .ant-input-data-count { font-size: 14px; color: var(--color-text-secondary); }
+
+.step-field .ant-form-item-control-input { min-height: 0; }

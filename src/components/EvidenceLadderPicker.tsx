@@ -1,6 +1,7 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/bilesen/EvidenceLadderPicker.css'
 import { Segmented, Tag } from 'antd'
-import '@/styles/mobil-pano.css'
-
 export const LADDER: { level: number; label: string; hint: string }[] = [
   { level: 1, label: 'Müşteri ödeme yaptı', hint: 'En güçlü kanıt.' },
   { level: 2, label: 'Depozito verdi veya sözleşme imzaladı', hint: '' },

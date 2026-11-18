@@ -1,3 +1,7 @@
+import '@/styles/desen/page-rapor.css'
+import '@/styles/desen/strateji.css'
+import '@/styles/ekran/OutputsContent.css'
+import '@/styles/yazdirma/yazdirma.css'
 import { useLayoutEffect, useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
@@ -9,12 +13,6 @@ import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
-import '@/styles/screens-rapor.css'
-import '@/styles/screens-strateji.css'
-import '@/styles/screens-devir.css'
-import '@/styles/mobil-cikti.css'
-import '@/styles/print.css'
-
 /** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje devir raporunun özetidir. */
 type Kind = 'temel' | 'yonetici' | 'aksiyon'
 const KIND_LABEL: Record<Kind, string> = { temel: 'Strateje devir raporu', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }

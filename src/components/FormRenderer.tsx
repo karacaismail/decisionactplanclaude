@@ -1,3 +1,5 @@
+import '@/styles/desen/step-card.css'
+import '@/styles/bilesen/FormRenderer.css'
 import { useEffect, useRef, useState, type AnimationEvent } from 'react'
 import { Button, Card, Form, Segmented, Tag } from 'antd'
 import { CaretDown, CaretUp } from '@phosphor-icons/react'

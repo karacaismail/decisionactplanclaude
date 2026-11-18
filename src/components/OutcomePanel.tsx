@@ -1,3 +1,11 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/desen/choice-list.css'
+import '@/styles/desen/choice.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/k-form.css'
+import '@/styles/desen/save-row.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/bilesen/OutcomePanel.css'
 import { useEffect, useId, useState } from 'react'
 import { Button, DatePicker, Form, Input, InputNumber, Radio } from 'antd'
 import dayjs from 'dayjs'
@@ -8,8 +16,6 @@ import type { GateEvaluation } from '@/engine/gate'
 import { OUTCOME_PRIORITY, OVERRIDE_REASON_MIN, validateDecision } from '@/engine/gate'
 import { DecisionBadge } from './DecisionBadge'
 import { Callout } from './Callout'
-import '@/styles/screens-kapi.css'
-
 export interface OutcomeDraft {
   chosen: Outcome
   reason: string

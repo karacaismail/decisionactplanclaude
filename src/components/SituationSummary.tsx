@@ -1,12 +1,11 @@
+import '@/styles/desen/pano.css'
+import '@/styles/bilesen/SituationSummary.css'
 import { Tag } from 'antd'
 import { Link } from 'react-router'
 import { ArrowUpRight, ShieldCheck, Warning, Lightbulb, Lightning } from '@phosphor-icons/react'
 import { stepPath } from '@/data/registry'
 import type { PlanDoc } from '@/data/types'
 import { buildSituation, SITUATION_EMPTY, SITUATION_TITLE, type SituationKind } from '@/engine/situation'
-import '@/styles/mobil-pano.css'
-import '@/styles/screens-durum.css'
-
 const ORDER: SituationKind[] = ['guclu', 'zayif', 'firsat', 'tehdit']
 const ICON = { guclu: ShieldCheck, zayif: Warning, firsat: Lightbulb, tehdit: Lightning }
 

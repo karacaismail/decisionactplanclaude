@@ -1,0 +1,71 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+
+.text-link:hover { text-decoration: underline; }
+
+.insight-empty-text { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.method-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; scroll-margin-top: 76px; }
+
+.method-tools .field-label { margin-bottom: 0; }
+
+.method-search { max-width: 480px; }
+
+.method-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 0; }
+
+.method-tabs.ant-tabs .ant-tabs-tab { padding: 10px 0; font-size: 16px; }
+
+.method-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 20px; }
+
+.method-tabs.ant-tabs .ant-tabs-tab-btn { font-weight: 400; }
+
+.method-tabs.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; }
+
+.method-tab { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+.method-badge .ant-badge-count { background: var(--color-surface-sunken); color: var(--color-text-primary); box-shadow: none; font-weight: 400; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; }
+
+.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-primary); }
+
+.method-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: stretch; }
+
+@media (min-width: 720px) {
+  .method-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .method-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.method-pagination { display: flex; justify-content: center; }
+
+:root { --cikti-focus-thickness: 2px;
+  --cikti-focus-offset: 0.2em;
+  --cikti-body-size: 1rem;
+  --cikti-heading-size: 1.25rem;
+  --cikti-line-height: 1.5;
+  --cikti-heading-line-height: 1.3;
+  --cikti-weight-strong: 600;
+  --cikti-panel-padding: var(--space-4);
+  --cikti-section-gap: var(--space-6);
+  --cikti-control-gap: var(--space-2); }
+
+.page-methods .method-pagination input { font: inherit;
+  font-size: var(--cikti-body-size);
+  min-height: var(--target-touch);
+  min-width: var(--target-touch); }
+
+.page-methods .method-pagination .ant-pagination-prev, .page-methods .method-pagination .ant-pagination-next, .page-methods .method-pagination .ant-pagination-item, .page-methods .method-pagination .ant-pagination-simple-pager { min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  line-height: var(--target-touch); }

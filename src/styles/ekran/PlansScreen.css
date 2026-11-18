@@ -1,0 +1,78 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.stat-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+@media (min-width: 600px) {
+  .stat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.stat-row .pano-card > .ant-card-body { display: grid; gap: 6px; padding: 18px 20px; }
+
+.plan-search { width: 240px; max-width: 100%; }
+
+@media (max-width: 599px) {
+  .plan-search { width: 100%; }
+}
+
+@media (max-width: 599px) {
+  .pano-card.ant-card .ant-card-extra:has(.plan-search) { flex: 1 1 100%; }
+}
+
+.tag-row { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+
+.mobil-plans .ant-btn.plan-name { display: inline-flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  max-width: 100%;
+  white-space: normal; }
+
+.mobil-plans :is(.plan-card, .plan-card-head) { min-width: 0; }
+
+.mobil-plans .plan-card-head { flex-wrap: wrap; }
+
+.mobil-plans .plan-card { padding: var(--pano-card-padding); background: var(--color-surface-context); border-radius: var(--radius-panel); gap: var(--pano-card-gap); }
+
+.mobil-plans .plan-name { word-break: normal; overflow-wrap: normal; }
+
+.mobil-plans-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+
+.mobil-plan-card { min-width: 0; display: grid; gap: var(--space-3); padding: var(--space-4); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+
+.mobil-plans-list-heading, .mobil-plan-card-title { margin: 0; font-size: inherit; font-weight: 600; line-height: 1.5; word-break: normal; overflow-wrap: normal; }
+
+.mobil-plan-card-title { font-size: var(--pano-font-body); font-weight: 600; }
+
+.mobil-plan-metadata { display: grid; gap: var(--space-3); margin: 0; min-width: 0; }
+
+.mobil-plan-metadata dt { font-size: var(--pano-font-helper); color: var(--color-text-secondary); }
+
+.mobil-plan-metadata dd { margin: 0; min-width: 0; }
+
+.mobil-plan-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.mobil-plan-actions .ant-btn { flex: 1 1 auto; }
+
+.mobil-plans-name-field { display: grid; gap: var(--space-2); }
+
+.mobil-plans-toolbar { display: grid; gap: var(--space-2); margin-block-end: var(--space-4); min-width: 0; }
+
+.mobil-plans-sort.ant-select { width: 100%; min-width: 0; min-height: var(--target-touch); }
+
+.mobil-plans-pagination { margin-block-start: var(--space-4); }
+
+@media (min-width: 768px) and (min-height: 481px) {
+  .mobil-plans .mobil-plans-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
+
+.tag-row .ant-tag { display: inline-flex; align-items: center; height: 28px; line-height: 26px !important; max-width: 100%; white-space: normal; }

@@ -1,7 +1,6 @@
+import '@/styles/desen/pano.css'
+import '@/styles/bilesen/EmptyState.css'
 import type { ReactNode } from 'react'
-import '@/styles/screens-pano.css'
-import '@/styles/mobil-token.css'
-
 /**
  * Boş durum: başlık, tek cümle açıklama ve en çok iki düğme.
  * İkon isteğe bağlıdır. Metin ve eylem ölçüleri ortak tasarım değişkenlerinden gelir.

@@ -1,0 +1,32 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.note.mt-callout { gap: var(--gap-label);
+  padding: var(--padding-panel) var(--padding-note-edge); }
+
+.calc-box { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: start; padding: 16px 20px; background: var(--color-surface-context); border-radius: var(--radius-panel); min-width: 0; }
+
+.calc-apply.ant-btn { min-width: var(--target-touch); max-width: 100%; height: auto; min-height: var(--target-touch); padding-block: var(--space-2); white-space: normal; }
+
+.calc-apply.ant-btn > span { min-width: 0; white-space: normal; }
+
+.calc-apply.ant-btn > .ant-btn-icon { flex-shrink: 0; }
+
+.calc-title { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+
+.calc-value { font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; color: var(--color-text-primary); }
+
+.calc-lines { margin: 0; padding-left: 18px; display: grid; gap: 2px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.calc-warn { font-size: 14px; font-weight: 600; color: var(--color-status-harm); }
+
+.insight-card.is-empty .ant-empty { margin: 8px 0 0; }
+
+.foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }

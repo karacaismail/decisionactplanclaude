@@ -1,0 +1,108 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.mt-icon-inline { flex-shrink: 0;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline); }
+
+html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visible { position: fixed; }
+
+html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visible::before { left: auto;
+  right: var(--padding-panel);
+  top: var(--padding-panel);
+  bottom: auto;
+  height: var(--icon-control); }
+
+.evidence-link.mt-evidence-link { gap: var(--gap-control); }
+
+.evidence-link-foot.mt-evidence-link-foot, .drawer-foot.mt-evidence-link-actions { flex-wrap: wrap;
+  gap: var(--gap-control);
+  min-width: 0; }
+
+.mt-evidence-link-foot .fill-tag { margin: 0;
+  padding: var(--padding-tag-block) var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+  white-space: normal; }
+
+.mt-evidence-link-action.ant-btn { min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal; }
+
+.mt-evidence-link-control.ant-select, .mt-evidence-link-control.ant-input { width: 100%;
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  font-size: var(--font-body);
+  line-height: var(--line-control); }
+
+.mt-evidence-link-control .mt-evidence-link-selection { align-items: center;
+  min-height: var(--control-visual-size);
+  margin-block: 0;
+  margin-inline-end: var(--gap-control);
+  padding-inline: var(--padding-selection-inline) 0;
+  font-size: var(--font-body);
+  line-height: var(--line-control); }
+
+.mt-evidence-link-control .mt-evidence-link-remove { justify-content: center;
+  flex-shrink: 0;
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+  font-size: var(--icon-small); }
+
+.mt-evidence-link-popup.ant-select-dropdown { padding: var(--padding-popup); }
+
+.mt-evidence-link-popup .mt-evidence-link-option { align-items: center;
+  min-height: var(--hit-area-min);
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-body);
+  transition: background-color var(--motion-small) var(--motion-ease); }
+
+.mt-evidence-link-popup .ant-select-item-option-content { white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal; }
+
+.mt-evidence-link-drawer .ant-drawer-header, .mt-evidence-link-drawer .ant-drawer-body, .mt-evidence-link-drawer .ant-drawer-footer { padding: var(--padding-panel); }
+
+.mt-evidence-link-drawer .ant-drawer-close { width: var(--hit-area-min);
+  height: var(--hit-area-min);
+  flex-shrink: 0;
+  font-size: var(--icon-control);
+  transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+
+.mt-evidence-link-drawer .ant-drawer-close:not(.ant-drawer-close-end) { margin-inline-end: var(--gap-control); }
+
+.mt-evidence-link-drawer .mt-evidence-link-fields { gap: var(--gap-content); }
+
+.mt-evidence-link-fields .ant-form-item { margin-bottom: 0;
+  min-width: 0; }
+
+.mt-evidence-link-fields .ant-form-item-label { padding-bottom: var(--padding-label-bottom); }
+
+.mt-evidence-link-fields .ant-form-item-label > label { height: auto;
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal; }
+
+.mt-evidence-link-fields .ant-form-item-extra { margin-top: var(--gap-label);
+  font-size: var(--font-helper);
+  line-height: var(--line-body); }
+
+.fill-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+
+.evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+
+.evidence-link .ant-select { width: 100%; }
+
+.evidence-link-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+
+.drawer-foot { display: flex; justify-content: flex-end; gap: 8px; }
+
+.drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }

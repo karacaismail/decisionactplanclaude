@@ -1,8 +1,8 @@
+import '@/styles/desen/strateji.css'
+import '@/styles/bilesen/FoundationSummary.css'
 import { useId, useMemo } from 'react'
 import type { PlanDoc } from '@/data/types'
 import { buildFoundationDoc, sourceLine, type FoundationDoc } from '@/reports/foundation'
-import '@/styles/screens-strateji.css'
-
 /** Kısa görünümde her sorudan gösterilen satır ve kaynak sayısı. */
 const COMPACT_LINES = 2
 const COMPACT_SOURCES = 1

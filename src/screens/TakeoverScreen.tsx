@@ -1,3 +1,4 @@
+import '@/styles/ekran/TakeoverScreen.css'
 import { Button, Card, ConfigProvider, Form, Input, Switch, Tag } from 'antd'
 import { ArrowRight } from '@phosphor-icons/react'
 import { Link, useNavigate } from 'react-router'
@@ -5,9 +6,6 @@ import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { control, space } from '@/theme/tokens'
-import '@/styles/screens-karar.css'
-import '@/styles/mobil-cikti.css'
-
 type Check = { key: string; q: string; yes: string; no: string; to: string }
 
 const CHECKS: Check[] = [

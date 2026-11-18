@@ -1,3 +1,5 @@
+import '@/styles/desen/note.css'
+import '@/styles/bilesen/CalcField.css'
 import { Button } from 'antd'
 import { Calculator, ArrowBendDownRight } from '@phosphor-icons/react'
 import type { CalcResult } from '@/data/schema'

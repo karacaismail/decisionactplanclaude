@@ -1,9 +1,8 @@
+import '@/styles/desen/kapi.css'
+import '@/styles/bilesen/DecisionBadge.css'
 import { CheckCircle, PauseCircle, ArrowsClockwise, ArrowBendUpRight, ShieldCheck, Prohibit } from '@phosphor-icons/react'
 import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { decisionColors } from '@/theme/tokens'
-import '@/styles/screens-kapi.css'
-import '@/styles/mobil-token.css'
-
 const ICON: Record<Outcome, typeof CheckCircle> = {
   ilerle: CheckCircle,
   kosulluIlerle: ShieldCheck,

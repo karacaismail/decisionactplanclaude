@@ -1,3 +1,8 @@
+import '@/styles/desen/page-karar.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/mobil-kapi-page.css'
+import '@/styles/ekran/DecisionScreen.css'
 import { Button, Card, Collapse, Descriptions, Grid, List, Progress, Steps, Table, Tag } from 'antd'
 import { Link, useNavigate, useParams } from 'react-router'
 import { ArrowRight, ArrowLeft, BookOpen, CheckCircle, Question, XCircle } from '@phosphor-icons/react'
@@ -14,9 +19,6 @@ import { Callout } from '@/components/Callout'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { modelByIndex } from '@/components/ModelChip'
-import '@/styles/mobil-kapi.css'
-import '@/styles/screens-karar.css'
-
 /** "Kapı 1'e git", "Kapı 2'ye git" gibi doğru ek. */
 const GATE_SUFFIX: Record<number, string> = { 1: "'e", 2: "'ye", 3: "'e", 4: "'e", 5: "'e", 6: "'ya", 7: "'ye", 8: "'e" }
 

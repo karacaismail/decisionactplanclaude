@@ -1,0 +1,31 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.decision-badge { border-radius: 6px; padding: 0 8px; }
+
+.mt-icon-inline { flex-shrink: 0;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline); }
+
+.decision-badge.mt-decision-badge { gap: var(--gap-icon);
+  height: var(--badge-visual-size);
+  padding: 0 var(--padding-control-inline);
+  border-radius: var(--radius-control);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-control); }
+
+.decision-badge { display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 8px; border-radius: 4px; border: 1px solid transparent; font-size: 14px; font-weight: 600; line-height: 1; white-space: nowrap; box-sizing: border-box; }
+
+.decision-badge svg { flex-shrink: 0; }
+
+.decision-badge.is-ilerle { color: var(--color-status-ok); background: var(--color-status-ok-bg); }
+
+.decision-badge.is-kosulluIlerle { color: var(--color-status-ok); background: var(--color-status-ok-bg); border-color: var(--color-status-ok); }
+
+.decision-badge.is-yenidenDene { color: var(--color-text-secondary); background: transparent; border-color: var(--color-border-strong); }
+
+.decision-badge.is-yonDegistir { color: var(--color-text-secondary); background: transparent; border-color: var(--color-border-strong); }
+
+.decision-badge.is-beklet { color: var(--color-status-hold); background: var(--color-status-hold-bg); }
+
+.decision-badge.is-durdur { color: var(--color-status-harm); background: var(--color-status-harm-bg); }

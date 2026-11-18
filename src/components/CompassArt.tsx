@@ -1,5 +1,4 @@
-import '@/styles/mobil-token.css'
-
+import '@/styles/bilesen/CompassArt.css'
 /**
  * İlerleme halkası geçilen karar sayısını ve sırayı gösterir.
  * Dış varlık kullanmaz. Ekran okuyucu ilerleme bilgisini okur.

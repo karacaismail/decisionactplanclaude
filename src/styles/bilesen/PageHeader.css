@@ -1,0 +1,86 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.page-header { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 12px 24px; min-width: 0; }
+
+.page-header-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; flex: 1 1 320px; }
+
+.page-kicker { display: block; font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--color-text-secondary); }
+
+.page-header h1 { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.page-header-text p { margin: 4px 0 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); max-width: 64ch; }
+
+.page-header-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; min-width: 0; }
+
+.section-head .section-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.page-header { align-items: center; }
+
+.page-header h1 { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; font-weight: 600; letter-spacing: -0.045em; }
+
+.page-kicker { color: var(--color-text-secondary); letter-spacing: 0.04em; font-weight: 400; }
+
+.page-header-text p { font-size: 17px; margin-top: 6px; }
+
+.page-header.mt-page-header { min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-content); }
+
+.section-head.mt-section-head { min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-content); }
+
+.mt-page-header .mt-page-header-text { min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-label); }
+
+.mt-page-header .page-kicker { font-size: var(--font-helper);
+  line-height: var(--line-body); }
+
+.mt-page-header h1, .mt-section-head > h2, .mt-section-head > h3 { min-inline-size: 0;
+  max-inline-size: 100%;
+  word-break: normal;
+  overflow-wrap: normal;
+  font-weight: var(--weight-strong); }
+
+.mt-page-header h1 { font-size: var(--font-page-title); }
+
+.mt-section-head > h2 { font-size: var(--font-section-title); }
+
+.mt-section-head > h3 { font-size: var(--font-subsection-title); }
+
+.mt-page-header .mt-page-header-text > p, .mt-section-head > p { min-inline-size: 0;
+  margin: 0;
+  line-height: var(--line-body); }
+
+.mt-section-head > p { font-size: var(--font-body); }
+
+.mt-page-header .mt-page-header-text > p { font-size: var(--font-page-description); }
+
+.mt-page-header .mt-header-actions, .mt-section-head .mt-header-actions { display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-control); }
+
+.mt-header-actions > *, .mt-header-actions :is(.ant-space, .ant-space-item) { min-inline-size: 0;
+  max-inline-size: 100%; }
+
+.mt-header-actions .ant-space { flex-wrap: wrap; gap: var(--gap-control); }
+
+.mt-header-actions :is(button, a[href], [role='button']) { box-sizing: border-box;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  height: auto;
+  padding-block: var(--padding-control-block);
+  padding-inline: var(--padding-control-inline);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal; }
+
+.mt-header-actions .ant-btn > span:not(.ant-btn-icon) { min-inline-size: 0;
+  white-space: normal; }

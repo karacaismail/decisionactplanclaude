@@ -1,3 +1,14 @@
+import '@/styles/desen/note.css'
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/ring-card.css'
+import '@/styles/desen/table-scroll.css'
+import '@/styles/desen/k-form.css'
+import '@/styles/desen/k-result.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/mobil-kapi-page.css'
+import '@/styles/ekran/ReviewScreen.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Card, Checkbox, Form, Grid, Input, Progress, Result, Select, Statistic, Steps, Switch, Table, Tag, Tooltip, App as AntApp } from 'antd'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -14,9 +25,6 @@ import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { openReviews } from '@/engine/changes'
 import { OUTCOME_PRIORITY } from '@/engine/gate'
-import '@/styles/mobil-kapi.css'
-import '@/styles/screens-kapi.css'
-
 interface RuleRow { condition: string; outcome: Outcome; note?: string }
 interface CriterionRow { key: string; c: GateCriterion; value: boolean | null; step?: StepDef }
 

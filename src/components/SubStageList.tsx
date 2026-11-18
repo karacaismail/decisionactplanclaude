@@ -1,5 +1,6 @@
+import '@/styles/desen/kapi.css'
+import '@/styles/bilesen/SubStageList.css'
 import { Tag } from 'antd'
-import '@/styles/mobil-kapi.css'
 import { Link } from 'react-router'
 import type { PlanDoc } from '@/data/types'
 import { SUB_STAGE_LABEL, type SubStageDef } from '@/data/clusters'

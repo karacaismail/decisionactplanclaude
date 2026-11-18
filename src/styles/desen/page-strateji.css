@@ -1,0 +1,11 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.page-strateji .ant-card .ant-card-head-wrapper { flex-wrap: wrap; gap: 4px 16px; padding: 14px 0; }
+
+.page-strateji .ant-card .ant-card-head-title { flex: 1 1 auto; padding: 0; overflow: visible; text-overflow: clip; }
+
+.page-strateji .ant-card .ant-card-extra { padding: 0; margin-inline-start: 0; }
+
+.page-strateji .ant-card .ant-card-extra a { text-decoration: underline; text-underline-offset: 2px; }
+
+.page-strateji .ant-card .helper { margin: 0; }

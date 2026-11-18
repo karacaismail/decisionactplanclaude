@@ -1,3 +1,11 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/desen/choice-list.css'
+import '@/styles/desen/choice.css'
+import '@/styles/desen/k-form.css'
+import '@/styles/desen/save-row.css'
+import '@/styles/desen/k-result.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/bilesen/TransitionPanel.css'
 import { useId, useState } from 'react'
 import { Button, Checkbox, DatePicker, Form, Input, Radio, Result, Tag, App as AntApp } from 'antd'
 import dayjs from 'dayjs'
@@ -9,9 +17,6 @@ import { TRANSITION_OVERRIDE_MIN, validateTransition, type ReadinessEvaluation, 
 import { formatDate } from '@/engine/format'
 import { usePlanStore } from '@/store/planStore'
 import { Callout } from './Callout'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-gecis.css'
-
 type Conditional = NonNullable<TransitionDraft['conditional']>
 
 const ORDER: TransitionOutcome[] = ['hazir', 'kosullu', 'degil']

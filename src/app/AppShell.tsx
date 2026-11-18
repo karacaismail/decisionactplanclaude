@@ -1,3 +1,4 @@
+import '@/styles/kabuk/kabuk.css'
 import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
 import { Button, Drawer, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
@@ -14,8 +15,6 @@ import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPaletteButton, CommandPaletteHost } from '@/components/CommandPaletteButton'
 import { cssVariables } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
-import '@/styles/mobil-kabuk.css'
-
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
 export function decisionIcon(name: string): typeof Briefcase {

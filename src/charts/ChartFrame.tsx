@@ -1,3 +1,8 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/step-card.css'
+import '@/styles/bilesen/ChartFrame.css'
 import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
 import Button from 'antd/es/button'
 import Card from 'antd/es/card'
@@ -5,8 +10,6 @@ import Segmented from 'antd/es/segmented'
 import { TableIcon } from '@phosphor-icons/react/dist/csr/Table'
 import { ChartBar } from '@phosphor-icons/react/dist/csr/ChartBar'
 import { scrollRegionWithKeyboard } from '@/components/keyboardScroll'
-import '@/styles/mobil-pano.css'
-
 const LazyChart = lazy(() => import('./EChart'))
 
 type View = 'grafik' | 'tablo'

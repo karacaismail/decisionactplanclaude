@@ -1,0 +1,22 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.toolbar-search { width: 100%; max-width: 100%; }
+
+@media (min-width: 640px) {
+  .toolbar-search { width: 260px; }
+}
+
+.history-item .recent-reason { font-size: 16px; color: var(--color-text-primary); }
+
+.ant-select-sm .ant-select-selection-item .ant-tag { height: 22px; line-height: 20px !important; }
+
+:root { --kapi-score-name-width: 12rem;
+  --kapi-score-criterion-width: calc(5 * var(--target-touch) + 2 * var(--space-4));
+  --kapi-score-total-width: 9rem;
+  --kapi-text-body: 1rem;
+  --kapi-text-label: max(14px, .875rem);
+  --kapi-title: 1.25rem;
+  --kapi-star-hover-scale: 1.1;
+  
+  --kapi-shell-height: 109px;
+  --kapi-aside-top: calc(var(--kapi-shell-height) + var(--space-4)); }

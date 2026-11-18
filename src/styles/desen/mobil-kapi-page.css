@@ -1,0 +1,25 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .mobil-kapi-page :focus-visible { outline: 2px solid CanvasText !important; }
+}
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .mobil-kapi-page .kapi-action-link:focus-visible { text-decoration: none; }
+}
+
+.mobil-kapi-page .ant-btn { min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  height: auto;
+  max-width: 100%;
+  white-space: normal; }
+
+.mobil-kapi-page .kapi-action-link { display: inline-flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  max-width: 100%;
+  white-space: normal;
+  scroll-margin-block-start: var(--kapi-aside-top); }
+
+html[data-focus-mode='keyboard'] .mobil-kapi-page .kapi-action-link:focus-visible::before { display: none; }

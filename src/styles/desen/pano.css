@@ -1,0 +1,58 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.limits-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 24px; min-width: 0; }
+
+.step-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+
+.step-row { appearance: none; display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: start; gap: 12px; width: 100%; min-height: 44px; margin: 0; padding: 4px 0; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; background: transparent; color: var(--color-text-primary); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease); }
+
+.step-list li:last-child .step-row { border-bottom: 0; }
+
+.step-row:hover { background: var(--color-surface-context); }
+
+.step-body { display: block; min-width: 0; }
+
+.step-title { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; overflow-wrap: break-word; padding: 3px 0 2px; }
+
+@media (max-width: 599px) {
+  .step-row { gap: 8px; }
+}
+
+.choice-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 24px; color: var(--color-text-secondary); }
+
+.yol-steps.ant-steps .ant-steps-item-icon { font-size: 14px; font-weight: 600; }
+
+.yol-steps.ant-steps .ant-steps-item-subtitle { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); }
+
+.yol-steps.ant-steps.ant-steps-vertical .ant-steps-item { min-height: 44px; padding-bottom: 0; }
+
+.yol-steps.ant-steps.ant-steps-vertical .ant-steps-item:last-child { min-height: 28px; }
+
+.cell-wrap { white-space: normal; }
+
+.ant-btn.ant-btn-link.plan-name { padding: 0; height: auto; min-height: 0; font-size: 16px; font-weight: 600; white-space: normal; text-align: left; line-height: 1.4; color: var(--color-text-primary); }
+
+.ant-btn.ant-btn-link.plan-name:hover { color: var(--color-action-primary); text-decoration: underline; text-underline-offset: 2px; }
+
+.plan-cards.ant-list .ant-list-item { padding: 12px 0; }
+
+.plan-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; width: 100%; }
+
+.plan-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-width: 0; }
+
+.plan-card .ant-progress { margin: 0; }
+
+:root { --pano-font-body: max(16px, 1rem);
+  --pano-font-helper: max(14px, 0.875rem);
+  --pano-card-padding: var(--space-4);
+  --pano-card-gap: var(--space-3);
+  --pano-column-min: 14rem;
+  --pano-value-min: 9rem; }
+
+.mobil-evidence-select-popup .ant-select-item-option { min-height: var(--target-touch); align-items: center; }
+
+.mobil-evidence-select-popup .ant-select-item-option-content { white-space: normal; word-break: normal; overflow-wrap: normal; }
+
+:root { --evidence-drawer-width: 35rem; }
+
+:root { --pano-focus-thickness: 3px; }

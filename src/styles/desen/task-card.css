@@ -1,0 +1,9 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.task-card.ant-card { border: 0; border-radius: var(--radius-control); box-shadow: var(--shadow-card) !important; min-width: 0; background: var(--color-surface-work); }
+
+.task-card.ant-card > .ant-card-body { padding: 14px 16px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+
+.task-card .ant-tag { display: inline-flex; align-items: center; gap: 4px; }
+
+.task-card .ant-select { min-width: 132px; }

@@ -1,0 +1,105 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+@media (max-width: 767px), (max-height: 480px) and (max-width: 960px) {
+  .mobil-tasks .kanban { grid-template-columns: minmax(0, 1fr); }
+}
+
+.mobil-tasks .tasks-list { display: grid; gap: var(--space-4); min-width: 0; }
+
+.mobil-tasks .tasks-list-toolbar { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+
+.mobil-tasks .task-list-control { display: grid; gap: var(--space-1); min-width: 0; flex: 1 1 var(--pano-column-min); }
+
+.mobil-tasks :is(.tasks-filter, .tasks-sort, .task-status-select) { min-height: var(--target-touch); width: 100%; min-width: 0; }
+
+.mobil-tasks .task-status-select { min-width: var(--pano-value-min); }
+
+.mobil-tasks .tasks-mobile-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
+
+.mobil-tasks .task-list-card { min-width: 0; display: grid; gap: var(--space-3); padding: var(--space-4); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+
+.mobil-tasks .task-list-title { margin: 0; font-size: var(--pano-font-body); font-weight: 600; word-break: normal; overflow-wrap: normal; }
+
+.mobil-tasks .task-list-metadata { margin: 0; display: grid; gap: var(--space-3); }
+
+.mobil-tasks .task-list-metadata dt { font-size: var(--pano-font-helper); color: var(--color-text-secondary); }
+
+.mobil-tasks .task-list-metadata dd { margin: 0; min-width: 0; overflow-wrap: break-word; }
+
+.mobil-tasks .task-foot { flex-wrap: wrap; }
+
+.mobil-tasks-drawer :is(.ant-btn, .ant-select, .ant-picker) { min-height: var(--target-touch); }
+
+.mobil-tasks-drawer .ant-btn { height: auto; white-space: normal; }
+
+@media (min-width: 768px) and (min-height: 481px) {
+  .mobil-tasks .tasks-mobile-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.stat-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; min-width: 0; }
+
+.stat-grid > .ant-card { min-width: 0; }
+
+.stat-grid > .is-wide { grid-column: 1 / -1; }
+
+@media (min-width: 860px) {
+  .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.stat-note { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
+
+.k-badge .ant-badge-count { font-size: 14px; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; box-shadow: none; font-weight: 600; }
+
+.drawer-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
+
+.drawer-footer .ant-btn { flex: 1 1 auto; }
+
+@media (min-width: 480px) {
+  .drawer-footer .ant-btn { flex: 0 0 auto; }
+}
+
+.k-tabs .ant-tabs-nav { margin-bottom: 16px; }
+
+.k-tabs .ant-tabs-tab { font-size: 16px; padding: 0; }
+
+.k-tabs .ant-tabs-tab-btn { font-weight: 400; }
+
+.k-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; text-shadow: none; }
+
+.kanban { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+
+@media (min-width: 860px) {
+  .kanban { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.kanban-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; padding: 12px; border-radius: var(--radius-panel); background: var(--color-surface-context); }
+
+.kanban-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 0; min-width: 0; }
+
+.kanban-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
+
+.kanban-count { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+
+.kanban-empty { font-size: 14px; color: var(--color-text-secondary); padding: 8px 4px 12px; }
+
+.task-title { font-size: 16px; line-height: 1.45; overflow-wrap: break-word; margin: 0; }
+
+.task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+
+.task-owner { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--color-text-secondary); min-width: 0; }
+
+.task-owner .ant-avatar { flex-shrink: 0; font-weight: 600; }
+
+.task-owner span:last-child { overflow-wrap: break-word; min-width: 0; }
+
+.task-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; min-width: 0; }
+
+.task-source { font-size: 14px; color: var(--color-text-secondary); }

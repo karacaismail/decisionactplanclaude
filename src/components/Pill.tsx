@@ -1,7 +1,6 @@
+import '@/styles/bilesen/Pill.css'
 import type { ReactNode } from 'react'
 import { isNewPage } from '@/data/newPages'
-import '@/styles/pill.css'
-
 /**
  * Küçük, hap biçimli durum etiketi. Yazı en az 14 piksel olur.
  * Kenar çizgisi kullanılmaz. Renk tonu ortak tema renklerinden gelir.

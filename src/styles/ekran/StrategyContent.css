@@ -1,0 +1,97 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.karar-desc .ant-descriptions-item-label { font-weight: 600; color: var(--color-text-primary); font-size: 14px; }
+
+.karar-desc .ant-descriptions-item-content { font-size: 16px; color: var(--color-text-primary); line-height: 1.5; overflow-wrap: break-word; }
+
+.karar-desc .ant-descriptions-row > th, .karar-desc .ant-descriptions-row > td { padding-bottom: 12px !important; }
+
+.karar-step-count { font-variant-numeric: tabular-nums; }
+
+.devralma-table .ant-table-cell { font-size: 16px; vertical-align: top; }
+
+.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
+
+.mobil-kapi-page .strateji-aside { top: var(--kapi-aside-top); }
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .strateji-result .ant-result-extra { justify-items: stretch; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .strateji-result .ant-result-extra .ant-btn { width: 100%; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .substage-link { justify-self: stretch; min-height: var(--target-touch); }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .strateji-aside { position: static; max-height: none; overflow: visible; }
+}
+
+.strateji-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; align-items: start; }
+
+.strateji-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+
+.strateji-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+
+@media (min-width: 1100px) {
+  .strateji-grid { grid-template-columns: minmax(0, 1fr) 300px; }
+}
+
+@media (min-width: 1100px) {
+  .strateji-main { grid-column: 1; grid-row: 1; }
+}
+
+@media (min-width: 1100px) {
+  .strateji-aside { grid-column: 2; grid-row: 1; position: sticky; top: 76px; }
+}
+
+.strateji-outcome { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
+
+.strateji-outcome .ant-tag { margin: 0; font-size: 14px; }
+
+.strateji-empty { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.strateji-result.ant-result { padding: 8px 0; }
+
+.strateji-result .ant-result-icon { margin-bottom: 12px; color: var(--color-status-ok); }
+
+.strateji-result .ant-result-title { font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
+
+.strateji-result .ant-result-subtitle { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.strateji-result .ant-result-extra { margin-top: 16px; }
+
+.strateji-question { margin: 0; font-size: 20px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); max-width: 44ch; overflow-wrap: break-word; }
+
+@media (min-width: 900px) {
+  .strateji-question { font-size: 24px; line-height: 1.3; }
+}
+
+.strateji-scope { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.strateji-firstday { margin: 0; padding: 0 0 0 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
+
+.strateji-firstday > li { min-width: 0; padding-left: 4px; overflow-wrap: break-word; }
+
+.strateji-firstday > li::marker { font-weight: 600; font-variant-numeric: tabular-nums; }
+
+.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
+
+.criteria-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
+
+.criteria-list > li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.criteria-list .is-met { color: var(--color-status-ok); }
+
+.criteria-list .is-open { color: var(--color-text-secondary); }
+
+.card-heading { margin: 0; font: inherit; color: inherit; }
+
+.card-heading:focus { outline: 0; }

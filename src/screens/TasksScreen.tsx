@@ -1,3 +1,13 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/k-drawer.css'
+import '@/styles/desen/k-form.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/task-card.css'
+import '@/styles/ekran/TasksScreen.css'
 import { useId, useRef, useState } from 'react'
 import { Avatar, Badge, Button, Card, DatePicker, Drawer, Empty, Form, Input, Pagination, Select, Statistic, Tabs, Tag, App as AntApp } from 'antd'
 import type { RefSelectProps } from 'antd'
@@ -7,9 +17,6 @@ import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import type { Task, TaskStatus } from '@/data/types'
 import { formatDate } from '@/engine/format'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-kapi.css'
-import '@/styles/mobil-pano.css'
-
 const STATUS: { value: TaskStatus; label: string; cls: string }[] = [
   { value: 'taslak', label: 'Taslak', cls: '' },
   { value: 'acik', label: 'Açık', cls: 'is-open' },

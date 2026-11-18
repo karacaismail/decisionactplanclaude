@@ -1,11 +1,10 @@
+import '@/styles/bilesen/EvidenceLink.css'
 import { useState } from 'react'
 import { Button, Drawer, Form, Input, Select, Tag } from 'antd'
 import { Paperclip, Plus } from '@phosphor-icons/react'
 import type { EvidenceKind, PlanDoc } from '@/data/types'
 import { usePlanStore } from '@/store/planStore'
 import { EvidenceLadderPicker } from './EvidenceLadderPicker'
-import '@/styles/mobil-token.css'
-
 const KIND_LABEL: Record<EvidenceKind, string> = { gozlem: 'Gözlem', tahmin: 'Tahmin', varsayim: 'Varsayım' }
 
 /**

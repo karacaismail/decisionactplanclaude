@@ -1,0 +1,151 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.save-dot.is-harm { background: var(--color-status-harm); }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.gecis-criterion-more > summary { min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important; }
+
+.karar-criterion-icon.is-ok { color: var(--color-status-ok); }
+
+.karar-criterion-icon.is-harm { color: var(--color-status-harm); }
+
+.step-row.is-muted { color: var(--color-text-secondary); }
+
+.tl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+
+.tl-reason { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.stat-note { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
+
+.ring-copy { display: grid; gap: 2px; min-width: 0; }
+
+.ring-copy strong { font-size: 16px; font-weight: 600; }
+
+.ring-copy span { font-size: 14px; color: var(--color-text-secondary); }
+
+.criterion-icon { display: inline-flex; vertical-align: middle; }
+
+.k-steps .ant-steps-item-title { font-size: 16px; font-weight: 600; }
+
+.k-steps .ant-steps-item-content, .k-steps .ant-steps-item-description { font-size: 14px; color: var(--color-text-secondary); }
+
+.k-timeline.ant-timeline { padding-top: 4px; }
+
+.k-timeline .ant-timeline-item-content, .k-timeline .ant-steps-item-content { font-size: 16px; }
+
+.tl-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); }
+
+.tl-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; padding-bottom: 8px; }
+
+.tl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+
+.tl-date { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+
+.tl-reason { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; margin: 0; }
+
+.tl-notes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.history-notes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+.gecis-stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+.gecis-stats > .ant-card { min-width: 0; }
+
+.gecis-stats .stat-note a { text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
+
+@media (min-width: 560px) {
+  .gecis-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 560px) {
+  .gecis-stats > .ring-card { grid-column: 1 / -1; }
+}
+
+@media (min-width: 900px) {
+  .gecis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1280px) {
+  .gecis-stats { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(180px, 1fr); }
+}
+
+@media (min-width: 1280px) {
+  .gecis-stats > .ring-card { grid-column: auto; }
+}
+
+.gecis-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; align-items: start; }
+
+.gecis-main, .gecis-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+
+@media (min-width: 1200px) {
+  .gecis-grid { grid-template-columns: minmax(0, 3fr) minmax(360px, 2fr); }
+}
+
+@media (min-width: 1200px) {
+  .gecis-aside { position: sticky; top: 76px; max-height: calc(100vh - 92px); overflow-y: auto; padding-bottom: var(--space-4); }
+}
+
+.gecis-criterion { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+
+.gecis-criterion-head { display: block; font-size: 16px; line-height: 1.5; min-width: 0; overflow-wrap: break-word; }
+
+.gecis-criterion-id { margin-inline-end: 8px; font-size: 14px; font-weight: 600; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+
+.gecis-criterion-meta { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); min-width: 0; }
+
+.gecis-criterion-meta > span { min-width: 0; overflow-wrap: break-word; }
+
+.gecis-criterion-meta a { text-decoration: underline; text-underline-offset: 2px; }
+
+.gecis-criterion-phone { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; align-items: start; min-width: 0; }
+
+.gecis-criterion-phone .criterion-icon { margin-top: 2px; }
+
+.gecis-criterion .ant-tag { justify-self: start; }
+
+.gecis-question { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; margin: 0; min-width: 0; }
+
+.gecis-question-label { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--color-text-secondary); }
+
+.gecis-question-text { font-size: 18px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.gecis-stats .stat-card .ant-progress { margin: 6px 0 2px; line-height: 1; }
+
+.gecis-timeline .tl-dot { flex: 0 0 28px; }
+
+.gecis-history-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-width: 0; }
+
+.gecis-criterion-more { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+
+.gecis-criterion-more > summary { font-size: 14px; color: var(--color-text-secondary); cursor: pointer; min-height: 28px; display: inline-flex; align-items: center; width: fit-content; }
+
+.gecis-criterion-more[open] > summary { margin-bottom: 4px; }
+
+.mobil-kapi-page .gecis-criterion-more > summary { display: inline-flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  min-width: var(--target-touch); }
+
+.mobil-kapi-page .gecis-aside { top: var(--kapi-aside-top); }
+
+@media (min-width: 1200px) {
+  .mobil-kapi-page .gecis-aside { max-height: calc(100dvh - var(--kapi-aside-top) - var(--space-4)); }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .gecis-aside { position: static; max-height: none; overflow: visible; }
+}
+
+.stat-ico.is-ok { color: var(--color-status-ok); }
+
+.stat-ico.is-hold { color: var(--color-status-hold); }
+
+.stat-ico.is-harm { color: var(--color-status-harm); }

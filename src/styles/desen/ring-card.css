@@ -1,0 +1,17 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.ring-card.ant-card > .ant-card-body { display: flex; flex-direction: row-reverse; justify-content: flex-end; align-items: center; gap: 16px; padding: 16px 20px; }
+
+.ring-card .ant-progress { display: block; line-height: 1; margin: 0; }
+
+@media (min-width: 1280px) {
+  .ring-card.ant-card > .ant-card-body { flex-direction: column; justify-content: flex-start; align-items: stretch; gap: 10px; padding: 16px 16px; }
+}
+
+@media (min-width: 1280px) {
+  .ring-card .ant-progress { align-self: center; }
+}
+
+.ring-card .ant-progress { flex-shrink: 0; }
+
+.ring-card .ant-progress-text { font-size: 18px !important; font-weight: 600; color: var(--color-text-primary); }

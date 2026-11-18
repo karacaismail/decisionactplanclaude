@@ -1,7 +1,8 @@
+import '@/styles/desen/kapi.css'
+import '@/styles/bilesen/ScoreMatrix.css'
 import { useId } from 'react'
 import { Rate, Switch, Table, Tag } from 'antd'
 import { LockSimple, LockSimpleOpen, Star } from '@phosphor-icons/react'
-import '@/styles/mobil-kapi.css'
 import { scrollRegionWithKeyboard } from './keyboardScroll'
 export interface ScoreMatrixValue {
   weights: Record<string, number>

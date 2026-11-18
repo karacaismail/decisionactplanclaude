@@ -1,3 +1,5 @@
+import '@/styles/desen/step-field.css'
+import '@/styles/bilesen/ThresholdInput.css'
 import { Form, Input, InputNumber, Tag } from 'antd'
 import { Info } from '@phosphor-icons/react'
 

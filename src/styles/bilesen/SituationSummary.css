@@ -1,0 +1,46 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.durum-meta a { min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important; }
+
+.durum { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; font-size: var(--pano-font-body); container-type: inline-size; container-name: situation; }
+
+.durum-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+
+@container situation (min-width: 30rem) {
+  .durum-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.durum-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); align-content: start; min-width: 0; padding: var(--space-3); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+
+.durum-title { margin: 0; display: flex; align-items: center; gap: var(--space-2); font-size: var(--pano-font-body); line-height: inherit; font-weight: 600; color: var(--color-text-primary); min-width: 0; }
+
+.durum-title > span:first-of-type { flex: 1; min-width: 0; overflow-wrap: break-word; }
+
+.durum-title > svg, .durum-count.ant-tag { flex-shrink: 0; }
+
+.durum .durum-count.ant-tag { margin: 0; height: auto; font-size: var(--pano-font-helper) !important; line-height: inherit !important; font-variant-numeric: tabular-nums; }
+
+.durum-list { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-width: 0; }
+
+.durum-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); min-width: 0; }
+
+.durum-text { font-size: var(--pano-font-body); color: var(--color-text-primary); overflow-wrap: break-word; white-space: pre-wrap; }
+
+.durum-meta, .durum-empty, .durum-hint { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); margin: 0; min-width: 0; font-size: var(--pano-font-helper); color: var(--color-text-secondary); overflow-wrap: break-word; }
+
+.durum .durum-link { display: flex; align-items: center; justify-self: start; gap: var(--space-1); min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; box-sizing: border-box; padding: var(--space-2); font-size: var(--pano-font-body); line-height: inherit; white-space: normal; overflow-wrap: break-word; color: var(--color-action-primary); transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+
+.durum-link > svg { flex-shrink: 0; }
+
+html[data-focus-mode='keyboard'] .durum .durum-link:focus-visible::before { display: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .durum .durum-link:focus-visible { outline: 2px solid CanvasText !important; text-decoration: none; }
+}
+
+.durum .durum-link:active { background: var(--color-selected-bg); }
+
+@media (hover: hover) {
+  .durum .durum-link:hover { color: var(--color-action-hover); background: var(--color-selected-bg); }
+}

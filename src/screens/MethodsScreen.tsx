@@ -1,3 +1,5 @@
+import '@/styles/desen/page-rapor.css'
+import '@/styles/ekran/MethodsScreen.css'
 import { useMemo, useRef, useState } from 'react'
 import { Badge, Input, Pagination, Tabs, Empty, Grid } from 'antd'
 import models from '@/data/models.json'
@@ -7,9 +9,6 @@ import { useCurrentPlan } from '@/store/planStore'
 import { ModelCard, type ModelEntry } from '@/components/ModelCard'
 import { ModelDrawer } from '@/components/ModelDrawer'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-rapor.css'
-import '@/styles/mobil-cikti.css'
-
 const ALL = models as ModelEntry[]
 const TUMU = '__tumu__'
 

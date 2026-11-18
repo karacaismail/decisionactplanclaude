@@ -1,7 +1,6 @@
+import '@/styles/bilesen/StatTile.css'
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router'
-import '@/styles/mobil-token.css'
-
 export type StatTone = 'teal' | 'purple' | 'orange' | 'navy'
 
 /**

@@ -1,3 +1,8 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-card.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/ekran/StartScreen.css'
 import { useId, useState, type KeyboardEvent } from 'react'
 import { Button, Card, Grid, Steps } from 'antd'
 import { ArrowRight, CheckCircle, Handshake, Lightbulb, Warning } from '@phosphor-icons/react'
@@ -7,9 +12,6 @@ import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { STAGES } from '@/data/stages'
 import type { Entry } from '@/data/types'
-import '@/styles/screens-pano.css'
-import '@/styles/mobil-pano.css'
-
 const OPTIONS: { value: Entry; title: string; text: string; to: string; Icon: typeof Lightbulb }[] = [
   { value: 'yeni', title: 'Yeni bir fikrim var', text: "Karar 1'den başlayın. Önce işinizi yedi soruyla anlatın.", to: '/karar/1/adim/00', Icon: Lightbulb },
   { value: 'devralma', title: 'Çalışan bir işi devralıyorum', text: 'Vaatleri sonuçlarla karşılaştırın. Kanıtı eksik olan ilk karara dönün.', to: '/devralma', Icon: Handshake },

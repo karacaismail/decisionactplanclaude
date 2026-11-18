@@ -1,7 +1,7 @@
+import '@/styles/bilesen/ModelChip.css'
 import { useState } from 'react'
 import { BookOpen } from '@phosphor-icons/react'
 import models from '@/data/models.json'
-import '@/styles/mobil-token.css'
 import { ModelDrawer } from './ModelDrawer'
 import type { ModelEntry } from './ModelCard'
 

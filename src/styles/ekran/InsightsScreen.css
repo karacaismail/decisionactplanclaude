@@ -1,0 +1,73 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.mobil-insights .insight-section { display: grid; gap: var(--space-4); min-width: 0; }
+
+.mobil-insights .insight-section-head { display: grid; gap: var(--space-2); }
+
+.mobil-insights .insight-section-head :is(h2, p), .mobil-insights .insight-title { margin: 0; }
+
+.mobil-insights .insight-section-head h2 { font-weight: 600; }
+
+.mobil-insights .insight-title { font: inherit; }
+
+.mobil-insights .insight-source { padding-inline: var(--space-4); margin-block: var(--space-2) 0; }
+
+.mobil-insights .insight-empty-link { max-width: 100%; text-align: start; }
+
+.mobil-insights .insight-empty-link svg { flex-shrink: 0; }
+
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+
+.text-link:hover { text-decoration: underline; }
+
+.insight-stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+@media (min-width: 600px) {
+  .insight-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .insight-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}
+
+.page-rapor .insight-stat > .ant-card-body { gap: 10px; padding: 18px 20px 20px; }
+
+.insight-stat .ant-statistic-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2px; }
+
+.insight-stat .ant-statistic-content { font-size: 30px; line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); font-variant-numeric: tabular-nums; overflow-wrap: break-word; }
+
+.insight-stat .ant-statistic-content-suffix { font-size: 16px; font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 6px; }
+
+.insight-stat .insight-stat-text .ant-statistic-content { font-size: 20px; font-weight: 600; }
+
+.insight-stat .ant-progress { margin: 0; line-height: 0; }
+
+.insight-stat .ant-progress .ant-progress-outer { display: block; }
+
+.insight-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
+
+@media (min-width: 1024px) {
+  .insight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.insight-card { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+
+.insight-card .chart-frame { margin: 0; min-width: 0; }
+
+.insight-card .chart-canvas { min-width: 0; width: 100%; }
+
+.insight-card .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.page-rapor .insight-card > .chart-frame:not(.ant-card) { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 20px 24px 24px; display: grid; gap: 12px; }
+
+.insight-card.is-empty .ant-empty { margin: 8px 0 0; }
+
+.insight-empty-text { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.insight-empty-link { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; color: var(--color-action-primary); text-decoration: underline; text-underline-offset: 2px; }
+
+.foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }

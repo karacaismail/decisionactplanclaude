@@ -1,5 +1,6 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/bilesen/PageHeader.css'
 import { useEffect, type ReactNode } from 'react'
-import '@/styles/mobil-token.css'
 import { NewPill } from '@/components/Pill'
 
 const APP_NAME = 'Girişimci Aksiyon Planı'

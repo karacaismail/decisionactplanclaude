@@ -1,0 +1,56 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+:root { --form-text-body: 16px;
+  --form-text-helper: 14px;
+  --form-field-min: 160px;
+  --form-threshold-column-min: 224px;
+  --form-action-reserve: calc(var(--target-touch) * 3 + var(--space-8));
+  --form-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --form-keyboard-inset: env(keyboard-inset-height, 0px);
+  --form-calendar-width: calc(var(--target-touch) * 7 + var(--space-3));
+  --form-action-line-height: 1.25; }
+
+.ant-modal-body > label:has(> input.ant-input) { position: relative; }
+
+.ant-modal-body > label > input.ant-input { min-height: var(--target-touch); }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus-visible { outline: 2px solid CanvasText !important; }
+}
+
+.ant-input-number-suffix { margin-inline-end: 4px; }
+
+.form-date-popup { --form-calendar-top-gap: max(var(--space-2), env(safe-area-inset-top, 0px));
+  --form-calendar-bottom-gap: max(var(--space-2), var(--form-safe-bottom));
+  --form-calendar-visible-height: min(var(--form-viewport-height, 100dvh), calc(100dvh - var(--form-keyboard-inset, 0px)));
+  max-width: 100vw; }
+
+.form-date-popup :is(.ant-picker-date-panel, .ant-picker-month-panel, .ant-picker-year-panel, .ant-picker-decade-panel) { width: min(100vw, var(--form-calendar-width)); }
+
+.form-date-popup.ant-picker-dropdown .ant-picker-panel .ant-picker-body { padding-inline: calc(var(--space-3) / 2); }
+
+.form-date-popup .ant-picker-content { width: 100%; table-layout: fixed; }
+
+.form-date-popup .ant-picker-header button, .form-date-popup .ant-picker-now { display: inline-flex; align-items: center; justify-content: center; min-width: var(--target-touch); min-height: var(--target-touch); }
+
+@media (max-width: 599px) {
+  .form-date-popup.ant-picker-dropdown { position: fixed !important; inset-block-start: auto !important;
+    inset-block-end: calc(var(--form-keyboard-inset, 0px) + var(--form-calendar-bottom-gap)) !important;
+    inset-inline-start: max(0px, calc((100vw - var(--form-calendar-width)) / 2)) !important;
+    inset-inline-end: auto !important; max-height: calc(var(--form-calendar-visible-height) - var(--form-calendar-top-gap) - var(--form-calendar-bottom-gap));
+    overflow-y: auto; overscroll-behavior: contain; }
+}
+
+.ant-rate .ant-rate-star svg { display: block; }
+
+.score-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 14px; background: var(--color-surface-context); border-radius: var(--radius-panel); min-width: 0; }
+
+.score-block-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 16px; }
+
+.score-block-head strong { font-weight: 600; color: var(--color-text-primary); }
+
+.score-block.is-weight .score-block-head strong { color: var(--color-text-secondary); }
+
+.score-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
+
+.score-row-label { font-size: 14px; color: var(--color-text-secondary); }

@@ -1,0 +1,25 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.choice { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 12px; align-items: start; padding: 12px 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface-work); cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease); }
+
+.choice:last-child { border-bottom: 0; }
+
+.choice:hover { background: var(--color-surface-context); }
+
+.choice.is-selected { background: var(--color-selected-bg); }
+
+.choice.is-selected .choice-mark { color: var(--color-action-primary); }
+
+.choice.ant-radio-wrapper { margin: 0; padding: 8px 12px; font-size: 16px; }
+
+.choice.ant-radio-wrapper::after { display: none; }
+
+.choice.ant-radio-wrapper > .ant-radio { margin-top: 3px; }
+
+.choice.ant-radio-wrapper > span:not(.ant-radio) { padding: 0; min-width: 0; }
+
+.choice.ant-radio-wrapper-disabled { cursor: not-allowed; color: var(--color-text-secondary); }
+
+.choice.ant-radio-wrapper-disabled:hover { background: var(--color-surface-work); }
+
+.mobil-kapi-page .choice.ant-radio-wrapper { min-height: var(--target-touch); box-sizing: border-box; }

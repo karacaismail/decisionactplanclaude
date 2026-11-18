@@ -1,7 +1,5 @@
 import { theme as antTheme, type ThemeConfig } from 'antd'
 import { control, font, motion, palette, radius, space, type ThemeMode } from './tokens'
-import '@/styles/mobil-token.css'
-
 /** Mağaza tercihi "system" ise işletim sistemi tercihine bakar. */
 export function resolveMode(pref: ThemeMode | 'system'): ThemeMode {
   if (pref !== 'system') return pref

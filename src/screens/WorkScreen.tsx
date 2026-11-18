@@ -1,3 +1,8 @@
+import '@/styles/desen/field.css'
+import '@/styles/desen/form.css'
+import '@/styles/desen/step-card.css'
+import '@/styles/desen/strateji.css'
+import '@/styles/ekran/WorkScreen.css'
 import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, ConfigProvider, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
 import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
@@ -22,9 +27,6 @@ import { LoadingState } from '@/components/LoadingState'
 import { SituationSummary } from '@/components/SituationSummary'
 import { ChartFrame } from '@/charts/ChartFrame'
 import type { Limits, PlanDoc } from '@/data/types'
-import '@/styles/screens-form.css'
-import '@/styles/screens-strateji.css'
-
 // Rapor bileşenleri yalnız görünür içerik istendiğinde yüklenir.
 const FoundationSummary = lazy(() => import('@/components/FoundationSummary').then((module) => ({ default: module.FoundationSummary })))
 const WorkPaths = lazy(() => import('@/components/WorkPaths').then((module) => ({ default: module.WorkPaths })))

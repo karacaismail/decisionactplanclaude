@@ -1,11 +1,10 @@
+import '@/styles/bilesen/ModelDrawer.css'
 import { useEffect, useState } from 'react'
 import { Button, Drawer, Skeleton, Tag } from 'antd'
 import { ArrowSquareOut } from '@phosphor-icons/react'
 import { loadHowTo, type HowTo } from '@/data/howto'
 import { Callout } from './Callout'
 import { modelLink, type ModelEntry } from './ModelCard'
-import '@/styles/mobil-token.css'
-
 type HelpState = { status: 'bekliyor' } | { status: 'hazir'; help: HowTo | null } | { status: 'hata' }
 
 /**

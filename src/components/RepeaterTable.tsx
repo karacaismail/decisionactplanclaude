@@ -1,3 +1,4 @@
+import '@/styles/bilesen/RepeaterTable.css'
 import { Button, Popconfirm, Table, Tag } from 'antd'
 import { Plus, Trash, ArrowUp, ArrowDown } from '@phosphor-icons/react'
 import type { Field } from '@/data/schema'

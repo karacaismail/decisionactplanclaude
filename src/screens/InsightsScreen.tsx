@@ -1,3 +1,7 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/page-rapor.css'
+import '@/styles/ekran/InsightsScreen.css'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Card, Empty, Progress, Statistic } from 'antd'
@@ -9,9 +13,6 @@ import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { resolveMode } from '@/theme/antdTheme'
 import { font, palette as paletteOf } from '@/theme/tokens'
-import '@/styles/screens-rapor.css'
-import '@/styles/mobil-pano.css'
-
 /**
  * Göstergeler. Üstte dört istatistik kartı, altında grafik ızgarası.
  * Masaüstünde iki sütun, telefonda tek sütun. Her gösterge kendi kartındadır.

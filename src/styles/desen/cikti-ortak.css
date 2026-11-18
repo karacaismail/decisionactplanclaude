@@ -1,0 +1,7 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+html[data-focus-mode='keyboard'] :is(.page-assumptions, .page-foundation, .devir-page) .ant-segmented-item-input:focus-visible { position: absolute; }
+
+html[data-focus-mode='keyboard'] :is(.page-assumptions, .page-foundation, .devir-page) .ant-segmented-item-input:focus-visible + .ant-segmented-item-label { text-decoration: underline;
+  text-decoration-thickness: var(--cikti-focus-thickness);
+  text-underline-offset: var(--cikti-focus-offset); }

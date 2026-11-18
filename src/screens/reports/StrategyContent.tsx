@@ -1,3 +1,9 @@
+import '@/styles/desen/page-karar.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/mobil-kapi-page.css'
+import '@/styles/desen/page-strateji.css'
+import '@/styles/desen/strateji.css'
+import '@/styles/ekran/StrategyContent.css'
 import { useMemo } from 'react'
 import { Button, Card, Descriptions, Result, Tag } from 'antd'
 import { ArrowLeft, ArrowRight, CheckCircle, Circle } from '@phosphor-icons/react'
@@ -17,10 +23,6 @@ import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { PathCompare } from '@/components/PathCompare'
-import '@/styles/mobil-kapi.css'
-import '@/styles/screens-karar.css'
-import '@/styles/screens-strateji.css'
-
 const OUTCOME_COLOR: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
 
 /**

@@ -1,3 +1,9 @@
+import '@/styles/desen/page-karar.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/mobil-kapi-page.css'
+import '@/styles/desen/page-strateji.css'
+import '@/styles/desen/strateji.css'
+import '@/styles/ekran/ExecutionScreen.css'
 import { useEffect, useRef, useState } from 'react'
 import { Button, Card, Input, Radio, Tag, App as AntApp } from 'antd'
 import { ArrowLeft, ArrowRight } from '@phosphor-icons/react'
@@ -14,10 +20,6 @@ import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { SubStageList } from '@/components/SubStageList'
-import '@/styles/mobil-kapi.css'
-import '@/styles/screens-karar.css'
-import '@/styles/screens-strateji.css'
-
 const HOLDS: ChoiceHolds[] = ['evet', 'kismen', 'hayir']
 const DECISION_HELP: Record<RenewalDecision, string> = {
   surdur: 'Seçim doğru. Aynı yolla devam edersiniz.',

@@ -1,0 +1,130 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.save-dot.is-harm { background: var(--color-status-harm); }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.history-filter .ant-segmented-item-label { min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important; }
+
+.karar-criterion-icon.is-ok { color: var(--color-status-ok); }
+
+.karar-criterion-icon.is-harm { color: var(--color-status-harm); }
+
+.tl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; min-width: 0; }
+
+.tl-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+
+.tl-reason { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.history-filter { max-width: 100%; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; }
+
+.history-filter .ant-segmented { vertical-align: top; }
+
+.mobil-history .history-filter { overflow: visible; }
+
+.mobil-history .history-filter .ant-segmented-group { flex-wrap: wrap; gap: var(--space-1); }
+
+.mobil-history .history-filter .ant-segmented-item-label { min-height: var(--target-touch); display: flex; align-items: center; white-space: normal; }
+
+.mobil-history .tl-item { min-width: 0; padding: var(--pano-card-padding); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+
+.mobil-history .tl-change { flex-wrap: wrap; }
+
+.mobil-history .history-heading { margin: 0; font: inherit; }
+
+.mobil-history .history-entry .tl-title { margin: 0; }
+
+.mobil-history .history-timeline { margin-block-start: var(--space-4); }
+
+@media (max-width: 767px), (max-height: 480px) {
+  .mobil-history .history-timeline :is(.ant-timeline-item-icon, .ant-timeline-item-rail) { display: none; }
+}
+
+.mobil-history .history-change-values { display: grid; gap: var(--space-3); margin: 0; }
+
+.mobil-history .history-change-values dt { font-size: var(--pano-font-helper); color: var(--color-text-secondary); }
+
+.mobil-history .history-change-values dd { margin: 0; min-width: 0; overflow-wrap: break-word; }
+
+.mobil-history .history-filter .ant-radio-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); width: 100%; }
+
+.mobil-history .history-filter .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; min-height: var(--target-touch); height: auto; min-width: var(--target-touch); flex: 1 1 auto; white-space: normal; line-height: 1.5; }
+
+.mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus) { outline: none; box-shadow: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus-visible) { outline: 2px solid CanvasText !important; }
+}
+
+.history-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; align-items: start; }
+
+@media (min-width: 1100px) {
+  .history-grid { grid-template-columns: minmax(0, 3fr) minmax(280px, 1fr); }
+}
+
+@media (min-width: 1100px) {
+  .history-aside { position: sticky; top: 76px; }
+}
+
+.history-aside { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; }
+
+.history-aside .stat-list { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+
+.history-aside .stat-list > div { padding: 12px 0; border-bottom: 1px solid var(--color-border); }
+
+.history-aside .stat-list > div:first-child { padding-top: 0; }
+
+.history-aside .stat-list > div:last-child { border-bottom: 0; padding-bottom: 0; }
+
+.history-aside .ant-statistic-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2px; }
+
+.history-aside .ant-statistic-content { font-size: 24px; font-weight: 600; line-height: 1.2; font-variant-numeric: tabular-nums; }
+
+.history-aside .is-text .ant-statistic-content { font-size: 16px; line-height: 1.4; }
+
+.k-timeline.ant-timeline { padding-top: 4px; }
+
+.k-timeline .ant-timeline-item-content, .k-timeline .ant-steps-item-content { font-size: 16px; }
+
+.tl-dot { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); }
+
+.tl-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; padding-bottom: 8px; }
+
+.tl-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
+
+.tl-title { font-size: 16px; font-weight: 600; }
+
+.tl-date { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+
+.tl-reason { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; margin: 0; }
+
+.tl-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 14px; color: var(--color-text-secondary); min-width: 0; }
+
+.tl-meta .ant-avatar { font-weight: 600; flex-shrink: 0; }
+
+.tl-notes { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.tl-change { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-width: 0; font-size: 16px; }
+
+.tl-change .ant-tag { max-width: 100%; white-space: normal; height: auto; min-height: 24px; display: inline-flex; align-items: center; }
+
+.tl-change .tl-arrow { display: inline-flex; color: var(--color-text-secondary); }
+
+.history-filter { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; min-width: 0; }
+
+.history-filter .ant-segmented { max-width: 100%; }
+
+.history-filter .ant-segmented-item-label { font-size: 14px; min-height: 36px; line-height: 36px; padding: 0 12px; }
+
+.stat-ico.is-ok { color: var(--color-status-ok); }
+
+.stat-ico.is-hold { color: var(--color-status-hold); }
+
+.stat-ico.is-harm { color: var(--color-status-harm); }

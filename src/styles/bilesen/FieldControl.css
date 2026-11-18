@@ -1,0 +1,75 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.cell-input, .cell-input.ant-select .ant-select-selector, .cell-input.ant-input, .cell-input.ant-input-number { box-shadow: none !important; border-color: transparent !important; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.chip { min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important; }
+
+.rate-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+
+.field-extra { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
+
+.field-extra { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+.field-required { font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 4px; }
+
+.unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
+
+.tooltip-list { margin: 0; padding: 0 0 0 16px; display: grid; gap: 4px; font-size: 14px; line-height: 1.45; }
+
+.tooltip-list strong { font-weight: 600; }
+
+.field.is-compact { display: grid; grid-template-columns: minmax(0, 1fr); min-width: 0; }
+
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-strong); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: var(--form-text-body); line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+
+.chip svg { flex-shrink: 0; }
+
+.chip:hover { border-color: var(--color-text-secondary); }
+
+.chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
+
+.chip.is-selected svg { color: var(--color-action-primary); }
+
+.chip:disabled { cursor: not-allowed; color: var(--color-text-secondary); box-shadow: none; }
+
+.plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
+
+.plain-list .ant-checkbox-wrapper { min-height: 44px; align-items: center; font-size: 16px; margin: 0; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
+
+.plain-list .ant-checkbox-wrapper:last-child { border-bottom: 0; }
+
+.toggle-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
+
+.toggle-text { font-size: 16px; color: var(--color-text-primary); }
+
+.rate-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
+
+.rate-field .ant-rate { display: flex; flex-wrap: wrap; font-size: 26px; line-height: 1; }
+
+.rate-field .ant-rate .ant-rate-star { margin-inline-end: 0; }
+
+.rate-field .ant-rate-star > [role='radio'] { display: flex; align-items: center; justify-content: center; min-width: var(--target-touch); min-height: var(--target-touch); }
+
+.cell-input.ant-input, .cell-input.ant-input-number, .cell-input.ant-picker, .cell-input.ant-select, .cell-input.ant-input-number-group-wrapper .ant-input-number, .cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { background: transparent !important; border-radius: 0 !important; border-bottom: 1px solid var(--color-border) !important;
+  transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+
+.cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { color: var(--color-text-secondary); }
+
+.cell-input.ant-input:hover, .cell-input.ant-input:focus, .cell-input.ant-input-number:hover, .cell-input.ant-input-number-focused, .cell-input.ant-picker:hover, .cell-input.ant-picker-focused, .cell-input.ant-select:hover, .cell-input.ant-select-focused, .cell-input.ant-select-open, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number-group-addon, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number-group-addon { border-bottom-color: var(--color-border-strong) !important; background: var(--color-surface-context) !important; }
+
+.cell-input.ant-input-number-disabled, .cell-input.ant-input-number-disabled:hover { border-bottom-color: transparent !important; background: transparent !important; }
+
+.cell-input.ant-select .ant-select-suffix { margin-inline-end: 4px; color: var(--color-text-secondary); }
+
+.cell-input .ant-select-content-placeholder, .cell-input .ant-select-placeholder, .cell-input.ant-input::placeholder, .cell-input .ant-input-number-input::placeholder, .cell-input .ant-picker-input > input::placeholder { color: var(--color-text-secondary); opacity: 1; }
+
+.repeater-cell-help { display: block; font-size: var(--form-text-helper); line-height: 1.5; color: var(--color-text-secondary); }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }

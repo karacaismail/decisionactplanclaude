@@ -1,3 +1,7 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-card.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/ekran/PlansScreen.css'
 import { BACKUP_DAYS } from '@/engine/backup'
 import { useMemo, useRef, useState, type ChangeEvent } from 'react'
 import { App as AntApp, Button, Card, Dropdown, Empty, Input, Modal, Pagination, Popconfirm, Progress, Select, Statistic, Tag } from 'antd'
@@ -11,9 +15,6 @@ import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { planPosition, type PlanPosition } from '@/engine/position'
-import '@/styles/screens-pano.css'
-import '@/styles/mobil-pano.css'
-
 /** Doğrulama seviyesinin en üst basamağı. Beş temel kapı geçilince 5 olur. */
 const MAX_LEVEL = 5
 const PAGE_SIZE = 10

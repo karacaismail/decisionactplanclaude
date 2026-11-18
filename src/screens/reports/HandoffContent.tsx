@@ -1,3 +1,8 @@
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/cikti-ortak.css'
+import '@/styles/ekran/HandoffContent.css'
+import '@/styles/yazdirma/yazdirma.css'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { Button, Collapse, Descriptions, Empty, Grid, Progress, Segmented, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -27,11 +32,6 @@ import { CONDITION_LABEL, DISSENT_LABEL, RELATION_LABEL, type ConditionStatus } 
 import { BLIND_SPOT_LABEL } from '@/engine/blindspots'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-devir.css'
-import '@/styles/mobil-cikti.css'
-import '@/styles/print.css'
-
 /** İçindekiler ve bölüm kimlikleri. Sıra raporun sırasıdır. */
 const SECTIONS = [
   { id: 'devir-karar', toc: '1. Karar sorusu' },

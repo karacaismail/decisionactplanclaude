@@ -1,3 +1,9 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/ekran/HistoryScreen.css'
 import { useId, useState } from 'react'
 import { Avatar, Card, Empty, Radio, Statistic, Tag, Timeline } from 'antd'
 import { DoorOpen, Flag, PencilSimpleLine } from '@phosphor-icons/react'
@@ -7,10 +13,6 @@ import { PageHeader } from '@/components/PageHeader'
 import { formatDate, formatMoney } from '@/engine/format'
 import { OUTCOME_LABEL, TRANSITION_LABEL, type ChangeRecord, type Decision, type TransitionOutcome, type TransitionRecord } from '@/data/types'
 import { DECISIONS } from '@/data/decisions'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-pano.css'
-import '@/styles/mobil-pano.css'
-
 type Filter = 'hepsi' | 'kararlar' | 'gecis' | 'degisiklikler'
 type Entry = { kind: 'karar'; at: string; d: Decision } | { kind: 'gecis'; at: string; t: TransitionRecord } | { kind: 'degisiklik'; at: string; c: ChangeRecord }
 

@@ -1,0 +1,43 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.k-card.is-plain.ant-card > .ant-card-body { gap: 0; }
+
+.stat-grid.is-three > .is-wide { grid-column: 1 / -1; }
+
+@media (min-width: 860px) {
+  .stat-grid.is-three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (min-width: 860px) {
+  .stat-grid.is-three > .is-wide { grid-column: 1 / -1; }
+}
+
+@media (min-width: 1280px) {
+  .stat-grid.has-ring { grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(180px, 1fr); }
+}
+
+@media (min-width: 1280px) {
+  .stat-grid.has-ring > .is-wide { grid-column: auto; }
+}
+
+@media (min-width: 1280px) {
+  .stat-grid.is-three { grid-template-columns: repeat(3, minmax(0, 1fr)) minmax(0, 2fr); }
+}
+
+@media (min-width: 1280px) {
+  .stat-grid.is-three > .is-wide { grid-column: auto; }
+}
+
+.stat-note.is-badge { display: flex; align-items: center; gap: 8px; }
+
+.criterion-icon.is-ok { color: var(--color-status-ok); }
+
+.criterion-icon.is-harm { color: var(--color-status-harm); }
+
+.criterion-icon.is-muted { color: var(--color-text-secondary); }
+
+.tl-dot.is-ok { color: var(--color-status-ok); background: var(--color-status-ok-bg); }
+
+.tl-dot.is-harm { color: var(--color-status-harm); background: var(--color-status-harm-bg); }
+
+.tl-dot.is-hold { color: var(--color-status-hold); background: var(--color-status-hold-bg); }

@@ -1,0 +1,15 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.ant-drawer.k-drawer .ant-drawer-header, .ant-drawer.k-drawer .ant-drawer-body, .ant-drawer.k-drawer .ant-drawer-footer { background: var(--color-surface-work) !important; color: var(--color-text-primary); }
+
+.ant-drawer.k-drawer .ant-drawer-header { border-bottom: 1px solid var(--color-border); }
+
+.ant-drawer.k-drawer .ant-drawer-footer { border-top: 1px solid var(--color-border); padding: 12px 20px; }
+
+.ant-drawer.k-drawer .ant-drawer-title { font-size: 20px; font-weight: 600; color: var(--color-text-primary); }
+
+.ant-drawer.k-drawer .ant-drawer-close { color: var(--color-text-secondary) !important; }
+
+.ant-drawer.k-drawer .ant-descriptions-title { font-size: 18px; font-weight: 600; white-space: normal; }
+
+.ant-drawer.k-drawer .ant-descriptions-item-label { width: 120px; }

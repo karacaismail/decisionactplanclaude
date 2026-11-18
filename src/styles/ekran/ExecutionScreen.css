@@ -1,0 +1,67 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.karar-step-count { font-variant-numeric: tabular-nums; }
+
+.devralma-table .ant-table-cell { font-size: 16px; vertical-align: top; }
+
+.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
+
+.mobil-kapi-page .substage-title { word-break: normal; overflow-wrap: normal; }
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .renewal-form .ant-btn { width: 100%; }
+}
+
+.strateji-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+
+@media (min-width: 1100px) {
+  .strateji-main { grid-column: 1; grid-row: 1; }
+}
+
+.strateji-empty { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.strateji-scope { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.substage-title { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.renewal-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; max-width: 72ch; }
+
+.renewal-form .field-label { display: block; margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+
+.renewal-form .ant-radio-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+
+.renewal-form .ant-radio-wrapper { min-height: 44px; align-items: center; font-size: 16px; white-space: normal; }
+
+.renewal-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: 4px; font-size: 16px; line-height: 1.5; }
+
+.renewal-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
+
+.renewal-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.renewal-item .ant-tag { margin: 0; font-size: 14px; }
+
+.renewal-item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+
+.question-pair { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+
+.question-pair > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
+
+.question-pair dt { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+
+.question-pair dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.decision-links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
+
+.decision-links a { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 44px; font-size: 16px; }
+
+.decision-links .ant-tag { margin: 0; font-size: 14px; }
+
+.card-heading { margin: 0; font: inherit; color: inherit; }
+
+.card-heading:focus { outline: 0; }

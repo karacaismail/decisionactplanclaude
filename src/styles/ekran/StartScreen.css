@@ -1,0 +1,81 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.section { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+
+.section + .section, .section.is-divided { border-top: 1px solid var(--color-border); padding-top: var(--space-8); }
+
+.section { background: var(--color-surface-work); border: 1px solid var(--color-border); border-radius: var(--radius-panel); box-shadow: none; }
+
+.section { padding: 24px; }
+
+.section + .section, .section.is-divided { border-top: 1px solid var(--color-border); padding-top: 24px; }
+
+.section-head.mt-section-head { min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-content); }
+
+.action-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; min-width: 0; }
+
+.pano-steps.ant-steps .ant-steps-item-title { font-size: 16px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary); }
+
+.pano-steps.ant-steps .ant-steps-item-content, .pano-steps.ant-steps .ant-steps-item-description { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; }
+
+.pano-steps.ant-steps .ant-steps-item-wait .ant-steps-item-title { color: var(--color-text-secondary); font-weight: 400; }
+
+.pano-steps.ant-steps .ant-steps-item { padding-bottom: 4px; min-height: 48px; }
+
+.entry-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+@media (min-width: 720px) {
+  .entry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.entry-card.ant-card { cursor: pointer; transition: box-shadow var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+
+.entry-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+
+.entry-card.ant-card.is-selected { background: var(--color-selected-bg); box-shadow: var(--shadow-float) !important; }
+
+.entry-card.ant-card > .ant-card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; padding: 20px; }
+
+.entry-head { display: flex; justify-content: space-between; align-items: center; min-height: 24px; }
+
+.entry-icon { display: inline-flex; color: var(--color-text-secondary); transition: color var(--motion-small) var(--motion-ease); }
+
+.entry-card.is-selected .entry-icon, .entry-check { color: var(--color-action-primary); }
+
+.entry-check { display: inline-flex; min-width: 20px; }
+
+.entry-card h3 { margin: 0; font-size: 18px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.entry-card p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.purpose-card.ant-card > .ant-card-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+
+.purpose-list { margin: 0; padding-left: 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.purpose-steps.ant-steps .ant-steps-item-icon { font-size: 14px; font-weight: 600; }
+
+.purpose-steps.ant-steps .ant-steps-item-title { font-size: 16px; }
+
+.mobil-start .entry-card.ant-card { transform: none; }
+
+.mobil-start .entry-card.ant-card:hover { transform: none; }
+
+.mobil-start-questions { margin: 0; padding-inline-start: var(--space-6); display: grid; gap: var(--space-2); }
+
+.mobil-start-actions { justify-content: stretch; }
+
+.mobil-start-continue.ant-btn { width: 100%; }
+
+@media (min-width: 768px) and (min-height: 481px) {
+  .mobil-start-actions { justify-content: flex-end; }
+}
+
+@media (min-width: 768px) and (min-height: 481px) {
+  .mobil-start-continue.ant-btn { width: auto; }
+}
+
+@media (max-height: 480px) and (max-width: 960px) {
+  .mobil-start .entry-grid { grid-template-columns: minmax(0, 1fr); }
+}

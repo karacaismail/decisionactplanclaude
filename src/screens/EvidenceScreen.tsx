@@ -1,3 +1,13 @@
+import '@/styles/desen/section-head.css'
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/k-drawer.css'
+import '@/styles/desen/k-form.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/ekran/EvidenceScreen.css'
 import { useId, useMemo, useState } from 'react'
 import { Button, Card, Checkbox, DatePicker, Descriptions, Drawer, Dropdown, Form, Input, Pagination, Popconfirm, Select, Statistic, Table, Tag, App as AntApp } from 'antd'
 import dayjs from 'dayjs'
@@ -11,9 +21,6 @@ import { ChartFrame } from '@/charts/ChartFrame'
 import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-kapi.css'
-import '@/styles/mobil-pano.css'
-
 const KIND_LABEL: Record<EvidenceKind, string> = { gozlem: 'Gözlem', tahmin: 'Tahmin', varsayim: 'Varsayım' }
 const KIND_OPTIONS = (Object.keys(KIND_LABEL) as EvidenceKind[]).map((k) => ({ value: k, label: KIND_LABEL[k] }))
 const LADDER_OPTIONS = LADDER.map((l) => ({ label: `${l.level}. ${l.label}`, value: l.level }))

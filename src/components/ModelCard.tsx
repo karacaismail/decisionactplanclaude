@@ -1,11 +1,9 @@
+import '@/styles/bilesen/ModelCard.css'
 import { Link } from 'react-router'
 import { stepHeading } from '@/data/registry'
 import { Badge, Card, Popover, Typography } from 'antd'
 import { ArrowSquareOut, ListNumbers } from '@phosphor-icons/react'
 import type { StepDef } from '@/data/schema'
-import '@/styles/screens-rapor.css'
-import '@/styles/mobil-token.css'
-
 export interface ModelEntry {
   g: number
   slug: string

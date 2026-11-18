@@ -1,0 +1,9 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.choice-list { display: grid; grid-template-columns: minmax(0, 1fr); border: 1px solid var(--color-border); border-radius: var(--radius-panel); overflow: hidden; }
+
+.choice-list { background: var(--color-surface-work); border: 1px solid var(--color-border); border-radius: var(--radius-panel); box-shadow: none; }
+
+.choice-list .choice { --focus-field-marker-start: var(--focus-marker-inset); }
+
+.choice-list.ant-radio-group { display: grid; }

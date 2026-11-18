@@ -1,0 +1,11 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
+
+.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--form-field-min)), 1fr)); gap: var(--space-4); min-width: 0; align-items: start; }
+
+.measure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
+
+.measure-divider.ant-divider { margin: 4px 0 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+
+.measure-divider.ant-divider .ant-divider-inner-text { padding-inline-start: 0; font-size: 16px; }

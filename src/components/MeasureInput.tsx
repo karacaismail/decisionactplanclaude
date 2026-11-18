@@ -1,3 +1,6 @@
+import '@/styles/desen/step-field.css'
+import '@/styles/desen/choice-buttons.css'
+import '@/styles/bilesen/MeasureInput.css'
 import { Divider, Form, Input, InputNumber, Radio } from 'antd'
 import { Info } from '@phosphor-icons/react'
 import type { Measure } from '@/data/types'

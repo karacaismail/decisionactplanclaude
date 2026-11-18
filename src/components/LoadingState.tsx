@@ -1,7 +1,5 @@
+import '@/styles/bilesen/LoadingState.css'
 import { Card, Skeleton } from 'antd'
-import '@/styles/screens-karar.css'
-import '@/styles/mobil-token.css'
-
 /**
  * Sayfa iskeleti: başlık satırı ve üç kart. Veri gelene kadar gösterilir.
  * Ekran okuyucu "Sayfa yükleniyor" duyar. Kart sayısı 1 ile 6 arasında seçilebilir.

@@ -1,0 +1,135 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.toggle-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+.toggle-row label { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.pano-card .toggle-row .ant-switch { flex-shrink: 0; margin-top: 1px; }
+
+.pano-card .toggle-row label { flex: 1 1 0; min-width: 0; }
+
+.row { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; min-height: 44px; padding: 8px 0; border-bottom: 1px solid var(--color-border); min-width: 0; box-sizing: border-box; }
+
+.row strong { font-weight: 600; }
+
+.row .helper { flex: 0 0 auto; }
+
+.total-cell.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+
+.score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-start, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-end, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-end { background: var(--color-surface-work) !important; }
+
+.score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-end { background: var(--color-surface-context) !important; }
+
+@media (hover: none) {
+  .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr:hover > td.ant-table-cell-fix-end { background: var(--color-surface-work) !important; }
+}
+
+.score-matrix .ant-table-content { scrollbar-width: auto; scrollbar-color: auto;
+  background:
+    linear-gradient(to right, var(--color-surface-work) 40%, transparent) 0 0 / 48px 100%,
+    linear-gradient(to left, var(--color-surface-work) 40%, transparent) 100% 0 / 48px 100%,
+    linear-gradient(to right, var(--color-shadow), transparent) 0 0 / 24px 100%,
+    linear-gradient(to left, var(--color-shadow), transparent) 100% 0 / 24px 100% !important;
+  background-repeat: no-repeat !important;
+  background-attachment: local, local, scroll, scroll !important; }
+
+.score-matrix .ant-table-content::-webkit-scrollbar { height: 8px; }
+
+.score-matrix .ant-table-content::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 4px; }
+
+.score-matrix .ant-table-content::-webkit-scrollbar-track { background: transparent; }
+
+.score-matrix { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+
+.score-matrix .ant-table-tbody > tr > td { padding-top: 6px !important; padding-bottom: 6px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
+
+.score-matrix .ant-rate { font-size: 20px; line-height: 1; white-space: nowrap; }
+
+.score-matrix .ant-rate-disabled .ant-rate-star { cursor: not-allowed; }
+
+.score-matrix .weight-row td { color: var(--color-text-secondary); background: var(--color-surface-context) !important; }
+
+.score-matrix .weight-row td:first-child { font-weight: 600; }
+
+.score-matrix .option-label { font-weight: 600; }
+
+.score-lock { padding: 10px 12px; background: var(--color-surface-context); border-radius: var(--radius-control); }
+
+.score-lock label { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); }
+
+.score-lock .ant-switch { flex-shrink: 0; }
+
+.score-matrix .score-table-frame { position: relative; min-width: 0; }
+
+.score-matrix .score-table-scroll { min-width: 0; max-width: 100%; overflow-x: auto; }
+
+.score-matrix .score-table-scroll .ant-table-wrapper, .score-matrix .score-table-scroll .ant-table-content { overflow: visible; max-width: none; }
+
+.score-matrix .ant-table-cell { white-space: normal; word-break: normal; overflow-wrap: normal; }
+
+.score-matrix .ant-rate { display: inline-flex; font-size: var(--kapi-title); line-height: 1; }
+
+.score-matrix .ant-rate .ant-rate-star { margin-inline-end: 0; }
+
+.score-matrix .ant-rate .ant-rate-star > [role='radio'] { position: relative;
+  display: grid;
+  place-items: center;
+  min-width: var(--target-touch);
+  min-height: var(--target-touch);
+  transform: none; }
+
+.score-matrix .ant-rate-star-first { display: none; }
+
+.score-matrix .ant-rate-star-second { transform: scale(1);
+  transition: transform var(--motion-micro) var(--motion-ease), color var(--motion-micro) var(--motion-ease); }
+
+.score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:hover .ant-rate-star-second, html[data-focus-mode='keyboard'] .score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:focus-visible .ant-rate-star-second { transform: scale(var(--kapi-star-hover-scale)); }
+
+.score-matrix .score-lock label { display: flex; align-items: center; min-height: var(--target-touch); }
+
+.score-matrix > .helper { margin: 0; }
+
+html[data-focus-mode='keyboard'] .score-table-scroll:focus-visible::before { display: none; }
+
+html[data-focus-mode='keyboard'] .score-table-frame:has(> .score-table-scroll:focus-visible)::before { content: '';
+  position: absolute;
+  inset-inline-start: calc(-1 * var(--space-2));
+  top: 0;
+  bottom: 0;
+  width: calc(var(--space-1) * .75);
+  background: var(--focus-marker);
+  pointer-events: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .score-table-frame:has(> .score-table-scroll:focus-visible)::before { display: none; }
+}
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .score-matrix :focus-visible { outline: 2px solid CanvasText !important; }
+}
+
+.mobil-kapi-page .kapi-switch-target { display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--target-touch);
+  min-height: var(--target-touch);
+  cursor: pointer; }
+
+.score-matrix .kapi-switch-target { display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--target-touch);
+  min-height: var(--target-touch);
+  cursor: pointer; }
+
+.mobil-kapi-page .kapi-switch-target .ant-switch { margin: 0; }
+
+.score-matrix .kapi-switch-target .ant-switch { margin: 0; }

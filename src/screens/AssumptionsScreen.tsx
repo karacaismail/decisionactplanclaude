@@ -1,3 +1,11 @@
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/task-card.css'
+import '@/styles/desen/temel-stats.css'
+import '@/styles/desen/cikti-ortak.css'
+import '@/styles/ekran/AssumptionsScreen.css'
 import { useId, useState } from 'react'
 import { Button, Card, Empty, Grid, Input, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
 import { Link, useNavigate } from 'react-router'
@@ -6,10 +14,6 @@ import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { stepPath } from '@/data/registry'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-temel.css'
-import '@/styles/mobil-cikti.css'
-
 /** Adım 10'daki varsayım satırı. Boş durum "Denenmedi" sayılır. */
 type Row = Record<string, unknown> & { _id: string }
 type Status = 'denenmedi' | 'dogrulandi' | 'curudu'

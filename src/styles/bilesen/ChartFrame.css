@@ -1,0 +1,98 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.section-head .section-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+.chart-view .ant-segmented-item-label { min-width: var(--hit-area-min) !important;
+  min-height: var(--hit-area-min) !important; }
+
+.section-head.mt-section-head { min-inline-size: 0;
+  max-inline-size: 100%;
+  gap: var(--gap-content); }
+
+.mobil-chart-frame .chart-view.ant-segmented .ant-segmented-item-label { min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--pano-font-helper); }
+
+.chart-frame :is(.chart-canvas, .chart-table-scroll) { min-width: 0; max-width: 100%; }
+
+.chart-table-scroll { overflow-x: auto; overscroll-behavior-x: contain; }
+
+.chart-data-table { width: 100%; border-collapse: collapse; font-size: var(--pano-font-body); }
+
+.chart-data-table caption { text-align: start; font-weight: 600; padding-block: var(--space-2); }
+
+.chart-data-table :is(th, td) { min-width: var(--pano-value-min);
+  text-align: start;
+  vertical-align: top;
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal; }
+
+.chart-data-table :is(th, td):first-child { min-width: var(--pano-column-min); }
+
+.chart-data-table th { font-weight: 600; }
+
+.chart-frame .chart-load-error { display: grid; gap: var(--space-2); justify-items: start; }
+
+@media (max-width: 767px), (max-height: 480px) and (max-width: 960px) {
+  :is(.mobil-overview, .mobil-insights, .mobil-evidence) .chart-card .ant-card-extra { flex-basis: 100%; margin-inline-start: 0; }
+}
+
+.mobil-chart-frame .chart-data:not(.sr-only) { min-width: 0; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; }
+
+html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-data:focus-visible::before, html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-visible::before { left: 0; }
+
+.mobil-chart-frame :is(.chart-error, .chart-load-error) { display: grid; gap: var(--space-2); justify-items: start; }
+
+.mobil-chart-frame :is(.chart-error, .chart-load-error) .ant-btn { min-height: var(--target-touch); }
+
+.mobil-chart-frame .sr-only { position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0; }
+
+.mobil-chart-frame .chart-table-scroll:not(.sr-only) { padding-block-end: var(--space-1); }
+
+html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-visible { background-image: linear-gradient(var(--focus-marker), var(--focus-marker));
+  background-size: 100% var(--pano-focus-thickness);
+  background-position: left bottom;
+  background-repeat: no-repeat;
+  background-attachment: scroll; }
+
+html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-visible::before { display: none; }
+
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-visible { background-image: none;
+    outline: 2px solid CanvasText !important; }
+}
+
+@media (max-width: 599px) {
+  .step-card.form-section.ant-card { padding: 0; }
+}
+
+.chart-frame { margin: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+
+.chart-frame .chart-canvas { min-width: 0; width: 100%; }
+
+.chart-frame .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.chart-view.ant-segmented { background: var(--color-surface-context); }
+
+.chart-view .ant-segmented-item-label { font-size: 14px; min-height: var(--target-touch); display: inline-flex; align-items: center; gap: 6px; }
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+.step-card.form-section { scroll-margin-top: 84px; }
+
+.step-card.form-section.is-closed.ant-card > .ant-card-head { padding-bottom: 16px; }

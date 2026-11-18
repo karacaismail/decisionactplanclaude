@@ -1,0 +1,17 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.k-result.ant-result { padding: 24px 8px; }
+
+.k-result .ant-result-title { font-size: 24px; font-weight: 600; }
+
+.k-result .ant-result-subtitle { font-size: 16px; color: var(--color-text-secondary); }
+
+.k-result .ant-result-icon svg { color: var(--color-status-ok); }
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .k-result .ant-result-extra { justify-items: stretch; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .k-result .ant-result-extra .ant-btn { width: 100%; }
+}

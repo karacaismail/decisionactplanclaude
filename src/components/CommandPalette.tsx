@@ -1,3 +1,4 @@
+import '@/styles/bilesen/CommandPalette.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Empty, Input, List, Modal } from 'antd'
 import { useNavigate } from 'react-router'
@@ -6,8 +7,6 @@ import { useCommandPalette } from './CommandPaletteButton'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { STEPS, stepPath, stepHeading } from '@/data/registry'
 import models from '@/data/models.json'
-import '@/styles/screens-karar.css'
-
 type Group = 'Kararlar' | 'Adımlar' | 'Yöntemler' | 'Ekranlar'
 interface Item {
   id: string

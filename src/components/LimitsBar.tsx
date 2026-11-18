@@ -1,9 +1,8 @@
+import '@/styles/bilesen/LimitsBar.css'
 import { Wallet, CalendarBlank, ArrowsClockwise, Gauge } from '@phosphor-icons/react'
 import type { PlanDoc } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { KpiStrip, StatTile } from './StatTile'
-import '@/styles/mobil-token.css'
-
 function values(plan: PlanDoc, retriesLeft?: number) {
   const { budgetKurus, deadline, retriesPerDecision, monthlyBurnKurus, cashKurus } = plan.limits
   const runway = monthlyBurnKurus && cashKurus ? Math.floor(cashKurus / monthlyBurnKurus) : null

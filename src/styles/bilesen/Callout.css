@@ -1,0 +1,25 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.note-title { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.06em; }
+
+.note.is-warn .note-title { color: var(--color-status-hold); }
+
+.note.is-danger .note-title { color: var(--color-status-harm); }
+
+.note-body { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+
+.mt-icon-inline { flex-shrink: 0;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline); }
+
+.note.mt-callout { gap: var(--gap-label);
+  padding: var(--padding-panel) var(--padding-note-edge); }
+
+.mt-callout > .note-title { gap: var(--gap-icon);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong); }
+
+.mt-callout > .note-title > .mt-callout-icon { flex-shrink: 0; }
+
+.mt-callout > .note-body { font-size: var(--font-body);
+  line-height: var(--line-body); }

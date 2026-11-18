@@ -1,0 +1,48 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+:is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-start, .mobil-evidence, .mobil-tasks, .mobil-history) { min-width: 0;
+  font-size: var(--pano-font-body); }
+
+:is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-start, .mobil-evidence, .mobil-tasks, .mobil-history) .ant-btn { min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  height: auto;
+  white-space: normal; }
+
+:is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-start, .mobil-evidence, .mobil-tasks, .mobil-history) :is(.ant-card-head-wrapper, .section-head, .section-actions) { min-width: 0;
+  flex-wrap: wrap;
+  gap: var(--space-2); }
+
+:is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-start, .mobil-evidence, .mobil-tasks, .mobil-history) :is(.ant-card-head-title, .ant-card-extra) { min-width: 0;
+  white-space: normal; }
+
+:is(.mobil-overview, .mobil-insights) :is(.ant-card-extra a, .insight-empty-link) { display: inline-flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  max-width: 100%;
+  white-space: normal; }
+
+:is(.mobil-plans, .mobil-evidence) .ant-input-clear-icon:not(.ant-input-clear-icon-hidden) { display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--target-touch);
+  min-height: var(--target-touch); }
+
+:is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-evidence, .mobil-tasks, .mobil-history) .ant-tag { max-width: 100%;
+  height: auto;
+  white-space: normal;
+  overflow-wrap: break-word; }
+
+:is(.mobil-overview, .mobil-tasks, .mobil-history) .ant-tabs-tab, :is(.mobil-overview, .mobil-tasks, .mobil-history) .ant-tabs-nav-more { min-height: var(--target-touch); }
+
+:is(.mobil-overview, .mobil-tasks, .mobil-history) .ant-tabs-nav-more { min-width: var(--target-touch); }
+
+@media (max-width: 767px), (max-height: 480px) and (max-width: 960px) {
+  :is(.mobil-overview, .mobil-insights, .mobil-plans, .mobil-start, .mobil-evidence, .mobil-tasks, .mobil-history) .ant-card-head-wrapper { align-items: flex-start; }
+}
+
+@media (max-width: 767px), (max-height: 480px) and (max-width: 960px) {
+  :is(.mobil-evidence, .mobil-tasks) .ant-card-head .ant-card-extra { flex-basis: 100%; margin-inline-start: 0; }
+}
+
+html[data-focus-mode='keyboard'] :is(.mobil-chart-frame, .mobil-ladder, .mobil-history) .ant-segmented-item-input:focus-visible + .ant-segmented-item-label { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: var(--space-1); }

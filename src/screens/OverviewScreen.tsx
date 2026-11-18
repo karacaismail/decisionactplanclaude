@@ -1,3 +1,8 @@
+import '@/styles/desen/pano.css'
+import '@/styles/desen/pano-card.css'
+import '@/styles/desen/pano-ortak.css'
+import '@/styles/desen/form.css'
+import '@/styles/ekran/OverviewScreen.css'
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Card, Collapse, Descriptions, Empty, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
 import { Link, useNavigate } from 'react-router'
@@ -24,10 +29,6 @@ import { palette } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
 import { OUTCOME_LABEL, TRANSITION_LABEL, type Evidence, type PlanDoc, type Task } from '@/data/types'
 import type { StepDef } from '@/data/schema'
-import '@/styles/screens-pano.css'
-import '@/styles/screens-form.css'
-import '@/styles/mobil-pano.css'
-
 const two = (n: number) => String(n).padStart(2, '0')
 const today = () => new Date().toISOString().slice(0, 10)
 

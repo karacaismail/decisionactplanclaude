@@ -1,0 +1,27 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.temel-stats { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
+
+.temel-stats > .ant-card { min-width: 0; }
+
+.temel-stats .stat-card .ant-statistic { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; min-width: 0; }
+
+.temel-stats .stat-card .ant-statistic-title { margin-bottom: 0; }
+
+.temel-stats .stat-card .ant-statistic-content-prefix { display: inline-flex; align-self: center; margin-inline-end: 8px; }
+
+@media (min-width: 600px) {
+  .temel-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+}
+
+@media (min-width: 600px) {
+  .temel-stats > .is-wide { grid-column: 1 / -1; }
+}
+
+@media (min-width: 600px) {
+  .temel-stats .stat-card .ant-statistic { display: block; }
+}
+
+@media (min-width: 600px) {
+  .temel-stats .stat-card .ant-statistic-title { margin-bottom: 2px; }
+}

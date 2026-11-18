@@ -1,0 +1,27 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.save-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: end; min-width: 0; padding-top: 16px; border-top: 1px solid var(--color-border); }
+
+.save-row .helper { text-align: right; max-width: 100%; }
+
+.save-row .ant-btn { max-width: 100%; }
+
+@media (max-width: 479px) {
+  .save-row .ant-btn { width: 100%; }
+}
+
+@media (max-width: 479px) {
+  .save-row .helper { text-align: left; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .save-row { justify-items: stretch; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .save-row .ant-btn { width: 100%; }
+}
+
+@media (max-width: 767px), (max-height: 559px) {
+  .mobil-kapi-page .save-row .helper { text-align: start; }
+}

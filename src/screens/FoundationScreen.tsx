@@ -1,3 +1,10 @@
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/temel-stats.css'
+import '@/styles/desen/cikti-ortak.css'
+import '@/styles/ekran/FoundationScreen.css'
 import { useMemo, useState } from 'react'
 import { Card, Empty, Progress, Segmented, Statistic, Tag } from 'antd'
 import { Link } from 'react-router'
@@ -8,10 +15,6 @@ import { stepPath } from '@/data/registry'
 import { LEVELS, validationLevel } from '@/engine/readiness'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-temel.css'
-import '@/styles/mobil-cikti.css'
-
 type Filter = 'hepsi' | StoneStatus
 
 const FILTERS: { value: Filter; label: string }[] = [

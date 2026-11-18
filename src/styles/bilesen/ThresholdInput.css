@@ -1,0 +1,11 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.threshold-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+
+.unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
+
+.threshold-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--form-threshold-column-min)), 1fr)); gap: var(--space-4); min-width: 0; align-items: start; }
+
+.threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); min-width: 0; }
+
+.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; min-width: var(--hit-area-min); max-width: 100%; }

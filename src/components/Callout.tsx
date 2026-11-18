@@ -1,7 +1,7 @@
+import '@/styles/desen/note.css'
+import '@/styles/bilesen/Callout.css'
 import { Info, Lightbulb, Warning, ChatCircleText, FlagCheckered } from '@phosphor-icons/react'
 import type { ReactNode } from 'react'
-import '@/styles/mobil-token.css'
-
 export type CalloutTone = 'bilgi' | 'ipucu' | 'uyari' | 'ornek' | 'sonuc'
 
 const META: Record<CalloutTone, { label: string; Icon: typeof Info; cls: string }> = {

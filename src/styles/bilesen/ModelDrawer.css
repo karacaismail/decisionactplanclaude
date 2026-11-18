@@ -1,0 +1,150 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.howto { display: grid; gap: 6px; }
+
+.howto ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+
+.helper a { text-decoration: underline; text-underline-offset: 2px; }
+
+.tabular { font-variant-numeric: tabular-nums; }
+
+.mt-icon-inline { flex-shrink: 0;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline); }
+
+html[data-focus-mode='keyboard'] .ant-drawer.mt-model-drawer:focus-visible { position: fixed; }
+
+html[data-focus-mode='keyboard'] .ant-drawer.mt-model-drawer:focus-visible::before { left: auto;
+  right: var(--padding-panel);
+  top: var(--padding-panel);
+  bottom: auto;
+  height: var(--icon-control); }
+
+.mt-model-drawer .ant-drawer-content-wrapper { max-inline-size: 100vw; }
+
+.mt-model-drawer .ant-drawer-header, .mt-model-drawer .ant-drawer-body { padding: var(--padding-panel);
+  min-inline-size: 0; }
+
+.mt-model-drawer .ant-drawer-title { min-inline-size: 0;
+  font-size: var(--font-subsection-title);
+  line-height: var(--line-control);
+  font-weight: var(--weight-strong);
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: normal; }
+
+.mt-model-drawer .ant-drawer-close { flex-shrink: 0;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  inline-size: var(--hit-area-min);
+  block-size: var(--hit-area-min);
+  font-size: var(--icon-control); }
+
+.mt-model-drawer .ant-drawer-close:not(.ant-drawer-close-end) { margin-inline-end: var(--gap-control); }
+
+.mt-model-drawer .drawer-body, .mt-model-drawer .howto, .mt-model-drawer .howto-steps, .mt-model-drawer .howto-step-body { display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0; }
+
+.mt-model-drawer .drawer-body { align-content: start;
+  gap: var(--gap-content);
+  font-size: var(--font-body);
+  line-height: var(--line-body); }
+
+.mt-model-drawer .drawer-tags { display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-control);
+  min-inline-size: 0; }
+
+.mt-model-drawer .drawer-tags .ant-tag { margin: 0;
+  max-inline-size: 100%;
+  padding-inline: var(--padding-control-inline);
+  font-size: var(--font-helper);
+  line-height: var(--line-body);
+  white-space: normal;
+  word-break: normal; }
+
+.mt-model-drawer .mt-model-drawer-question { margin: 0;
+  font-size: var(--font-body);
+  line-height: var(--line-body); }
+
+.mt-model-drawer .howto { gap: var(--gap-control); }
+
+.mt-model-drawer .howto-title { margin: 0;
+  font-size: var(--font-subsection-title);
+  line-height: var(--line-control);
+  font-weight: var(--weight-strong);
+  color: var(--color-text-primary); }
+
+.mt-model-drawer .howto-steps { margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--gap-content);
+  font-size: var(--font-body); }
+
+.mt-model-drawer .howto-step { display: grid;
+  grid-template-columns: var(--size-step-marker) minmax(0, 1fr);
+  align-items: start;
+  gap: var(--gap-control);
+  min-inline-size: 0; }
+
+.mt-model-drawer .howto-no { display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: var(--size-step-marker);
+  block-size: var(--size-step-marker);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-context);
+  color: var(--color-text-primary);
+  font-size: var(--font-helper);
+  font-weight: var(--weight-strong);
+  line-height: var(--line-control); }
+
+.mt-model-drawer .howto-step-body { gap: var(--gap-label); }
+
+.mt-model-drawer .howto-step-title, .mt-model-drawer .howto-step-text { font-size: var(--font-body);
+  line-height: var(--line-body);
+  color: var(--color-text-primary);
+  overflow-wrap: break-word; }
+
+.mt-model-drawer .howto-step-title { font-weight: var(--weight-strong); }
+
+.mt-model-drawer .mt-model-drawer-link { justify-self: start;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+  max-inline-size: 100%;
+  height: auto;
+  padding: var(--padding-control-block) var(--padding-control-inline);
+  gap: var(--gap-icon);
+  font-size: var(--font-body);
+  line-height: var(--line-control);
+  white-space: normal;
+  text-align: start; }
+
+.visually-hidden { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
+
+.drawer-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.drawer-tags .ant-tag { margin: 0; }
+
+.howto { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-width: 0; }
+
+.howto-title { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); }
+
+.howto-steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
+
+.howto-step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--space-3); align-items: start; min-width: 0; }
+
+.howto-no { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-primary); font-size: 14px; font-weight: 600; line-height: 1; }
+
+.howto-step-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
+
+.howto-step-title { font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.howto-step-text { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }

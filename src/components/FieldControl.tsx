@@ -1,3 +1,7 @@
+import '@/styles/desen/field.css'
+import '@/styles/desen/step-field.css'
+import '@/styles/desen/choice-buttons.css'
+import '@/styles/bilesen/FieldControl.css'
 import type { ComponentProps, ReactNode } from 'react'
 import { Checkbox, DatePicker, Form, Input, InputNumber, Radio, Rate, Select, Switch, Tag } from 'antd'
 import { CalendarBlank, ChatCircleText, Check, Hash, Info, LinkSimple, Quotes, Star, TextAa, User } from '@phosphor-icons/react'

@@ -1,0 +1,20 @@
+/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+
+.ring { display: grid; place-items: center; width: 96px; height: 96px; position: relative; }
+
+.ring svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+.ring-text { position: relative; font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-hero-text); line-height: 1; }
+
+.ring-text span { font-size: 14px; font-weight: 400; color: var(--color-hero-muted); }
+
+.ring.mt-compass-art, .ozet .ring.mt-compass-art { width: var(--size-progress-ring);
+  height: var(--size-progress-ring); }
+
+@media (max-width: 479px) {
+  .ozet .ring { width: 96px; height: 96px; }
+}
+
+@media (max-width: 479px) {
+  .ozet .ring-text { font-size: 20px; }
+}

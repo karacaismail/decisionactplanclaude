@@ -1,3 +1,11 @@
+import '@/styles/desen/k-card.css'
+import '@/styles/desen/kapi-ortak.css'
+import '@/styles/desen/stat-card.css'
+import '@/styles/desen/ring-card.css'
+import '@/styles/desen/table-scroll.css'
+import '@/styles/desen/kapi.css'
+import '@/styles/desen/mobil-kapi-page.css'
+import '@/styles/ekran/TransitionContent.css'
 import { useMemo, useState } from 'react'
 import { Card, Grid, Progress, Statistic, Steps, Table, Tag, Timeline } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
@@ -12,10 +20,6 @@ import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { TransitionPanel, TransitionTag } from '@/components/TransitionPanel'
-import '@/styles/mobil-kapi.css'
-import '@/styles/screens-kapi.css'
-import '@/styles/screens-gecis.css'
-
 const icon = (v: boolean | null) =>
   v === true ? (
     <span className="criterion-icon is-ok"><CheckCircle size={20} weight="fill" aria-label="Karşılandı" /></span>
