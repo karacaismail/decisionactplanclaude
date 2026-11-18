@@ -4,7 +4,7 @@ import { emptyPlan, type PlanDoc, type Task } from './types'
  * Örnek plan: Ayakkabı şirketi. Gerçek bir işletmenin yapısına dayanır.
  * Kullanıcı yalnız ekip yapısını ve satış yollarını verdi.
  * Para, ciro, fiyat, müşteri sayısı ve hata oranı verilmedi. Bu alanlar boş kalır.
- * Boş alanlar kapı ölçütlerinde eksik görünür. Araç eksik bilgiyi uydurmaz.
+ * Boş alanlar kontrol ölçütlerinde eksik görünür. Araç eksik bilgiyi uydurmaz.
  */
 
 export const SHOE_DEMO_ID = 'ornek-ayakkabi-sirketi'
@@ -71,7 +71,7 @@ function task(id: string, action: string, owner: string, acceptance: string, sou
  * Ayakkabı şirketi örneği. Çalışan bir işletme sıradaki stratejisini hazırlar.
  * Patron işi devralmıyor. Uygulamada çalışan iş için tek giriş "devralma" girişidir.
  * Bu yüzden giriş ve başlangıç "devralma" seçilir. Açıklama bu farkı yazar.
- * Hiçbir kapı kararı kaydedilmedi. Eksikler kapı ölçütlerinde görünür.
+ * Hiçbir kontrol kararı kaydedilmedi. Eksikler kontrol ölçütlerinde görünür.
  */
 export function buildShoeDemoPlan(): PlanDoc {
   const p = emptyPlan(SHOE_DEMO_ID, SHOE_DEMO_NAME)

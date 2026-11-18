@@ -82,7 +82,7 @@ describe('ayakkabı örneği', () => {
     expect(json).not.toMatch(/Kurus"\s*:\s*\d/)
   })
 
-  it('kapı 1 eksikleri gösterir', () => {
+  it('kontrol 1 eksikleri gösterir', () => {
     const p = buildShoeDemoPlan()
     const ev = evaluateGate(DECISIONS[0].gate, p)
     expect(ev.criteria.profil).toBe(false)
