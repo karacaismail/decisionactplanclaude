@@ -10,13 +10,13 @@ function values(plan: PlanDoc, retriesLeft?: number) {
     { Icon: Wallet, label: 'Toplam harcama sınırı', value: budgetKurus ? formatMoney(budgetKurus) : 'Yazılmadı' },
     { Icon: CalendarBlank, label: 'Bitiş tarihi', value: deadline ? formatDate(deadline, false) : 'Yazılmadı' },
     { Icon: ArrowsClockwise, label: 'Kalan deneme hakkı', value: retriesLeft !== undefined ? String(retriesLeft) : retriesPerDecision ? `${retriesPerDecision} / karar` : 'Yazılmadı' },
-    { Icon: Gauge, label: 'Pist', value: runway !== null ? `${runway} ay` : 'Hesaplanmadı' },
+    { Icon: Gauge, label: 'Kasa süresi', value: runway !== null ? `${runway} ay` : 'Hesaplanmadı' },
   ]
 }
 
 /**
- * Üç sınır ve pist.
- * `compact` karar ve kapı ekranlarında kısa özeti gösterir.
+ * Üç sınır ve kasa süresi.
+ * `compact` karar ve kontrol ekranlarında kısa özeti gösterir.
  * Şerit biçimi yalnız plan özetinde durur.
  */
 export function LimitsBar({ plan, retriesLeft, compact }: { plan: PlanDoc; retriesLeft?: number; compact?: boolean }) {

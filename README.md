@@ -14,15 +14,15 @@ Yazılım üç ana kümeden oluşur. Kümeler sırayla açılır.
 
 | Sıra | Ana küme | İçerik | Bitiş |
 |---|---|---|---|
-| 1 | Strateji öncesi hazırlık | Karar 1 ile Karar 5 arası. Adım 00 ile Adım 18 arası. Sonra geçiş kapısı. | Geçiş kararı |
+| 1 | Strateji öncesi hazırlık | Karar 1 ile Karar 5 arası. Adım 00 ile Adım 18 arası. Sonra hazırlık kontrolü. | Hazırlık kararı |
 | 2 | Strateji oluşturma | Beş zorunlu alt aşama: teşhis, seçenekler, sınama, seçim ve vazgeçiş, ana hamleler. | Onaylanmış strateji belgesi |
-| 3 | Strateji uygulama | Beş zorunlu alt aşama: hedef ve gösterge, işler ve sorumlular, kaynak ve bütçe, yürütme, sınama ve yenileme. | Çıkış kapısı yoktur. Küme bir döngüdür. |
+| 3 | Strateji uygulama | Beş zorunlu alt aşama: hedef ve gösterge, işler ve sorumlular, kaynak ve bütçe, yürütme, sınama ve yenileme. | Çıkış kontrolü yoktur. Küme bir döngüdür. |
 
 Bir ana küme ancak olmazsa olmaz ise eklenir. İncelenen 18 çerçevenin 15'i oluşturmayı ve uygulamayı ayrı ana aşama sayıyor. Başka hiçbir aşama bu orana yaklaşmıyor. Sayım [docs/sonraki-ana-asamalar-plani.md](docs/sonraki-ana-asamalar-plani.md) dosyasındadır.
 
 Strateji uygulamanın son alt aşaması şu soruyu sorar: "Seçim hâlâ doğru mu?" Karar sahibi "Yeniden aç" derse iş strateji oluşturmaya geri döner.
 
-Geçiş kapısının üç sonucu vardır: "Planlamaya hazır", "Koşullu hazır" ve "Henüz hazır değil". Temel verisi sonradan değişirse geçiş kararı yeniden inceleme ister. Kilit ve eskime kurallarının tamamı [süreç haritasındadır](docs/surec-haritasi.md).
+Hazırlık kontrolünün üç sonucu vardır: "Planlamaya hazır", "Koşullu hazır" ve "Henüz hazır değil". Temel verisi sonradan değişirse hazırlık kararı yeniden inceleme ister. Kilit ve eskime kurallarının tamamı [süreç haritasındadır](docs/surec-haritasi.md).
 
 Uygulama telefon için tasarlanır. Ant Design, ECharts ve Phosphor Icons kullanır. Sunucu yoktur. Veri tarayıcıda durur.
 
@@ -34,6 +34,7 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 
 - Güncel süreç, kilitler ve eskime kuralları: [docs/surec-haritasi.md](docs/surec-haritasi.md)
 - Alan adları: [docs/alan-sozlesmesi.md](docs/alan-sozlesmesi.md)
+- Ekranda görünen terimler: [docs/terim-sozlugu.md](docs/terim-sozlugu.md)
 - Strateji tanımı, boşluk analizi ve uygulama notu: [docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md](docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md)
 - Gerçek deneme föyü: [docs/gercek-deneme-foyu.md](docs/gercek-deneme-foyu.md)
 - Arka yüz için bütünleşik geliştirme raporu: [docs/butunlesik-gelistirme-raporu.md](docs/butunlesik-gelistirme-raporu.md)
@@ -44,7 +45,7 @@ Sürecin tek güncel kaynağı [süreç haritasıdır](docs/surec-haritasi.md). 
 - Codex önerilerinin uygulama notu: [docs/codex-onerileri-uygulama-notu.md](docs/codex-onerileri-uygulama-notu.md)
 - Codex uygulamasıyla karşılaştırma ve veri bütünlüğü kuralları: [docs/codex-uygulamasi-karsilastirma-raporu.md](docs/codex-uygulamasi-karsilastirma-raporu.md)
 - Araştırma analizi ve yedi ekleme: [docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md](docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md)
-- Strateje devir raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
+- Strateje teslim raporunun planı: [docs/strateje-devir-uygulama-plani.md](docs/strateje-devir-uygulama-plani.md)
 - Amaç ve ilk boşluk analizi: [docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md](docs/stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md)
 - İlk ön yüz uygulama planı: [docs/uygulama-plani-on-yuz.md](docs/uygulama-plani-on-yuz.md)
 - Uzlaşmış ön yüz planı: [docs/act_components_uzlasma.md](docs/act_components_uzlasma.md)
@@ -72,7 +73,7 @@ Kapı, kodu denetleyen bir kontroldür. Kapı bir hata bulursa iş durur. Üç k
 
 ## Çıktılar ve sürümler
 
-Çıktılar ekranı üç belge üretir: strateje devir raporu, yönetici raporu ve girişimci aksiyon planı. Her kapı kararı bir sürüm kaydeder. "Sürüm" seçicisinden eski bir sürümü açabilirsiniz. "Bu sürümü sabitle" düğmesi güncel taslağı yeni sürüm olarak kaydeder. Örnek planda rapor başında "Örnek plan. Gerçek veri değildir." uyarısı görünür.
+Çıktılar ekranı üç belge üretir: strateje teslim raporu, yönetici raporu ve girişimci aksiyon planı. Her kontrol kararı bir sürüm kaydeder. "Sürüm" seçicisinden eski bir sürümü açabilirsiniz. "Bu sürümü sabitle" düğmesi güncel taslağı yeni sürüm olarak kaydeder. Örnek planda rapor başında "Örnek plan. Gerçek veri değildir." uyarısı görünür.
 
 ## Yazım kuralı
 

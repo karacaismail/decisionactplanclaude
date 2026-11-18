@@ -88,7 +88,7 @@ export const KARAR5: StepDef[] = [
           { key: 'monthlyPerCustomerKurus', type: 'money', label: 'Bir müşteriden aylık gelen para (orta durum)', span: 12 },
           { key: 'acquisitionKurus', type: 'money', label: 'Bir müşteriyi getirme gideri (orta durum)', span: 12 },
           { key: 'paybackMonths', type: 'number', label: 'Müşteri kazanma gideri kaç ayda geri gelir?', unit: 'ay', min: 0, max: 60, span: 12 },
-          { key: 'collectionDays', type: 'number', label: 'Para kaç günde elinize geçer?', help: 'Müşteri vadeyle ödüyorsa vadeyi yazın. Vade pisti kısaltır.', unit: 'gün', min: 0, max: 365, span: 12 },
+          { key: 'collectionDays', type: 'number', label: 'Para kaç günde elinize geçer?', help: 'Müşteri vadeyle ödüyorsa vadeyi yazın. Vade kasa süresini kısaltır.', unit: 'gün', min: 0, max: 365, span: 12 },
           { key: 'paybackNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Müşteri kazanma gideri 12 aydan geç geri geliyor. Kanal varsayımını Adım 24\'te ilk test edin.', when: { all: [{ field: { key: 'paybackMonths', truthy: true } }, { not: { field: { key: 'paybackMonths', in: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12] } } }] } },
           { key: 'freeServiceInfo', type: 'info', label: 'Ücretsiz hizmet', tone: 'ipucu', text: 'Ücretsiz hizmette teslim başına gider hesaplanır. Toplam gideri başarıyla tamamlanan hizmet sayısına bölün. Hizmeti hiç alamayanları ayrıca sayın. Tamamlanan hizmet yoksa birim gider hesaplanamaz.', when: { profile: { paid: [false] } } },
         ],
@@ -165,7 +165,7 @@ export const KARAR5: StepDef[] = [
     ],
     output: 'Tek sayfalık iş planı. Üç durumlu para tablosu. Üç hesap. En kırılgan sayı.',
     outcomeTable: [
-      { condition: 'Orta durumda bile katkı sıfır veya eksi', result: 'Fiyatı veya maliyeti değiştirin. Kapı 5\'ten geçmeyin.' },
+      { condition: 'Orta durumda bile katkı sıfır veya eksi', result: 'Fiyatı veya maliyeti değiştirin. Kontrol 5\'ten geçmeyin.' },
       { condition: 'Müşteri kazanma gideri 12 aydan geç geri geliyor', result: 'Kanal varsayımını Adım 24\'te ilk test edin.' },
       { condition: 'En kırılgan sayı test edilmemiş bir varsayım', result: 'Adım 10\'daki tabloya "kritik" diye ekleyin.' },
     ],
@@ -178,7 +178,7 @@ export const KARAR5: StepDef[] = [
         const mid = num(v.contributionMid)
         const days = rows(v.paymentDays).filter((r) => num(r.balanceAfterKurus) !== null)
         const parts: string[] = []
-        if (mid !== null) parts.push(mid > 0 ? `Orta durumda katkı ${formatMoney(mid)}.` : 'Orta durumda katkı sıfır veya eksi. Kapı 5\'ten geçmeyin.')
+        if (mid !== null) parts.push(mid > 0 ? `Orta durumda katkı ${formatMoney(mid)}.` : 'Orta durumda katkı sıfır veya eksi. Kontrol 5\'ten geçmeyin.')
         if (days.length) {
           const minRow = days.reduce((a, b) => (Number(a.balanceAfterKurus) <= Number(b.balanceAfterKurus) ? a : b))
           const minBal = Number(minRow.balanceAfterKurus)
@@ -241,7 +241,7 @@ export const KARAR5: StepDef[] = [
     who: 'Kurucu. Dış göz katılırsa daha iyidir.',
     timebox: '2 ile 3 gün.',
     shortPath: true,
-    whenNote: 'Kapı 5 risk tablosunu bu adımdan okur. Bu yüzden adım kısa yolda da görünür.',
+    whenNote: 'Kontrol 5 risk tablosunu bu adımdan okur. Bu yüzden adım kısa yolda da görünür.',
     intro: 'Ön ölüm analizi, işin battığını hayal edip nedenleri önceden yazmaktır. Böylece önlem erken alınır.',
     howTo: [
       '"Bu iş 12 ay sonra battı" diye düşünün. En olası 5 nedeni yazın.',
@@ -626,7 +626,7 @@ export const KARAR5: StepDef[] = [
   },
   {
     id: '20',
-    code: 'Çıkış kapısı',
+    code: 'Çıkış kontrolü',
     decision: 9,
     title: 'Strateji belgesi',
     question: 'Kararınızı iki sayfada anlatabiliyor musunuz?',

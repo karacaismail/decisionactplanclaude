@@ -91,13 +91,13 @@ test('aynı görünen yollar uyarı verir ve rapora yazılır', async ({ page })
   await expect(page.locator('#devir-yollar').getByRole('alert').filter({ hasText: 'Yol denetimi' })).toContainText('aynı görünüyor')
 })
 
-test('geçiş kapısı talep kanıtındaki karşı bulguyu uyarı olarak gösterir', async ({ page }) => {
+test('hazırlık kontrolü talep kanıtındaki karşı bulguyu uyarı olarak gösterir', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/gecis')
   await expect(page.locator('main')).toContainText('Talep kanıtında karşı bulgu var: Üç kişi fiyatı yüksek buldu.')
 })
 
-test('ayrı görüş Adım 17\'de yazılır ve devir raporunda görünür', async ({ page }) => {
+test('ayrı görüş Adım 17\'de yazılır ve teslim raporunda görünür', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/karar/5/adim/17')
   await optionalTab(page)

@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 /**
  * Araştırma analizinden gelen yedi ekleme ve rol dili.
  * Kural docs/arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md dosyasındadır.
- * Bu alanların hepsi isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü değildir.
+ * Bu alanların hepsi isteğe bağlıdır. Hiçbiri hazırlık kontrolünün ölçütü değildir.
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
@@ -57,7 +57,7 @@ async function expand(page: Page, title: string) {
 
 const section = (page: Page, title: string) => page.locator('.form-section').filter({ has: page.locator('.ant-card-head-title', { hasText: title }) })
 
-test('devir raporu her yolun para mantığını, kurma yolunu ve kanıt türünü gösterir', async ({ page }) => {
+test('teslim raporu her yolun para mantığını, kurma yolunu ve kanıt türünü gösterir', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/devir')
   const paths = page.locator('#devir-yollar')
@@ -71,7 +71,7 @@ test('devir raporu her yolun para mantığını, kurma yolunu ve kanıt türün�
   await designRules(page, 'main', 'devir yollar')
 })
 
-test('devir raporunun sonunda altı soru ve cevapları durur', async ({ page }) => {
+test('teslim raporunun sonunda altı soru ve cevapları durur', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/devir')
   const card = page.locator('#devir-alti-soru')

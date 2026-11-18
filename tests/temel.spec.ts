@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Temel taşları ve varsayım panosu (docs/uygulama-plani-on-yuz.md, Adım 4).
+ * Temel sorular ve varsayım panosu (docs/uygulama-plani-on-yuz.md, Adım 4).
  * Örnek plan açılır. Taş kartları, süzgeç, adım bağlantısı ve varsayım durumu sınanır.
  */
 
@@ -36,10 +36,10 @@ async function smallText(page: Page) {
   )
 }
 
-test('temel taşları: 20 kart görünür, süzgeç daraltır, kart adımı açar', async ({ page }) => {
+test('temel sorular: 20 kart görünür, süzgeç daraltır, kart adımı açar', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/temel')
-  await expect(page.getByRole('heading', { level: 1, name: 'Strateji öncesi 20 temel taşı' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Strateji öncesi 20 temel soru' })).toBeVisible()
   const cards = page.locator('.stone-card')
   await expect(cards).toHaveCount(20)
   await expect(page.getByText('Var ama dayanağı zayıf.')).toBeVisible()
@@ -62,7 +62,7 @@ test('temel taşları: 20 kart görünür, süzgeç daraltır, kart adımı aça
   await expect(page).toHaveURL(/#\/karar\/\d+\/adim\/\d+/)
 })
 
-test('temel taşları: kart klavyeyle açılır ve çevreleyen halka çizilmez', async ({ page, browserName, viewport }) => {
+test('temel sorular: kart klavyeyle açılır ve çevreleyen halka çizilmez', async ({ page, browserName, viewport }) => {
   test.skip((viewport?.width ?? 0) < 1024, 'Klavye yolu masaüstünde sınanır')
   await openDemo(page)
   await page.goto('/#/temel')
@@ -92,7 +92,7 @@ test('varsayım panosu: kart görünür, "Çürüdü" seçilince uyarı çıkar 
   const cards = page.locator('.assumption-card')
   await expect(cards.first()).toBeVisible()
   expect(await cards.count()).toBeGreaterThanOrEqual(1)
-  const warning = page.getByText('Çürüyen varsayım var. Geçiş kapısında bunu not edin.')
+  const warning = page.getByText('Çürüyen varsayım var. Hazırlık kontrolünde bunu not edin.')
   await expect(warning).toHaveCount(0)
   await noHorizontalOverflow(page, 'varsayımlar')
   expect(await smallText(page), '14 px altı metin').toEqual([])

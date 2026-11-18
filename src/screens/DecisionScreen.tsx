@@ -19,7 +19,7 @@ import { Callout } from '@/components/Callout'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { modelByIndex } from '@/components/ModelChip'
-/** "Kapı 1'e git", "Kapı 2'ye git" gibi doğru ek. */
+/** "Kontrol 1'e git", "Kontrol 2'ye git" gibi doğru ek. */
 const GATE_SUFFIX: Record<number, string> = { 1: "'e", 2: "'ye", 3: "'e", 4: "'e", 5: "'e", 6: "'ya", 7: "'ye", 8: "'e" }
 
 type StepState = 'tamam' | 'taslak' | 'atlandi' | 'bos'
@@ -56,13 +56,13 @@ export function DecisionScreen() {
   const steps = stepsOf(d.n).filter((s) => !plan.shortPath || s.shortPath)
   const locked = decisionLocked(plan, d.n)
   const reason = lockReason(plan, d.n)
-  /* Karar 6 iki işe bağlıdır: geçiş kararı ve strateji oluşturma. Öteki kararlar bir önceki kapıya bağlıdır. */
+  /* Karar 6 iki işe bağlıdır: hazırlık kararı ve strateji oluşturma. Öteki kararlar bir önceki kontrole bağlıdır. */
   const target = lockTarget(plan, d.n)
   const lockedByTransition = target === 'gecis'
   const lockedByStrategy = target === 'strateji'
   const stage = STAGES.find((x) => x.key === stageOfDecision(d.n))
   const kicker = stage ? `${stage.title}, Karar ${d.n}` : `Karar ${d.n}`
-  /* Kapı 5 geçildiyse sıradaki iş geçiş kapısıdır. Geçiş kararı geçerliyse not gerekmez. */
+  /* Kontrol 5 geçildiyse sıradaki iş hazırlık kontrolüdür. Hazırlık kararı geçerliyse not gerekmez. */
   const transitionNext = d.n === 5 && gatePassed(plan, 5) && !transitionPassed(plan)
   const last = lastDecision(plan, d.n)
   const isDone = (id: string) => stateOf(plan, id) === 'tamam' || stateOf(plan, id) === 'atlandi'
@@ -81,7 +81,7 @@ export function DecisionScreen() {
 
   const gateButton = lockedByTransition ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/gecis')}>
-      Geçiş kapısına git
+      Hazırlık kontrolüne git
     </Button>
   ) : lockedByStrategy ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/strateji')}>
@@ -89,11 +89,11 @@ export function DecisionScreen() {
     </Button>
   ) : locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav(`/karar/${d.n - 1}/kapi`)}>
-      Önceki kapıya git
+      Önceki kontrole git
     </Button>
   ) : (
     <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(`/karar/${d.n}/kapi`)}>
-      Kapı {d.n}
+      Kontrol {d.n}
       {suffix} git
     </Button>
   )
@@ -104,7 +104,7 @@ export function DecisionScreen() {
 
       {lockedByTransition ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında kararı kaydedin. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını açın.</Link>
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce hazırlık kontrolünde kararı kaydedin. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Hazırlık kontrolünü açın.</Link>
         </Callout>
       ) : lockedByStrategy ? (
         <Callout tone="uyari" title="Bu karar kilitli">
@@ -112,18 +112,18 @@ export function DecisionScreen() {
         </Callout>
       ) : locked ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {/* Strateji öncesi adımlar kilitlenmez. Yalnız kapı kararı bekler. Uygulama adımları ise kilitlidir. */}
+          {/* Strateji öncesi adımlar kilitlenmez. Yalnız kontrol kararı bekler. Uygulama adımları ise kilitlidir. */}
           {d.n <= 5 ? (
-            <>{reason} Bu kararın adımlarını şimdiden doldurabilirsiniz. Bu kararın kapısı için önce Kapı {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
+            <>{reason} Bu kararın adımlarını şimdiden doldurabilirsiniz. Bu kararın kontrolü için önce Kontrol {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
           ) : (
-            <>{reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kapı {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
+            <>{reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce Kontrol {d.n - 1}{prevSuffix} gidin. Orada "İlerle" ya da "Koşullu ilerle" sonucu gerekir.</>
           )}
         </Callout>
       ) : null}
 
       {transitionNext ? (
-        <Callout tone="bilgi" title="Kapı 5 geçildi">
-          Sıradaki iş geçiş kapısıdır. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını açın.</Link>
+        <Callout tone="bilgi" title="Kontrol 5 geçildi">
+          Sıradaki iş hazırlık kontrolüdür. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Hazırlık kontrolünü açın.</Link>
         </Callout>
       ) : null}
 
@@ -144,7 +144,7 @@ export function DecisionScreen() {
                 { key: 'soru', label: 'Soru', children: d.question },
                 { key: 'kim', label: 'Kim yapar', children: d.who },
                 { key: 'sure', label: 'Süre tahmini', children: `${dayMin} ile ${dayMax} gün arası. Sınır: ${d.time}` },
-                { key: 'cikti', label: 'Çıktı', children: `Kapı ${d.n}. ${d.gate.title}` },
+                { key: 'cikti', label: 'Çıktı', children: `Kontrol ${d.n}. ${d.gate.title}` },
               ]}
             />
           </Card>
@@ -203,8 +203,8 @@ export function DecisionScreen() {
           </Card>
         </div>
 
-        <aside className="karar-aside" aria-label="Kapı önizleme">
-          <Card title="Kapı önizleme" extra={<Link className="kapi-action-link" tabIndex={0} to={`/karar/${d.n}/kapi`}>Kapıyı aç</Link>}>
+        <aside className="karar-aside" aria-label="Kontrol önizleme">
+          <Card title="Kontrol önizleme" extra={<Link className="kapi-action-link" tabIndex={0} to={`/karar/${d.n}/kapi`}>Kontrolü aç</Link>}>
             <div className="karar-ring">
               <Progress type="circle" percent={gatePercent} size={120} strokeColor="var(--color-status-ok)" format={() => `${evaluation.metCount} / ${evaluation.total}`} aria-label={`${evaluation.metCount} / ${evaluation.total} ölçüt karşılandı`} />
               <p className="karar-ring-note">

@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 /**
  * Asıl engel, başarı koşulları, yol bağları, serbest bütçe ve iş türüne özgü sorular.
  * Kural docs/codex-onerileri-uygulama-notu.md dosyasındadır.
- * Bu kayıtlar isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü değildir.
+ * Bu kayıtlar isteğe bağlıdır. Hiçbiri hazırlık kontrolünün ölçütü değildir.
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
@@ -59,7 +59,7 @@ async function expand(page: Page, title: string) {
 
 const section = (page: Page, title: string) => page.locator('.form-section').filter({ has: page.locator('.ant-card-head-title', { hasText: title }) })
 
-test('devir raporu asıl engeli ve başarı koşullarını karar sorusunun altında gösterir', async ({ page }) => {
+test('teslim raporu asıl engeli ve başarı koşullarını karar sorusunun altında gösterir', async ({ page }) => {
   await openDemo(page)
   const before = await stored(page, 'plan.revision')
   await page.goto('/#/devir')

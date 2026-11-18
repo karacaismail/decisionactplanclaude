@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Dört soruluk güç süzgeci (Adım 12), Adım 16'daki güç listesi ve devir raporundaki "Güçlü yönler" grubu.
+ * Dört soruluk güç süzgeci (Adım 12), Adım 16'daki güç listesi ve teslim raporundaki "Güçlü yönler" grubu.
  * Kural docs/karar-kitabi-firsatlari-plani.md dosyasının Faz B bölümündedir.
  */
 
@@ -93,7 +93,7 @@ test('Adım 16 sınanmış güçleri gösterir ama kutuyu kendisi doldurmaz', as
   await expect(page.getByLabel('Haksız avantaj')).toHaveValue('')
 })
 
-test('devir raporu güçleri dayanağıyla gösterir', async ({ page }) => {
+test('teslim raporu güçleri dayanağıyla gösterir', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/devir')
   const group = page.locator('.devir-group, section').filter({ hasText: 'Hangi güce yaslanırız? Hangi güç fark yaratmaz?' }).last()

@@ -6,7 +6,7 @@ const RATE5 = ['Çok zayıf', 'Zayıf', 'Orta', 'İyi', 'Çok iyi']
 
 type Row = Record<string, unknown> & { _id: string }
 
-/** Profile göre en az görüşme sayısı. Kapı 2 ile aynı kuralı kullanır. */
+/** Profile göre en az görüşme sayısı. Kontrol 2 ile aynı kuralı kullanır. */
 function interviewTarget(customer?: string): number {
   if (customer === 'tuketici') return 15
   if (customer === 'kamu') return 6
@@ -228,12 +228,12 @@ export const KARAR2: StepDef[] = [
       'Görüşme defterinden üç kanıt çıkarın. Tekrar. Çaba. Kayıp. Her birini ayrı ölçün.',
       'Her ölçü için ad, birim, eşik ve dayanak yazın. Ölçemediyseniz "Bilinmiyor" seçin.',
       'Sonra beş konuda 1 ile 5 arası puan verin. Toplam yardımcı puandır.',
-      'Yardımcı puan kapı ölçütü değildir. Kapı 2 yalnız üç kanıt ölçüsüne bakar.',
+      'Yardımcı puan kontrol ölçütü değildir. Kontrol 2 yalnız üç kanıt ölçüsüne bakar.',
     ],
     sections: [
       {
         title: 'Üç kanıt ölçüsü',
-        description: 'Kapı 2 bu üç ölçüyü okur. Her ölçüde gerçek sayı olmalı.',
+        description: 'Kontrol 2 bu üç ölçüyü okur. Her ölçüde gerçek sayı olmalı.',
         fields: [
           { key: 'cruxHint', type: 'info', label: 'Asıl engel', tone: 'ipucu', text: 'Buradaki kayıp ve gözlem, işin asıl engelini gösterebilir. Asıl engeli Adım 18\'de yazarsınız. Kanıtı orada yeniden yazmazsınız, defterden seçersiniz.' },
           { key: 'repeatMeasure', type: 'measure', label: 'Tekrar. Problem ne sıklıkla yaşanıyor?', defaultName: 'Problemin tekrarı', defaultUnit: 'kez', help: 'Örneğin haftada kaç kez yaşanıyor. Görüşmelerden sayın.' },
@@ -246,7 +246,7 @@ export const KARAR2: StepDef[] = [
         optional: true,
         description: 'Her konuda 1 ile 5 arası puan verin. Toplam 5 ile 25 arasında çıkar.',
         fields: [
-          { key: 'helperNote', type: 'info', label: 'Bu puan yardımcıdır', tone: 'bilgi', text: 'Beş puanın toplamı yalnız sizi yönlendirir. Kapı 2 bu toplamı ölçüt olarak okumaz. Kapı yukarıdaki üç ölçüye bakar.' },
+          { key: 'helperNote', type: 'info', label: 'Bu puan yardımcıdır', tone: 'bilgi', text: 'Beş puanın toplamı yalnız sizi yönlendirir. Kontrol 2 bu toplamı ölçüt olarak okumaz. Kontrol yukarıdaki üç ölçüye bakar.' },
           { key: 'sev1', type: 'rate', label: 'Sıklık. Her gün yaşanıyorsa 5. Yılda bir yaşanıyorsa 1.', labels: RATE5, span: 12 },
           { key: 'sev2', type: 'rate', label: 'Etki. Para veya zaman kaybı büyükse 5.', labels: RATE5, span: 12 },
           { key: 'sev3', type: 'rate', label: 'Aciliyet. Hemen çözmek istiyorsa 5.', labels: RATE5, span: 12 },

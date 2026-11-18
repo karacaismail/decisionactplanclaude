@@ -43,9 +43,9 @@ interface PlanState {
   setLocation: (loc: string) => void
   addEvidence: (e: Omit<Evidence, 'id' | 'createdAt' | 'updatedAt'>) => string
   updateEvidence: (id: string, patch: Partial<Evidence>) => void
-  /** Kanıtı siler. Bağlı adımların kararları ve geçiş kararı eskir. */
+  /** Kanıtı siler. Bağlı adımların kararları ve hazırlık kararı eskir. */
   removeEvidence: (ids: string[]) => void
-  /** Geçiş kapısı kararını kaydeder. Yeni sürüm alınır. */
+  /** Hazırlık kontrolü kararını kaydeder. Yeni sürüm alınır. */
   recordTransition: (t: Omit<TransitionRecord, 'id' | 'decidedAt' | 'revision' | 'stale'>) => string
   recordDecision: (d: Omit<Decision, 'id' | 'decidedAt' | 'revision'>, label: string) => string
   /** Strateji gözden geçirme kararını kaydeder. Geçersiz taslakta Türkçe hata listesi döndürür. */
@@ -164,7 +164,7 @@ export const usePlanStore = create<PlanState>()(
           const gates = linked.map((st) => gateOfStep(st)).filter((g): g is number => g !== null)
           // Bağlı adım yazılmadıysa kanıt bütün temeli ilgilendirir.
           if (linked.length === 0) markStale(p, 1)
-          // Kanıt yalnız hiçbir kapının okumadığı adımlara bağlıysa hiçbir karar eskimez.
+          // Kanıt yalnız hiçbir kontrolün okumadığı adımlara bağlıysa hiçbir karar eskimez.
           else if (gates.length > 0) markStale(p, Math.min(...gates))
         }),
       recordTransition: (t) => {
@@ -172,7 +172,7 @@ export const usePlanStore = create<PlanState>()(
         get().update((p) => {
           p.revision += 1
           p.transitions = [...(p.transitions ?? []), { ...t, id, decidedAt: new Date().toISOString(), revision: p.revision }]
-          p.revisions.push({ id: uid('surum'), label: `Geçiş kapısı: ${TRANSITION_LABEL[t.outcome]}`, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
+          p.revisions.push({ id: uid('surum'), label: `Hazırlık kontrolü: ${TRANSITION_LABEL[t.outcome]}`, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
         })
         return id
       },
@@ -180,7 +180,7 @@ export const usePlanStore = create<PlanState>()(
         const id = uid('karar')
         get().update((p) => {
           p.revision += 1
-          // Kapı yeniden karara bağlandı. Sonraki kapıların kararları ve gerekiyorsa geçiş kararı eskir.
+          // Kontrol yeniden karara bağlandı. Sonraki kontrollerin kararları ve gerekiyorsa hazırlık kararı eskir.
           markStaleAfterGate(p, d.gate)
           p.decisions.push({ ...d, id, stale: false, decidedAt: new Date().toISOString(), revision: p.revision })
           p.revisions.push({ id: uid('surum'), label, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })

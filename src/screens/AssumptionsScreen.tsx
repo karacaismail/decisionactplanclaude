@@ -189,7 +189,7 @@ export function AssumptionsScreen() {
         <>
           {refuted > 0 || risky.length > 0 ? (
             <div className="assumption-alerts">
-              {refuted > 0 ? <Callout tone="uyari" danger title="Çürüyen varsayım">Çürüyen varsayım var. Geçiş kapısında bunu not edin.</Callout> : null}
+              {refuted > 0 ? <Callout tone="uyari" danger title="Çürüyen varsayım">Çürüyen varsayım var. Hazırlık kontrolünde bunu not edin.</Callout> : null}
               {risky.length > 0 ? (
                 <Callout tone="uyari" title="En riskli varsayım">
                   “{text(risky[0].assumption)}” Bu varsayımın etkisi yüksek, kanıtı düşük. Önce bu varsayımı deneyin.
@@ -210,7 +210,7 @@ export function AssumptionsScreen() {
 
           {board}
 
-          <p className="helper">Durumu ya da sonucu değiştirince Adım 10 güncellenir. Karar 3 ve sonraki kapıların kararı yeniden inceleme ister.</p>
+          <p className="helper">Durumu ya da sonucu değiştirince Adım 10 güncellenir. Karar 3 ve sonraki kontrollerin kararı yeniden inceleme ister.</p>
         </>
       )}
     </div>

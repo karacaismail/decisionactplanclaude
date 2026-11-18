@@ -30,7 +30,7 @@ const RENEWALS: RenewalDecision[] = ['surdur', 'duzelt', 'yenidenAc']
 const EMPTY: ReviewDraft = { decidedBy: '', reason: '', evidence: '' }
 
 /**
- * Strateji uygulama. Üçüncü ana kümedir. Beş zorunlu alt aşaması vardır ve çıkış kapısı yoktur.
+ * Strateji uygulama. Üçüncü ana kümedir. Beş zorunlu alt aşaması vardır ve çıkış kontrolü yoktur.
  * Küme, onaylanmış strateji belgesi olmadan kilitlidir. Kilit kuralı motordadır (`decisionLocked`).
  * Alt aşama 3.5 bu ekranda kaydedilir: "Seçim hâlâ doğru mu?" Karar sahibi sürdürür, düzeltir ya da yeniden açar.
  * Yazılım bu kararı vermez ve önermez. Ekranda en çok bir dolu düğme vardır.
@@ -79,7 +79,7 @@ export function ExecutionScreen() {
 
   const action = locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav(target === 'gecis' ? '/gecis' : '/strateji')}>
-      {target === 'gecis' ? 'Geçiş kapısına git' : 'Strateji oluşturmaya git'}
+      {target === 'gecis' ? 'Hazırlık kontrolüne git' : 'Strateji oluşturmaya git'}
     </Button>
   ) : nextStage ? (
     <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(nextStage.path)}>
@@ -110,7 +110,7 @@ export function ExecutionScreen() {
         </Card>
 
         <Card title={<h2 className="card-heading">Yürütme kararları</h2>}>
-          <p className="helper">Alt aşama 3.4 Karar 6 ve Karar 7 ile yürür. Karar 8 işin yönünü sorar ve 3.5'in parçasıdır. Her kararın sonunda bir kapı vardır.</p>
+          <p className="helper">Alt aşama 3.4 Karar 6 ve Karar 7 ile yürür. Karar 8 işin yönünü sorar ve 3.5'in parçasıdır. Her kararın sonunda bir kontrol vardır.</p>
           <ul className="decision-links">
             {EXECUTION_DECISIONS.map((n) => {
               const d = DECISIONS.find((x) => x.n === n)!

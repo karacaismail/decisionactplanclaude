@@ -406,7 +406,7 @@ test('M12 plan name has one painted keyboard marker and preserves input on rotat
 test('M02 row actions remain 44 pixels and move the actual row', async ({ page }) => {
   await page.goto('/#/karar/1/adim/03')
   const rows = page.locator('.repeater-table').first().locator('tr.repeater-card')
-  await page.getByRole('button', { name: 'Kapı ekle', exact: true }).tap()
+  await page.getByRole('button', { name: 'Kontrol ekle', exact: true }).tap()
   await expect(rows).toHaveCount(2)
   expect(await rows.count()).toBeGreaterThanOrEqual(2)
   const owner = rows.first().locator('input[id$="-owner"]')

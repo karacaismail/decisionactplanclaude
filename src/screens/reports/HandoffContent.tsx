@@ -288,7 +288,7 @@ const coverageIcon = (s: CoverageStatus) =>
   )
 
 /**
- * Strateje devir raporu. Stratej, stratejiyi geliştiren kişinin unvanıdır.
+ * Strateje teslim raporu. Stratej, stratejiyi geliştiren kişinin unvanıdır.
  * Rapor seçim yapmaz: soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir.
  * Masaüstünde sağda yapışkan içindekiler durur. Telefonda tablolar blok listesine döner.
  */
@@ -377,8 +377,8 @@ export function HandoffScreen() {
     <div className="page devir-page">
       <PageHeader
         newPath="/devir"
-        kicker="Geçiş"
-        title="Strateje devir raporu"
+        kicker="Hazırlık"
+        title="Strateje teslim raporu"
         description="Stratej bu raporla başlar. Rapor seçim yapmaz. Soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir."
         actions={phone ? undefined : actions}
       />
@@ -456,7 +456,7 @@ export function HandoffScreen() {
             ) : null}
 
             <div className="devir-block">
-              <h3 className="devir-sub">Geçiş kararı</h3>
+              <h3 className="devir-sub">Hazırlık kararı</h3>
               {t ? (
                 <>
                   <span className="devir-tags">
@@ -466,10 +466,10 @@ export function HandoffScreen() {
                   </span>
                   <p className="devir-line">{t.reason}</p>
                   <span className="devir-source">Karar sahibi: {t.decidedBy}. Karar tarihi: {t.date}.</span>
-                  {t.stale ? <span className="devir-source">Kararın dayandığı veri sonradan değişti. <Link className="no-print" to="/gecis">Geçiş kapısını aç</Link></span> : null}
+                  {t.stale ? <span className="devir-source">Kararın dayandığı veri sonradan değişti. <Link className="no-print" to="/gecis">Hazırlık kontrolünü aç</Link></span> : null}
                 </>
               ) : (
-                <p className="helper devir-missing">Geçiş kararı henüz kaydedilmedi. <Link className="no-print" to="/gecis">Geçiş kapısını aç</Link></p>
+                <p className="helper devir-missing">Hazırlık kararı henüz kaydedilmedi. <Link className="no-print" to="/gecis">Hazırlık kontrolünü aç</Link></p>
               )}
             </div>
 
@@ -488,7 +488,7 @@ export function HandoffScreen() {
                   </ul>
                 </>
               ) : (
-                <p className="helper devir-missing">Henüz geçilen kapı yok. <Link className="no-print" to="/ozet">Plan özetini aç</Link></p>
+                <p className="helper devir-missing">Henüz geçilen kontrol yok. <Link className="no-print" to="/ozet">Plan özetini aç</Link></p>
               )}
             </div>
           </HandoffSection>

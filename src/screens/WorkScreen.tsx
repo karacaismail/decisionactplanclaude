@@ -125,7 +125,7 @@ function foundationSuggestions(stepId: string, plan: PlanDoc, values: Record<str
  * Altta 64 px yapışkan işlem şeridi. Şeritte en çok üç düğme vardır. "Geri" düz bağlantıdır.
  * "Bu adımı atla" taşma menüsündedir. Ekranda tek dolu düğme vardır: "Adımı tamamla".
  * 320 px ekranda şerit iki satırdır: üstte "Geri" ve menü, altta iki düğme. Yükseklik 112 px.
- * Adım 19 ve 20 strateji oluşturmadır. Geçiş kapısı kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
+ * Adım 19 ve 20 strateji oluşturmadır. Hazırlık kontrolü kararı yoksa form salt okunur açılır ve kayıt düğmeleri kapalıdır.
  * Adım 18 "Yol adayları" Karar 5'tedir ve kilitli değildir. Bu adımda yol seçilmez.
  * Adım 19 açıkken üstte yol adayları tablosu salt okunur durur. Yazılım "Seçilen yol" alanını doldurmaz.
  * Adresler adımın kendi grubundan üretilir (`stepPath`). Adresteki karar numarası okunmaz.
@@ -168,7 +168,7 @@ export function WorkScreen() {
   const isStrategy = step.decision === STRATEGY_N
   /*
    * Kilitli bölüm okunur ama doldurulmaz. Kural süreç haritasının 2. bölümündedir.
-   * Strateji adımı geçiş kararı olmadan kilitlidir. Strateji uygulama adımı kendi kararı kilitliyken kilitlidir.
+   * Strateji adımı hazırlık kararı olmadan kilitlidir. Strateji uygulama adımı kendi kararı kilitliyken kilitlidir.
    * Strateji öncesi adımlar kilitlenmez. Kullanıcı hazırlıkta istediği adıma dönebilir.
    */
   const lockGroup = isStrategy ? STRATEGY_N : step.decision
@@ -264,10 +264,10 @@ export function WorkScreen() {
               {lockReason(plan, lockGroup)} Adımı okuyabilirsiniz. Alanlar ve kayıt düğmeleri kapalıdır.
               <span className="work-lock-links">
                 {lockTo === 'kapi' ? (
-                  <Link to={`/karar/${lockGroup - 1}/kapi`}>Kapı {lockGroup - 1} ekranını aç</Link>
+                  <Link to={`/karar/${lockGroup - 1}/kapi`}>Kontrol {lockGroup - 1} ekranını aç</Link>
                 ) : (
                   <>
-                    <Link to="/gecis">Geçiş kapısına git</Link>
+                    <Link to="/gecis">Hazırlık kontrolüne git</Link>
                     <Link to="/strateji">Strateji oluşturma özetine dön</Link>
                   </>
                 )}
@@ -409,7 +409,7 @@ export function WorkScreen() {
         {nextInDecision ? (
           <Button className="bar-draft" disabled={locked} onClick={() => { if (editablePlan()) nav(stepPath(nextInDecision)) }}>Taslak bırak, ilerle</Button>
         ) : (
-          <Button className="bar-draft" onClick={() => nav(gatePath)}>{isStrategy ? 'Strateji oluşturma özetine git' : 'Kapıya git'}</Button>
+          <Button className="bar-draft" onClick={() => nav(gatePath)}>{isStrategy ? 'Strateji oluşturma özetine git' : 'Kontrole git'}</Button>
         )}
         <Button type="primary" disabled={locked} onClick={complete}>Adımı tamamla</Button>
       </div>

@@ -132,7 +132,7 @@ describe('Genel bakış ekranının dar alandaki içeriği', () => {
     await render()
     const headers = routeHeaders()
     expect(headers.map((header) => header.getAttribute('aria-expanded'))).toEqual(['false', 'false', 'false'])
-    expect(host.querySelector('.hero-button')?.textContent).toContain('Geçiş kapısını aç')
+    expect(host.querySelector('.hero-button')?.textContent).toContain('Hazırlık kontrolünü aç')
     expect(headers[0].tabIndex).toBe(0)
     await pressKey(headers[0], 'Enter')
     expect(headers[0].getAttribute('aria-expanded')).toBe('true')
@@ -326,7 +326,7 @@ describe('Genel bakış ekranının dar alandaki içeriği', () => {
     expect(header.textContent).toBe('Son kararlar (0)')
     expect(header.getAttribute('aria-expanded')).toBe('false')
     await pressKey(header, 'Enter')
-    expect(host.querySelector('.overview-recent-collapse')?.textContent).toContain('Henüz karar kaydı yok. İlk kapıda kararı kaydedince burada görünür.')
+    expect(host.querySelector('.overview-recent-collapse')?.textContent).toContain('Henüz karar kaydı yok. İlk kontrolde kararı kaydedince burada görünür.')
     expect(host.querySelector('.pano-timeline')).toBeNull()
   })
 

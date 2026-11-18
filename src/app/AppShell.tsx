@@ -123,8 +123,8 @@ export function AppShell() {
               key: '/devir',
               icon: <FileText size={20} />,
               label: (
-                <Link to="/devir" aria-label={`Strateje devir raporu${newSuffix('/devir')}`}>
-                  <span className="label">Devir raporu</span>
+                <Link to="/devir" aria-label={`Strateje teslim raporu${newSuffix('/devir')}`}>
+                  <span className="label">Teslim raporu</span>
                   <NewPill path="/devir" />
                 </Link>
               ),
@@ -133,8 +133,8 @@ export function AppShell() {
               key: '/gecis',
               icon: <DoorOpen size={20} weight={passedTransition ? 'fill' : 'regular'} />,
               label: (
-                <Link to="/gecis" aria-label={`Geçiş kapısı, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}${newSuffix('/gecis')}`}>
-                  <span className="label">Geçiş kapısı</span>
+                <Link to="/gecis" aria-label={`Hazırlık kontrolü, ${transitionState}${lastTransition(plan)?.stale ? ', inceleme bekliyor' : ''}${newSuffix('/gecis')}`}>
+                  <span className="label">Hazırlık kontrolü</span>
                   <NewPill path="/gecis" />
                   <span className={`status-dot ${passedTransition ? 'is-passed' : foundationDone ? 'is-current' : ''}`} aria-hidden />
                 </Link>
@@ -180,7 +180,7 @@ export function AppShell() {
       ]
     : []
 
-  /* Sıradaki iş: "Yol" sekmesi buraya gider. Sıra: temel kararı, geçiş kapısı, strateji oluşturma, uygulama kararı. */
+  /* Sıradaki iş: "Yol" sekmesi buraya gider. Sıra: temel kararı, hazırlık kontrolü, strateji oluşturma, uygulama kararı. */
   const journeyHome = !position
     ? '/'
     : position.stage === 'gecis'
@@ -192,7 +192,7 @@ export function AppShell() {
   const tabs: { to: string; label: string; Icon: typeof Briefcase; active: boolean; needsPlan: boolean; newPath?: string }[] = [
     { to: '/ozet', label: 'Pano', Icon: SquaresFour, active: loc.pathname === '/ozet', needsPlan: true },
     { to: journeyHome, label: 'Yol', Icon: MapTrifold, active: isJourney, needsPlan: true },
-    { to: '/temel', label: 'Temel taşları', Icon: Stack, active: loc.pathname === '/temel', needsPlan: true, newPath: '/temel' },
+    { to: '/temel', label: 'Temel sorular', Icon: Stack, active: loc.pathname === '/temel', needsPlan: true, newPath: '/temel' },
     { to: '/varsayimlar', label: 'Varsayımlar', Icon: Lightbulb, active: loc.pathname === '/varsayimlar', needsPlan: true, newPath: '/varsayimlar' },
     { to: '/kanitlar', label: 'Kanıtlar', Icon: Paperclip, active: loc.pathname === '/kanitlar', needsPlan: true },
     { to: '/isler', label: 'İşler', Icon: CheckSquare, active: loc.pathname === '/isler', needsPlan: true },

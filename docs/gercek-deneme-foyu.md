@@ -16,7 +16,7 @@ Bu üç deneme o soruyu cevaplar.
 |---|---|---|---|
 | 1. Gerçek plan | Siz | Yaklaşık 3 saat | Form gerçek bir işe uyuyor mu? |
 | 2. Telefonda okur | Uygulamayı hiç görmemiş bir kişi | Yaklaşık 30 dakika | Okur ekranı yardımsız anlıyor mu? |
-| 3. Stratej okuması | Bir stratej | Yaklaşık 45 dakika | Devir raporu stratej'in işini başlatıyor mu? |
+| 3. Stratej okuması | Bir stratej | Yaklaşık 45 dakika | Teslim raporu stratej'in işini başlatıyor mu? |
 
 Önce 2. denemeyi yapın. Bu deneme en kısa denemedir ve en çok şeyi öğretir.
 
@@ -43,10 +43,10 @@ Bu denemede kendi gerçek işinizin planını yazarsınız.
 1. Adım 00'dan başlayın.
 2. Her adımda yalnız "Zorunlu bölümler" sekmesini doldurun.
 3. Bir adımı bitirince "Adımı tamamla" düğmesine basın.
-4. Karar 1'in kapısına gelince kapının önerisini okuyun.
+4. Karar 1'in kontrolüne gelince kontrolün önerisini okuyun.
 5. Beş kararı da aynı yolla geçin.
-6. Geçiş kapısını açın ve eksik ölçütleri okuyun.
-7. "Strateje devir" ekranını açın ve raporu baştan sona okuyun.
+6. Hazırlık kontrolünü açın ve eksik ölçütleri okuyun.
+7. "Strateje teslim raporu" ekranını açın ve raporu baştan sona okuyun.
 
 ### Not edecekleriniz
 
@@ -56,13 +56,13 @@ Bu denemede kendi gerçek işinizin planını yazarsınız.
 | Bir soruya cevabınız olmadığında | Adım numarasını yazın. Cevabı neden bilmediğinizi yazın. |
 | Bir bölümü gereksiz bulduğunuzda | Bölümün adını yazın. |
 | İşinizde olan ama formda olmayan bir şey gördüğünüzde | O şeyi bir cümleyle yazın. |
-| Kapı sizi durdurduğunda | Kapının nedenini haklı bulup bulmadığınızı yazın. |
+| Kontrol sizi durdurduğunda | Kontrolün nedenini haklı bulup bulmadığınızı yazın. |
 | Her kararın sonunda | O karar için harcadığınız süreyi yazın. |
 
 ### Deneme ne zaman başarılı sayılır?
 
 - Beş kararı tek başınıza geçebildiyseniz deneme başarılıdır.
-- Devir raporunda kendi işinizi tanıyorsanız deneme başarılıdır.
+- Teslim raporunda kendi işinizi tanıyorsanız deneme başarılıdır.
 - Toplam süre 4 saati geçtiyse form hâlâ büyüktür. Bunu not edin.
 
 ## Deneme 2: telefonda okur
@@ -103,12 +103,12 @@ Bu denemede uygulamayı hiç görmemiş bir kişi üç adım doldurur.
 
 ## Deneme 3: stratej okuması
 
-Bu denemede bir stratej devir raporunu okur.
+Bu denemede bir stratej teslim raporunu okur.
 
 ### Hazırlık
 
 1. Deneme 1'i bitirin. Bitiremezseniz örnek planı kullanın.
-2. "Strateje devir" ekranını açın.
+2. "Strateje teslim raporu" ekranını açın.
 3. Raporu "Markdown indir" düğmesiyle indirin.
 4. Raporu stratej'e gönderin. Rapora açıklama eklemeyin.
 
@@ -146,7 +146,7 @@ Bu iş bir deneme değildir. Bu iş kısa bir sayımdır.
 
 1. İlk gerçek plandan bir ay sonra planı açın.
 2. İsteğe bağlı bölümlerden hangilerini hiç açmadığınızı sayın.
-3. Devir raporundaki "Bakılmayan alanlar" listesini okuyun.
+3. Teslim raporundaki "Bakılmayan alanlar" listesini okuyun.
 4. Hiç açılmayan bölümlerin adını not edin.
 
 Hiç açılmayan bölüm, uygulamadan çıkarılacak bölümün adayıdır.

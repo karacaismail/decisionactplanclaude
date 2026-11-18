@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Durum özeti ve çapraz sorular (Adım 18) ile devir raporundaki karşılığı.
+ * Durum özeti ve çapraz sorular (Adım 18) ile teslim raporundaki karşılığı.
  * Kural docs/karar-kitabi-firsatlari-plani.md dosyasının Faz C bölümündedir.
  * Yazılım listeyi toplar ve soruyu sorar. Yol önermez ve yol seçmez.
  */
@@ -122,13 +122,13 @@ test('dört çapraz soru isteğe bağlıdır ve yol kaynağı seçilir', async (
   for (const q of QUESTIONS) await expect(card.getByText(q, { exact: true })).toBeVisible()
   await expect(card.locator('textarea').first()).toHaveValue('Barista deneyimi ve durağa yakınlıkla sabah 7 boşluğunu doldururuz.')
 
-  // Çapraz sorular boşken de adım tamamlanır. Kapı 5'in ölçütü değişmez.
+  // Çapraz sorular boşken de adım tamamlanır. Kontrol 5'in ölçütü değişmez.
   await patchPlan(page, `for (const k of ['crossSO','crossWO','crossST','crossWT']) plan.steps['18'].values[k] = ''`)
   await page.getByRole('button', { name: 'Adımı tamamla' }).click()
   await expect(page.locator('.ant-message')).toContainText('Adım tamamlandı.')
 })
 
-test('devir raporu yolun hangi sorudan çıktığını gösterir ama yol seçmez', async ({ page }) => {
+test('teslim raporu yolun hangi sorudan çıktığını gösterir ama yol seçmez', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/devir')
   const block = page.locator('.devir-block').filter({ hasText: 'Yollar hangi sorulardan çıktı?' })

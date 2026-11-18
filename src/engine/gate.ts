@@ -57,11 +57,11 @@ export function evaluateGate(def: GateDef, plan: PlanDoc, flags: { harm?: boolea
   const blocked: Outcome[] = []
   if (left <= 0) {
     blocked.push('yenidenDene')
-    reasons.push('Bu kapıda deneme hakkı kalmadı.')
+    reasons.push('Bu kontrolde deneme hakkı kalmadı.')
   }
   if (conditionalUsed(plan, def.n)) {
     blocked.push('kosulluIlerle')
-    reasons.push('Bu kapıda koşullu izin daha önce kullanıldı. Aynı eksik için ikinci izin verilmez.')
+    reasons.push('Bu kontrolde koşullu izin daha önce kullanıldı. Aynı eksik için ikinci izin verilmez.')
   }
 
   let suggested: Outcome
@@ -143,10 +143,10 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
     }
   }
 
-  if (chosen === 'yenidenDene' && evaluation.retriesLeft <= 0) errors.push('Bu kapıda deneme hakkı kalmadı. "Yeniden dene" seçilemez.')
+  if (chosen === 'yenidenDene' && evaluation.retriesLeft <= 0) errors.push('Bu kontrolde deneme hakkı kalmadı. "Yeniden dene" seçilemez.')
 
   if (chosen === 'kosulluIlerle') {
-    if (conditionalUsed(plan, def.n)) errors.push('Bu kapıda koşullu izin daha önce kullanıldı. İkinci izin verilmez.')
+    if (conditionalUsed(plan, def.n)) errors.push('Bu kontrolde koşullu izin daha önce kullanıldı. İkinci izin verilmez.')
     const c = draft.conditional
     if (!c) errors.push('Koşullu izin için kapsam, tutar, bitiş, sorumlu ve kapanış kanıtı gerekir.')
     else {
@@ -160,10 +160,10 @@ export function validateDecision(def: GateDef, plan: PlanDoc, evaluation: GateEv
     }
   }
 
-  /* Uygulama kapıları kilitliyken kayıt yapılmaz. Kilidin nedeni geçiş kapısı ya da strateji oluşturma olabilir. */
+  /* Uygulama kontrolleri kilitliyken kayıt yapılmaz. Kilidin nedeni hazırlık kontrolü ya da strateji oluşturma olabilir. */
   const target = def.n >= 6 ? lockTarget(plan, def.n) : null
   if (advancing && target && target !== 'kapi') errors.push(lockReason(plan, def.n) ?? `Karar ${def.n} kilitli.`)
-  else if (advancing && def.n > 1 && def.n !== 6 && !gatePassed(plan, def.n - 1)) errors.push(`Kapı ${def.n - 1} henüz geçilmedi. Önce önceki kapıyı kapatın.`)
+  else if (advancing && def.n > 1 && def.n !== 6 && !gatePassed(plan, def.n - 1)) errors.push(`Kontrol ${def.n - 1} henüz geçilmedi. Önce önceki kontrolü kapatın.`)
 
   if (advancing) {
     const open = (plan.changes ?? []).filter((c) => c.needsReview && !c.reviewer)
@@ -222,7 +222,7 @@ export function lockTarget(plan: PlanDoc, n: number): LockTarget | null {
 export function lockReason(plan: PlanDoc, n: number): string | null {
   const target = lockTarget(plan, n)
   if (!target) return null
-  if (target === 'gecis') return 'Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
+  if (target === 'gecis') return 'Hazırlık kontrolünde "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.'
   if (target === 'strateji') return 'Strateji oluşturma bitmedi. Beş alt aşama tamamlanmalı ve karar sahibi strateji belgesini onaylamalı.'
-  return `Kapı ${n - 1} henüz geçilmedi.`
+  return `Kontrol ${n - 1} henüz geçilmedi.`
 }

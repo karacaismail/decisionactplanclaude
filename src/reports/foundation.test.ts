@@ -33,7 +33,7 @@ describe('buildFoundationDoc', () => {
     }
     expect(doc.transition).toBeUndefined()
     expect(doc.stamp).toBeUndefined()
-    expect(doc.openItems).toContain('Geçiş kararı henüz kaydedilmedi.')
+    expect(doc.openItems).toContain('Hazırlık kararı henüz kaydedilmedi.')
     expect(doc.openItems.length).toBeGreaterThanOrEqual(6)
   })
 
@@ -83,7 +83,7 @@ describe('buildFoundationDoc', () => {
     expect(lines.join(' ')).not.toContain('Küçük risk')
   })
 
-  it('"Kararı kim verecek?" karar sahibini, kalan bütçeyi, kalan süreyi ve geçiş kararını yazar', () => {
+  it('"Kararı kim verecek?" karar sahibini, kalan bütçeyi, kalan süreyi ve hazırlık kararını yazar', () => {
     const plan = emptyPlan('p3', 'Karar denemesi')
     plan.limits = { budgetKurus: 15_000_000, deadline: '2026-12-31' }
     plan.steps['03'] = { values: { rights: [{ _id: 'h1', gate: '5', owner: 'Ayşe' }] }, status: 'tamam', updatedAt: '2026-10-01T10:00:00.000Z' }
@@ -93,13 +93,13 @@ describe('buildFoundationDoc', () => {
     expect(lines).toContain('Karar sahibi: Ayşe.')
     expect(lines).toContain('Kalan bütçe: 150.000,00 TL.')
     expect(lines).toContain('Kalan süre: 47 gün, yaklaşık 6 hafta. Bitiş tarihi 31 Aralık 2026 Perşembe günü.')
-    expect(lines.some((l) => l.startsWith('Son geçiş kararı: Planlamaya hazır. Gerekçe: Dokuz zorunlu ölçüt tamam.'))).toBe(true)
+    expect(lines.some((l) => l.startsWith('Son hazırlık kararı: Planlamaya hazır. Gerekçe: Dokuz zorunlu ölçüt tamam.'))).toBe(true)
     expect(doc.transition?.label).toBe('Planlamaya hazır')
     expect(doc.transition?.decidedBy).toBe('Ayşe')
-    expect(doc.openItems).not.toContain('Geçiş kararı henüz kaydedilmedi.')
+    expect(doc.openItems).not.toContain('Hazırlık kararı henüz kaydedilmedi.')
   })
 
-  it('koşullu ve eskimiş geçiş kararında konu, açık soru ve uyarı yazar', () => {
+  it('koşullu ve eskimiş hazırlık kararında konu, açık soru ve uyarı yazar', () => {
     const plan = emptyPlan('p4', 'Koşullu deneme')
     plan.transitions = [transition({ outcome: 'kosullu', stale: true, conditional: { topic: 'Yalnız sabah satışı', openQuestion: 'Öğlen müşteri gelir mi?', owner: 'Ayşe', deadline: '2026-12-01' } })]
     const doc = buildFoundationDoc(plan, new Date('2026-11-14T10:00:00'))
@@ -120,19 +120,19 @@ describe('remainingTimeLine', () => {
 })
 
 describe('foundationToMarkdown', () => {
-  it('altı soruyu, kaynakları, geçiş kararını ve örnek damgasını yazar', () => {
+  it('altı soruyu, kaynakları, hazırlık kararını ve örnek damgasını yazar', () => {
     const md = foundationToMarkdown(buildFoundationDoc(buildDemoPlan()))
     expect(md.startsWith('# Stratejik planlama temel belgesi')).toBe(true)
     expect(md).toContain(`**${EXAMPLE_STAMP}**`)
     for (const q of FOUNDATION_QUESTIONS) expect(md).toContain(`## ${q}`)
     expect(md).toContain('- Kaynak: 7 kişi aylık kahve kartına ödeme yaptı')
-    expect(md).toContain('## Geçiş kararı')
+    expect(md).toContain('## Hazırlık kararı')
   })
 
   it('boş planda "Henüz yazılmadı." ve açık kalanlar bölümü yazar', () => {
     const md = foundationToMarkdown(buildFoundationDoc(emptyPlan('p5', 'Boş')))
     expect(md.match(/- Henüz yazılmadı\./g)).toHaveLength(6)
-    expect(md).toContain('Geçiş kararı henüz kaydedilmedi.')
+    expect(md).toContain('Hazırlık kararı henüz kaydedilmedi.')
     expect(md).toContain('## Açık kalanlar')
   })
 })

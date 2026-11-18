@@ -59,7 +59,7 @@ export const labelled = (label: string, value: unknown, missing = 'yazılmadı')
 /**
  * "Etiket: değer." biçimindeki cümleyi başlık ve değer çiftine çevirir.
  * "Etiket henüz yazılmadı." gibi cümlelerde değer cümlenin kendisi olur, başlık ilk kelimelerden alınır.
- * Örnek: factOf('Pist: 8 ay.') → { title: 'Pist', value: '8 ay' }
+ * Örnek: factOf('Kasa süresi: 8 ay.') → { title: 'Kasa süresi', value: '8 ay' }
  */
 export function factOf(line: string): Fact {
   const m = /^([^:]{1,48}):\s+(.+)$/.exec(line.trim())
@@ -141,8 +141,8 @@ const metaFacts = (p: PlanDoc): Fact[] => [
 type Decided = PlanDoc['decisions'][number] | undefined
 function summaryFacts(latest: Decided, runway: number | null, p: PlanDoc, firstGap: Record<string, unknown> | undefined, risks: Record<string, unknown>[], openTasks: PlanDoc['tasks']): Fact[] {
   return [
-    { title: 'Son kapı', value: latest ? `Kapı ${latest.gate}: ${OUTCOME_LABEL[effectiveOutcome(latest)]}, ${formatDate(latest.decidedAt)}` : 'Henüz kapı kararı yok' },
-    { title: 'Pist', value: runway !== null ? `${runway} ay` : 'Hesaplanmadı' },
+    { title: 'Son kontrol', value: latest ? `Kontrol ${latest.gate}: ${OUTCOME_LABEL[effectiveOutcome(latest)]}, ${formatDate(latest.decidedAt)}` : 'Henüz kontrol kararı yok' },
+    { title: 'Kasa süresi', value: runway !== null ? `${runway} ay` : 'Hesaplanmadı' },
     { title: 'Toplam harcama sınırı', value: typeof p.limits.budgetKurus === 'number' ? formatMoney(p.limits.budgetKurus) : 'Henüz yazılmadı' },
     { title: 'İlk kasa açığı', value: firstGap ? `${formatDate(String(firstGap.date), false)}, eksik ${formatMoney(Math.abs(Number(firstGap.balanceAfterKurus)))}` : 'Kayıtlı ödeme gününde açık yok' },
     { title: 'Kritik risk', value: risks.length ? `${risks.length} risk${text(risks[0].risk) ? `. En önemlisi: ${text(risks[0].risk)}` : ''}` : 'Kayıt yok' },
@@ -159,8 +159,8 @@ export function buildExecutiveReport(p: PlanDoc): Report {
   const risks = rows(p, '17', 'risks').filter((r) => Number(r.likelihood ?? 0) * Number(r.impact ?? 0) >= 6)
   const openTasks = p.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
   const summary: string[] = [
-    latest ? `Son kapı: Kapı ${latest.gate}. Sonuç: ${OUTCOME_LABEL[effectiveOutcome(latest)]}. Tarih: ${formatDate(latest.decidedAt)}.` : 'Henüz kapı kararı yok.',
-    `Pist: ${runway !== null ? runway + ' ay' : 'hesaplanmadı'}.`,
+    latest ? `Son kontrol: Kontrol ${latest.gate}. Sonuç: ${OUTCOME_LABEL[effectiveOutcome(latest)]}. Tarih: ${formatDate(latest.decidedAt)}.` : 'Henüz kontrol kararı yok.',
+    `Kasa süresi: ${runway !== null ? runway + ' ay' : 'hesaplanmadı'}.`,
     money('Toplam harcama sınırı', p.limits.budgetKurus),
     firstGap ? `İlk kasa açığı: ${formatDate(String(firstGap.date), false)}. Eksik: ${formatMoney(Math.abs(Number(firstGap.balanceAfterKurus)))}.` : 'Kayıtlı ödeme gününde kasa açığı yok.',
     risks.length ? `${risks.length} kritik risk var.${text(risks[0].risk) ? ` En önemlisi: ${text(risks[0].risk)}.` : ''}` : 'Kritik risk kaydı yok.',
@@ -277,12 +277,12 @@ export function buildActionPlan(p: PlanDoc): Report {
           ...problemLines(p, 'Problem cümlesi'),
           labelled('Değer önerisi', v(p, '13', 'sentence')),
           labelled('Seçilen yol', v(p, '19', 'chosenPath')),
-          ...DECISIONS.map((d) => { const ld = lastDecision(p, d.n); return `Kapı ${d.n}: ${ld ? OUTCOME_LABEL[effectiveOutcome(ld)] + '. ' + ld.reason : 'karar yok'}` }),
+          ...DECISIONS.map((d) => { const ld = lastDecision(p, d.n); return `Kontrol ${d.n}: ${ld ? OUTCOME_LABEL[effectiveOutcome(ld)] + '. ' + ld.reason : 'karar yok'}` }),
         ],
       },
       {
         title: 'Sonraki karar',
-        lines: DECISIONS.filter((d) => !lastDecision(p, d.n)).slice(0, 1).map((d) => `Sıradaki kapı: Kapı ${d.n}. ${d.gate.title}`).concat(p.decisions.filter((d) => d.conditional && !d.conditional.closedAt).map((d) => `Koşullu izin bitişi: ${formatDate(d.conditional!.deadline, false)}. Kapanış kanıtı: ${d.conditional!.closingEvidence}.`)),
+        lines: DECISIONS.filter((d) => !lastDecision(p, d.n)).slice(0, 1).map((d) => `Sıradaki kontrol: Kontrol ${d.n}. ${d.gate.title}`).concat(p.decisions.filter((d) => d.conditional && !d.conditional.closedAt).map((d) => `Koşullu izin bitişi: ${formatDate(d.conditional!.deadline, false)}. Kapanış kanıtı: ${d.conditional!.closingEvidence}.`)),
       },
       {
         title: 'Kullanılan modeller',

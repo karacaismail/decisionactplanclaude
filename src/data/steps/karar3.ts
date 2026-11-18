@@ -53,7 +53,7 @@ export const KARAR3: StepDef[] = [
     sections: [
       {
         title: 'Aşağıdan yukarıya hesap',
-        description: 'Bu hesap sizin gerçekçi pazarınızdır. Kapı 3 bu sayıyı okur.',
+        description: 'Bu hesap sizin gerçekçi pazarınızdır. Kontrol 3 bu sayıyı okur.',
         fields: [
           { key: 'reachableCustomers', type: 'number', label: 'Bugün ulaşabileceğiniz müşteri sayısı', required: true, unit: 'müşteri', min: 0, help: 'Adım 08\'deki ulaşma yoluyla gerçekten ulaşabildiğiniz kişi sayısı.', span: 12 },
           { key: 'salesCapacity', type: 'number', label: 'Bir yılda kaç müşteriye satış yapabilirsiniz?', required: true, unit: 'müşteri', min: 0, help: 'Teslim gücünüz ve zamanınız kaç müşteriye yeter?', span: 12 },
@@ -347,7 +347,7 @@ export const KARAR3: StepDef[] = [
       'Donanım veya derin teknolojide teknik ön kanıt planlayın. Teknik ön kanıt, çözümün çalıştığını gösteren küçük deneme parçasıdır.',
       'Fiziksel üründe tedarik, üretim, stok ve kargo maliyetini yazın. En küçük sipariş miktarını öğrenin.',
       'Mekân gerekiyorsa konum ve kira ayrı bir karardır. Uzun kira imzalamadan önce geçici satış noktasıyla test edin.',
-      'Gereken parayı ve süreyi pistle karşılaştırın. Pist, para bitene kadar kalan ay sayısıdır.',
+      'Gereken parayı ve süreyi kasa süresiyle karşılaştırın. Kasa süresi, para bitene kadar kalan ay sayısıdır.',
       'Güçlerinizi yazın. Her gücü dört soruyla sınayın. Ağır yatırımda en az bir güç yazın.',
     ],
     sections: [
@@ -378,7 +378,7 @@ export const KARAR3: StepDef[] = [
           { key: 'techProofCostKurus', type: 'money', label: 'Teknik ön kanıt kaç para tutar?', span: 12 },
           { key: 'patentSearched', type: 'toggle', label: 'Patent taraması yapıldı mı?', onLabel: 'Evet, yapıldı', offLabel: 'Hayır' },
           { key: 'approvals', type: 'text', label: 'Gereken onay süreçleri', placeholder: 'Belgelendirme, test, ruhsat', maxLength: 200 },
-          { key: 'techProofNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Teknik ön kanıt 3 aydan uzun sürüyor. Bu süre Karar 6\'ya eklenir. Pist yetmiyorsa Kapı 4\'te beklet.', when: { field: { key: 'techProofMonths', in: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36] } } },
+          { key: 'techProofNote', type: 'info', label: 'Dikkat', tone: 'uyari', text: 'Teknik ön kanıt 3 aydan uzun sürüyor. Bu süre Karar 6\'ya eklenir. Kasa süresi yetmiyorsa Kontrol 4\'te beklet.', when: { field: { key: 'techProofMonths', in: [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36] } } },
         ],
       },
       {
@@ -393,7 +393,7 @@ export const KARAR3: StepDef[] = [
           { key: 'moq', type: 'number', label: 'En küçük sipariş miktarı', unit: 'adet', min: 0, help: 'Tedarikçinin kabul ettiği en küçük sipariş.', span: 12 },
           { key: 'moqCostKurus', type: 'money', label: 'En küçük siparişin toplam bedeli', span: 12 },
           { key: 'supplyLeadDays', type: 'number', label: 'Tedarik süresi', unit: 'gün', min: 0, span: 12 },
-          { key: 'moqNote', type: 'info', label: 'İpucu', tone: 'ipucu', text: 'En küçük sipariş pisti aşıyorsa ön sipariş sayısını artırın. Ya da ürünü elle yapın.' },
+          { key: 'moqNote', type: 'info', label: 'İpucu', tone: 'ipucu', text: 'En küçük siparişin bedeli kasaya sığmıyorsa ön sipariş sayısını artırın. Ya da ürünü elle yapın.' },
         ],
       },
       {
@@ -454,20 +454,20 @@ export const KARAR3: StepDef[] = [
         ],
       },
       {
-        title: 'Pistle karşılaştırma',
+        title: 'Kasa süresiyle karşılaştırma',
         optional: true,
         fields: [
           { key: 'neededMoneyKurus', type: 'money', label: 'Bu yol için gereken toplam para', span: 12 },
           { key: 'neededMonths', type: 'number', label: 'Bu yol için gereken süre', unit: 'ay', min: 0, span: 12 },
-          { key: 'fitsRunway', type: 'toggle', label: 'Para ve süre piste sığıyor mu?', onLabel: 'Evet, sığıyor', offLabel: 'Hayır, sığmıyor' },
+          { key: 'fitsRunway', type: 'toggle', label: 'Para ve süre kasa süresine sığıyor mu?', onLabel: 'Evet, sığıyor', offLabel: 'Hayır, sığmıyor' },
         ],
       },
     ],
     output: 'Beceri tablosu. Yap, satın al veya ortak ol kararları. Teknik ön kanıt planı. Dört soruyla sınanmış güç listesi.',
     outcomeTable: [
       { condition: 'Kritik beceri yok ve edinilemiyor', result: 'Adım 11\'e dönün. Başka yol seçin.' },
-      { condition: 'Teknik ön kanıt 3 aydan uzun sürüyor', result: 'Bu süre Karar 6\'ya eklenir. Pist yetmiyorsa Kapı 4\'te beklet.' },
-      { condition: 'En küçük sipariş miktarı pisti aşıyor', result: 'Ön sipariş sayısını artırın. Ya da ürünü elle yapın.' },
+      { condition: 'Teknik ön kanıt 3 aydan uzun sürüyor', result: 'Bu süre Karar 6\'ya eklenir. Kasa süresi yetmiyorsa Kontrol 4\'te beklet.' },
+      { condition: 'En küçük siparişin bedeli kasaya sığmıyor', result: 'Ön sipariş sayısını artırın. Ya da ürünü elle yapın.' },
     ],
     models: [67, 80, 49, 110, 101],
     completeWhen: ['skills'],

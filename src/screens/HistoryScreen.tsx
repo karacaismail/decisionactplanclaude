@@ -18,9 +18,9 @@ type Entry = { kind: 'karar'; at: string; d: Decision } | { kind: 'gecis'; at: s
 
 const FILTER_KIND: Record<Exclude<Filter, 'hepsi'>, Entry['kind']> = { kararlar: 'karar', gecis: 'gecis', degisiklikler: 'degisiklik' }
 const EMPTY_TEXT: Record<Filter, string> = {
-  hepsi: 'Henüz kayıt yok. İlk kapıda kararı kaydedince burada görünür.',
-  kararlar: 'Henüz kayıt yok. İlk kapıda kararı kaydedince burada görünür.',
-  gecis: 'Geçiş kararı yok. Geçiş kapısında kararı kaydedince burada görünür.',
+  hepsi: 'Henüz kayıt yok. İlk kontrolde kararı kaydedince burada görünür.',
+  kararlar: 'Henüz kayıt yok. İlk kontrolde kararı kaydedince burada görünür.',
+  gecis: 'Hazırlık kararı yok. Hazırlık kontrolünde kararı kaydedince burada görünür.',
   degisiklikler: 'Sınır değişikliği yok. Harcama sınırı, bitiş tarihi veya deneme hakkı değişince kayıt buraya düşer.',
 }
 const TRANSITION_TAG: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
@@ -60,7 +60,7 @@ export function HistoryScreen() {
     return (
       <article className="tl-item history-entry" aria-labelledby={`${historyId}-decision-${d.id}`}>
         <div className="tl-head">
-          <h3 className="tl-title" id={`${historyId}-decision-${d.id}`}>Kapı {d.gate}</h3>
+          <h3 className="tl-title" id={`${historyId}-decision-${d.id}`}>Kontrol {d.gate}</h3>
           {def ? <span className="helper">{def.title}</span> : null}
           <DecisionBadge outcome={d.chosen} />
           {d.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
@@ -73,7 +73,7 @@ export function HistoryScreen() {
         </div>
         <div className="tl-notes">
           {d.chosen !== d.suggested ? <span>Sistemin önerisi: {OUTCOME_LABEL[d.suggested]}</span> : null}
-          {d.stale ? <span>Dayandığı veri sonradan değişti. Kapıyı yeniden inceleyin.</span> : null}
+          {d.stale ? <span>Dayandığı veri sonradan değişti. Kontrolü yeniden inceleyin.</span> : null}
           {d.counterView ? <span>Karşı görüş: {d.counterView}</span> : null}
           {d.secondOpinion ? <span>İkinci görüş: {d.secondOpinion}</span> : null}
           {d.conditional ? <span>Koşullu iş: {d.conditional.scope}. Bitiş {formatDate(d.conditional.deadline, false)}.</span> : null}
@@ -85,7 +85,7 @@ export function HistoryScreen() {
   const transitionItem = (t: TransitionRecord) => (
     <article className="tl-item history-entry" aria-labelledby={`${historyId}-transition-${t.id}`}>
       <div className="tl-head">
-        <h3 className="tl-title" id={`${historyId}-transition-${t.id}`}>Geçiş kapısı</h3>
+        <h3 className="tl-title" id={`${historyId}-transition-${t.id}`}>Hazırlık kontrolü</h3>
         <Tag color={TRANSITION_TAG[t.outcome]}>{TRANSITION_LABEL[t.outcome]}</Tag>
         {t.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
       </div>
@@ -103,7 +103,7 @@ export function HistoryScreen() {
         {t.conditional ? <span>Planlanacak konu: {t.conditional.topic}</span> : null}
         {t.conditional ? <span>Açık soru: {t.conditional.openQuestion}</span> : null}
         {t.conditional ? <span>Sorumlu: {t.conditional.owner}. Son tarih {formatDate(t.conditional.deadline, false)}.</span> : null}
-        {t.stale ? <span>Temel verisi sonradan değişti. Geçiş kapısını yeniden inceleyin.</span> : null}
+        {t.stale ? <span>Temel verisi sonradan değişti. Hazırlık kontrolünü yeniden inceleyin.</span> : null}
       </div>
     </article>
   )
@@ -133,7 +133,7 @@ export function HistoryScreen() {
       <PageHeader
         kicker="Karar günlüğü"
         title="Geçmiş"
-        description="Her kapı kararı bir sürüm noktasıdır. Geçiş kararları da burada durur. Karar, kanıt ve karşı görüş birlikte durur. Kayıtlar silinmez."
+        description="Her kontrol kararı bir sürüm noktasıdır. Hazırlık kararları da burada durur. Karar, kanıt ve karşı görüş birlikte durur. Kayıtlar silinmez."
       />
 
       <div className="history-grid">
@@ -155,7 +155,7 @@ export function HistoryScreen() {
               options={[
                 { value: 'hepsi', label: 'Hepsi' },
                 { value: 'kararlar', label: 'Kararlar' },
-                { value: 'gecis', label: 'Geçiş' },
+                { value: 'gecis', label: 'Hazırlık' },
                 { value: 'degisiklikler', label: 'Değişiklikler' },
               ]}
               aria-label="Kayıt türü"
@@ -182,7 +182,7 @@ export function HistoryScreen() {
           <Card className="k-card is-plain" variant="borderless" title={<h2 className="history-heading">Özet</h2>}>
             <div className="stat-list">
               <div><Statistic title="Karar sayısı" value={decisions.length} /></div>
-              <div><Statistic title="Geçiş kararı sayısı" value={transitions.length} /></div>
+              <div><Statistic title="Hazırlık kararı sayısı" value={transitions.length} /></div>
               <div><Statistic title="Değişiklik sayısı" value={changes.length} /></div>
               <div><Statistic title="Son kayıt" value={lastAt ? formatDate(lastAt) : 'Henüz yok'} className="is-text" /></div>
               <div><Statistic title="Plan sürümü" value={plan.revision} /></div>

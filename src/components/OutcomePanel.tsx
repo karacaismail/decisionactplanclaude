@@ -40,18 +40,18 @@ const EMPTY_COND = { scope: '', amountKurus: 0, deadline: '', owner: '', closing
 export interface OutcomePanelProps {
   evaluation: GateEvaluation
   onSave: (d: OutcomeDraft) => void
-  /** Taslak her değişimde dışarıya bildirilir. Kapı ekranı adım göstergesini buna göre günceller. */
+  /** Taslak her değişimde dışarıya bildirilir. Kontrol ekranı adım göstergesini buna göre günceller. */
   onChange?: (d: OutcomeDraft) => void
   singleFounder: boolean
   saving?: boolean
-  /** Kural denetimi için plan ve kapı tanımı. Verilmezse yalnız alan doluluğu denetlenir. */
+  /** Kural denetimi için plan ve kontrol tanımı. Verilmezse yalnız alan doluluğu denetlenir. */
   plan?: PlanDoc
   def?: GateDef
   harm?: boolean
 }
 
 /**
- * Kapı sonucu seçimi. Öneri gösterilir. Değiştirmek gerekçe ister. Kural engeli düğmeyi kilitler.
+ * Kontrol sonucu seçimi. Öneri gösterilir. Değiştirmek gerekçe ister. Kural engeli düğmeyi kilitler.
  * Görünüm antd Form'dur; durum bu bileşende tutulur. Form.Item etiketleri `htmlFor` ile alanlara bağlanır.
  */
 export function OutcomePanel({ evaluation, onSave, onChange, singleFounder, saving, plan, def, harm }: OutcomePanelProps) {

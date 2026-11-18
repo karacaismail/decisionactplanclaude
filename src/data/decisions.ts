@@ -1,7 +1,7 @@
 /**
- * Sekiz karar ve kapıları. Ölçütler adım alanlarını okur.
- * Sıra: Karar 1-5 (strateji öncesi), geçiş kapısı, strateji oluşturma (2.1-2.5 ve strateji belgesi), Karar 6-8 (strateji uygulama).
- * Kural: bir kapının ölçütü, o karardan sonraki bir adımı okuyamaz.
+ * Sekiz karar ve kontrolleri. Ölçütler adım alanlarını okur.
+ * Sıra: Karar 1-5 (strateji öncesi), hazırlık kontrolü, strateji oluşturma (2.1-2.5 ve strateji belgesi), Karar 6-8 (strateji uygulama).
+ * Kural: bir kontrolün ölçütü, o karardan sonraki bir adımı okuyamaz.
  * Alan adları docs/alan-sozlesmesi.md dosyasında yazılıdır.
  */
 import type { DecisionDef, GateCriterion } from './schema'
@@ -39,7 +39,7 @@ export const DECISIONS: DecisionDef[] = [
       criteria: [
         c('profil', 'Profil seçimleri yazıldı.', (p) => Boolean(p.profile.customer && p.profile.offering && p.profile.team && p.profile.funding && p.profile.market && p.profile.start)),
         c('niyet', 'Niyet, yön ve kurucu uyum kartı var.', (p) => filled(v(p, '01', 'whys')) && filled(v(p, '01', 'exitDirection')) && filled(v(p, '01', 'fitDomain'))),
-        c('sinir', 'Durdurma kuralları, pist ve üç sınır yazıldı.', (p) => (p.limits.stopRules?.length ?? 0) >= 3 && Boolean(p.limits.budgetKurus && p.limits.deadline && p.limits.retriesPerDecision && p.limits.monthlyBurnKurus && p.limits.cashKurus)),
+        c('sinir', 'Durdurma kuralları, kasa süresi ve üç sınır yazıldı.', (p) => (p.limits.stopRules?.length ?? 0) >= 3 && Boolean(p.limits.budgetKurus && p.limits.deadline && p.limits.retriesPerDecision && p.limits.monthlyBurnKurus && p.limits.cashKurus)),
         c('hak', 'Ekip varsa karar hakları yazıldı.', (p) => (p.profile.team === 'ekip' ? rows(p, '03', 'rights').length > 0 : true)),
       ],
       rows: [
@@ -48,11 +48,11 @@ export const DECISIONS: DecisionDef[] = [
           const vals = keys.map((k) => Number(v(p, '01', k) ?? 0))
           return vals.some((x) => x > 0) && (vals.reduce((a, b) => a + b, 0) < 12 || vals.some((x) => x > 0 && x < 2))
         } },
-        { condition: 'Pist 3 aydan kısa ve ek gelir yok', outcome: 'beklet', note: 'Önce gelir bulun.', applies: (p) => {
+        { condition: 'Kasa süresi 3 aydan kısa ve ek gelir yok', outcome: 'beklet', note: 'Önce gelir bulun.', applies: (p) => {
           const burn = p.limits.monthlyBurnKurus, cash = p.limits.cashKurus
           return Boolean(burn && cash) && Math.floor((cash as number) / (burn as number)) < 3 && !v(p, '02', 'extraIncome')
         } },
-        { condition: 'Durdurma kuralı veya pist eksik', outcome: 'yenidenDene', note: 'Bu iki şey olmadan Karar 2\'ye geçmeyin.', applies: (_p, cr) => cr.sinir === false },
+        { condition: 'Durdurma kuralı veya kasa süresi eksik', outcome: 'yenidenDene', note: 'Bu iki şey olmadan Karar 2\'ye geçmeyin.', applies: (_p, cr) => cr.sinir === false },
         { condition: '4 ölçüt tamam', outcome: 'ilerle', note: 'Karar 2\'ye geçin.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
       ],
     },
@@ -186,7 +186,7 @@ export const DECISIONS: DecisionDef[] = [
         { condition: 'Eşik geçildi ama reddedenlerin gerekçesi yazılmadı', outcome: 'yenidenDene', note: '1 hafta içinde reddedenleri arayın.', applies: (_p, cr) => cr.esik === true && cr.ret === false },
         { condition: 'İlgi var ama istenen taahhüt yok', outcome: 'yenidenDene', note: 'Teklifi yanlış kişiye sunduysanız Adım 08\'e dönün. En çok 1 deneme.', applies: (p, cr) => cr.esik === false && rows(p, '15', 'offers').some((o) => Number(o.ladder) >= 4 && Number(o.ladder) <= 5) },
         { condition: 'Problem güçlü, çözüm zayıf', outcome: 'yonDegistir', note: 'Adım 11\'e dönün. Başka yol test edin.', applies: (_p, cr) => cr.esik === false },
-        { condition: 'Pist yetmiyor', outcome: 'beklet', note: 'Para bulun. Yeniden açılma tarihi yazın.', applies: (p) => {
+        { condition: 'Kasa süresi yetmiyor', outcome: 'beklet', note: 'Para bulun. Yeniden açılma tarihi yazın.', applies: (p) => {
           const burn = p.limits.monthlyBurnKurus, cash = p.limits.cashKurus
           return Boolean(burn && cash) && Math.floor((cash as number) / (burn as number)) < 2
         } },
@@ -200,7 +200,7 @@ export const DECISIONS: DecisionDef[] = [
     icon: 'wallet',
     who: 'Harcama yetkilisi. Teslim sorumlusu kapasiteyi doğrular.',
     time: '1 ile 2 hafta.',
-    intro: 'Bu karar strateji seçmez. Üç soruya bakar. Bir satıştan para kalıyor mu? İşi bitirebilecek tehlikeler için kural var mı? Masada hangi yollar var? Cevaplar stratej\'e devir raporunu besler.',
+    intro: 'Bu karar strateji seçmez. Üç soruya bakar. Bir satıştan para kalıyor mu? İşi bitirebilecek tehlikeler için kural var mı? Masada hangi yollar var? Cevaplar stratej\'e teslim raporunu besler.',
     example: 'Atölye sahibi sipariş başına kalan parayı hesapladı. Sabit gideri 20 sipariş karşılıyor. Kusur oranı sınırı aşarsa sonraki parti açılmaz.',
     steps: ['16', '17', '18'],
     gate: {
@@ -223,7 +223,7 @@ export const DECISIONS: DecisionDef[] = [
           if (r.length === 0) return null
           return r.filter((x) => Number(x.likelihood ?? 0) * Number(x.impact ?? 0) >= 6).every((x) => filled(x.trigger) && filled(x.response))
         }),
-        c('pist', 'Pist en az 3 ay. Strateji oluşturmayı ve ilk denemeyi kapsıyor.', (p) => {
+        c('pist', 'Kasa süresi en az 3 ay. Strateji oluşturmayı ve ilk denemeyi kapsıyor.', (p) => {
           const burn = p.limits.monthlyBurnKurus, cash = p.limits.cashKurus
           if (!burn || !cash) return null
           return Math.floor(cash / burn) >= 3
@@ -237,7 +237,7 @@ export const DECISIONS: DecisionDef[] = [
         }),
       ],
       rows: [
-        { condition: '5 ölçüt tamam', outcome: 'ilerle', note: 'Geçiş kapısına gidin. Devir raporunu okuyun.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
+        { condition: '5 ölçüt tamam', outcome: 'ilerle', note: 'Hazırlık kontrolüne gidin. Teslim raporunu okuyun.', applies: (_p, cr) => Object.values(cr).every((x) => x === true) },
         { condition: 'Talep var, para mantığı çalışmıyor', outcome: 'yonDegistir', note: 'Adım 16\'ya dönün. Fiyat ve maliyeti değiştirin.', applies: (_p, cr) => cr.plan === false },
         { condition: 'Kârlı iş ama tahsilat gecikiyor', outcome: 'kosulluIlerle', note: 'Ödeme koşulunu yeniden görüşün. Kasa açığı kapanmadan harcama yapmayın.', applies: (_p, cr) => cr.plan === true && cr.kasa === false },
         { condition: 'Talep var ama kaynak yetmiyor', outcome: 'beklet', note: 'Ortak arayın veya para bulun.', applies: (_p, cr) => cr.pist === false },
@@ -255,7 +255,7 @@ export const DECISIONS: DecisionDef[] = [
     time: '4 ile 8 hafta. Donanımda 3 ile 6 ay. Fiziksel üründe tedarik süresi, kamuda alım süresi eklenir.',
     intro: 'Küçük ama baştan sona tamamlanan bir işi gerçek müşteriye verin. Talep, teslim ve faydayı ayrı ölçün.',
     example: 'Sekiz işletmeden dördü ödeme yaptı. Yalnız biri raporu yardımsız hazırladı. Teklif çalıştı. Teslim çalışmadı.',
-    /* İlk üç adım uygulama planıdır: hedef ve gösterge, ana işler ve sorumlular, kaynak ve bütçe. Kapı 6 bu adımları okumaz. */
+    /* İlk üç adım uygulama planıdır: hedef ve gösterge, ana işler ve sorumlular, kaynak ve bütçe. Kontrol 6 bu adımları okumaz. */
     steps: ['U31', 'U32', 'U33', '21', '22', '23', '24', '25'],
     gate: {
       n: 6,
@@ -368,9 +368,9 @@ export const DECISIONS: DecisionDef[] = [
 ]
 
 /**
- * Strateji oluşturma. Sekiz karardan biri değildir. Geçiş kapısından sonra açılır.
+ * Strateji oluşturma. Sekiz karardan biri değildir. Hazırlık kontrolünden sonra açılır.
  * Beş zorunlu alt aşaması vardır: teşhis, seçenekler, sınama, seçim ve vazgeçiş, ana hamleler.
- * Çıkış kapısı strateji belgesidir. Karar sahibi belgeyi onaylayınca strateji uygulama açılır.
+ * Çıkış kontrolü strateji belgesidir. Karar sahibi belgeyi onaylayınca strateji uygulama açılır.
  * Alt aşamaların dayanağı docs/sonraki-ana-asamalar-plani.md dosyasındadır.
  */
 export const STRATEGY_N = 9
@@ -379,16 +379,16 @@ export const STRATEGY: DecisionDef = {
   title: 'Strateji oluşturma',
   question: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?',
   icon: 'signpost',
-  who: 'Stratej, karar sahibi ve ekip. Devir raporu masada durur.',
+  who: 'Stratej, karar sahibi ve ekip. Teslim raporu masada durur.',
   time: '1 ile 2 hafta.',
-  intro: 'Bu aşama geçiş kapısından sonra başlar. Önce asıl güçlüğü yazarsınız. Sonra yolları sınar, birini seçer ve ana hamleleri belirlersiniz.',
+  intro: 'Bu aşama hazırlık kontrolünden sonra başlar. Önce asıl güçlüğü yazarsınız. Sonra yolları sınar, birini seçer ve ana hamleleri belirlersiniz.',
   example: 'Atölye sahibi mevcut müşterilere küçük parti sunmayı seçti. Yeni bölgeye satış şimdilik kapsam dışı.',
   steps: ['S21', 'S22', 'S23', '19', 'S25', '20'],
   gate: {
     n: STRATEGY_N,
     title: 'Strateji oluşturma tamam mı?',
     maxRetries: 0,
-    /* Ölçütler adım denetimlerini çağırır. Adımı tamamlatmayan kayıt kapıyı da geçmez. */
+    /* Ölçütler adım denetimlerini çağırır. Adımı tamamlatmayan kayıt kontrolü da geçmez. */
     criteria: [
       c('teshis', 'Teşhis yazıldı. Asıl güçlük ve dayanağı belli.', (p) => (p.steps['S21'] ? filled(v(p, 'S21', 'diagnosis')) && filled(v(p, 'S21', 'diagnosisWhy')) : null)),
       c('secenek', 'En az iki farklı yol masada.', (p) => (p.steps['S22'] ? optionIssues(p.steps['S22'].values).length === 0 : null)),

@@ -311,7 +311,7 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
             ]}
           />
           <p className="helper form-tabs-note">
-            {tab === 'zorunlu' ? 'Bu sekmedeki bölümleri doldurmanız yeter. Öteki sekme isteğe bağlıdır.' : 'Bu bölümleri doldurmak zorunda değilsiniz. Doldurursanız devir raporu güçlenir.'}
+            {tab === 'zorunlu' ? 'Bu sekmedeki bölümleri doldurmanız yeter. Öteki sekme isteğe bağlıdır.' : 'Bu bölümleri doldurmak zorunda değilsiniz. Doldurursanız teslim raporu güçlenir.'}
           </p>
         </div>
       ) : null}

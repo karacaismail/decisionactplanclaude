@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Geçiş kapısı (/gecis) akışı. Yazılım öneri üretir, karar sahibi kaydeder.
+ * Hazırlık kontrolü (/gecis) akışı. Yazılım öneri üretir, karar sahibi kaydeder.
  * Kabul ölçütleri docs/uygulama-plani-on-yuz.md Adım 3 ve 6.5'tedir.
  * Rapora bağlanan kısım docs/strateje-devir-uygulama-plani.md Adım 5'tedir.
  */
@@ -37,11 +37,11 @@ async function openGate(page: Page) {
   await expect(page.getByText('Yazılımın önerisi')).toBeVisible()
 }
 
-/** Onay kutusunun etiketi. Karar sahibi strateje devir raporunu okuduğunu bildirir. */
-const REPORT_READ = 'Strateje devir raporunu okudum.'
+/** Onay kutusunun etiketi. Karar sahibi strateje teslim raporunu okuduğunu bildirir. */
+const REPORT_READ = 'Strateje teslim raporunu okudum.'
 
 const suggestion = async (page: Page) => (await page.locator('.suggestion-line .ant-tag').innerText()).trim()
-const saveButton = (page: Page) => page.getByRole('button', { name: 'Geçiş kararını kaydet' })
+const saveButton = (page: Page) => page.getByRole('button', { name: 'Hazırlık kararını kaydet' })
 
 /** Koşullu hazır için dört alanı doldurur. Tarih, takvimde seçilebilen ilk gündür. */
 async function fillConditional(page: Page) {
@@ -66,7 +66,7 @@ async function fillCommon(page: Page) {
 test('örnek planda öneri görünür, karar kaydedilir ve strateji oluşturma açılır', async ({ page }) => {
   await openDemo(page)
   await openGate(page)
-  await noHorizontalOverflow(page, 'geçiş kapısı')
+  await noHorizontalOverflow(page, 'hazırlık kontrolü')
 
   const save = saveButton(page)
   await expect(save).toBeDisabled()
@@ -87,7 +87,7 @@ test('örnek planda öneri görünür, karar kaydedilir ve strateji oluşturma a
 
   const open = page.getByRole('button', { name: 'Strateji oluşturmayı aç' })
   await expect(open).toBeVisible()
-  await expect(page.getByText('Önceki geçiş kararları')).toBeVisible()
+  await expect(page.getByText('Önceki hazırlık kararları')).toBeVisible()
   await noHorizontalOverflow(page, 'kayıt sonrası')
   await open.click()
   await expect(page).toHaveURL(/#\/strateji/)
@@ -127,7 +127,7 @@ test('"Koşullu hazır" dört alan ister ve açık soruyu iş listesine ekler', 
   await expect(page.getByText('Açık soru: Günde 40 sipariş tutar mı?')).toBeVisible()
 
   await page.goto('/#/isler')
-  await expect(page.getByText('Geçiş kapısı açık sorusu: Günde 40 sipariş tutar mı?').first()).toBeVisible()
+  await expect(page.getByText('Hazırlık kontrolü açık sorusu: Günde 40 sipariş tutar mı?').first()).toBeVisible()
 })
 
 test('"Henüz hazır değil" kaydı strateji oluşturmayı açmaz ve eksik ölçüte götürür', async ({ page }) => {
@@ -141,12 +141,12 @@ test('"Henüz hazır değil" kaydı strateji oluşturmayı açmaz ve eksik ölç
   await expect(page).toHaveURL(/#\/karar\/\d\/adim\/\d\d/)
 })
 
-test('kapı devir raporuna bağlıdır: doluluk kartı, karar sorusu ve onay kutusu', async ({ page }) => {
+test('hazırlık kontrolü teslim raporuna bağlıdır: doluluk kartı, karar sorusu ve onay kutusu', async ({ page }) => {
   await openDemo(page)
   await openGate(page)
 
   // Dördüncü kart raporun doluluğunu gösterir. Sayı rapor motorundan gelir.
-  const card = page.locator('.gecis-stats .stat-card').filter({ hasText: 'Devir raporu' })
+  const card = page.locator('.gecis-stats .stat-card').filter({ hasText: 'Teslim raporu' })
   await expect(card).toBeVisible()
   await expect(card).toContainText(/\d+ \/ 14 başlık dolu\./)
   await expect(card.getByRole('progressbar')).toHaveCount(1)
@@ -185,7 +185,7 @@ test('kapı devir raporuna bağlıdır: doluluk kartı, karar sorusu ve onay kut
 
   // Kutu işaretlenmeden kayıt olmaz.
   if ((await suggestion(page)) === 'Koşullu hazır') await fillConditional(page)
-  await page.getByLabel('Gerekçe').fill('Dokuz zorunlu ölçüt kanıtla karşılandı. Devir raporunu baştan sona okudum.')
+  await page.getByLabel('Gerekçe').fill('Dokuz zorunlu ölçüt kanıtla karşılandı. Teslim raporunu baştan sona okudum.')
   await page.getByLabel('Karar sahibi').fill('Kurucu')
   await expect(saveButton(page)).toBeDisabled()
   await page.getByLabel(REPORT_READ).check()

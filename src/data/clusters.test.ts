@@ -73,11 +73,11 @@ describe('ana kümeler', () => {
   it('dayanak adlarında virgül yoktur, liste karışmaz', () => {
     for (const s of CLUSTERS.flatMap((c) => c.subStages)) for (const f of s.frameworks) expect([s.code, f.includes(',')]).toEqual([s.code, false])
   })
-  it('strateji oluşturmanın her adımı ya bir alt aşamadır ya da çıkış kapısıdır', () => {
+  it('strateji oluşturmanın her adımı ya bir alt aşamadır ya da çıkış kontrolüdür', () => {
     const staged = clusterOf('olusturma').subStages.flatMap((s) => s.steps)
     expect(STRATEGY.steps.filter((id) => !staged.includes(id))).toEqual(['20'])
   })
-  it('strateji uygulamanın plan adımları Karar 6\'nın başındadır ve Kapı 6 onları okumaz', () => {
+  it('strateji uygulamanın plan adımları Karar 6\'nın başındadır ve Kontrol 6 onları okumaz', () => {
     const k6 = DECISIONS.find((d) => d.n === 6)!
     expect(k6.steps.slice(0, 3)).toEqual(['U31', 'U32', 'U33'])
     const p = withStrategy(withTransition(emptyPlan('p', 'Plan')))
@@ -96,12 +96,12 @@ describe('kümenin durumu', () => {
     const p = emptyPlan('p', 'Plan')
     expect([clusterState(p, 'hazirlik'), clusterState(p, 'olusturma'), clusterState(p, 'uygulama')]).toEqual(['bos', 'kilitli', 'kilitli'])
   })
-  it('örnek planda hazırlık sürer, geçiş kararı yoktur', () => {
+  it('örnek planda hazırlık sürer, hazırlık kararı yoktur', () => {
     const p = buildDemoPlan()
     expect(clusterState(p, 'hazirlik')).toBe('suruyor')
     expect(clusterState(p, 'olusturma')).toBe('kilitli')
   })
-  it('geçiş kararından sonra strateji oluşturma açılır, strateji uygulama kilitli kalır', () => {
+  it('hazırlık kararından sonra strateji oluşturma açılır, strateji uygulama kilitli kalır', () => {
     const p = withTransition(emptyPlan('p', 'Plan'))
     expect([clusterState(p, 'hazirlik'), clusterState(p, 'olusturma'), clusterState(p, 'uygulama')]).toEqual(['tamam', 'bos', 'kilitli'])
     p.steps['S21'] = { values: { diagnosis: 'Güçlük' }, status: 'taslak', updatedAt: '' }

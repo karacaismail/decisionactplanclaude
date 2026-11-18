@@ -1,6 +1,6 @@
 /**
  * Süreç tutarlılığı. Tek bir sıra vardır:
- * Karar 1-5 (temel), geçiş kapısı, strateji oluşturma, Karar 6-8 (uygulama).
+ * Karar 1-5 (temel), hazırlık kontrolü, strateji oluşturma, Karar 6-8 (uygulama).
  * Bu dosya, tanımların, kilitlerin, eskime kuralının ve raporların aynı sırayı kullandığını sınar.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
@@ -87,11 +87,11 @@ describe('adımlar ve gruplar', () => {
     expect(ids(EXECUTION_DECISIONS).slice(0, 4)).toEqual(['U31', 'U32', 'U33', '21'])
     expect(ids(EXECUTION_DECISIONS).at(-1)).toBe('34')
   })
-  it('kodu olan her adım bir alt aşamaya ya da çıkış kapısına bağlıdır', () => {
+  it('kodu olan her adım bir alt aşamaya ya da çıkış kontrolüne bağlıdır', () => {
     const coded = STEP_IDS.filter((id) => STEPS[id].code)
     expect(coded).toEqual(['S21', 'S22', 'S23', '19', 'S25', '20', 'U31', 'U32', 'U33'])
-    expect(coded.map((id) => STEPS[id].code)).toEqual(['2.1', '2.2', '2.3', '2.4', '2.5', 'Çıkış kapısı', '3.1', '3.2', '3.3'])
-    for (const id of coded) if (STEPS[id].code !== 'Çıkış kapısı') expect([id, subStageOfStep(id)?.code]).toEqual([id, STEPS[id].code])
+    expect(coded.map((id) => STEPS[id].code)).toEqual(['2.1', '2.2', '2.3', '2.4', '2.5', 'Çıkış kontrolü', '3.1', '3.2', '3.3'])
+    for (const id of coded) if (STEPS[id].code !== 'Çıkış kontrolü') expect([id, subStageOfStep(id)?.code]).toEqual([id, STEPS[id].code])
     expect(stepHeading('S21')).toBe('2.1. Teşhis')
     expect(stepHeading('12')).toBe('Adım 12. Yapabilirlik ve kaynak')
   })
@@ -101,10 +101,10 @@ describe('adımlar ve gruplar', () => {
   })
 })
 
-describe('kapılar yalnız kendi adımlarını ve önceki adımları okur', () => {
+describe('kontroller yalnız kendi adımlarını ve önceki adımları okur', () => {
   const plans = [emptyPlan('p', 'Boş'), buildDemoPlan()]
   for (const g of GROUPS) {
-    it(`${g.n === STRATEGY_N ? 'Strateji oluşturma' : `Kapı ${g.n}`}`, () => {
+    it(`${g.n === STRATEGY_N ? 'Strateji oluşturma' : `Kontrol ${g.n}`}`, () => {
       for (const plan of plans) {
         const filledPlan = structuredClone(plan)
         for (const id of STEP_IDS) filledPlan.steps[id] ??= { values: {}, status: 'taslak', updatedAt: '' }
@@ -118,7 +118,7 @@ describe('kapılar yalnız kendi adımlarını ve önceki adımları okur', () =
   }
 })
 
-describe('geçiş kapısı ve devir raporu yalnız temel adımlarını okur', () => {
+describe('hazırlık kontrolü ve teslim raporu yalnız temel adımlarını okur', () => {
   const demo = buildDemoPlan()
   finishStrategy(demo)
   const isFoundation = (id: string) => FOUNDATION_DECISIONS.includes(STEPS[id].decision)
@@ -126,7 +126,7 @@ describe('geçiş kapısı ve devir raporu yalnız temel adımlarını okur', ()
     const read = stepsRead(demo, (p) => evaluateReadiness(p, { secondReader: 'Ayşe' }))
     expect([...read].filter((id) => !isFoundation(id))).toEqual([])
   })
-  it('devir raporu seçimi okumaz, yol seçmez', () => {
+  it('teslim raporu seçimi okumaz, yol seçmez', () => {
     const read = stepsRead(demo, (p) => buildHandoffReport(p))
     expect([...read].filter((id) => !isFoundation(id))).toEqual([])
     expect(JSON.stringify(buildHandoffReport(demo))).not.toContain('En güçlü kanıt burada.')
@@ -141,7 +141,7 @@ describe('geçiş kapısı ve devir raporu yalnız temel adımlarını okur', ()
   })
 })
 
-describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
+describe('isteğe bağlı kayıtlar hazırlık kontrolünü değiştirmez', () => {
   it('asıl engel, başarı koşulu, yol bağı, güç ve taahhüt silinince öneri aynı kalır', () => {
     const full = buildDemoPlan()
     const bare = buildDemoPlan()
@@ -167,10 +167,10 @@ describe('isteğe bağlı kayıtlar geçiş kapısını değiştirmez', () => {
   })
 })
 
-describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
+describe('kısa yol hiçbir temel kontrolünü kör bırakmaz', () => {
   const visible = (id: string) => STEPS[id].shortPath
   for (const n of FOUNDATION_DECISIONS) {
-    it(`Kapı ${n} kısa yolda gizli bir adımı okumaz`, () => {
+    it(`Kontrol ${n} kısa yolda gizli bir adımı okumaz`, () => {
       const p = buildDemoPlan()
       p.shortPath = true
       const gate = DECISIONS.find((d) => d.n === n)!.gate
@@ -178,7 +178,7 @@ describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
       expect([...read].filter((id) => !visible(id))).toEqual([])
     })
   }
-  it('strateji oluşturma ve uygulama kapıları da kısa yolda gizli bir adımı okumaz', () => {
+  it('strateji oluşturma ve uygulama kontrolleri da kısa yolda gizli bir adımı okumaz', () => {
     const p = buildDemoPlan()
     p.shortPath = true
     for (const g of [STRATEGY, ...DECISIONS.filter((d) => EXECUTION_DECISIONS.includes(d.n))]) {
@@ -186,7 +186,7 @@ describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
       expect([g.n, [...read].filter((id) => !visible(id))]).toEqual([g.n, []])
     }
   })
-  it('ekipte Kapı 1 kısa yolda gizli bir adımı okumaz', () => {
+  it('ekipte Kontrol 1 kısa yolda gizli bir adımı okumaz', () => {
     const p = buildDemoPlan()
     p.shortPath = true
     p.profile.team = 'ekip'
@@ -195,7 +195,7 @@ describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
     expect(read.has('03')).toBe(true)
     expect([...read].filter((id) => !visible(id))).toEqual([])
   })
-  it('kısa yolda örnek plan beş temel kapıda "İlerle" önerisi alır', () => {
+  it('kısa yolda örnek plan beş temel kontrolde "İlerle" önerisi alır', () => {
     const p = buildDemoPlan()
     p.shortPath = true
     for (const n of FOUNDATION_DECISIONS) {
@@ -216,7 +216,7 @@ describe('kısa yol hiçbir temel kapısını kör bırakmaz', () => {
 })
 
 describe('isteğe bağlı bölüm hiçbir kuralın istediği alanı taşımaz', () => {
-  /* Kapılar, geçiş kapısı, hazırlık ölçütleri ve adım tamamlama denetimleri. */
+  /* Kontroller, hazırlık kontrolü, hazırlık ölçütleri ve adım tamamlama denetimleri. */
   const rules = [decisionsSrc, transitionSrc, readinessSrc, strengthsSrc, integritySrc].join('\n')
   const real = (sec: { fields: { key: string; type: string }[] }) => sec.fields.filter((f) => f.type !== 'info' && f.type !== 'calc')
   const foundation = STEP_IDS.filter((id) => FOUNDATION_DECISIONS.includes(STEPS[id].decision))
@@ -230,7 +230,7 @@ describe('isteğe bağlı bölüm hiçbir kuralın istediği alanı taşımaz', 
     expect(wrong).toEqual([])
   })
 
-  it('kapının ya da geçiş kapısının okuduğu alan isteğe bağlı bölümde durmaz', () => {
+  it('kontrolün ya da hazırlık kontrolünün okuduğu alan isteğe bağlı bölümde durmaz', () => {
     const wrong: string[] = []
     for (const id of foundation) {
       for (const sec of STEPS[id].sections) {
@@ -258,7 +258,7 @@ describe('isteğe bağlı bölüm hiçbir kuralın istediği alanı taşımaz', 
   })
 
   /*
-   * Alan bütçesi. Kapsam kaymasına karşı kapıdır.
+   * Alan bütçesi. Kapsam kaymasına karşı kontroldür.
    * Yeni alan eklemek bu testi kırar. Bütçeyi yükseltme kararını karar sahibi verir.
    * Gerekçe docs/strateji-tanimi-bosluk-ve-bilinmeyen-analizi.md dosyasının 10.3. bölümündedir.
    */
@@ -298,13 +298,13 @@ describe('kilit zinciri tek sırayı izler', () => {
     expect(ORDER.filter((n) => !decisionLocked(p, n))).toEqual([1])
     expect(planPosition(p)).toMatchObject({ stage: 'temel', decision: 1 })
   })
-  it('beş temel kapısından sonra sıradaki iş geçiş kapısıdır', () => {
+  it('beş temel kontrolünden sonra sıradaki iş hazırlık kontrolüdür', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = FOUNDATION_DECISIONS.map((n) => decision(n))
     expect(targets(p)).toEqual([null, null, null, null, null, 'gecis', 'gecis', 'gecis', 'gecis'])
     expect(planPosition(p).stage).toBe('gecis')
   })
-  it('geçiş kararından sonra strateji oluşturma açılır, uygulama kilitli kalır', () => {
+  it('hazırlık kararından sonra strateji oluşturma açılır, uygulama kilitli kalır', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = FOUNDATION_DECISIONS.map((n) => decision(n))
     p.transitions = [transition()]
@@ -312,7 +312,7 @@ describe('kilit zinciri tek sırayı izler', () => {
     expect(lockReason(p, 6)).toContain('Beş alt aşama')
     expect(planPosition(p).stage).toBe('strateji')
   })
-  it('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler', () => {
+  it('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kontrol 6\'yı bekler', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = FOUNDATION_DECISIONS.map((n) => decision(n))
     p.transitions = [transition()]
@@ -324,7 +324,7 @@ describe('kilit zinciri tek sırayı izler', () => {
     expect(ORDER.filter((n) => decisionLocked(p, n))).toEqual([])
     expect(planPosition(p).stage).toBe('bitti')
   })
-  it('geçiş kararı düşünce strateji oluşturma ve bütün uygulama kilitlenir', () => {
+  it('hazırlık kararı düşünce strateji oluşturma ve bütün uygulama kilitlenir', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = [...FOUNDATION_DECISIONS, ...EXECUTION_DECISIONS].map((n) => decision(n))
     p.transitions = [transition({ outcome: 'kosullu', conditional: { topic: 'Kapsam', openQuestion: 'Soru', owner: 'Kurucu', deadline: '2026-01-01' } })]
@@ -350,7 +350,7 @@ describe('eskime kuralı süreç sırasını izler', () => {
     finishStrategy(p)
     return p
   }
-  it('seçim (Adım 19) değişince Kapı 6, 7 ve 8 eskir, geçiş kararı ve temel eskimez', () => {
+  it('seçim (Adım 19) değişince Kontrol 6, 7 ve 8 eskir, hazırlık kararı ve temel eskimez', () => {
     const p = fullPlan()
     applyStepValues(p, '19', { chosenPath: 'Ön sipariş' })
     expect(EXECUTION_DECISIONS.map((n) => gatePassed(p, n))).toEqual([false, false, false])
@@ -367,7 +367,7 @@ describe('eskime kuralı süreç sırasını izler', () => {
       expect([step, EXECUTION_DECISIONS.map((n) => gatePassed(p, n))]).toEqual([step, [true, true, true]])
     }
   })
-  it('hiçbir kapı, geçiş kapısı ya da strateji ölçütü uygulama planı adımlarını okumaz', () => {
+  it('hiçbir kontrol, hazırlık kontrolü ya da strateji ölçütü uygulama planı adımlarını okumaz', () => {
     const p = fullPlan()
     const all = [...DECISIONS.map((d) => d.gate), STRATEGY.gate]
     const read = stepsRead(p, (x) => {
@@ -376,7 +376,7 @@ describe('eskime kuralı süreç sırasını izler', () => {
     })
     expect(PLAN_STEPS.filter((id) => read.has(id))).toEqual([])
   })
-  it('yol adayları (Adım 18) değişince Kapı 5, geçiş kararı ve uygulama eskir', () => {
+  it('yol adayları (Adım 18) değişince Kontrol 5, hazırlık kararı ve uygulama eskir', () => {
     const p = fullPlan()
     p.steps['18'] = { values: { counterMove: 'a' }, status: 'tamam', updatedAt: '' }
     applyStepValues(p, '18', { counterMove: 'b' })
@@ -385,14 +385,14 @@ describe('eskime kuralı süreç sırasını izler', () => {
     expect(transitionPassed(p)).toBe(false)
     expect(EXECUTION_DECISIONS.some((n) => gatePassed(p, n))).toBe(false)
   })
-  it('bir temel kapısı yeniden karara bağlanınca geçiş kararı da eskir', () => {
+  it('bir temel kontrolü yeniden karara bağlanınca hazırlık kararı da eskir', () => {
     const p = fullPlan()
     markStaleAfterGate(p, 5)
     expect(gatePassed(p, 5)).toBe(true)
     expect(transitionPassed(p)).toBe(false)
     expect(gatePassed(p, 6)).toBe(false)
   })
-  it('bir uygulama kapısı yeniden karara bağlanınca geçiş kararı eskimez', () => {
+  it('bir uygulama kontrolü yeniden karara bağlanınca hazırlık kararı eskimez', () => {
     const p = fullPlan()
     markStaleAfterGate(p, 6)
     expect(transitionPassed(p)).toBe(true)
@@ -416,10 +416,10 @@ describe('metinler eski süreci anlatmaz', () => {
     [/6 destekleyici/, 'Destekleyici ölçüt sayısı 7\'dir.'],
     [/Adım 18, 19 ve 20/, 'Strateji oluşturma Adım 19 ve 20\'dir. Adım 18 Karar 5\'tedir.'],
     [/Saha ve kazanma yolu/, 'Adım 18\'in adı "Yol adayları"dır.'],
-    [/[Tt]emel belgesinde yazar|temel belgesindeki kanıt/, 'Belgenin adı "Strateje devir raporu"dur.'],
+    [/[Tt]emel belgesinde yazar|temel belgesindeki kanıt/, 'Belgenin adı "Strateje teslim raporu"dur.'],
     [/stratejist/i, 'Unvan "stratej"dir.'],
     [/Seçimi stratej yapar|Kararı stratej verir|Seçim stratej.{1,2}in işidir|aralarından seçer|adaylar arasından seçer|Yolu stratej seçer/, 'Stratej önerir. Seçimi karar sahibi yapar.'],
-    [/dayanakları inceledim/i, 'Kutu metni "Strateje devir raporunu okudum"dur.'],
+    [/dayanakları inceledim/i, 'Kutu metni "Strateje teslim raporunu okudum"dur.'],
   ]
   it('güncel dosyalarda eski ifade yoktur', () => {
     const hits: string[] = []

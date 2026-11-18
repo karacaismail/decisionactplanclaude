@@ -13,11 +13,11 @@ function transition(patch: Partial<TransitionRecord> = {}): TransitionRecord {
 }
 const draft = (patch: Partial<TransitionDraft> = {}): TransitionDraft => ({ outcome: 'degil', reason: 'Eksik kanıt var.', decidedBy: 'Kurucu', reviewed: true, ...patch })
 
-describe('doğrulama seviyesi', () => {
+describe('kanıt düzeyi', () => {
   it('boş planda sıfırdır', () => {
     expect(validationLevel(emptyPlan('p', 'Plan'))).toBe(0)
   })
-  it('kapılar sırayla sayılır, atlanan kapı seviyeyi durdurur', () => {
+  it('kontroller sırayla sayılır, atlanan kontrol seviyeyi durdurur', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = [decision(1), decision(2), decision(4)]
     expect(validationLevel(p)).toBe(2)
@@ -57,7 +57,7 @@ describe('evaluateReadiness', () => {
   })
 })
 
-describe('geçiş kararı', () => {
+describe('hazırlık kararı', () => {
   it('karar yokken strateji oluşturma ve Karar 6 kilitlidir', () => {
     const p = emptyPlan('p', 'Plan')
     p.decisions = [1, 2, 3, 4, 5].map((n) => decision(n))
@@ -83,7 +83,7 @@ describe('geçiş kararı', () => {
     expect(effectiveTransition(t, new Date('2026-11-11T00:00:00.000Z'))).toBe('kosullu')
     expect(effectiveTransition(t, new Date('2026-11-14T00:00:00.000Z'))).toBe('degil')
   })
-  it('temel adımı değişince geçiş kararı eskir, uygulama adımı değişince eskimez', () => {
+  it('temel adımı değişince hazırlık kararı eskir, uygulama adımı değişince eskimez', () => {
     const p = emptyPlan('p', 'Plan')
     p.transitions = [transition()]
     markStale(p, 6)
@@ -196,7 +196,7 @@ describe('kanıtın sayılma kuralı', () => {
 })
 
 describe('yol adayları ölçütü aynı adı bir kez sayar', () => {
-  it('aynı adla iki kez yazılan yol Kapı 5 ölçütünü karşılamaz', () => {
+  it('aynı adla iki kez yazılan yol Kontrol 5 ölçütünü karşılamaz', () => {
     const p = buildDemoPlan()
     const yol = (x: PlanDoc) => evaluateReadiness(x).mandatory.find((c) => c.id === 'Z5')?.met
     expect(yol(p)).toBe(true)

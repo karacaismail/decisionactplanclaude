@@ -14,9 +14,9 @@ Yazılım üç ana kümeden oluşur. Kümeler bu sırayla açılır. Sıra hiçb
 
 | Sıra | Ana küme | Zorunlu alt aşamalar | Küme ne ile biter? | Kararı kim verir? |
 |---|---|---|---|---|
-| 1 | Strateji öncesi hazırlık | Karar 1 ile Karar 5 arası ve geçiş kapısı | Geçiş kararı kaydedilir. | Karar sahibi |
+| 1 | Strateji öncesi hazırlık | Karar 1 ile Karar 5 arası ve hazırlık kontrolü | Hazırlık kararı kaydedilir. | Karar sahibi |
 | 2 | Strateji oluşturma | 2.1, 2.2, 2.3, 2.4 ve 2.5 | Karar sahibi strateji belgesini onaylar. | Karar sahibi. Stratej önerir. |
-| 3 | Strateji uygulama | 3.1, 3.2, 3.3, 3.4 ve 3.5 | Çıkış kapısı yoktur. Bu küme bir döngüdür. | Karar sahibi |
+| 3 | Strateji uygulama | 3.1, 3.2, 3.3, 3.4 ve 3.5 | Çıkış kontrolü yoktur. Bu küme bir döngüdür. | Karar sahibi |
 
 **Ana küme kuralı.** Bir ana küme ancak olmazsa olmaz ise eklenir. Ölçü şudur: incelenen çerçevelerin en az dörtte üçü o aşamayı ayrı bir üst aşama saymalıdır. Bu ölçüyü yalnız iki aşama geçti: oluşturma ve uygulama. Sayım [sonraki-ana-asamalar-plani.md](sonraki-ana-asamalar-plani.md) dosyasındadır.
 
@@ -27,7 +27,7 @@ Süreç dört bölümle yürür. Bölümler kümelere şöyle bağlıdır:
 | Bölüm | Ana küme | Adımlar |
 |---|---|---|
 | Temel | 1. Strateji öncesi hazırlık | Adım 00 ile Adım 18 arası. Karar 1 ile Karar 5 arası. |
-| Geçiş kapısı | 1. Strateji öncesi hazırlık | Adım yoktur. Devir raporu okunur. |
+| Hazırlık kontrolü | 1. Strateji öncesi hazırlık | Adım yoktur. Teslim raporu okunur. |
 | Strateji oluşturma | 2. Strateji oluşturma | 2.1, 2.2, 2.3, 2.4, 2.5 ve strateji belgesi |
 | Strateji uygulama | 3. Strateji uygulama | 3.1, 3.2 ve 3.3. Sonra Adım 21 ile Adım 34 arası. Karar 6, 7 ve 8. |
 
@@ -41,7 +41,7 @@ Süreç dört bölümle yürür. Bölümler kümelere şöyle bağlıdır:
 | 2.4 | Seçim ve vazgeçiş | Karar sahibi yolu, kazanma hedefini ve sahayı seçer. Neyden vazgeçtiğini yazar. | Ortada strateji olmaz. |
 | 2.5 | Ana hamleler ve gerekli yetkinlikler | Stratej az sayıda büyük işi ve gereken beceriyi yazar. | Seçim kâğıtta kalır. |
 
-Alt aşama 2.4 eski Adım 19'dur. Çıkış kapısı eski Adım 20'dir ve adı "Strateji belgesi"dir.
+Alt aşama 2.4 eski Adım 19'dur. Çıkış kontrolü eski Adım 20'dir ve adı "Strateji belgesi"dir.
 
 ### Strateji uygulamanın alt aşamaları
 
@@ -53,7 +53,7 @@ Alt aşama 2.4 eski Adım 19'dur. Çıkış kapısı eski Adım 20'dir ve adı "
 | 3.4 | Yürütme, ölçme ve gözden geçirme | Ekip işleri yapar ve sonucu ölçer. | Karar 6 ve Karar 7 |
 | 3.5 | Stratejiyi sınama ve yenileme | Karar sahibi "Seçim hâlâ doğru mu?" diye sorar. | "Strateji uygulama" ekranı ve Karar 8 |
 
-Alt aşama 3.1, 3.2 ve 3.3 Karar 6'nın ilk üç adımıdır. Kapı 6 bu üç adımı okumaz.
+Alt aşama 3.1, 3.2 ve 3.3 Karar 6'nın ilk üç adımıdır. Kontrol 6 bu üç adımı okumaz.
 
 Alt aşama 3.5'te karar sahibi üç karardan birini verir:
 
@@ -61,7 +61,7 @@ Alt aşama 3.5'te karar sahibi üç karardan birini verir:
 2. "Düzelt" kararı seçimi değiştirmez. Karar sahibi hedefi ya da işleri günceller.
 3. "Yeniden aç" kararı işi strateji oluşturmaya geri götürür.
 
-"Yeniden aç" kararından sonra strateji belgesi taslağa döner ve onay silinir. Kapı 6, 7 ve 8'in kararları eskir. Uygulama kilitlenmez ve eski seçimle sürer. Karar sahibi strateji belgesini yeniden onaylayınca strateji kapanır. Sonraki bir "Düzelt" kaydı açık stratejiyi kapatmaz.
+"Yeniden aç" kararından sonra strateji belgesi taslağa döner ve onay silinir. Kontrol 6, 7 ve 8'in kararları eskir. Uygulama kilitlenmez ve eski seçimle sürer. Karar sahibi strateji belgesini yeniden onaylayınca strateji kapanır. Sonraki bir "Düzelt" kaydı açık stratejiyi kapatmaz.
 
 Stratejisi eski sürümde tamamlanan plan bir izin alır. Strateji uygulama bu planda kilitlenmez. "Yeniden aç" kararı bu izni kaldırır.
 
@@ -84,11 +84,11 @@ Kilitli bölüm okunur ama doldurulmaz. Ekran kilidin nedenini ve gidilecek yeri
 | Bölüm | Ne zaman açılır? | Kilitliyken düğme nereye götürür? |
 |---|---|---|
 | Karar 1 | Her zaman açıktır. | Kilit yoktur. |
-| Karar 2, 3, 4 ve 5 | Bir önceki kapı geçilince açılır. | Önceki kapı |
-| Geçiş kapısı | Her zaman okunur. Öneri, ölçütler doldukça değişir. | Kilit yoktur. |
-| Strateji oluşturma | Geçiş kararı "Planlamaya hazır" ya da "Koşullu hazır" olunca açılır. | Geçiş kapısı |
-| Karar 6 | Geçiş kararı geçerliyse ve strateji oluşturma bittiyse açılır. | Geçiş kapısı ya da strateji oluşturma |
-| Karar 7 ve 8 | Karar 6 açıksa ve bir önceki kapı geçildiyse açılır. | Geçiş kapısı, strateji oluşturma ya da önceki kapı |
+| Karar 2, 3, 4 ve 5 | Bir önceki kontrol geçilince açılır. | Önceki kontrol |
+| Hazırlık kontrolü | Her zaman okunur. Öneri, ölçütler doldukça değişir. | Kilit yoktur. |
+| Strateji oluşturma | Hazırlık kararı "Planlamaya hazır" ya da "Koşullu hazır" olunca açılır. | Hazırlık kontrolü |
+| Karar 6 | Hazırlık kararı geçerliyse ve strateji oluşturma bittiyse açılır. | Hazırlık kontrolü ya da strateji oluşturma |
+| Karar 7 ve 8 | Karar 6 açıksa ve bir önceki kontrol geçildiyse açılır. | Hazırlık kontrolü, strateji oluşturma ya da önceki kontrol |
 
 Strateji oluşturma altı koşul dolunca biter:
 
@@ -99,11 +99,11 @@ Strateji oluşturma altı koşul dolunca biter:
 5. Stratej ana hamleleri ve gereken yetkinlikleri yazar.
 6. Karar sahibi strateji belgesinde beş kalite maddesini işaretler ve belgeyi onaylar.
 
-Strateji adımları geçiş kararı olmadan doldurulmaz. Strateji uygulama adımları kendi kararı kilitliyken doldurulmaz. Örneğin Karar 6 kilitliyse 3.1 ve Adım 21 doldurulmaz.
+Strateji adımları hazırlık kararı olmadan doldurulmaz. Strateji uygulama adımları kendi kararı kilitliyken doldurulmaz. Örneğin Karar 6 kilitliyse 3.1 ve Adım 21 doldurulmaz.
 
-Strateji öncesi adımlar kilitlenmez. Kullanıcı hazırlıkta istediği adıma dönebilir. Yalnız o kararın kapısı önceki kapıyı bekler.
+Strateji öncesi adımlar kilitlenmez. Kullanıcı hazırlıkta istediği adıma dönebilir. Yalnız o kararın kontrolü önceki kontrolü bekler.
 
-Kilitli bir uygulama kapısında "İlerle" kaydedilmez.
+Kilitli bir uygulama kontrolünde "İlerle" kaydedilmez.
 
 "Koşullu hazır" kararının son tarihi vardır. Son tarih geçerse strateji oluşturma ve uygulama yeniden kilitlenir.
 
@@ -113,22 +113,22 @@ Bir veri değişirse o veriye dayanan kararlar eskir. Eskiyen karar yeniden ince
 
 | Ne değişti? | Ne eskir? | Ne eskimez? |
 |---|---|---|
-| Profil ya da sınırlar | Bütün kapı kararları ve geçiş kararı | Hiçbir şey |
-| Temel adımı, örneğin Adım 09 | O adımın kapısı, sonraki kapılar ve geçiş kararı | Önceki kapılar |
-| Bir temel adımına bağlı kanıt silindi | O adımın kapısı, sonraki kapılar ve geçiş kararı | Önceki kapılar |
-| Bir temel kapısı yeniden karara bağlandı | Sonraki kapılar ve geçiş kararı | O kapı ve önceki kapılar |
-| Bir strateji oluşturma adımı, örneğin 2.4 | Kapı 6, 7 ve 8 | Temel kapıları ve geçiş kararı |
-| Bir uygulama planı adımı, örneğin 3.2 | Hiçbir karar | Bütün kapı kararları ve geçiş kararı |
-| Karar sahibi stratejiyi yeniden açtı | Kapı 6, 7 ve 8 | Temel kapıları ve geçiş kararı |
-| Bir uygulama adımı, örneğin Adım 24 | O adımın kapısı ve sonraki kapılar | Temel kapıları ve geçiş kararı |
+| Profil ya da sınırlar | Bütün kontrol kararları ve hazırlık kararı | Hiçbir şey |
+| Temel adımı, örneğin Adım 09 | O adımın kontrolü, sonraki kontroller ve hazırlık kararı | Önceki kontroller |
+| Bir temel adımına bağlı kanıt silindi | O adımın kontrolü, sonraki kontroller ve hazırlık kararı | Önceki kontroller |
+| Bir temel kontrolü yeniden karara bağlandı | Sonraki kontroller ve hazırlık kararı | O kontrol ve önceki kontroller |
+| Bir strateji oluşturma adımı, örneğin 2.4 | Kontrol 6, 7 ve 8 | Temel kontrolleri ve hazırlık kararı |
+| Bir uygulama planı adımı, örneğin 3.2 | Hiçbir karar | Bütün kontrol kararları ve hazırlık kararı |
+| Karar sahibi stratejiyi yeniden açtı | Kontrol 6, 7 ve 8 | Temel kontrolleri ve hazırlık kararı |
+| Bir uygulama adımı, örneğin Adım 24 | O adımın kontrolü ve sonraki kontroller | Temel kontrolleri ve hazırlık kararı |
 
-Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kapı okumaz. Bu yüzden bu adımlar değişince hiçbir karar eskimez. Örneğin bir sorumlunun adını düzeltmek Karar 7'yi kilitlemez. Bu kural kullanıcının 15 Kasım 2026 Pazar günü verdiği karardır. Bir kapı ileride bu adımları okursa kural testte kırılır.
+Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kontrol okumaz. Bu yüzden bu adımlar değişince hiçbir karar eskimez. Örneğin bir sorumlunun adını düzeltmek Karar 7'yi kilitlemez. Bu kural kullanıcının 15 Kasım 2026 Pazar günü verdiği karardır. Bir kontrol ileride bu adımları okursa kural testte kırılır.
 
-Bir örnek verelim. Karar sahibi Adım 18'e yeni bir yol adayı ekler. Kapı 5 ve geçiş kararı eskir. Karar sahibi ikisini yeniden kaydeder.
+Bir örnek verelim. Karar sahibi Adım 18'e yeni bir yol adayı ekler. Kontrol 5 ve hazırlık kararı eskir. Karar sahibi ikisini yeniden kaydeder.
 
-## 4. Geçiş kapısının ölçütleri
+## 4. Hazırlık kontrolünün ölçütleri
 
-Geçiş kapısı tek soruya bakar: "Dayanak yeterli mi?" Ölçütler yalnız temel adımlarını okur.
+Hazırlık kontrolü tek soruya bakar: "Dayanak yeterli mi?" Ölçütler yalnız temel adımlarını okur.
 
 Zorunlu ölçüt sayısı 9'dur. Destekleyici ölçüt sayısı 7'dir.
 
@@ -138,7 +138,7 @@ Zorunlu ölçüt sayısı 9'dur. Destekleyici ölçüt sayısı 7'dir.
 | Koşullu hazır | 9 zorunlu ölçüt tamam. Destekleyici ölçütlerin 4'ten azı tamam. |
 | Henüz hazır değil | En az bir zorunlu ölçüt eksik. |
 
-Yazılım yalnız öneri üretir. Kararı karar sahibi kaydeder. Karar sahibi önce "Strateje devir raporunu okudum" kutusunu işaretler.
+Yazılım yalnız öneri üretir. Kararı karar sahibi kaydeder. Karar sahibi önce "Strateje teslim raporunu okudum" kutusunu işaretler.
 
 Ölçütlerin tam listesi `src/engine/readiness.ts` dosyasındadır.
 
@@ -146,14 +146,14 @@ Yazılım yalnız öneri üretir. Kararı karar sahibi kaydeder. Karar sahibi ö
 
 | Belge | Ne zaman okunur? | İçinde ne var? | İçinde ne yok? |
 |---|---|---|---|
-| Strateje devir raporu | Seçimden önce | Karar sorusu, dayanaklar, sınırlar, yol adayları, eksik bilgi | Seçilen yol |
+| Strateje teslim raporu | Seçimden önce | Karar sorusu, dayanaklar, sınırlar, yol adayları, eksik bilgi | Seçilen yol |
 | Strateji belgesi | Seçimden sonra | Teşhis, seçilen yol, gerekçe, vazgeçilenler, ana hamleler | Yeni kanıt |
 
-Devir raporu strateji oluşturma adımlarını okumaz. Yönetici raporu ve aksiyon planı seçimi 2.4 adımından okur. Aksiyon planı 90 günlük işleri 3.2 adımından okur.
+Teslim raporu strateji oluşturma adımlarını okumaz. Yönetici raporu ve aksiyon planı seçimi 2.4 adımından okur. Aksiyon planı 90 günlük işleri 3.2 adımından okur.
 
 ## 6. Karar Kitabı'ndan gelen üç yardım
 
-Bu üç yardım süreci değiştirmez. Adım sayısı, kilitler ve geçiş kapısının ölçütleri aynı kalır.
+Bu üç yardım süreci değiştirmez. Adım sayısı, kilitler ve hazırlık kontrolünün ölçütleri aynı kalır.
 
 | Yardım | Nerede? | Yazılım ne yapar? | Kullanıcı ne yapar? |
 |---|---|---|---|
@@ -166,13 +166,13 @@ Güç süzgecinin iki kuralı vardır:
 1. Kullanıcı bir güce "rakiplerin çoğunda yok" derse dayanak yazar. Dayanak yoksa Adım 12 tamamlanmaz.
 2. Ağır yatırımda kullanıcı en az bir güç yazar. Küçük ve geri alınabilir işte güç yazmak zorunlu değildir.
 
-Durum özeti yalnız Adım 00 ile Adım 18 arasını okur. Çapraz sorular isteğe bağlıdır. Kapı 5'in ölçütü değişmez.
+Durum özeti yalnız Adım 00 ile Adım 18 arasını okur. Çapraz sorular isteğe bağlıdır. Kontrol 5'in ölçütü değişmez.
 
 Planın tamamı [karar-kitabi-firsatlari-plani.md](karar-kitabi-firsatlari-plani.md) dosyasındadır.
 
-### Devir raporunu güçlendiren kayıtlar
+### Teslim raporunu güçlendiren kayıtlar
 
-Bu kayıtlar isteğe bağlıdır. Hiçbiri geçiş kapısının ölçütü değildir.
+Bu kayıtlar isteğe bağlıdır. Hiçbiri hazırlık kontrolünün ölçütü değildir.
 
 | Kayıt | Nerede yazılır? | Raporda nerede görünür? |
 |---|---|---|
@@ -204,7 +204,7 @@ Her adım bölümlerden oluşur. Bölüm ya zorunludur ya isteğe bağlıdır. K
 | Bölüm ne zaman zorunludur? | Bölüm ne zaman isteğe bağlıdır? |
 |---|---|
 | Bölüm adımı tamamlayan bir alan taşıyorsa zorunludur. | Bölümü hiçbir kural okumuyorsa bölüm isteğe bağlıdır. |
-| Bölümü bir kapı ya da geçiş kapısı okuyorsa zorunludur. | |
+| Bölümü bir kontrol ya da hazırlık kontrolü okuyorsa zorunludur. | |
 | Bölümü bir tamamlama denetimi okuyorsa zorunludur. | |
 
 Ekran bu kuralı şöyle gösterir:
@@ -214,7 +214,7 @@ Ekran bu kuralı şöyle gösterir:
 3. Bir adımda üç ve daha çok isteğe bağlı bölüm varsa form iki sekmeye ayrılır.
 4. Birinci sekmenin adı "Zorunlu bölümler"dir. İkinci sekmenin adı "İsteğe bağlı bölümler"dir.
 
-İsteğe bağlı bölümü boş bırakan kullanıcı adımı tamamlar. Hiçbir kapı bu kullanıcıyı durdurmaz.
+İsteğe bağlı bölümü boş bırakan kullanıcı adımı tamamlar. Hiçbir kontrol bu kullanıcıyı durdurmaz.
 
 Bölümü yalnız kullanıcı kapatır. Kullanıcı bir alanı boşaltınca bölüm kendiliğinden kapanmaz. Sekme seçimi sonraki adıma taşınmaz. Doluluk yüzdesi yalnız zorunlu bölümlerden hesaplanır.
 
@@ -224,15 +224,15 @@ Strateji öncesi adımlarda 76 bölüm vardır. Bu bölümlerin 31'i isteğe ba�
 
 Kısa yol plan özetindeki "En kısa yol" anahtarıyla açılır. Kısa yol tek adımı gizler: Adım 04.
 
-Adım 03 ekipte kısa yolda da görünür. Çünkü Kapı 1 ekipte karar haklarını Adım 03'ten okur. Tek kurucuda Adım 03 zaten görünmez.
+Adım 03 ekipte kısa yolda da görünür. Çünkü Kontrol 1 ekipte karar haklarını Adım 03'ten okur. Tek kurucuda Adım 03 zaten görünmez.
 
-Adım 17 kısa yolda görünür. Çünkü Kapı 5 risk tablosunu Adım 17'den okur. Adım 17 kısa yolda üç bölüm taşır:
+Adım 17 kısa yolda görünür. Çünkü Kontrol 5 risk tablosunu Adım 17'den okur. Adım 17 kısa yolda üç bölüm taşır:
 
 1. Ön ölüm listesi
 2. Risk tablosu
 3. Tek kaynağa bağımlılık
 
-Kural şudur: bir kapı, kısa yolda gizlenen bir adımı okuyamaz. Devir raporu kısa yolda gizlenen boş adımı "Bakılmayan alanlar" başlığında gösterir. Adım daha önce doldurulduysa bakılmış sayılır.
+Kural şudur: bir kontrol, kısa yolda gizlenen bir adımı okuyamaz. Teslim raporu kısa yolda gizlenen boş adımı "Bakılmayan alanlar" başlığında gösterir. Adım daha önce doldurulduysa bakılmış sayılır.
 
 ### Alan bütçesi
 
@@ -271,11 +271,11 @@ Yazılım birbirini tutmayan kayıtları yakalar. Yorum yapmaz.
 |---|---|---|
 | Aynı kişi iki kez sayılmaz. | Adım 06 ve Adım 15 | Uyarır. Adımı durdurmaz. |
 | Sayılar birbirini tutmalı. | Adım 15 | Adımı tamamlatmaz. |
-| Aynı adı taşıyan yol bir kez sayılır. | Adım 18 ve Kapı 5 | Kapı 5 yolu bir kez sayar. |
-| Aynı görünen iki yol uyarı verir. | Adım 18 ve devir raporu | Uyarır ve rapora yazar. |
-| Varsayım ve kurucu kanaati sorunun kanıtı sayılmaz. | Geçiş kapısı, Z2 | Ölçütü karşılanmış saymaz. |
-| Gelecek tarihli kayıt kanıt sayılmaz. | Geçiş kapısı ve kanıt formu | Kaydı saymaz ve uyarır. |
-| Talep kanıtındaki karşı bulgu gizlenmez. | Geçiş kapısı | Uyarır. Kararı karar sahibi verir. |
+| Aynı adı taşıyan yol bir kez sayılır. | Adım 18 ve Kontrol 5 | Kontrol 5 yolu bir kez sayar. |
+| Aynı görünen iki yol uyarı verir. | Adım 18 ve teslim raporu | Uyarır ve rapora yazar. |
+| Varsayım ve kurucu kanaati sorunun kanıtı sayılmaz. | Hazırlık kontrolü, Z2 | Ölçütü karşılanmış saymaz. |
+| Gelecek tarihli kayıt kanıt sayılmaz. | Hazırlık kontrolü ve kanıt formu | Kaydı saymaz ve uyarır. |
+| Talep kanıtındaki karşı bulgu gizlenmez. | Hazırlık kontrolü | Uyarır. Kararı karar sahibi verir. |
 
 Kuralların kaynağı [codex-uygulamasi-karsilastirma-raporu.md](codex-uygulamasi-karsilastirma-raporu.md) dosyasındadır.
 
@@ -286,7 +286,7 @@ Kuralların kaynağı [codex-uygulamasi-karsilastirma-raporu.md](codex-uygulamas
 - Yazılım "Seçim hâlâ doğru mu?" sorusunu cevaplamaz. Cevabı karar sahibi kaydeder.
 - Yazılım yol önermez. Durum özeti yalnız listeyi toplar ve soruyu sorar.
 - Yazılım bir gücün gerçek olup olmadığına karar vermez. Dört soruyu kullanıcı cevaplar.
-- Yazılım geçiş kararını vermez. Yazılım yalnız öneri üretir.
+- Yazılım hazırlık kararını vermez. Yazılım yalnız öneri üretir.
 - Yazılım eksik bilgiyi uydurmaz. Eksik alan raporda "Henüz yazılmadı." diye görünür.
 - Yazılım kanıtın doğru olduğunu denetlemez. Kanıtı karar sahibi girer.
 - Yazılım bilinmeyen sorunu tahmin etmez. Yalnız hangi adıma bakılmadığını gösterir.
@@ -299,11 +299,11 @@ Kaynak plan [act_plan_v5_final-claude.md](act_plan_v5_final-claude.md) dosyasıd
 | Konu | Kaynak planda | Uygulamada | Neden? |
 |---|---|---|---|
 | Adım 18'in adı | "Saha ve kazanma yolu" | "Yol adayları" | Seçim strateji oluşturmaya bırakıldı. |
-| Seçilen yol | Adım 18'de yazılır. | 2.4 adımında yazılır. | Seçim geçiş kapısından sonra yapılır. |
+| Seçilen yol | Adım 18'de yazılır. | 2.4 adımında yazılır. | Seçim hazırlık kontrolünden sonra yapılır. |
 | Karar 5'in adımları | 16, 17, 18, 19 ve 20 | 16, 17 ve 18 | Adım 19 ve 20 strateji oluşturmaya taşındı. |
 | Hedefler ve 90 günlük işler | Adım 19'da yazılır. | 3.1 ve 3.2 adımlarında yazılır. | Hedef ve iş, seçimin değil uygulamanın parçasıdır. |
 | Teşhis, seçenekler ve sınama | Ayrı adım yoktur. | 2.1, 2.2 ve 2.3 adımlarıdır. | Seçime nasıl varıldığı kayda geçer. |
-| Geçiş kapısı | Yoktur. | Karar 5 ile strateji oluşturma arasındadır. | Dayanak, seçimden önce incelenir. |
+| Hazırlık kontrolü | Yoktur. | Karar 5 ile strateji oluşturma arasındadır. | Dayanak, seçimden önce incelenir. |
 
 ## 9. Kurallar kodda nerede?
 
@@ -311,16 +311,16 @@ Her kuralın tek bir kaynağı vardır. Ekranlar kuralı yeniden yazmaz, kaynakt
 
 | Kural | Dosya |
 |---|---|
-| Kararlar, adımlar ve kapı ölçütleri | `src/data/decisions.ts` |
+| Kararlar, adımlar ve kontrol ölçütleri | `src/data/decisions.ts` |
 | Üç ana küme ve zorunlu alt aşamalar | `src/data/clusters.ts` |
 | Dört bölüm | `src/data/stages.ts` |
 | Strateji oluşturma ve uygulama adımlarının denetimleri | `src/engine/strategy.ts` |
 | Stratejiyi sınama ve yenileme | `src/engine/renewal.ts` |
-| Geçiş kararının geçerliliği | `src/engine/transition.ts` |
+| Hazırlık kararının geçerliliği | `src/engine/transition.ts` |
 | Kilit, kilidin nedeni ve gidilecek yer | `src/engine/gate.ts` |
 | Planın yoldaki yeri | `src/engine/position.ts` |
 | Eskime | `src/engine/changes.ts` |
-| Geçiş kapısının ölçütleri ve önerisi | `src/engine/readiness.ts` |
+| Hazırlık kontrolünün ölçütleri ve önerisi | `src/engine/readiness.ts` |
 | Güç süzgeci | `src/engine/strengths.ts` |
 | Durum özeti ve çapraz sorular | `src/engine/situation.ts` |
 | Asıl engel, başarı koşulları, serbest bütçe | `src/engine/crux.ts` |
@@ -329,17 +329,17 @@ Her kuralın tek bir kaynağı vardır. Ekranlar kuralı yeniden yazmaz, kaynakt
 | Yedek durumu | `src/engine/backup.ts` |
 | Bölümün görünmesi, zorunlu alanlar ve sekmeler | `src/components/FormRenderer.tsx` |
 | Yöntem yardımı verisi | `src/data/models-howto.json` |
-| Devir raporu | `src/reports/handoff.ts` |
+| Teslim raporu | `src/reports/handoff.ts` |
 
 Bu belgedeki kuralları `src/engine/consistency.test.ts` dosyası sınar. Test şunlara bakar:
 
 - Her adım tek bir bölüme bağlı mı?
-- Bir kapı, sonraki bir bölümün adımını okuyor mu?
-- Geçiş kapısı ve devir raporu yalnız temel adımlarını mı okuyor?
+- Bir kontrol, sonraki bir bölümün adımını okuyor mu?
+- Hazırlık kontrolü ve teslim raporu yalnız temel adımlarını mı okuyor?
 - Kilitler ve eskime bu belgedeki sırayı izliyor mu?
 - Güncel metinlerde eski süreçten kalan ifade var mı?
 - İsteğe bağlı bir bölüm, bir kuralın istediği alanı taşıyor mu?
-- Bir kapı, kısa yolda gizlenen bir adımı okuyor mu?
+- Bir kontrol, kısa yolda gizlenen bir adımı okuyor mu?
 - Alan sayısı bütçeyi aşıyor mu?
 
 Ana kümeleri `src/data/clusters.test.ts` dosyası sınar. Test şunlara bakar:

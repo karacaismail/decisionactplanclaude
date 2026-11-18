@@ -91,12 +91,12 @@ export function FoundationScreen() {
     <div className="page page-foundation">
       <PageHeader
         newPath="/temel"
-        kicker="Temel taşları"
-        title="Strateji öncesi 20 temel taşı"
+        kicker="Temel sorular"
+        title="Strateji öncesi 20 temel soru"
         description="Her taş bir soruya cevap verir. Eksik taşa tıklayın, ilgili adım açılır."
       />
 
-      <div className="temel-stats has-wide" role="group" aria-label="Temel taşı özeti">
+      <div className="temel-stats has-wide" role="group" aria-label="Temel soru özeti">
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Var" value={ok} prefix={<CheckCircle className="stat-ico is-ok" size={22} weight="fill" aria-hidden />} />
           <span className="stat-note">Cevabı yazılı ve kanıtı güçlü taşlar.</span>
@@ -115,9 +115,9 @@ export function FoundationScreen() {
             percent={Math.round((ok / TOTAL) * 100)}
             format={() => `${ok} / ${TOTAL}`}
             strokeColor="var(--color-status-ok)"
-            aria-label={`${TOTAL} temel taşının ${ok} tanesi var`}
+            aria-label={`${TOTAL} temel sorunun ${ok} tanesi var`}
           />
-          <span className="stat-note">Doğrulama seviyeniz 5 üzerinden {level}. {levelTitle}.</span>
+          <span className="stat-note">Kanıt düzeyiniz 5 üzerinden {level}. {levelTitle}.</span>
         </Card>
       </div>
 

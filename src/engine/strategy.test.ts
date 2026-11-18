@@ -23,7 +23,7 @@ function full(): PlanDoc {
   return p
 }
 
-describe('strateji oluşturmanın çıkış kapısı', () => {
+describe('strateji oluşturmanın çıkış kontrolü', () => {
   it('altı koşulun hepsi dolunca strateji oluşturma biter', () => {
     expect(STRATEGY.gate.criteria.map((c) => c.id)).toEqual(['teshis', 'secenek', 'sinama', 'yol', 'hamle', 'dosya'])
     expect(strategyDone(full())).toBe(true)
@@ -135,7 +135,7 @@ describe('stratejiyi sınama ve yenileme', () => {
     expect(p.steps['20'].status).toBe('tamam')
     expect(lastStrategyReview(p)?.reason).toBe(draft.reason)
   })
-  it('"yeniden aç" kararı strateji belgesini taslağa döndürür, onayı siler ve kapı kararlarını eskitir', () => {
+  it('"yeniden aç" kararı strateji belgesini taslağa döndürür, onayı siler ve kontrol kararlarını eskitir', () => {
     const p = full()
     p.steps['20'].values.approvedAt = '2026-11-14'
     p.decisions = [{ id: 'd6', gate: 6, scope: '', criteria: [], suggested: 'ilerle', chosen: 'ilerle', reason: 'Gerekçe', retriesLeft: 1, decidedBy: 'Kurucu', decidedAt: '2026-11-01T00:00:00.000Z', revision: 1 }]
@@ -193,15 +193,15 @@ describe('eski sürümde tamamlanan strateji', () => {
   })
 })
 
-describe('kapı kaydı kilide bakar', () => {
-  it('Karar 6 kilitliyken Kapı 7 "İlerle" kaydedilmez', () => {
+describe('kontrol kaydı kilide bakar', () => {
+  it('Karar 6 kilitliyken Kontrol 7 "İlerle" kaydedilmez', () => {
     const p = full()
     delete p.transitions
     p.decisions = [6].map((gate) => ({ id: `d${gate}`, gate, scope: '', criteria: [], suggested: 'ilerle' as const, chosen: 'ilerle' as const, reason: 'Gerekçe', retriesLeft: 1, decidedBy: 'Kurucu', decidedAt: '2026-11-01T00:00:00.000Z', revision: 1 }))
-    /* Geçiş kararı yok. Karar 6 ve Karar 7 kilitlidir. */
+    /* Hazırlık kararı yok. Karar 6 ve Karar 7 kilitlidir. */
     const def = DECISIONS.find((d) => d.n === 7)!.gate
     const errors = validateDecision(def, p, evaluateGate(def, p), { chosen: 'ilerle', reason: 'Uzun bir gerekçe yazıldı burada.', secondOpinion: 'Ali' })
-    expect(errors).toContain('Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
+    expect(errors).toContain('Hazırlık kontrolünde "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
   })
 
 })

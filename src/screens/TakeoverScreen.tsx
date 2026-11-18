@@ -9,13 +9,13 @@ import { control, space } from '@/theme/tokens'
 type Check = { key: string; q: string; yes: string; no: string; to: string }
 
 const CHECKS: Check[] = [
-  { key: 'problem', q: 'Problem gerçek müşteriyle doğrulandı mı?', yes: 'Kapı 2 geçildi sayılır.', no: "Adım 06'dan girin.", to: '/karar/2/adim/06' },
-  { key: 'odeme', q: 'Ödeme veya depozito kanıtı var mı?', yes: 'Kapı 4 geçildi sayılır.', no: 'Problem doğrulandıysa Adım 15. Doğrulanmadıysa Adım 06.', to: '/karar/4/adim/15' },
-  { key: 'yollar', q: 'Para hesabı, risk kuralları ve yol adayları yazılı mı?', yes: 'Kapı 5 geçildi sayılır. Geçiş kapısında karar kaydedin.', no: "Adım 16'dan girin.", to: '/karar/5/adim/16' },
-  { key: 'strateji', q: 'Yazılı bir strateji seçimi ve vazgeçiş listesi var mı?', yes: 'Strateji oluşturma yapılmış sayılır. Seçimi strateji oluşturma adımlarına yazın.', no: 'Önce geçiş kapısından geçin. Sonra 2.1 Teşhis adımından başlayın.', to: '/gecis' },
+  { key: 'problem', q: 'Problem gerçek müşteriyle doğrulandı mı?', yes: 'Kontrol 2 geçildi sayılır.', no: "Adım 06'dan girin.", to: '/karar/2/adim/06' },
+  { key: 'odeme', q: 'Ödeme veya depozito kanıtı var mı?', yes: 'Kontrol 4 geçildi sayılır.', no: 'Problem doğrulandıysa Adım 15. Doğrulanmadıysa Adım 06.', to: '/karar/4/adim/15' },
+  { key: 'yollar', q: 'Para hesabı, risk kuralları ve yol adayları yazılı mı?', yes: 'Kontrol 5 geçildi sayılır. Hazırlık kontrolünde karar kaydedin.', no: "Adım 16'dan girin.", to: '/karar/5/adim/16' },
+  { key: 'strateji', q: 'Yazılı bir strateji seçimi ve vazgeçiş listesi var mı?', yes: 'Strateji oluşturma yapılmış sayılır. Seçimi strateji oluşturma adımlarına yazın.', no: 'Önce hazırlık kontrolünden geçin. Sonra 2.1 Teşhis adımından başlayın.', to: '/gecis' },
   { key: 'olcum', q: 'Ölçüm düzeni ve eşikler var mı?', yes: 'Adım 22 tamam.', no: "Adım 22'den girin.", to: '/karar/6/adim/22' },
-  { key: 'kapi', q: 'İlk ürün kapısı kararı yazılı mı?', yes: 'Kapı 6 geçildi sayılır.', no: 'Adım 22 eşiklerini şimdi yazın. 4 hafta ölçün. Sonra Adım 25.', to: '/karar/6/adim/22' },
-  { key: 'uyum', q: 'Uyum ölçüldü mü?', yes: "Kapı 7'ye yakınsınız.", no: "Adım 28'den girin.", to: '/karar/7/adim/28' },
+  { key: 'kapi', q: 'İlk ürün kontrolü kararı yazılı mı?', yes: 'Kontrol 6 geçildi sayılır.', no: 'Adım 22 eşiklerini şimdi yazın. 4 hafta ölçün. Sonra Adım 25.', to: '/karar/6/adim/22' },
+  { key: 'uyum', q: 'Uyum ölçüldü mü?', yes: "Kontrol 7'ye yakınsınız.", no: "Adım 28'den girin.", to: '/karar/7/adim/28' },
   { key: 'ekonomi', q: 'Birim ekonomisi gerçek veriyle hesaplandı mı?', yes: 'Adım 29 tamam.', no: "Adım 29'dan girin.", to: '/karar/7/adim/29' },
 ]
 

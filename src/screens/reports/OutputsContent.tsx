@@ -13,9 +13,9 @@ import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
-/** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje devir raporunun özetidir. */
+/** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje teslim raporunun özetidir. */
 type Kind = 'temel' | 'yonetici' | 'aksiyon'
-const KIND_LABEL: Record<Kind, string> = { temel: 'Strateje devir raporu', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
+const KIND_LABEL: Record<Kind, string> = { temel: 'Strateje teslim raporu', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
 /** Adresteki `?belge=` değeri. Eski "temel" ve yeni "devir" aynı sekmeyi açar. */
 const HANDOFF_PARAMS = ['temel', 'devir']
 /** Güncel taslağın seçici değeri. Sürüm kimlikleri "surum-" ile başlar, çakışmaz. */
@@ -80,7 +80,7 @@ function SectionBody({ s }: { s: ReportSection }) {
 }
 
 /**
- * Strateje devir raporunun kısa özeti: karar sorusu, kapsam ve raporun bağlantısı.
+ * Strateje teslim raporunun kısa özeti: karar sorusu, kapsam ve raporun bağlantısı.
  * Raporun tamamı /devir ekranındadır. Markdown indirme raporun tamamını verir.
  */
 function HandoffSummary({ report, state, current }: { report: HandoffReport; state: string; current: boolean }) {
@@ -114,8 +114,8 @@ function HandoffSummary({ report, state, current }: { report: HandoffReport; sta
 }
 
 /**
- * Çıktılar. Üç belge aynı veriden üretilir: strateje devir raporu, yönetici raporu ve girişimci aksiyon planı.
- * Varsayılan sekme yönetici raporudur. Adres `?belge=devir` ya da eski `?belge=temel` taşırsa devir raporunun özeti açılır. Masaüstünde iki sütun:
+ * Çıktılar. Üç belge aynı veriden üretilir: strateje teslim raporu, yönetici raporu ve girişimci aksiyon planı.
+ * Varsayılan sekme yönetici raporudur. Adres `?belge=devir` ya da eski `?belge=temel` taşırsa teslim raporunun özeti açılır. Masaüstünde iki sütun:
  * solda belge kartı (sekmeler, içindekiler, belge), sağda "Sürümler" ve "Dışa aktar" kartları.
  * Telefonda tek sütun; rapor bölümleri akordeondur ve ilk bölüm açık gelir. Yazdırmada yalnız belge kalır.
  */
@@ -170,7 +170,7 @@ export function OutputsScreen() {
   const versionSlug = revision ? `surum-${versionIndex + 1}` : `taslak-surum-${plan.revision}`
   const slug = slugify(plan.name)
   const isCurrent = !revision
-  /* Yayım kaydı yalnız iki rapor içindir. Strateje devir raporu yayım listesine yazılmaz. */
+  /* Yayım kaydı yalnız iki rapor içindir. Strateje teslim raporu yayım listesine yazılmaz. */
   const publish = (k: 'yonetici' | 'aksiyon') => update((p) => p.outputs.push({ id: uid('cikti'), kind: k, revision: viewed?.revision ?? p.revision, createdAt: new Date().toISOString() }))
   const pin = () => {
     const label = pinLabel.trim() || `${KIND_LABEL[kind]} çıktısı`
@@ -306,7 +306,7 @@ export function OutputsScreen() {
               <Button icon={<PushPin size={16} />} onClick={pin} disabled={!isCurrent}>Bu sürümü sabitle</Button>
             </div>
             <p className="helper">
-              {isCurrent ? 'Sabitlenen sürüm sonraki değişikliklerden etkilenmez. Her kapı kararı da bir sürüm kaydeder.' : 'Yalnız güncel taslak sabitlenir. Önce “Güncel taslak” seçin.'}
+              {isCurrent ? 'Sabitlenen sürüm sonraki değişikliklerden etkilenmez. Her kontrol kararı da bir sürüm kaydeder.' : 'Yalnız güncel taslak sabitlenir. Önce “Güncel taslak” seçin.'}
             </p>
             <Timeline className="version-timeline" items={timelineItems} />
           </Card>

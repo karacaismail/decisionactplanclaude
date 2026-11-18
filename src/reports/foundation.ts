@@ -1,5 +1,5 @@
 /**
- * Devir raporunun iç kaynağı. Ekranda ayrı bir belge olarak gösterilmez.
+ * Teslim raporunun iç kaynağı. Ekranda ayrı bir belge olarak gösterilmez.
  * Eski adı: stratejik planlama temel belgesi. Tek sayfadır ve altı soruya cevap verir.
  * Her cevap plan verisinden üretilir. Kaynak satırları kanıt defterinden gelir.
  * Eksik bilgi uydurulmaz. Cevabı olmayan soruda "Henüz yazılmadı." yazar.
@@ -225,7 +225,7 @@ function unknowns(p: PlanDoc): FoundationAnswer {
   return answer(FOUNDATION_QUESTIONS[4], ['10', '17'], out, gaps, sourcesFor(p, ['10', '17'], (e) => Boolean(bare(e.counterFinding))))
 }
 
-/** Karar sahibi: en son kapı kararını kaydeden kişi. Karar yoksa Adım 03 tablosundaki karar sahibi. */
+/** Karar sahibi: en son kontrol kararını kaydeden kişi. Karar yoksa Adım 03 tablosundaki karar sahibi. */
 function decisionOwner(p: PlanDoc): string | null {
   const latest = [...p.decisions].sort((a, b) => b.decidedAt.localeCompare(a.decidedAt))[0]
   if (bare(latest?.decidedBy)) return bare(latest?.decidedBy)
@@ -253,8 +253,8 @@ function whoDecides(p: PlanDoc, now: Date, transition: FoundationTransition | un
   const left = remainingBudgetKurus(p)
   if (left !== null) out.push(`Kalan bütçe: ${formatMoney(left)}.`)
   push(out, remainingTimeLine(p.limits.deadline, now))
-  if (transition) out.push(`Son geçiş kararı: ${transition.label}. Gerekçe: ${bare(transition.reason) ?? 'yazılmadı'}. Tarih: ${transition.date}.`)
-  const gaps: string[] = transition ? [] : ['Geçiş kararı henüz kaydedilmedi.']
+  if (transition) out.push(`Son hazırlık kararı: ${transition.label}. Gerekçe: ${bare(transition.reason) ?? 'yazılmadı'}. Tarih: ${transition.date}.`)
+  const gaps: string[] = transition ? [] : ['Hazırlık kararı henüz kaydedilmedi.']
   return answer(FOUNDATION_QUESTIONS[5], ['02', '03'], out, gaps, sourcesFor(p, ['02', '03']))
 }
 
@@ -270,7 +270,7 @@ function transitionOf(p: PlanDoc, now: Date): FoundationTransition | undefined {
     lines.push(`Açık sorunun son tarihi: ${conditional.deadline}.`)
   }
   if (effective !== t.outcome) lines.push('Koşulun son tarihi geçti. Karar bugün "Henüz hazır değil" sayılır.')
-  if (t.stale) lines.push('Bu karar eskidi. Karardan sonra dayanak değişti. Geçiş kapısında yeniden karar kaydedin.')
+  if (t.stale) lines.push('Bu karar eskidi. Karardan sonra dayanak değişti. Hazırlık kontrolünde yeniden karar kaydedin.')
   return { outcome: t.outcome, effective, label: TRANSITION_LABEL[t.outcome], reason: t.reason, decidedBy: t.decidedBy, date, stale: Boolean(t.stale), conditional, lines }
 }
 
@@ -285,8 +285,8 @@ export function buildFoundationDoc(plan: PlanDoc, now: Date = new Date()): Found
     if (a.empty) openItems.push(`"${a.question}" sorusunun cevabı henüz yazılmadı. Dayanak: ${stepList}.`)
     else for (const l of a.lines) if (/ henüz (yazılmadı|kaydedilmedi)\.$/.test(l)) openItems.push(l)
   }
-  if (!transition && !openItems.includes('Geçiş kararı henüz kaydedilmedi.')) openItems.push('Geçiş kararı henüz kaydedilmedi.')
-  if (transition?.stale) openItems.push('Geçiş kararı eskidi. Geçiş kapısında yeniden karar kaydedin.')
+  if (!transition && !openItems.includes('Hazırlık kararı henüz kaydedilmedi.')) openItems.push('Hazırlık kararı henüz kaydedilmedi.')
+  if (transition?.stale) openItems.push('Hazırlık kararı eskidi. Hazırlık kontrolünde yeniden karar kaydedin.')
   if (transition?.conditional) openItems.push(`Açık soru: ${bare(transition.conditional.openQuestion) ?? 'yazılmadı'}. Son tarih: ${transition.conditional.deadline}.`)
   return {
     title: FOUNDATION_TITLE,
@@ -295,7 +295,7 @@ export function buildFoundationDoc(plan: PlanDoc, now: Date = new Date()): Found
       `Plan: ${plan.name}`,
       `Profil: ${profileSentence(plan)}`,
       `Sürüm: ${plan.revision}`,
-      `Doğrulama seviyesi: ${level} / 5, ${LEVELS[level].title}`,
+      `Kanıt düzeyi: ${level} / 5, ${LEVELS[level].title}`,
       `Oluşturma: ${formatDate(now.toISOString())}`,
     ],
     answers,
@@ -312,9 +312,9 @@ export function foundationToMarkdown(doc: FoundationDoc): string {
     out.push(`## ${a.question}`, '')
     out.push(...a.lines.map((l) => `- ${l}`), ...a.sources.map((s) => `- ${sourceLine(s)}`), '')
   }
-  out.push('## Geçiş kararı', '')
+  out.push('## Hazırlık kararı', '')
   if (doc.transition) out.push(...doc.transition.lines.map((l) => `- ${l}`), '')
-  else out.push('Geçiş kararı henüz kaydedilmedi.', '')
+  else out.push('Hazırlık kararı henüz kaydedilmedi.', '')
   if (doc.openItems.length) out.push('## Açık kalanlar', '', ...doc.openItems.map((l) => `- ${l}`), '')
   return out.join('\n')
 }

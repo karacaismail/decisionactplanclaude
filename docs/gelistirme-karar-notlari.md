@@ -73,7 +73,7 @@ Her iş bir sonuca hizmet etmelidir. Hiçbir sonuca hizmet etmeyen iş boşa har
 3. Hiçbir hedefe bağlanmayan iş için ekran uyarır.
 4. Hiçbir işle desteklenmeyen hedef için ekran uyarır.
 5. Gözden geçirmede ekran bu bağı gösterir. Örneğin hedef tutmazsa o hedefe bağlı işler listelenir. Böylece "teslim aksadı" ile "dayanak çöktü" daha kolay ayrılır.
-6. 3.1, 3.2 ve 3.3 adımları yine hiçbir kapı kararını eskitmez. Bu bağ yalnız uyarı ve görünüm içindir.
+6. 3.1, 3.2 ve 3.3 adımları yine hiçbir kontrol kararını eskitmez. Bu bağ yalnız uyarı ve görünüm içindir.
 
 Sunucu sürümünde bu bağ Plan modülünün içinde kalır. İş ve hedef aynı modüldedir. Bu yüzden bağ bir bağlantı alanıyla kurulabilir. Kaynak: `docs/butunlesik-gelistirme-raporu.md`, 5.2 ve 6.1 bölümleri.
 
@@ -82,7 +82,7 @@ Sunucu sürümünde bu bağ Plan modülünün içinde kalır. İş ve hedef ayn�
 - 3.2 adımında her işin yanında hedef seçimi görünür.
 - Hedefe bağlanmamış bir iş kaydedilince uyarı çıkar.
 - İşi olmayan bir hedef için uyarı çıkar.
-- 3.1, 3.2 ya da 3.3 değişince hiçbir kapı kararı eskimez. Bu davranışı bugünkü koruma testleri de denetler.
+- 3.1, 3.2 ya da 3.3 değişince hiçbir kontrol kararı eskimez. Bu davranışı bugünkü koruma testleri de denetler.
 
 ## Not 3. İhtiyaç, zamanlama, hazırlık ve kapsam ayrı sorulur
 
@@ -137,7 +137,7 @@ Bu bilgiler `reports/Stratejik planlama ihtiyacı sınıflaması.md` dosyasında
 8. "İş kısa ömürlü" maddesi kullanılmaz. Çünkü hiçbir uzman bu maddeyi desteklemiyor.
 9. İlk kez yazılan zorluk cümlesi 2.1 "Teşhis" adımına taslak olarak taşınır. Stratej bu taslağı düzeltir.
 
-**Teknik not.** Bugün profil değişince bütün kapı kararları eskiyor. Nakit süresi gibi bilgiler sık değişir. Bu yüzden ön değerlendirmenin cevapları profile yazılmaz. Cevaplar ayrı bir kayıtta durur. Bu kaydın değişmesi hiçbir kapı kararını eskitmez.
+**Teknik not.** Bugün profil değişince bütün kontrol kararları eskiyor. Nakit süresi gibi bilgiler sık değişir. Bu yüzden ön değerlendirmenin cevapları profile yazılmaz. Cevaplar ayrı bir kayıtta durur. Bu kaydın değişmesi hiçbir kontrol kararını eskitmez.
 
 **Satış için not.** Aynı ayrım ICP puan tablosuna da işlenmeli. Sınıflama raporu bir eksik buldu: tabloda zamanlama filtresi yok. Bu yüzden nakit krizindeki bir şirket de yüksek puan alabiliyor. Bu bir yazılım işi değildir. Ama satış ile ürün aynı dili konuşmalıdır.
 
@@ -146,7 +146,7 @@ Bu bilgiler `reports/Stratejik planlama ihtiyacı sınıflaması.md` dosyasında
 - Yeni plan açılınca dört ekran parçası görünür.
 - Nakit süresi çok kısa yazılınca ekran kriz yönetimini önerir. Kullanıcı yine devam edebilir.
 - Karar sahibi "hazır değilim" derse ekran hazırlık uyarısı gösterir.
-- Ön değerlendirme cevabı değişince hiçbir kapı kararı eskimez.
+- Ön değerlendirme cevabı değişince hiçbir kontrol kararı eskimez.
 - Zorluk cümlesi 2.1 adımında taslak olarak görünür.
 - Eski planlar açılınca veri kaybolmaz.
 
@@ -174,10 +174,10 @@ Karar verilene kadar şu kurallar geçerlidir:
 
 1. Hiçbir inceleme aralığı koda sabit yazılmaz. Örneğin "2 yıl" ya da "5 yıl" kodda geçmez.
 2. Aralıklar bir ayar olarak tutulur. Ayarda üç değer vardır: genel yönün bakış süresi, stratejinin güncellenme aralığı ve ara sınamaların aralığı.
-3. Ayarın sahibi karar sahibidir. Ayar bir kapı kararı değildir. Ayar değişince hiçbir karar eskimez.
+3. Ayarın sahibi karar sahibidir. Ayar bir kontrol kararı değildir. Ayar değişince hiçbir karar eskimez.
 4. Ekran örnek seçenekler gösterebilir. Örneğin 5/2, 4/2 ve 2/2. Ekran bu seçenekleri yalnız örnek olarak sunar.
 5. Hatırlatma bu ayardan hesaplanır. Hatırlatmayı sunucudaki zamanlanmış iş gönderir. Bu iş ürünün bir özelliğidir. İşi DevOps sorumlusu kurar.
-6. Sunucu sürümünde ayar plan kaydının profiline yazılmaz. Çünkü profil değişince bütün kapı kararları eskiyor. Ayar ayrı bir kayıtta durur.
+6. Sunucu sürümünde ayar plan kaydının profiline yazılmaz. Çünkü profil değişince bütün kontrol kararları eskiyor. Ayar ayrı bir kayıtta durur.
 
 Ürün sahibi karar verince bu not güncellenir. Örneğin sabit bir varsayılan seçilebilir. Ya da her şirketin kendi seçimi kesinleşebilir.
 
@@ -185,7 +185,7 @@ Karar verilene kadar şu kurallar geçerlidir:
 
 - Kodda sabit bir inceleme aralığı yoktur. Bunu bir test denetler.
 - Karar sahibi aralıkları ayardan değiştirebilir.
-- Aralık değişince hiçbir kapı kararı eskimez.
+- Aralık değişince hiçbir kontrol kararı eskimez.
 - Bir sonraki gözden geçirme tarihi ekranda görünür.
 
 ## Açık sorular
@@ -200,13 +200,13 @@ Bu sorular henüz cevaplanmadı. Cevap gelince ilgili not güncellenir.
 | 4 | Mobilde küçük kod düzeltmeleri uzaktan mı gönderilir? | Sizin hedefiniz küçük düzeltmeleri uzaktan dağıtmaktır. Codex her kod düzeltmesini mağazadan göndermeyi, uzaktan yalnız içerik ve ayar göndermeyi öneriyor. | Karar gelene kadar uzaktan yalnız sürümlü ayar gönderilir. Kod düzeltmesi için bütünleşik raporun 10.3 bölümündeki kurallar geçerlidir. |
 | 5 | İnceleme aralığı ayarı şirket düzeyinde mi, plan düzeyinde mi? Ayarda iki değer mi, üç değer mi olur? | Codex "her şirket iki aralık seçer" diye yazdı. Bizde Not 4 üç değerli bir ayar öneriyor. | Not 4'teki ayar karar gelene kadar plan düzeyinde ve üç değerli tasarlanır. |
 
-## Bekleyen iş: hazırlık kapısında olası üç boşluk
+## Bekleyen iş: hazırlık kontrolünde olası üç boşluk
 
 Codex kendi uygulamasında üç boşluk buldu. Claude'un kodu okununca aynı boşlukların burada da olabileceği görüldü. Bu bilgi 16 Kasım 2026 Pazartesi günü Codex belgelerinin incelemesinden geldi. Her boşluk önce başarısız olan bir testle doğrulanır. Test başarısız olursa boşluk düzeltilir.
 
-1. **Talep kanıtının eşleşmesi.** Talep kanıtı kapıda sayılıyor. Kanıtın müşteri grubuna, yere, döneme ve teklife uyup uymadığına bakılmıyor.
+1. **Talep kanıtının eşleşmesi.** Talep kanıtı kontrolde sayılıyor. Kanıtın müşteri grubuna, yere, döneme ve teklife uyup uymadığına bakılmıyor.
 2. **Eski kanıt.** Eski bir kanıt hiçbir zaman eskimiş sayılmıyor. Yalnız gelecek tarihli kanıt dışarıda kalıyor.
-3. **Sınanmamış kritik varsayım.** Sınanmamış kritik varsayım kapıyı durdurmuyor. Yalnız çürüyen varsayım kapıyı durduruyor.
+3. **Sınanmamış kritik varsayım.** Sınanmamış kritik varsayım hazırlık kontrolünü durdurmuyor. Yalnız çürüyen varsayım bu kontrolü durduruyor.
 
 Kaynak: `src/engine/readiness.ts` ve `research_notes/Codex belgelerinden alınanlar/codex_aktarim_listesi.md`.
 
@@ -216,7 +216,7 @@ Kaynak: `src/engine/readiness.ts` ve `research_notes/Codex belgelerinden alınan
 
 Ürün sahibi bu işi 15 Kasım 2026 Pazar günü erteledi. Geliştirme başlayınca ilk ele alınacak iş budur.
 
-**Sorun.** Hazırlık kapısında 7 destekleyici ölçüt var. Bunların en az 4'ü karşılanmalı. D5 ve D7 ölçütleri Adım 04'e bağlı. Kısa yol Adım 04'ü gizliyor. Bu yüzden kısa yolu seçen kullanıcı bu iki ölçütü karşılayamıyor. Ayrıca senaryolar bölümü yalnız pazar yeniyse ya da düzenleme yüksekse açılıyor. Köklü bir pazarda D7 hiç karşılanamıyor.
+**Sorun.** Hazırlık kontrolünde 7 destekleyici ölçüt var. Bunların en az 4'ü karşılanmalı. D5 ve D7 ölçütleri Adım 04'e bağlı. Kısa yol Adım 04'ü gizliyor. Bu yüzden kısa yolu seçen kullanıcı bu iki ölçütü karşılayamıyor. Ayrıca senaryolar bölümü yalnız pazar yeniyse ya da düzenleme yüksekse açılıyor. Köklü bir pazarda D7 hiç karşılanamıyor.
 
 **Kaynak.** `src/engine/readiness.ts`, `src/data/steps/karar1.ts` ve `reports/Güvenilir strateji yöntemleri.md`.
 

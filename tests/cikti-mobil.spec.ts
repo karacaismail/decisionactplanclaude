@@ -283,7 +283,7 @@ test('devir ve devralma bağlantılarının dokunma alanı en az 44 pikseldir', 
     await readable(page)
   }
   await page.goto('/#/devir')
-  const transition = page.getByRole('link', { name: 'Geçiş kapısını aç', exact: true })
+  const transition = page.getByRole('link', { name: 'Hazırlık kontrolünü aç', exact: true })
   await transition.scrollIntoViewIfNeeded()
   const box = (await transition.boundingBox())!
   const position = { x: box.width / 2, y: box.height - 2 }
@@ -292,7 +292,7 @@ test('devir ve devralma bağlantılarının dokunma alanı en az 44 pikseldir', 
   await expect(page).toHaveURL(/#\/gecis$/)
 })
 
-test('boş devir raporunda eksik adım bağlantıları dokunmaya uygundur', async ({ page }) => {
+test('boş teslim raporunda eksik adım bağlantıları dokunmaya uygundur', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await page.goto('/')
   await page.getByRole('button', { name: 'Yeni plan', exact: true }).first().click()

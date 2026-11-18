@@ -63,7 +63,7 @@ test('pano karar rotasını üç ana kümeye göre gösterir', async ({ page }) 
   await designRules(page, 'main', 'pano üç küme')
 })
 
-test('strateji oluşturma beş zorunlu alt aşamayı ve çıkış kapısını gösterir, geçiş kararı yokken kilitlidir', async ({ page }) => {
+test('strateji oluşturma beş zorunlu alt aşamayı ve çıkış kontrolünü gösterir, hazırlık kararı yokken kilitlidir', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/strateji')
   await expect(page.getByRole('alert').filter({ hasText: 'Strateji oluşturma kilitli' })).toBeVisible()
@@ -344,7 +344,7 @@ test('3.5 bağlantısı gözden geçirme kartına gider ve odağı oraya taşır
   await expect(page.locator('#yenileme h2')).toBeFocused()
 })
 
-test('3.1 adımını değiştirmek uygulama kapılarının kararlarını eskitmez', async ({ page }) => {
+test('3.1 adımını değiştirmek uygulama kontrollerinin kararlarını eskitmez', async ({ page }) => {
   await openDemo(page)
   await patchPlan(
     page,
@@ -356,7 +356,7 @@ test('3.1 adımını değiştirmek uygulama kapılarının kararlarını eskitme
   await page.locator('#aU31-objective').fill('İlk 12 müşteri')
   await expect.poll(() => stored(page, `plan.steps['U31'].values.objective`)).toBe('İlk 12 müşteri')
   expect(await stored(page, `plan.decisions.find((d) => d.gate === 6).stale ?? false`)).toBe(false)
-  // Karar 7 açık kalır. Kapı 6 kararı geçerlidir.
+  // Karar 7 açık kalır. Kontrol 6 kararı geçerlidir.
   await page.goto('/#/karar/7')
   await expect(page.getByRole('alert').filter({ hasText: 'Bu karar kilitli' })).toHaveCount(0)
 })

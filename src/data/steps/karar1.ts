@@ -161,7 +161,7 @@ export const KARAR1: StepDef[] = [
     howTo: [
       'Planın sonunda neyi görmek istediğinizi bir cümleyle yazın. Örneğin "12 ay içinde ödeyen 30 müşteri."',
       'En az 3 durdurma kuralı yazın. Her kuralda bir sayı olsun.',
-      'Aylık zorunlu giderinizi ve elinizdeki parayı yazın. Pist kendiliğinden hesaplanır.',
+      'Aylık zorunlu giderinizi ve elinizdeki parayı yazın. Kasa süresi kendiliğinden hesaplanır.',
       'Üç sınır yazın. Toplam harcama. Bitiş tarihi. Karar başına deneme hakkı. Süre uzatmak ek harcama yetkisi vermez.',
     ],
     sections: [
@@ -172,7 +172,7 @@ export const KARAR1: StepDef[] = [
         ],
       },
       {
-        title: 'Pist',
+        title: 'Kasa süresi',
         fields: [
           { key: 'monthlyBurnKurus', type: 'money', label: 'Aylık zorunlu gider', required: true, span: 12 },
           { key: 'cashKurus', type: 'money', label: 'Elinizdeki para', required: true, span: 12 },
@@ -191,29 +191,29 @@ export const KARAR1: StepDef[] = [
         ],
       },
     ],
-    output: 'Başarı cümlesi. Üç durdurma kuralı. Pist. Üç sınır.',
+    output: 'Başarı cümlesi. Üç durdurma kuralı. Kasa süresi. Üç sınır.',
     outcomeTable: [
-      { condition: 'Pist, Karar 1 ile Karar 6 toplam süresinden kısa', result: 'Önce ek gelir veya para bulun. Ya da en kısa yolu izleyin.' },
+      { condition: 'Kasa süresi, Karar 1 ile Karar 6 toplam süresinden kısa', result: 'Önce ek gelir veya para bulun. Ya da en kısa yolu izleyin.' },
       { condition: 'Durdurma kuralı yazamıyorsanız', result: 'Karar 2\'ye geçmeyin. İkinci görüş alın.' },
     ],
     models: [17, 95],
     completeWhen: ['successSentence', 'stopRules', 'monthlyBurnKurus', 'cashKurus', 'budgetKurus', 'deadline', 'retriesPerDecision'],
     chart: {
       kind: 'bar',
-      title: 'Pist ve plan süresi',
+      title: 'Kasa süresi ve plan süresi',
       summary: (v) => {
         const burn = Number(v.monthlyBurnKurus ?? 0), cash = Number(v.cashKurus ?? 0)
         if (!burn || !cash) return ''
         const m = Math.floor(cash / burn)
-        return m < 6 ? `Pist ${m} ay. Karar 1 ile 6 en az 11 hafta sürer. Dikkat.` : `Pist ${m} ay.`
+        return m < 6 ? `Kasa süresi ${m} ay. Karar 1 ile 6 en az 11 hafta sürer. Dikkat.` : `Kasa süresi ${m} ay.`
       },
       build: (v) => {
         const burn = Number(v.monthlyBurnKurus ?? 0), cash = Number(v.cashKurus ?? 0)
         if (!burn || !cash) return null
         const m = Math.floor(cash / burn)
         return {
-          option: { grid: { left: 110, right: 24, top: 16, bottom: 24 }, xAxis: { type: 'value', name: 'ay' }, yAxis: { type: 'category', data: ['Pist', 'Plan en az', 'Plan en çok'] }, series: [{ type: 'bar', data: [m, 3, 6], label: { show: true, position: 'right' } }] },
-          table: { head: ['Ölçü', 'Ay'], rows: [['Pist', m], ['Plan en az', 3], ['Plan en çok', 6]] },
+          option: { grid: { left: 110, right: 24, top: 16, bottom: 24 }, xAxis: { type: 'value', name: 'ay' }, yAxis: { type: 'category', data: ['Kasa süresi', 'Plan en az', 'Plan en çok'] }, series: [{ type: 'bar', data: [m, 3, 6], label: { show: true, position: 'right' } }] },
+          table: { head: ['Ölçü', 'Ay'], rows: [['Kasa süresi', m], ['Plan en az', 3], ['Plan en çok', 6]] },
         }
       },
     },
@@ -226,14 +226,14 @@ export const KARAR1: StepDef[] = [
     mandatory: { profile: { team: ['ekip'] } },
     whenNote: 'Yalnız ekip varsa yapılır. Tek kurucu bu adımı atlar.',
     who: 'Kurucular birlikte.',
-    /* Kapı 1 ekipte bu adımı okur. Bu yüzden adım kısa yolda da görünür. Tek kurucuda profil koşulu adımı gizler. */
+    /* Kontrol 1 ekipte bu adımı okur. Bu yüzden adım kısa yolda da görünür. Tek kurucuda profil koşulu adımı gizler. */
     shortPath: true,
-    howTo: ['Her kapı için tek bir karar sahibi yazın.', 'Kim öneri yapar? Kim itiraz eder? Kime bilgi verilir? Üçünü de yazın.', 'Anlaşmazlık kuralını yazın.'],
+    howTo: ['Her kontrol için tek bir karar sahibi yazın.', 'Kim öneri yapar? Kim itiraz eder? Kime bilgi verilir? Üçünü de yazın.', 'Anlaşmazlık kuralını yazın.'],
     sections: [
       {
         fields: [
-          { key: 'rights', type: 'repeater', label: 'Karar hakları tablosu', addLabel: 'Kapı ekle', columns: [
-            { key: 'gate', type: 'select', label: 'Kapı', options: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: String(n), label: `Kapı ${n}` })) },
+          { key: 'rights', type: 'repeater', label: 'Karar hakları tablosu', addLabel: 'Kontrol ekle', columns: [
+            { key: 'gate', type: 'select', label: 'Kontrol', options: [1, 2, 3, 4, 5, 6, 7, 8].map((n) => ({ value: String(n), label: `Kontrol ${n}` })) },
             { key: 'owner', type: 'text', label: 'Karar sahibi' },
             { key: 'proposer', type: 'text', label: 'Öneren' },
             { key: 'objector', type: 'text', label: 'İtiraz eden' },

@@ -20,7 +20,7 @@ function historyPlan(): PlanDoc {
       owner: 'Ece', closingEvidence: 'Banka kaydı', issuedAt: '2026-11-15T12:00:00Z',
     },
     retriesLeft: 1, decidedBy: 'Ece Yılmaz', decidedAt: '2026-11-15T12:00:00Z',
-    reopenWhen: 'Ödeme gelmezse kapıyı yeniden açın.', revision: 5, stale: true,
+    reopenWhen: 'Ödeme gelmezse kontrolü yeniden açın.', revision: 5, stale: true,
   }]
   plan.transitions = [{
     id: 'transition-1', outcome: 'kosullu', suggested: 'degil',
@@ -90,7 +90,7 @@ describe('Geçmiş kartları', () => {
     await render()
     expect(cards()).toHaveLength(3)
     expect(cards().map((card) => card.querySelector('h3')?.textContent)).toEqual([
-      'Geçiş kapısı', 'Harcama sınırı', 'Kapı 1',
+      'Hazırlık kontrolü', 'Harcama sınırı', 'Kontrol 1',
     ])
     for (const card of cards()) {
       expect(card.getAttribute('aria-labelledby')).toBe(card.querySelector('h3')?.id)
@@ -101,7 +101,7 @@ describe('Geçmiş kartları', () => {
       plan.decisions[0].reason, 'Ece Yılmaz', 'Sürüm 5', 'İnceleme bekliyor',
       'Koşullu ilerle', 'Sistemin önerisi: Beklet', 'Ödeme henüz gelmedi.',
       'Ayşe kanıtları inceledi.', 'Yalnız ön sipariş denemesi',
-      formatDate('2026-12-03', false), 'Ödeme gelmezse kapıyı yeniden açın.',
+      formatDate('2026-12-03', false), 'Ödeme gelmezse kontrolü yeniden açın.',
     ]) expect(decision).toContain(detail)
     const transition = cards()[0].textContent
     for (const detail of [
@@ -109,7 +109,7 @@ describe('Geçmiş kartları', () => {
       '9 zorunlu ölçütün 7 tanesi karşılandı.', '4 destekleyici ölçütün 2 tanesi karşılandı.',
       'Deniz koşulu inceledi.', 'Dağıtım denemesi',
       'Ürün hangi yoldan ulaşacak?', 'Selin', formatDate('2026-12-10', false),
-      'Geçiş kapısını yeniden inceleyin.',
+      'Hazırlık kontrolünü yeniden inceleyin.',
     ]) expect(transition).toContain(detail)
     expect(cards()[1].textContent).toContain('Zeynep')
     expect(cards()[1].textContent).toContain(formatDate('2026-11-18T12:00:00Z'))
@@ -127,7 +127,7 @@ describe('Geçmiş kartları', () => {
     await render()
     const summary = host.querySelector('aside')?.textContent
     for (const [label, title] of [
-      ['Kararlar', 'Kapı 1'], ['Geçiş', 'Geçiş kapısı'], ['Değişiklikler', 'Harcama sınırı'],
+      ['Kararlar', 'Kontrol 1'], ['Hazırlık', 'Hazırlık kontrolü'], ['Değişiklikler', 'Harcama sınırı'],
     ]) {
       await selectFilter(label)
       expect(cards()).toHaveLength(1)
@@ -146,7 +146,7 @@ describe('Geçmiş kartları', () => {
     expect(radios).toHaveLength(4)
     expect(radios[0].name).not.toBe('')
     expect(new Set(radios.map((radio) => radio.name)).size).toBe(1)
-    await selectFilter('Geçiş')
+    await selectFilter('Hazırlık')
     expect(radios.filter((radio) => radio.checked)).toHaveLength(1)
     expect(radios[2].checked).toBe(true)
   })
@@ -154,9 +154,9 @@ describe('Geçmiş kartları', () => {
   it('boş filtrede açıklama verir ve başka türdeki kayda geri döner', async () => {
     plan.transitions = []
     await render()
-    await selectFilter('Geçiş')
+    await selectFilter('Hazırlık')
     expect(cards()).toHaveLength(0)
-    expect(host.textContent).toContain('Geçiş kararı yok.')
+    expect(host.textContent).toContain('Hazırlık kararı yok.')
     await selectFilter('Kararlar')
     expect(cards()).toHaveLength(1)
   })

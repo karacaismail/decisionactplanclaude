@@ -134,7 +134,7 @@ describe('uyarlanan görev kartları', () => {
     ])
     await openList()
     const [first, second] = records()
-    for (const text of ['İş ilk', 'Ayşe Yılmaz', '13 Kasım 2026 Cuma günü', 'Kapı 2',
+    for (const text of ['İş ilk', 'Ayşe Yılmaz', '13 Kasım 2026 Cuma günü', 'Kontrol 2',
       'Adım 06', 'Teklifi hazırlayın.', 'Müşteri yazılı onay verir.',
       'Müşteri koşulu değiştirirse işi yeniden açın.', '10 Kasım 2026 Salı günü',
       '11 Kasım 2026 Çarşamba günü']) expect(first.textContent).toContain(text)

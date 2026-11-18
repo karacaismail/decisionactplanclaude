@@ -31,10 +31,10 @@ describe('örnek plan', () => {
     expect(plan.transitions).toEqual([])
   })
 
-  it('Karar 1-5 kapıları motorun ölçütleriyle de "ilerle" önerir', () => {
+  it('Karar 1-5 kontrolleri motorun ölçütleriyle de "ilerle" önerir', () => {
     for (const n of [1, 2, 3, 4, 5]) {
       const ev = evaluateGate(DECISIONS[n - 1].gate, plan)
-      expect(ev.suggested, `Kapı ${n}: ${ev.reasons.join(' ')}`).toBe('ilerle')
+      expect(ev.suggested, `Kontrol ${n}: ${ev.reasons.join(' ')}`).toBe('ilerle')
     }
   })
 
@@ -43,7 +43,7 @@ describe('örnek plan', () => {
     for (const id of ['19', '20']) expect(plan.steps[id]).toBeUndefined()
   })
 
-  it('geçiş kapısı dokuz zorunlu ölçütü karşılar ve "hazır" ya da "koşullu" önerir', () => {
+  it('hazırlık kontrolü dokuz zorunlu ölçütü karşılar ve "hazır" ya da "koşullu" önerir', () => {
     const r = evaluateReadiness(plan)
     expect(r.mandatory.filter((c) => c.met !== true).map((c) => c.id)).toEqual([])
     expect(['hazir', 'kosullu']).toContain(r.suggested)

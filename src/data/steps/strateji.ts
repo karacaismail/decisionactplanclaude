@@ -32,7 +32,7 @@ export const STRATEJI_SECIM_ONCESI: StepDef[] = [
     shortPath: true,
     intro: 'Teşhis, karmaşık durumu tek bir güçlüğe indirir. Güçlük belli olmadan yollar karşılaştırılamaz.',
     howTo: [
-      'Devir raporunu okuyun. Hazırlıkta yazılan asıl engel adayına bakın.',
+      'Teslim raporunu okuyun. Hazırlıkta yazılan asıl engel adayına bakın.',
       'Adayı aynen almak zorunda değilsiniz. Kanıt başka bir güçlüğü gösteriyorsa onu yazın.',
       'Güçlüğü tek cümleyle yazın. Cümle bir hedef ya da bir çözüm olmasın.',
       'Bu güçlüğün neden asıl güçlük olduğunu kanıtla yazın.',

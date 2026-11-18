@@ -9,15 +9,15 @@ import { transitionPassed, validationLevel } from './readiness'
 
 /**
  * Planın yol üzerindeki yeri. Tek kaynak budur.
- * Sıra: temel kapıları, geçiş kapısı, strateji oluşturma, uygulama kapıları.
+ * Sıra: temel kontrolleri, hazırlık kontrolü, strateji oluşturma, uygulama kontrolleri.
  * Pano, planlar ekranı, menü ve kilit kuralı aynı sırayı kullanır.
  */
 export interface PlanPosition {
-  /** Sıradaki işin bölümü. Bütün kapılar geçildiyse 'bitti'. */
+  /** Sıradaki işin bölümü. Bütün kontroller geçildiyse 'bitti'. */
   stage: StageKey | 'bitti'
   /** Sıradaki iş bir kararsa numarası. */
   decision?: number
-  /** Doğrulama seviyesi, 0 ile 5 arası. */
+  /** Kanıt düzeyi, 0 ile 5 arası. */
   level: number
   /** Tamamlanan strateji adımı sayısı. Yalnız gösterim içindir. */
   strategyDone: number

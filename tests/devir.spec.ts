@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test'
 
 /**
- * Strateje devir raporu (/devir). Rapor stratej'in önüne konur ve seçim yapmaz.
+ * Strateje teslim raporu (/devir). Rapor stratej'in önüne konur ve seçim yapmaz.
  * Ölçütler docs/strateje-devir-uygulama-plani.md dosyasının 4. adımından gelir.
  */
 
@@ -50,7 +50,7 @@ async function createPlan(page: Page, name = 'Deneme planı') {
 async function openReport(page: Page) {
   await openDemo(page)
   await page.goto('/#/devir')
-  await expect(page.getByRole('heading', { level: 1, name: 'Strateje devir raporu' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Strateje teslim raporu' })).toBeVisible()
 }
 
 test('rapor karar sorusuyla açılır ve seçim önermez', async ({ page }) => {
@@ -67,7 +67,7 @@ test('rapor karar sorusuyla açılır ve seçim önermez', async ({ page }) => {
   // Rapor seçim yapmaz: hiçbir yol "önerilen" diye işaretlenmez.
   const body = await page.locator('body').innerText()
   expect(body).not.toMatch(/[Öö]nerilen/)
-  await noHorizontalOverflow(page, 'devir raporu')
+  await noHorizontalOverflow(page, 'teslim raporu')
 })
 
 test('dayanaklar türüne göre etiketlenir ve süzülür', async ({ page }) => {
@@ -148,7 +148,7 @@ test('tasarım kuralları: tek dolu düğme, iç içe kart yok, küçük yazı y
   expect(breaks).toBe(0)
 })
 
-test('Markdown indirme devir raporunu verir', async ({ page }) => {
+test('Markdown indirme teslim raporunu verir', async ({ page }) => {
   await openReport(page)
   const [file] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Markdown indir' }).click()])
   expect(file.suggestedFilename()).toMatch(/strateje-devir-raporu.*\.md$/)
@@ -182,11 +182,11 @@ test('yazdırmada düğmeler gizlenir, rapor 14 piksel basılır', async ({ page
 test('boş planda rapor uydurma yapmaz', async ({ page }) => {
   await createPlan(page)
   await page.goto('/#/devir')
-  await expect(page.getByRole('heading', { level: 1, name: 'Strateje devir raporu' })).toBeVisible()
+  await expect(page.getByRole('heading', { level: 1, name: 'Strateje teslim raporu' })).toBeVisible()
   const paths = page.locator('#devir-yollar')
   await expect(paths.getByText('Yol adayı henüz yazılmadı.')).toBeVisible()
   await expect(paths.getByRole('link', { name: "Adım 18'i aç" })).toBeVisible()
-  await expect(page.locator('#devir-karar').getByText('Geçiş kararı henüz kaydedilmedi.')).toBeVisible()
+  await expect(page.locator('#devir-karar').getByText('Hazırlık kararı henüz kaydedilmedi.')).toBeVisible()
   await expect(page.locator('#devir-dayanaklar').getByText('Henüz yazılmadı.').first()).toBeVisible()
   await expect(page.locator('#devir-kapsam').getByText('0 / 14 başlık dolu')).toBeVisible()
   expect(await page.locator('.ant-card .ant-card').count()).toBe(0)
@@ -194,16 +194,16 @@ test('boş planda rapor uydurma yapmaz', async ({ page }) => {
   await noHorizontalOverflow(page, 'boş plan')
 })
 
-test('çıktılar ekranında "Strateje devir raporu" sekmesi özeti gösterir', async ({ page }) => {
+test('çıktılar ekranında "Strateje teslim raporu" sekmesi özeti gösterir', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/ciktilar')
   // Varsayılan sekme yönetici raporudur.
   await expect(page.getByRole('heading', { name: 'Yönetici raporu' })).toBeVisible()
-  for (const name of ['Strateje devir raporu', 'Yönetici raporu', 'Girişimci aksiyon planı']) await expect(page.getByRole('tab', { name })).toBeInViewport()
+  for (const name of ['Strateje teslim raporu', 'Yönetici raporu', 'Girişimci aksiyon planı']) await expect(page.getByRole('tab', { name })).toBeInViewport()
   await expect(page.getByRole('tab', { name: 'Temel belgesi' })).toHaveCount(0)
 
-  await page.getByRole('tab', { name: 'Strateje devir raporu' }).click()
-  await expect(page.getByRole('heading', { name: 'Strateje devir raporu' })).toBeVisible()
+  await page.getByRole('tab', { name: 'Strateje teslim raporu' }).click()
+  await expect(page.getByRole('heading', { name: 'Strateje teslim raporu' })).toBeVisible()
   await expect(page.locator('.devir-question')).toContainText(QUESTION)
   await expect(page.getByText('13 / 14 başlık dolu')).toBeVisible()
   await expect(page.getByRole('button', { name: 'Markdown indir' })).toBeEnabled()
@@ -221,7 +221,7 @@ test('eski ve yeni belge adresi devir sekmesini açar', async ({ page }) => {
   await openDemo(page)
   for (const key of ['temel', 'devir']) {
     await page.goto(`/#/ciktilar?belge=${key}`)
-    await expect(page.getByRole('tab', { name: 'Strateje devir raporu' })).toHaveAttribute('aria-selected', 'true')
+    await expect(page.getByRole('tab', { name: 'Strateje teslim raporu' })).toHaveAttribute('aria-selected', 'true')
     await expect(page.locator('.devir-question')).toContainText(QUESTION)
     await page.goto('/#/ozet')
   }

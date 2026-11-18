@@ -371,7 +371,7 @@ for (const intent of ['hover', 'touch'] as const) {
   test(`${intent}: çalışma ekranı rapor kodu olmadan önceden yüklenir`, async ({ page, network }) => {
     await createPlan(page)
     await page.evaluate(() => { window.location.hash = '/temel' })
-    await expect(page.getByRole('heading', { name: 'Strateji öncesi 20 temel taşı' })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'Strateji öncesi 20 temel soru' })).toBeVisible()
     const link = page.locator('main a[href*="/adim/"]').first()
     expectNoRequest(network, 'WorkScreen')
     if (intent === 'hover') await link.hover()
