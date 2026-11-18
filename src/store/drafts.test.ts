@@ -107,8 +107,8 @@ describe('plan komutları', () => {
   })
 })
 
-describe('modül verisi kapıları değiştirmez', () => {
-  it('modül verisi, özet ve taslak varken kapılar ve hazırlık aynı kalır', async () => {
+describe('modül verisi kontrolleri değiştirmez', () => {
+  it('modül verisi, özet ve taslak varken kontroller ve hazırlık aynı kalır', async () => {
     const id = open(buildShoeDemoPlan())
     const before = gateSnapshot(current())
     const planJson = JSON.stringify(current())
