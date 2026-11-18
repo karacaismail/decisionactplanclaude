@@ -32,9 +32,19 @@ html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-i
   width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
 }
 html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::before { display: none; }
+/* Plan adı gibi pencerelerdeki yalın girişlerde işaret, etiket kabında çizilir. */
+.ant-modal-body > label:has(> input.ant-input) { position: relative; }
+.ant-modal-body > label > input.ant-input { min-height: var(--target-touch); }
+html[data-focus-mode='keyboard'] .ant-modal-body > label:has(> input.ant-input:focus-visible)::before {
+  content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2)); inset-block: var(--space-1);
+  width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
+}
+html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus-visible::before { display: none; }
 @media (forced-colors: active) {
   html[data-focus-mode='keyboard'] .work-page :focus-visible { outline: 2px solid CanvasText !important; }
   html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-input-content)::before { display: none; }
+  html[data-focus-mode='keyboard'] .ant-modal-body > label:has(> input.ant-input:focus-visible)::before { display: none; }
+  html[data-focus-mode='keyboard'] .ant-modal-body > label > input.ant-input:focus-visible { outline: 2px solid CanvasText !important; }
 }
 
 /* Başlık altı tek satır: gereklilik etiketi, durum etiketi ve "Kim yapar?" */
@@ -232,6 +242,7 @@ html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wr
 .repeater-cell-label { display: none; }
 .repeater-cell-help { display: block; font-size: var(--form-text-helper); line-height: 1.5; color: var(--color-text-secondary); }
 .repeater-table .repeater-field-cell { min-width: var(--form-field-min); }
+.repeater-table .ant-table-measure-row { pointer-events: none; user-select: none; }
 .repeater-table .repeater-row-actions { min-width: calc(var(--target-touch) * 3 + var(--space-1) * 2 + var(--space-8)); }
 .repeater-table .ant-table-thead > tr > th { word-break: normal; overflow-wrap: normal; }
 .repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
