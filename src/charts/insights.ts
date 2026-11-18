@@ -15,7 +15,7 @@ import { stepApplies } from '@/engine/conditions'
 import { effectiveOutcome } from '@/engine/gate'
 import { formatDate, formatMoney, formatNumber } from '@/engine/format'
 import { LADDER } from '@/components/EvidenceLadderPicker'
-import { font } from '@/theme/tokens'
+import { font, space } from '@/theme/tokens'
 
 export interface InsightPalette {
   /** Ana seri: tamamlanan, ölçülen. Koyu mürekkep. */
@@ -129,7 +129,7 @@ function styles(c: InsightPalette) {
     axis,
     grid,
     axisText: { color: axis, fontSize: font.helper, fontFamily: font.family },
-    categoryAxis: { axisLine: line, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { color: axis, fontSize: font.helper, interval: 0 } },
+    categoryAxis: { axisLine: line, axisTick: { show: false }, splitLine: { show: false }, axisLabel: { color: axis, fontSize: font.helper, interval: 0, formatter: '{value}' } },
     /* En çok 4 ızgara çizgisi. Sekiz çizgili eksen okunmaz. */
     valueAxis: { axisLine: { show: false }, axisTick: { show: false }, splitNumber: 4, splitLine: { show: true, ...line }, axisLabel: { color: axis, fontSize: font.helper } },
     legend: { top: 0, left: 0, icon: 'rect', itemWidth: 12, itemHeight: 12, itemGap: 16, textStyle: { color: axis, fontSize: font.helper } },
@@ -138,7 +138,7 @@ function styles(c: InsightPalette) {
   }
 }
 
-/** Dar kapsayıcı sınırı. Bunun altında kategori adları kısalır ve 45 derece döner. */
+/** Dar kapsayıcı sınırı. Etiketler seyrelir. Veri ve tablo aynı kalır. */
 const NARROW = 520
 
 /** Telefonda kategori adı tek kelime. Tablo tam adı verir. */
@@ -257,7 +257,8 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
     height: 8 * 48 + 56,
     /*
      * Yatay çubuk: her satır bir karar. Karar adı solda tam yazılır, dar ekranda kısalır.
-     * X ekseni yalnız 0, 4 ve 8. Bir kararda en çok 7 adım vardır. Çubuk ucunda "tamamlanan/toplam" yazar.
+     * Dar alanda X ekseni 0 ve 8 değerlerini gösterir. Geniş alanda 4 de görünür.
+     * Geniş alanda çubuk ucunda "tamamlanan/toplam" yazar. Tablo bütün değerleri korur.
      */
     option: whenNarrow({
       tooltip: s.tooltip,
@@ -279,10 +280,13 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
         },
       ],
     }, {
-      /* Dar kartta karar adı 100 px içinde kelime sınırından sarılır. Satır 48 px: üç satıra kadar sığar. */
-      yAxis: { data: items.map((i) => i.label), axisLabel: { width: 100, overflow: 'break' } },
+      xAxis: { interval: 8 },
+      yAxis: { axisLabel: { width: 100, formatter: (_value: string, index: number) => `${index + 1}. ${items[index].short}` } },
+      series: [{ name: 'Kalan', label: { show: false } }],
     }, {
-      yAxis: { data: items.map((i) => i.label), axisLabel: { width: 150, overflow: 'break' } },
+      xAxis: { interval: 4 },
+      yAxis: { axisLabel: { width: 150, formatter: '{value}' } },
+      series: [{ name: 'Kalan', label: { show: true } }],
     }),
     table: { head: ['Karar', 'Tamamlanan', 'Toplam'], rows: items.map((i) => [i.label, i.done, i.total]) },
   }
@@ -300,14 +304,14 @@ function ladderDistribution(plan: PlanDoc, c: InsightPalette): Insight {
   const totals = LADDER.map((_l, i) => evidence[i] + interviews[i] + offers[i])
   const colors = seriesColors(c, LADDER.length)
   const axis = c.axis ?? c.primary
-  /* Donut: yalnız dolu basamaklar dilim olur. Açıklama altta, dar ekranda kayar. Dilim içinde sayı yazar. */
+  /* Yalnız dolu basamaklar dilim olur. Dar alanda sayı etiketleri kalkar. Tablo bütün sayıları korur. */
   const slices = LADDER.map((l, i) => ({ name: `${l.level}. basamak`, value: totals[i], itemStyle: { color: colors[i] } })).filter((d) => d.value > 0)
   return {
     ...base,
     empty: false,
     summary: `${strong} kanıt 1, 2 veya 3. basamakta. ${total - strong} kanıt yalnız ipucu.`,
     height: 300,
-    option: {
+    option: whenNarrow({
       tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { name: string; value: number; percent: number }) => `${p.name}: ${p.value} kanıt (%${Math.round(p.percent)})` },
       /* Açıklama altta ve satırlara sarılır; sayfalama yoktur. Halka üstte durur. */
       legend: { bottom: 0, left: 'center', width: '100%', icon: 'circle', itemWidth: 12, itemHeight: 12, itemGap: 14, textStyle: { color: axis, fontSize: font.helper } },
@@ -321,7 +325,7 @@ function ladderDistribution(plan: PlanDoc, c: InsightPalette): Insight {
         emphasis: { scale: false, label: { show: true } },
         data: slices,
       }],
-    },
+    }, { series: [{ label: { show: false } }] }, { series: [{ label: { show: true } }] }),
     table: { head: ['Basamak', 'Kanıt defteri', 'Görüşmeler', 'Teklifler'], rows: LADDER.map((l, i) => [`${l.level}. ${l.label}`, evidence[i], interviews[i], offers[i]]) },
   }
 }
@@ -352,7 +356,7 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
     ...base,
     empty: false,
     summary,
-    option: {
+    option: whenNarrow({
       tooltip: { trigger: 'item', textStyle: { fontSize: font.helper } },
       series: [{
         type: 'funnel',
@@ -367,7 +371,7 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
         itemStyle: { borderWidth: 0 },
         data: data.map(([name, value], i) => ({ name, value, itemStyle: { color: colors[i] }, label: { color: labelColor() } })),
       }],
-    },
+    }, { series: [{ label: { show: false } }] }, { series: [{ label: { show: true } }] }),
     table: { head: ['Aşama', 'Kişi'], rows: data.map(([name, value]) => [name, value]) },
   }
 }
@@ -396,9 +400,17 @@ function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
         data: items.map((i) => ({ value: i.pct, itemStyle: { color: i.pct >= 100 ? c.success : c.warning } })),
         barMaxWidth: BAR,
         label: { ...s.valueLabel, position: 'right', formatter: '%{c}' },
-        markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { formatter: 'Eşik %100', position: 'start', distance: 6, color: c.error, fontSize: font.helper }, data: [{ xAxis: 100 }] },
+        markLine: { symbol: 'none', lineStyle: { color: c.error, width: 1 }, label: { show: true, formatter: 'Eşik %100', position: 'start', distance: 6, color: c.error, fontSize: font.helper }, data: [{ xAxis: 100 }] },
       }],
-    }, { yAxis: { axisLabel: { width: 96 } } }, { yAxis: { axisLabel: { width: 140 } } }),
+    }, {
+      xAxis: { splitNumber: 2 },
+      yAxis: { axisLabel: { width: 96, interval: 'auto' } },
+      series: [{ label: { show: false }, markLine: { label: { show: false } } }],
+    }, {
+      xAxis: { splitNumber: 4 },
+      yAxis: { axisLabel: { width: 140, interval: 0 } },
+      series: [{ label: { show: true }, markLine: { label: { show: true } } }],
+    }),
     table: { head: ['Ölçü', 'Adım', 'Birim', 'Ölçülen', 'Eşik', 'Eşiğin yüzdesi'], rows: items.map((i) => [i.name, i.step, i.unit, i.value, i.threshold, `%${i.pct}`]) },
   }
 }
@@ -443,19 +455,41 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
   const cashX = { type: 'category', data: cashLabels, ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } }
   const unitX = { type: 'category', data: unitLabels, ...s.categoryAxis }
   const tlY = { type: 'value', name: 'TL', nameTextStyle: s.axisText, ...s.valueAxis }
+  const narrowCashX = { axisLabel: { interval: Math.max(0, Math.ceil(days.length / 2) - 1), formatter: (value: string) => value.replace(/ \d{4}$/, '') } }
+  const wideCashX = { axisLabel: { interval: 'auto', formatter: '{value}' } }
+  const narrowUnitX = { axisLabel: { formatter: (value: string) => value.replaceAll(' ', '\n') } }
+  const wideUnitX = { axisLabel: { formatter: '{value}' } }
+  const narrowY = { splitNumber: 2 }
+  const wideY = { splitNumber: s.valueAxis.splitNumber }
   let option: unknown
   if (hasCash && hasUnit) {
-    option = {
+    option = whenNarrow({
       tooltip: s.tooltip,
       grid: [{ left: 8, right: 8, top: 32, height: '30%', containLabel: true }, { left: 8, right: 8, top: '60%', height: '28%', containLabel: true }],
       xAxis: [{ ...cashX, gridIndex: 0 }, { ...unitX, gridIndex: 1 }],
       yAxis: [{ ...tlY, gridIndex: 0 }, { ...tlY, gridIndex: 1 }],
       series: [{ ...cashSeries, xAxisIndex: 0, yAxisIndex: 0 }, { ...unitSeries, xAxisIndex: 1, yAxisIndex: 1 }],
-    }
+    }, {
+      xAxis: [narrowCashX, narrowUnitX],
+      yAxis: [narrowY, narrowY],
+      series: [{ name: 'TL', label: { show: false } }],
+    }, {
+      xAxis: [wideCashX, wideUnitX],
+      yAxis: [wideY, wideY],
+      series: [{ name: 'TL', label: { show: true } }],
+    })
   } else if (hasCash) {
-    option = { tooltip: s.tooltip, grid: GRID, xAxis: cashX, yAxis: tlY, series: [cashSeries] }
+    option = whenNarrow(
+      { tooltip: s.tooltip, grid: GRID, xAxis: cashX, yAxis: tlY, series: [cashSeries] },
+      { xAxis: narrowCashX, yAxis: narrowY },
+      { xAxis: wideCashX, yAxis: wideY },
+    )
   } else {
-    option = { tooltip: s.tooltip, grid: GRID, xAxis: unitX, yAxis: tlY, series: [unitSeries] }
+    option = whenNarrow(
+      { tooltip: s.tooltip, grid: GRID, xAxis: unitX, yAxis: tlY, series: [unitSeries] },
+      { xAxis: narrowUnitX, yAxis: narrowY, series: [{ label: { show: false } }] },
+      { xAxis: wideUnitX, yAxis: wideY, series: [{ label: { show: true } }] },
+    )
   }
   return { ...base, empty: false, summary: parts.join(' '), option, table }
 }
@@ -486,7 +520,17 @@ function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
         data: points.map((p) => ({ value: [p.i, p.gate - 1], itemStyle: { color: p.color }, name: p.label })),
         label: { show: true, position: 'right', color: s.axis, formatter: (p: { name: string }) => p.name, fontSize: font.helper },
       }],
-    }, { yAxis: { axisLabel: { width: 72 } } }, { yAxis: { axisLabel: { width: 140 } } }),
+    }, {
+      grid: { right: space.sm },
+      xAxis: { axisLabel: { interval: Math.max(0, Math.ceil(points.length / 2) - 1) } },
+      yAxis: { axisLabel: { width: 72, formatter: (_value: string, index: number) => SHORT_TITLE[index + 1] } },
+      series: [{ label: { show: false } }],
+    }, {
+      grid: { right: space.xxl * 2 },
+      xAxis: { axisLabel: { interval: 'auto' } },
+      yAxis: { axisLabel: { width: 140, formatter: '{value}' } },
+      series: [{ label: { show: true } }],
+    }),
     table: { head: ['Kapı', 'Sonuç', 'Tarih', 'Karar veren'], rows: points.map((p) => [`Kapı ${p.gate}`, p.label, p.date, p.by]) },
   }
 }
@@ -505,7 +549,7 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
     ...base,
     empty: false,
     summary: ok ? 'Üç sayı da Kapı 2 hedefini karşılıyor.' : `${labels.filter((_l, i) => actual[i] < target[i]).join(' ve ')} hedefin altında.`,
-    option: {
+    option: whenNarrow({
       tooltip: s.tooltip,
       legend: s.legend,
       grid: GRID,
@@ -516,7 +560,15 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
         { type: 'bar', name: 'Sayı', data: actual, itemStyle: { color: c.primary }, barMaxWidth: BAR, barGap: '75%', barCategoryGap: CATEGORY_GAP, label: s.valueLabel },
         { type: 'bar', name: 'Hedef', data: target, itemStyle: { color: c.muted }, barMaxWidth: BAR, label: { ...s.valueLabel, color: s.axis } },
       ],
-    },
+    }, {
+      xAxis: { axisLabel: { interval: 'auto', width: space.xxl * 2 } },
+      yAxis: { splitNumber: 2 },
+      series: [{ label: { show: false } }, { label: { show: false } }],
+    }, {
+      xAxis: { axisLabel: { interval: 0, width: 104 } },
+      yAxis: { splitNumber: s.valueAxis.splitNumber },
+      series: [{ label: { show: true } }, { label: { show: true } }],
+    }),
     table: { head: ['Ölçü', 'Sayı', 'Hedef'], rows: labels.map((l, i) => [l, actual[i], target[i]]) },
   }
 }

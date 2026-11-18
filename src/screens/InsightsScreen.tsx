@@ -8,8 +8,9 @@ import { buildInsights, statCards, type Insight, type InsightPalette } from '@/c
 import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { resolveMode } from '@/theme/antdTheme'
-import { palette as paletteOf } from '@/theme/tokens'
+import { font, palette as paletteOf } from '@/theme/tokens'
 import '@/styles/screens-rapor.css'
+import '@/styles/mobil-pano.css'
 
 /**
  * Göstergeler. Üstte dört istatistik kartı, altında grafik ızgarası.
@@ -45,7 +46,7 @@ export function InsightsScreen() {
   if (!plan) return null
 
   return (
-    <div className="page page-rapor">
+    <div className="page page-rapor mobil-insights">
       <PageHeader kicker="Göstergeler" title="Göstergeler" description="Bu ekran planınızdaki sayıları gösterir. Sayılar adımlarda yazdığınız cevaplardan gelir." />
 
       <section className="insight-stats" aria-label="Özet sayılar">
@@ -56,14 +57,20 @@ export function InsightsScreen() {
             ) : (
               <Statistic title={t.title} value={t.value} className="insight-stat-text" />
             )}
-            {t.percent !== null ? <Progress percent={t.percent} showInfo={false} size={{ height: 6 }} aria-label={`${t.title} yüzde ${t.percent}`} /> : null}
+            {t.percent !== null ? <Progress percent={t.percent} showInfo={false} size="small" aria-label={`${t.title} yüzde ${t.percent}`} /> : null}
             <p className="helper">{t.note}</p>
           </Card>
         ))}
       </section>
 
-      <section className="insight-grid" aria-label="Grafikler">
-        {insights.map((i) => <InsightCard key={i.id} insight={i} />)}
+      <section className="insight-section" aria-labelledby="insight-charts-heading">
+        <header className="insight-section-head">
+          <h2 id="insight-charts-heading">Grafikler ve tablolar</h2>
+          <p className="helper">Sayıları tablo olarak görmek için “Tablo” seçeneğini seçin.</p>
+        </header>
+        <div className="insight-grid">
+          {insights.map((i) => <InsightCard key={i.id} insight={i} />)}
+        </div>
       </section>
     </div>
   )
@@ -73,25 +80,26 @@ export function InsightsScreen() {
 function InsightCard({ insight }: { insight: Insight }) {
   if (insight.empty) {
     return (
-      <Card title={insight.title} className="insight-card is-empty">
-        <Empty
-          image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={<span className="insight-empty-text">Bu gösterge için ölçüm bekleniyor. {insight.hint}</span>}
-        >
-          <Link className="insight-empty-link" to={insight.link.to}>
-            {insight.link.label}
-            <ArrowRight size={16} aria-hidden />
-          </Link>
-        </Empty>
-        <p className="helper">{insight.source}</p>
-      </Card>
+      <section className="insight-card is-empty" aria-label={insight.title}>
+        <Card title={<h3 className="insight-title">{insight.title}</h3>} variant="borderless">
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={<span className="insight-empty-text">Bu gösterge için ölçüm bekleniyor. {insight.hint}</span>}
+          >
+            <Link className="insight-empty-link" to={insight.link.to}>
+              {insight.link.label}
+              <ArrowRight size={font.body} aria-hidden />
+            </Link>
+          </Empty>
+          <p className="helper insight-source">{insight.source}</p>
+        </Card>
+      </section>
     )
   }
-  /* Özet cümlesi ve kaynak açıklaması grafik altında birlikte durur. */
-  const summary = [insight.summary, insight.source].filter(Boolean).join(' ')
   return (
-    <div className="insight-card">
-      <ChartFrame title={insight.title} summary={summary} option={insight.option} table={insight.table} height={insight.height} />
-    </div>
+    <section className="insight-card insight-chart" aria-label={insight.title}>
+      <ChartFrame title={insight.title} summary={insight.summary} option={insight.option} table={insight.table} height={insight.height} frame="plain" />
+      <p className="helper insight-source">{insight.source}</p>
+    </section>
   )
 }

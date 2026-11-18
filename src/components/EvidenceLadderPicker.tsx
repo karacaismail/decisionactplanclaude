@@ -1,4 +1,5 @@
 import { Segmented, Tag } from 'antd'
+import '@/styles/mobil-pano.css'
 
 export const LADDER: { level: number; label: string; hint: string }[] = [
   { level: 1, label: 'Müşteri ödeme yaptı', hint: 'En güçlü kanıt.' },
@@ -29,13 +30,29 @@ export function ladderLabel(level?: number): string {
  */
 export function EvidenceLadderPicker({ value, onChange, id }: { value?: number; onChange: (v: number) => void; id?: string }) {
   return (
-    <div className="ladder-picker" id={id}>
+    <div className="mobil-ladder ladder-picker" id={id}>
       <Segmented<number>
         orientation="vertical"
         block
         className="ladder-steps"
+        aria-label="Kanıt basamağı"
         value={value ?? 0}
         onChange={(v) => onChange(Number(v))}
+        onKeyDownCapture={(event) => {
+          if (!['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) return
+          if (!(event.target instanceof HTMLInputElement)) return
+          const inputs = Array.from(event.currentTarget.querySelectorAll<HTMLInputElement>('input[type="radio"]:not(:disabled)'))
+          const index = inputs.indexOf(event.target)
+          if (index < 0) return
+          // Yerel ok davranışı WebKit'te :focus-visible durumunu kaybediyor.
+          // Seçimi tek kez bildirirken görünür odağı sonraki girdiye taşıyoruz.
+          event.preventDefault()
+          event.stopPropagation()
+          const offset = ['ArrowUp', 'ArrowLeft'].includes(event.key) ? -1 : 1
+          const next = inputs[(index + offset + inputs.length) % inputs.length]
+          next.focus()
+          next.click()
+        }}
         options={LADDER.map((l) => ({
           value: l.level,
           label: (
@@ -57,11 +74,11 @@ export function EvidenceLadderPicker({ value, onChange, id }: { value?: number; 
 /** Salt okunur merdiven. Seçili basamak kalın yazılır. */
 export function EvidenceLadder({ value }: { value?: number }) {
   return (
-    <ol style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
+    <ol className="mobil-ladder ladder-readonly" aria-label="Kanıt basamakları">
       {LADDER.map((l) => (
-        <li key={l.level} className="helper" style={{ display: 'flex', gap: 8, alignItems: 'center', fontWeight: value === l.level ? 600 : 400 }}>
-          <span className="tabular" style={{ width: 20 }}>{l.level}.</span>
-          {l.label}
+        <li key={l.level} className="helper ladder-readonly-item" aria-current={value === l.level ? 'true' : undefined}>
+          <span className="tabular ladder-readonly-number">{l.level}.</span>
+          <span className="ladder-readonly-label">{l.label}</span>
         </li>
       ))}
     </ol>

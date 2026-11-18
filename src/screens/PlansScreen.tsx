@@ -1,8 +1,7 @@
 import { BACKUP_DAYS } from '@/engine/backup'
 import { useMemo, useRef, useState, type ChangeEvent } from 'react'
-import { App as AntApp, Button, Card, Dropdown, Empty, Grid, Input, List, Modal, Popconfirm, Progress, Statistic, Table, Tag } from 'antd'
-import type { ColumnsType } from 'antd/es/table'
-import { Plus, DotsThree, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSquareOut } from '@phosphor-icons/react'
+import { App as AntApp, Button, Card, Dropdown, Empty, Input, Modal, Pagination, Popconfirm, Progress, Select, Statistic, Tag } from 'antd'
+import { Plus, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSquareOut } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
@@ -13,9 +12,22 @@ import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { planPosition, type PlanPosition } from '@/engine/position'
 import '@/styles/screens-pano.css'
+import '@/styles/mobil-pano.css'
 
 /** Doğrulama seviyesinin en üst basamağı. Beş temel kapı geçilince 5 olur. */
 const MAX_LEVEL = 5
+const PAGE_SIZE = 10
+const SORT_OPTIONS = [
+  { value: 'updated-desc', label: 'Son değişiklik: yeniden eskiye' },
+  { value: 'updated-asc', label: 'Son değişiklik: eskiden yeniye' },
+  { value: 'name-asc', label: 'Plan adı: A harfinden Z harfine' },
+  { value: 'name-desc', label: 'Plan adı: Z harfinden A harfine' },
+  { value: 'level-asc', label: 'Doğrulama seviyesi: düşükten yükseğe' },
+  { value: 'level-desc', label: 'Doğrulama seviyesi: yüksekten düşüğe' },
+  { value: 'revision-asc', label: 'Sürüm: küçükten büyüğe' },
+  { value: 'revision-desc', label: 'Sürüm: büyükten küçüğe' },
+] as const
+type PlanSort = typeof SORT_OPTIONS[number]['value']
 
 interface Row {
   plan: PlanDoc
@@ -61,10 +73,11 @@ export function PlansScreen() {
   /* Kayıt okunamadıysa yeni plan açılmaz. Açılırsa depoya yazılmaz ve kaybolur. */
   const loadFailed = usePlanStore((s) => s.loadFailed)
   const { message } = AntApp.useApp()
-  const bp = Grid.useBreakpoint()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [query, setQuery] = useState('')
+  const [sort, setSort] = useState<PlanSort>('updated-desc')
+  const [page, setPage] = useState(1)
   const [confirmId, setConfirmId] = useState<string | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
 
@@ -73,6 +86,17 @@ export function PlansScreen() {
     const q = query.trim().toLocaleLowerCase('tr-TR')
     return q ? rows.filter((r) => r.plan.name.toLocaleLowerCase('tr-TR').includes(q)) : rows
   }, [rows, query])
+  const sorted = useMemo(() => [...filtered].sort((a, b) => {
+    const comparison = sort.startsWith('name') ? a.plan.name.localeCompare(b.plan.name, 'tr-TR')
+      : sort.startsWith('level') ? a.position.level - b.position.level
+        : sort.startsWith('revision') ? a.plan.revision - b.plan.revision
+          : a.plan.updatedAt.localeCompare(b.plan.updatedAt)
+    return sort.endsWith('asc') ? comparison : -comparison
+  }), [filtered, sort])
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(sorted.length / PAGE_SIZE)))
+  // Kayıt azalınca saklanan sayfa da düzelir. Yeni kayıt eski sayfaya sıçratmaz.
+  if (currentPage !== page) setPage(currentPage)
+  const visibleRows = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
   /* Beş temel kapıyı geçen plan geçiş kapısına ulaşmıştır. */
   const reachedCount = rows.filter((r) => r.position.stage !== 'temel').length
   const latest = rows[0]?.plan.updatedAt
@@ -110,6 +134,11 @@ export function PlansScreen() {
     goTop(to ?? '/ozet')
   }
 
+  const downloadPlan = (plan: PlanDoc) => {
+    downloadJson(`${safeFileName(plan.name)}.json`, plan)
+    markBackup(plan.id)
+  }
+
   const onFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
@@ -135,77 +164,6 @@ export function PlansScreen() {
     },
   }
 
-  const actions = (p: PlanDoc) => (
-    <Popconfirm
-      title="Plan silinsin mi?"
-      description="Bu işlem geri alınamaz."
-      okText="Sil"
-      cancelText="Vazgeç"
-      open={confirmId === p.id}
-      onOpenChange={(v) => {
-        if (!v) setConfirmId(null)
-      }}
-      onConfirm={() => {
-        setConfirmId(null)
-        deletePlan(p.id)
-      }}
-    >
-      <Dropdown
-        trigger={['click']}
-        menu={{
-          items: [
-            { key: 'open', label: 'Aç', icon: <ArrowSquareOut size={16} /> },
-            { key: 'json', label: 'JSON indir', icon: <DownloadSimple size={16} /> },
-            { type: 'divider' },
-            { key: 'delete', label: 'Sil', icon: <Trash size={16} />, danger: true },
-          ],
-          onClick: ({ key }) => {
-            if (key === 'open') openPlan(p.id, p.lastLocation ?? '/ozet')
-            if (key === 'json') {
-              downloadJson(`${safeFileName(p.name)}.json`, p)
-              markBackup(p.id)
-            }
-            if (key === 'delete') setConfirmId(p.id)
-          },
-        }}
-      >
-        <Button type="text" aria-label={`${p.name} için daha fazla işlem`} icon={<DotsThree size={20} weight="bold" />} />
-      </Dropdown>
-    </Popconfirm>
-  )
-
-  const columns: ColumnsType<Row> = [
-    {
-      title: 'Plan',
-      key: 'name',
-      dataIndex: ['plan', 'name'],
-      sorter: (a, b) => a.plan.name.localeCompare(b.plan.name, 'tr'),
-      render: (_, r) => (
-        <Button type="link" className="plan-name" onClick={() => openPlan(r.plan.id, r.plan.lastLocation ?? '/ozet')}>
-          {r.plan.name}
-        </Button>
-      ),
-    },
-    {
-      title: 'Doğrulama seviyesi',
-      key: 'progress',
-      width: 190,
-      sorter: (a, b) => a.position.level - b.position.level,
-      render: (_, r) => <LevelBar level={r.position.level} />,
-    },
-    { title: 'Durum', key: 'status', width: 230, render: (_, r) => <StatusTags row={r} /> },
-    {
-      title: 'Son değişiklik',
-      key: 'updated',
-      width: 170,
-      defaultSortOrder: 'descend',
-      sorter: (a, b) => a.plan.updatedAt.localeCompare(b.plan.updatedAt),
-      render: (_, r) => formatDate(r.plan.updatedAt, false),
-    },
-    { title: 'Sürüm', key: 'revision', width: 80, align: 'right', sorter: (a, b) => a.plan.revision - b.plan.revision, render: (_, r) => <span className="tabular">{r.plan.revision}</span> },
-    { title: 'Eylemler', key: 'actions', width: 72, align: 'right', render: (_, r) => actions(r.plan) },
-  ]
-
   const emptyActions = (
     <span className="empty-actions">
       <Button icon={<Sparkle size={16} />} onClick={openDemo} disabled={loadFailed}>
@@ -218,7 +176,7 @@ export function PlansScreen() {
   )
 
   return (
-    <div className="page">
+    <div className="page mobil-plans">
       <PageHeader
         title="Planlar"
         kicker="Çalışma alanı"
@@ -248,58 +206,106 @@ export function PlansScreen() {
           <p className="helper">{reachedCount === 0 ? 'Henüz hiçbir plan beş temel kapıyı geçmedi.' : `${reachedCount} plan beş temel kapıyı geçti.`}</p>
         </Card>
         <Card className="pano-card">
-          <Statistic title="Son değişiklik" value={latest ? formatDate(latest, false) : 'Henüz yok'} />
+          <Statistic title="Son değişiklik" value={latest ? formatDate(latest) : 'Henüz yok'} />
           <p className="helper">{latest ? 'En son kaydedilen plan bu tarihte değişti.' : 'İlk planı açınca tarih görünür.'}</p>
         </Card>
       </div>
 
       <Card
         className="pano-card"
-        title="Plan listesi"
-        extra={rows.length > 0 ? <Input.Search allowClear placeholder="Plan adı ara" aria-label="Plan adı ara" value={query} onChange={(e) => setQuery(e.target.value)} className="plan-search" /> : null}
+        title={<h2 className="mobil-plans-list-heading" id="plan-list-heading">Plan listesi</h2>}
+        extra={rows.length > 0 ? <Input.Search allowClear placeholder="Plan adı ara" aria-label="Plan adı ara" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} className="plan-search" /> : null}
       >
+        <div className="mobil-plans-toolbar">
+          <label htmlFor="plan-list-sort">Sıralama</label>
+          <Select<PlanSort>
+            id="plan-list-sort"
+            className="mobil-plans-sort"
+            classNames={{ popup: { root: 'mobil-plans-select-popup' } }}
+            aria-label="Planları sırala"
+            value={sort}
+            options={[...SORT_OPTIONS]}
+            onChange={(value) => { setSort(value); setPage(1) }}
+          />
+        </div>
         {rows.length === 0 ? (
           <Empty description="Henüz plan yok. Yeni bir plan açın. Ya da örnek planla ekranları tanıyın.">{emptyActions}</Empty>
         ) : filtered.length === 0 ? (
           <Empty description={`"${query}" adında plan bulunamadı.`}>
-            <Button type="text" onClick={() => setQuery('')}>
+            <Button type="text" onClick={() => { setQuery(''); setPage(1) }}>
               Aramayı temizle
             </Button>
           </Empty>
-        ) : bp.md ? (
-          <Table<Row> rowKey={(r) => r.plan.id} size="middle" pagination={filtered.length > 10 ? { pageSize: 10 } : false} dataSource={filtered} columns={columns} scroll={{ x: 'max-content' }} showSorterTooltip={false} />
         ) : (
-          <List<Row>
-            className="plan-cards"
-            dataSource={filtered}
-            renderItem={(r) => (
-              <List.Item key={r.plan.id}>
-                <div className="plan-card">
-                  <div className="plan-card-head">
-                    <Button type="link" className="plan-name" onClick={() => openPlan(r.plan.id, r.plan.lastLocation ?? '/ozet')}>
-                      {r.plan.name}
+          <ul className="mobil-plans-list" aria-labelledby="plan-list-heading">
+            {visibleRows.map((r) => (
+              <li key={r.plan.id}>
+                <article className="mobil-plan-card" aria-labelledby={`plan-title-${encodeURIComponent(r.plan.id)}`}>
+                  <h3 className="mobil-plan-card-title" id={`plan-title-${encodeURIComponent(r.plan.id)}`}>{r.plan.name}</h3>
+                  <dl className="mobil-plan-metadata">
+                    <div>
+                      <dt>Doğrulama seviyesi</dt>
+                      <dd><LevelBar level={r.position.level} /></dd>
+                    </div>
+                    <div>
+                      <dt>Durum</dt>
+                      <dd><StatusTags row={r} /></dd>
+                    </div>
+                    <div>
+                      <dt>Son değişiklik</dt>
+                      <dd><time dateTime={r.plan.updatedAt}>{formatDate(r.plan.updatedAt)}</time></dd>
+                    </div>
+                    <div>
+                      <dt>Sürüm</dt>
+                      <dd className="tabular">{r.plan.revision}</dd>
+                    </div>
+                  </dl>
+                  <div className="mobil-plan-actions" role="group" aria-label={`${r.plan.name} için işlemler`}>
+                    <Button icon={<ArrowSquareOut size={16} />} aria-label={`Aç: ${r.plan.name}`} onClick={() => openPlan(r.plan.id, r.plan.lastLocation ?? '/ozet')}>
+                      Aç
                     </Button>
-                    {actions(r.plan)}
+                    <Button icon={<DownloadSimple size={16} />} aria-label={`JSON indir: ${r.plan.name}`} onClick={() => downloadPlan(r.plan)}>
+                      JSON indir
+                    </Button>
+                    <Popconfirm
+                      title="Plan silinsin mi?"
+                      description="Bu işlem geri alınamaz."
+                      okText="Sil"
+                      cancelText="Vazgeç"
+                      open={confirmId === r.plan.id}
+                      onOpenChange={(value) => setConfirmId(value ? r.plan.id : null)}
+                      onConfirm={() => {
+                        setConfirmId(null)
+                        deletePlan(r.plan.id)
+                      }}
+                    >
+                      <Button danger icon={<Trash size={16} />} aria-label={`Sil: ${r.plan.name}`}>Sil</Button>
+                    </Popconfirm>
                   </div>
-                  <span className="helper">Doğrulama seviyesi</span>
-                  <LevelBar level={r.position.level} />
-                  <StatusTags row={r} />
-                  <span className="helper tabular">
-                    Son değişiklik {formatDate(r.plan.updatedAt, false)}. Sürüm {r.plan.revision}.
-                  </span>
-                </div>
-              </List.Item>
-            )}
-          />
+                </article>
+              </li>
+            ))}
+          </ul>
         )}
+        <nav className="mobil-plans-pagination" aria-label="Plan sayfaları">
+          <Pagination
+            current={currentPage}
+            pageSize={PAGE_SIZE}
+            total={sorted.length}
+            onChange={setPage}
+            hideOnSinglePage
+            showSizeChanger={false}
+            simple={{ readOnly: true }}
+          />
+        </nav>
       </Card>
 
       <Callout tone="ipucu" title="Veri nerede durur?">
-        Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta yedek alın. Yedek almak için planın menüsünden "JSON indir" seçin. Yedek {BACKUP_DAYS} günden eskiyse pano sizi uyarır.
+        Plan yalnız bu tarayıcıda durur. Tarayıcı verisi silinirse plan kaybolur. Her hafta yedek alın. Yedek almak için plan kartından "JSON indir" seçin. Yedek {BACKUP_DAYS} günden eskiyse pano sizi uyarır.
       </Callout>
 
       <Modal open={open} title="Yeni plan" onCancel={() => setOpen(false)} onOk={create} okText="Oluştur" cancelText="Vazgeç" okButtonProps={{ disabled: !name.trim() }}>
-        <label style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 4 }}>
+        <label className="mobil-plans-name-field">
           <span>Planın adı</span>
           <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Örneğin Mahalle kafesi" onPressEnter={create} autoFocus />
         </label>

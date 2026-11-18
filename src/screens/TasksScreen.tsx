@@ -1,6 +1,6 @@
-import { useId, useState } from 'react'
-import { Avatar, Badge, Button, Card, DatePicker, Drawer, Empty, Form, Grid, Input, Select, Statistic, Table, Tabs, Tag, App as AntApp } from 'antd'
-import type { TableProps } from 'antd'
+import { useId, useRef, useState } from 'react'
+import { Avatar, Badge, Button, Card, DatePicker, Drawer, Empty, Form, Input, Pagination, Select, Statistic, Tabs, Tag, App as AntApp } from 'antd'
+import type { RefSelectProps } from 'antd'
 import dayjs from 'dayjs'
 import { Plus, Check, CalendarBlank, User, Kanban, ListBullets } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -8,6 +8,7 @@ import type { Task, TaskStatus } from '@/data/types'
 import { formatDate } from '@/engine/format'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
+import '@/styles/mobil-pano.css'
 
 const STATUS: { value: TaskStatus; label: string; cls: string }[] = [
   { value: 'taslak', label: 'Taslak', cls: '' },
@@ -16,7 +17,13 @@ const STATUS: { value: TaskStatus; label: string; cls: string }[] = [
   { value: 'iptal', label: 'İptal', cls: 'is-muted' },
 ]
 const STATUS_OPTIONS = STATUS.map((s) => ({ value: s.value, label: s.label }))
-const STATUS_FILTERS = STATUS.map((s) => ({ text: s.label, value: s.value }))
+const PAGE_SIZE = 10
+type DateOrder = 'none' | 'asc' | 'desc'
+const DATE_ORDER_OPTIONS: { value: DateOrder; label: string }[] = [
+  { value: 'none', label: 'Kayıt sırası' },
+  { value: 'asc', label: 'Son tarih: eskiden yeniye' },
+  { value: 'desc', label: 'Son tarih: yeniden eskiye' },
+]
 const COLUMNS: { key: string; title: string; statuses: TaskStatus[] }[] = [
   { key: 'taslak', title: 'Taslak', statuses: ['taslak'] },
   { key: 'acik', title: 'Açık', statuses: ['acik'] },
@@ -35,13 +42,15 @@ const initial = (name?: string) => (name?.trim() ? name.trim().charAt(0).toLocal
 export function TasksScreen() {
   const uid = useId()
   const id = (k: string) => `${uid}-${k}`
-  const bp = Grid.useBreakpoint()
-  const narrow = bp.md === false
   const { message } = AntApp.useApp()
   const plan = useCurrentPlan()
   const addTask = usePlanStore((s) => s.addTask)
   const updateTask = usePlanStore((s) => s.updateTask)
   const [open, setOpen] = useState(false)
+  const [statusFilter, setStatusFilter] = useState<TaskStatus[]>([])
+  const [dateOrder, setDateOrder] = useState<DateOrder>('none')
+  const [page, setPage] = useState(1)
+  const statusFilterRef = useRef<RefSelectProps>(null)
   const [draft, setDraft] = useState<{ action: string; owner: string; due?: string; acceptance: string }>({ action: '', owner: '', acceptance: '' })
   if (!plan) return null
   const tasks = plan.tasks
@@ -49,6 +58,12 @@ export function TasksScreen() {
   const draftTasks = tasks.filter((t) => t.status === 'taslak')
   const doneTasks = tasks.filter((t) => t.status === 'bitti')
   const overdue = tasks.filter(isOverdue).length
+  const filteredTasks = tasks.filter((task) => statusFilter.length === 0 || statusFilter.includes(task.status))
+  if (dateOrder !== 'none') {
+    filteredTasks.sort((a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? '') * (dateOrder === 'asc' ? 1 : -1))
+  }
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(filteredTasks.length / PAGE_SIZE)))
+  const pageTasks = filteredTasks.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
 
   const add = () => {
     if (!draft.action.trim()) return
@@ -59,20 +74,24 @@ export function TasksScreen() {
     setOpen(false)
   }
   const sourceLabel = (sid?: string) => {
-    if (!sid) return ''
+    if (!sid) return 'Elle eklendi'
     const g = plan.decisions.find((d) => d.id === sid)?.gate
-    return g ? `Kapı ${g}` : ''
+    return g ? `Kapı ${g}` : 'Kaynak karar bulunamadı.'
   }
-  /** Durum hem etiket hem seçim kutusudur. Kapalı kontrol etiketi gösterir; açılan panel durumu değiştirir ve kartı taşır. */
-  const statusSelect = (t: Task) => (
+  /** Pano ve her genişlikte kullanılan liste aynı görev kaydını günceller. */
+  const statusSelect = (t: Task, inList = false) => (
     <Select
-      size="small"
+      className="task-status-select"
       variant="borderless"
       value={t.status}
-      onChange={(v) => updateTask(t.id, { status: v })}
+      onChange={(value: TaskStatus) => {
+        updateTask(t.id, { status: value })
+        if (inList && statusFilter.length > 0 && !statusFilter.includes(value)) {
+          statusFilterRef.current?.focus()
+        }
+      }}
       options={STATUS_OPTIONS}
       labelRender={(p) => <StatusTag status={p.value as TaskStatus} />}
-      style={{ width: 140 }}
       aria-label={`Durum: ${t.action}`}
     />
   )
@@ -81,48 +100,19 @@ export function TasksScreen() {
     const late = isOverdue(t)
     return (
       <Tag color={late ? 'error' : undefined} icon={<CalendarBlank size={14} aria-hidden />}>
-        <span className="tabular">{formatDate(t.dueDate, false)}</span>{late ? ' gecikti' : ''}
+        <time className="tabular" dateTime={t.dueDate}>{formatDate(t.dueDate)}</time>{late ? ' gecikti' : ''}
       </Tag>
     )
   }
-
-  const wideColumns: TableProps<Task>['columns'] = [
-    { title: 'İş', dataIndex: 'action', width: 320, className: 'is-sticky-col' },
-    { title: 'Sorumlu', dataIndex: 'owner', width: 180, render: (o?: string) => (o ? <span className="task-owner"><Avatar size={28}>{initial(o)}</Avatar><span>{o}</span></span> : <span className="tag is-muted">Eksik</span>) },
-    { title: 'Son tarih', dataIndex: 'dueDate', width: 200, sorter: (a, b) => (a.dueDate ?? '').localeCompare(b.dueDate ?? ''), render: (_: string | undefined, t: Task) => dueTag(t) },
-    { title: 'Durum', dataIndex: 'status', width: 160, filters: STATUS_FILTERS, onFilter: (v, t) => t.status === v, render: (_: TaskStatus, t: Task) => statusSelect(t) },
-    { title: 'Kaynak karar', dataIndex: 'sourceDecisionId', width: 140, render: (sid?: string) => sourceLabel(sid) || <span className="helper">Elle eklendi</span> },
-  ]
-  const narrowColumns: TableProps<Task>['columns'] = [
-    {
-      title: 'İş',
-      dataIndex: 'action',
-      filters: STATUS_FILTERS,
-      onFilter: (v, t) => t.status === v,
-      render: (_: string, t: Task) => (
-        <div className="cell-stack">
-          <span className="cell-head">
-            <span className="cell-title">{t.action}</span>
-            {statusSelect(t)}
-          </span>
-          <span className="cell-line">{t.owner ?? 'Sorumlu eksik'}</span>
-          <span className="cell-line">
-            {dueTag(t)}
-            {sourceLabel(t.sourceDecisionId) ? <span>{sourceLabel(t.sourceDecisionId)}</span> : null}
-          </span>
-        </div>
-      ),
-    },
-  ]
 
   const board = (
     <div className="kanban" role="group" aria-label="İş panosu">
       {COLUMNS.map((col) => {
         const items = tasks.filter((t) => col.statuses.includes(t.status))
         return (
-          <section key={col.key} className="kanban-col" aria-labelledby={`pano-${col.key}`}>
+          <section key={col.key} className="kanban-col" aria-labelledby={id(`pano-${col.key}`)}>
             <div className="kanban-head">
-              <h3 id={`pano-${col.key}`}>{col.title}</h3>
+              <h3 id={id(`pano-${col.key}`)}>{col.title}</h3>
               <span className="kanban-count">{items.length} iş</span>
             </div>
             {items.length === 0 ? <span className="kanban-empty">Bu sütunda iş yok.</span> : null}
@@ -131,14 +121,14 @@ export function TasksScreen() {
                 <p className="task-title">{t.action}</p>
                 <div className="task-meta">
                   <span className="task-owner">
-                    <Avatar size={28} aria-hidden>{initial(t.owner)}</Avatar>
+                    <Avatar size="small" aria-hidden>{initial(t.owner)}</Avatar>
                     <span>{t.owner ?? 'Sorumlu eksik'}</span>
                   </span>
                   {dueTag(t)}
                 </div>
                 <div className="task-foot">
                   {statusSelect(t)}
-                  <span className="task-source">{sourceLabel(t.sourceDecisionId) || 'Elle eklendi'}</span>
+                  <span className="task-source">{sourceLabel(t.sourceDecisionId)}</span>
                 </div>
               </Card>
             ))}
@@ -148,22 +138,79 @@ export function TasksScreen() {
     </div>
   )
 
-  const table = (
-    <div className="table-scroll">
-      <Table<Task>
-        rowKey="id"
-        size="middle"
-        dataSource={tasks}
-        pagination={{ pageSize: 10, hideOnSinglePage: true, showSizeChanger: false }}
-        style={narrow ? undefined : { minWidth: 1000 }}
-        locale={{ emptyText: 'Bu durumda iş yok.' }}
-        columns={narrow ? narrowColumns : wideColumns}
+  const list = (
+    <div className="tasks-list">
+      <div className="tasks-list-toolbar">
+        <div className="task-list-control">
+          <label htmlFor={id('durum-filtre')}>İş durumu</label>
+          <Select<TaskStatus[]>
+            ref={statusFilterRef}
+            id={id('durum-filtre')}
+            className="tasks-filter"
+            aria-label="İş durumunu filtrele"
+            mode="multiple"
+            placeholder="Tüm durumlar"
+            value={statusFilter}
+            options={STATUS_OPTIONS}
+            onChange={(value) => { setStatusFilter(value); setPage(1) }}
+          />
+        </div>
+        <div className="task-list-control">
+          <label htmlFor={id('sirala')}>Sıralama</label>
+          <Select<DateOrder>
+            id={id('sirala')}
+            className="tasks-sort"
+            aria-label="İşleri sırala"
+            value={dateOrder}
+            options={DATE_ORDER_OPTIONS}
+            onChange={(value) => { setDateOrder(value); setPage(1) }}
+          />
+        </div>
+        {statusFilter.length > 0 ? (
+          <Button onClick={() => { setStatusFilter([]); setPage(1) }}>Filtreyi temizle</Button>
+        ) : null}
+      </div>
+      <p className="helper" role="status">{filteredTasks.length} iş listeleniyor.</p>
+      <ul className="tasks-mobile-list" aria-label="İş kayıtları">
+        {pageTasks.map((task) => (
+          <li key={task.id} className="task-list-item">
+            <article className="task-list-card" aria-labelledby={id(`task-${task.id}`)}>
+              <h3 className="task-list-title" id={id(`task-${task.id}`)}>{task.action}</h3>
+              <dl className="task-list-metadata">
+                <div><dt>Sorumlu</dt><dd>{task.owner || 'Sorumlu eksik'}</dd></div>
+                <div><dt>Son tarih</dt><dd>{dueTag(task)}</dd></div>
+                <div className="task-list-status"><dt>Durum</dt><dd>{statusSelect(task, true)}</dd></div>
+                <div><dt>Kaynak karar</dt><dd>{sourceLabel(task.sourceDecisionId)}</dd></div>
+                {task.sourceStep ? <div><dt>Kaynak adım</dt><dd>Adım {task.sourceStep}</dd></div> : null}
+                <div><dt>Kabul ölçütü</dt><dd>{task.acceptance || 'Kabul ölçütü yazılmadı.'}</dd></div>
+                {task.dependsOn?.length ? (
+                  <div><dt>Bağlı işler</dt><dd><ul>
+                    {task.dependsOn.map((taskId) => <li key={taskId}>{tasks.find((item) => item.id === taskId)?.action || `İş bulunamadı: ${taskId}`}</li>)}
+                  </ul></dd></div>
+                ) : null}
+                {task.reopenEvent ? <div><dt>Yeniden açma koşulu</dt><dd>{task.reopenEvent}</dd></div> : null}
+                <div><dt>Oluşturulma tarihi</dt><dd><time dateTime={task.createdAt}>{formatDate(task.createdAt)}</time></dd></div>
+                <div><dt>Son değişiklik</dt><dd><time dateTime={task.updatedAt}>{formatDate(task.updatedAt)}</time></dd></div>
+              </dl>
+            </article>
+          </li>
+        ))}
+      </ul>
+      {filteredTasks.length === 0 ? <p className="tasks-mobile-empty">Bu durumda iş yok.</p> : null}
+      <Pagination
+        className="tasks-list-pagination"
+        current={currentPage}
+        total={filteredTasks.length}
+        pageSize={PAGE_SIZE}
+        hideOnSinglePage
+        showSizeChanger={false}
+        onChange={setPage}
       />
     </div>
   )
 
   return (
-    <div className="page">
+    <div className="page mobil-tasks">
       <PageHeader
         kicker="İş listesi"
         title="İşler"
@@ -191,25 +238,25 @@ export function TasksScreen() {
 
       {tasks.length === 0 ? (
         <Card className="k-card" variant="borderless" title="İş listesi">
-          <Empty description="Henüz iş yok. Kapı kararları iş doğurur. İlk işi sağ üstteki düğmeyle de ekleyebilirsiniz." />
+          <Empty description={'Henüz iş yok. Kapı kararları iş doğurur. İlk işi "İş ekle" düğmesiyle de ekleyebilirsiniz.'} />
         </Card>
       ) : (
         <Tabs
           className="k-tabs"
           defaultActiveKey="pano"
+          destroyOnHidden
           items={[
             { key: 'pano', label: 'Pano', icon: <Kanban size={16} aria-hidden />, children: board },
-            { key: 'liste', label: 'Liste', icon: <ListBullets size={16} aria-hidden />, children: table },
+            { key: 'liste', label: 'Liste', icon: <ListBullets size={16} aria-hidden />, children: list },
           ]}
         />
       )}
 
       <Drawer
-        rootClassName="k-drawer"
+        rootClassName="k-drawer mobil-tasks-drawer"
         open={open}
         onClose={() => setOpen(false)}
         title="Yeni iş"
-        size={Math.min(520, typeof window !== 'undefined' ? window.innerWidth : 520)}
         footer={
           <div className="drawer-footer">
             <Button type="text" onClick={() => setOpen(false)}>Vazgeç</Button>

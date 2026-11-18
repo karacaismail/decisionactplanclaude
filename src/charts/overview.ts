@@ -1,5 +1,6 @@
 import type { PlanDoc } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
+import { font } from '@/theme/tokens'
 
 /** Adım 16 "Ödeme günleri" tablosundan okunan tek satır. */
 export interface CashDay {
@@ -33,10 +34,11 @@ export function cashDays(plan: PlanDoc): CashDay[] {
 
 /** ECharts çizgi seçeneği. Renk ekrandan gelir; tuval CSS değişkeni okuyamaz. */
 export function cashFlowOption(days: CashDay[], colors: { line: string; area: string; axis: string; text: string; zero: string }) {
-  return {
+  const baseOption = {
     grid: { left: 8, right: 16, top: 16, bottom: 8, containLabel: true },
     tooltip: {
       trigger: 'axis',
+      textStyle: { fontFamily: font.family, fontSize: font.helper },
       formatter: (params: { dataIndex: number }[]) => {
         const d = days[params[0]?.dataIndex ?? 0]
         if (!d) return ''
@@ -48,12 +50,13 @@ export function cashFlowOption(days: CashDay[], colors: { line: string; area: st
       data: days.map((d) => formatDate(d.date, false).replace(/ \d{4}$/, '')),
       axisLine: { lineStyle: { color: colors.axis } },
       axisTick: { show: false },
-      axisLabel: { color: colors.text, fontSize: 14, hideOverlap: true },
+      axisLabel: { color: colors.text, fontSize: font.helper, interval: 'auto', hideOverlap: true },
     },
     yAxis: {
       type: 'value',
+      splitNumber: 4,
       splitLine: { lineStyle: { color: colors.axis } },
-      axisLabel: { color: colors.text, fontSize: 14, formatter: (v: number) => `${Math.round(v / 1000).toLocaleString('tr-TR')} bin` },
+      axisLabel: { color: colors.text, fontSize: font.helper, formatter: (v: number) => `${Math.round(v / 1000).toLocaleString('tr-TR')} bin` },
     },
     series: [
       {
@@ -68,6 +71,20 @@ export function cashFlowOption(days: CashDay[], colors: { line: string; area: st
         areaStyle: { color: colors.area },
         markLine: { silent: true, symbol: 'none', label: { show: false }, lineStyle: { color: colors.zero, type: 'dashed' }, data: [{ yAxis: 0 }] },
       },
+    ],
+  }
+  return {
+    baseOption,
+    media: [
+      {
+        query: { maxWidth: 520 },
+        option: {
+          // Tarih etiketleri seyrelir. Seri ve tablo bütün ödeme günlerini korur.
+          xAxis: { axisLabel: { interval: Math.max(0, Math.ceil(days.length / 2) - 1) } },
+          yAxis: { splitNumber: 2 },
+        },
+      },
+      { option: { xAxis: { axisLabel: { interval: 'auto' } }, yAxis: { splitNumber: 4 } } },
     ],
   }
 }

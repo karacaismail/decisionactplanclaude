@@ -1,6 +1,6 @@
-import { useState } from 'react'
-import { Avatar, Card, Empty, Segmented, Statistic, Tag, Timeline } from 'antd'
-import { ArrowRight, DoorOpen, Flag, PencilSimpleLine } from '@phosphor-icons/react'
+import { useId, useState } from 'react'
+import { Avatar, Card, Empty, Radio, Statistic, Tag, Timeline } from 'antd'
+import { DoorOpen, Flag, PencilSimpleLine } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
@@ -9,6 +9,7 @@ import { OUTCOME_LABEL, TRANSITION_LABEL, type ChangeRecord, type Decision, type
 import { DECISIONS } from '@/data/decisions'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-pano.css'
+import '@/styles/mobil-pano.css'
 
 type Filter = 'hepsi' | 'kararlar' | 'gecis' | 'degisiklikler'
 type Entry = { kind: 'karar'; at: string; d: Decision } | { kind: 'gecis'; at: string; t: TransitionRecord } | { kind: 'degisiklik'; at: string; c: ChangeRecord }
@@ -38,6 +39,7 @@ const dotClass = (d: Decision) => (d.chosen === 'ilerle' || d.chosen === 'kosull
 export function HistoryScreen() {
   const plan = useCurrentPlan()
   const [filter, setFilter] = useState<Filter>('hepsi')
+  const historyId = useId()
   if (!plan) return null
   const decisions = plan.decisions
   const changes = plan.changes ?? []
@@ -54,14 +56,14 @@ export function HistoryScreen() {
   const decisionItem = (d: Decision) => {
     const def = DECISIONS[d.gate - 1]
     return (
-      <div className="tl-item">
+      <article className="tl-item history-entry" aria-labelledby={`${historyId}-decision-${d.id}`}>
         <div className="tl-head">
-          <span className="tl-title">Kapı {d.gate}</span>
+          <h3 className="tl-title" id={`${historyId}-decision-${d.id}`}>Kapı {d.gate}</h3>
           {def ? <span className="helper">{def.title}</span> : null}
           <DecisionBadge outcome={d.chosen} />
           {d.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
         </div>
-        <span className="tl-date">{formatDate(d.decidedAt)}. Sürüm {d.revision}.</span>
+        <span className="tl-date"><time dateTime={d.decidedAt}>{formatDate(d.decidedAt)}</time>. Sürüm {d.revision}.</span>
         <p className="tl-reason">{d.reason}</p>
         <div className="tl-meta">
           <Avatar size={28} aria-hidden>{initial(d.decidedBy)}</Avatar>
@@ -75,26 +77,25 @@ export function HistoryScreen() {
           {d.conditional ? <span>Koşullu iş: {d.conditional.scope}. Bitiş {formatDate(d.conditional.deadline, false)}.</span> : null}
           {d.reopenWhen ? <span>Yeniden açılır: {d.reopenWhen}</span> : null}
         </div>
-      </div>
+      </article>
     )
   }
   const transitionItem = (t: TransitionRecord) => (
-    <div className="tl-item">
+    <article className="tl-item history-entry" aria-labelledby={`${historyId}-transition-${t.id}`}>
       <div className="tl-head">
-        <span className="tl-title">Geçiş kapısı</span>
+        <h3 className="tl-title" id={`${historyId}-transition-${t.id}`}>Geçiş kapısı</h3>
         <Tag color={TRANSITION_TAG[t.outcome]}>{TRANSITION_LABEL[t.outcome]}</Tag>
         {t.stale ? <Tag color="warning">İnceleme bekliyor</Tag> : null}
       </div>
-      <span className="tl-date">{formatDate(t.decidedAt)}. Sürüm {t.revision}.</span>
+      <span className="tl-date"><time dateTime={t.decidedAt}>{formatDate(t.decidedAt)}</time>. Sürüm {t.revision}.</span>
       <p className="tl-reason">{t.reason}</p>
       <div className="tl-meta">
         <Avatar size={28} aria-hidden>{initial(t.decidedBy)}</Avatar>
         <span>Karar sahibi: {t.decidedBy || 'Yazılmadı'}</span>
       </div>
       <div className="tl-notes">
-        <span className="tabular">
-          {t.mandatoryMet} / {t.mandatoryTotal} zorunlu, {t.supportingMet} / {t.supportingTotal} destekleyici ölçüt karşılandı.
-        </span>
+        <span className="tabular">{t.mandatoryTotal} zorunlu ölçütün {t.mandatoryMet} tanesi karşılandı.</span>
+        <span className="tabular">{t.supportingTotal} destekleyici ölçütün {t.supportingMet} tanesi karşılandı.</span>
         {t.outcome !== t.suggested ? <span>Sistemin önerisi: {TRANSITION_LABEL[t.suggested]}</span> : null}
         {t.secondOpinion ? <span>İkinci görüş: {t.secondOpinion}</span> : null}
         {t.conditional ? <span>Planlanacak konu: {t.conditional.topic}</span> : null}
@@ -102,71 +103,81 @@ export function HistoryScreen() {
         {t.conditional ? <span>Sorumlu: {t.conditional.owner}. Son tarih {formatDate(t.conditional.deadline, false)}.</span> : null}
         {t.stale ? <span>Temel verisi sonradan değişti. Geçiş kapısını yeniden inceleyin.</span> : null}
       </div>
-    </div>
+    </article>
   )
   const changeItem = (c: ChangeRecord) => (
-    <div className="tl-item">
+    <article className="tl-item history-entry" aria-labelledby={`${historyId}-change-${c.id}`}>
       <div className="tl-head">
-        <span className="tl-title">{c.label}</span>
+        <h3 className="tl-title" id={`${historyId}-change-${c.id}`}>{c.label}</h3>
         {c.needsReview ? (c.reviewer ? <Tag color="success">İkinci görüş alındı</Tag> : <Tag color="warning">İkinci görüş bekliyor</Tag>) : <Tag>Sınır değişikliği</Tag>}
       </div>
-      <span className="tl-date">{formatDate(c.at)}</span>
-      <div className="tl-change" aria-label={`${changeValue(c.key, c.before)} yerine ${changeValue(c.key, c.after)}`}>
-        <Tag>{changeValue(c.key, c.before)}</Tag>
-        <span className="tl-arrow" aria-hidden><ArrowRight size={16} /></span>
-        <Tag color="processing">{changeValue(c.key, c.after)}</Tag>
-      </div>
+      <time className="tl-date" dateTime={c.at}>{formatDate(c.at)}</time>
+      <dl className="tl-change history-change-values">
+        <div>
+          <dt>Önce</dt>
+          <dd><Tag>{changeValue(c.key, c.before)}</Tag></dd>
+        </div>
+        <div>
+          <dt>Sonra</dt>
+          <dd><Tag color="processing">{changeValue(c.key, c.after)}</Tag></dd>
+        </div>
+      </dl>
       {c.reviewer ? <span className="tl-notes">İnceleyen: {c.reviewer}{c.reviewedAt ? `. ${formatDate(c.reviewedAt)}` : ''}</span> : null}
-    </div>
+    </article>
   )
 
   return (
-    <div className="page">
+    <div className="page mobil-history">
       <PageHeader
         kicker="Karar günlüğü"
         title="Geçmiş"
-        description="Her kapı kararı bir sürüm noktasıdır. Geçiş kararları da burada durur. Karar, kanıt ve karşı görüş birlikte durur. Silinmez."
+        description="Her kapı kararı bir sürüm noktasıdır. Geçiş kararları da burada durur. Karar, kanıt ve karşı görüş birlikte durur. Kayıtlar silinmez."
       />
 
       <div className="history-grid">
         <Card
-          className="k-card"
+          className="k-card history-main"
           variant="borderless"
-          title="Zaman çizgisi"
-          extra={
-            <div className="history-filter">
-              <Segmented<Filter>
-                value={filter}
-                onChange={(v) => setFilter(v)}
-                options={[
-                  { value: 'hepsi', label: 'Hepsi' },
-                  { value: 'kararlar', label: 'Kararlar' },
-                  { value: 'gecis', label: 'Geçiş' },
-                  { value: 'degisiklikler', label: 'Değişiklikler' },
-                ]}
-                aria-label="Kayıt türü"
-              />
-            </div>
-          }
+          title={<h2 className="history-heading">Zaman çizgisi</h2>}
         >
+          <div className="history-filter">
+            <Radio.Group
+              name={`${historyId}-filter`}
+              optionType="button"
+              buttonStyle="solid"
+              value={filter}
+              onChange={(event) => {
+                const value: unknown = event.target.value
+                if (value === 'hepsi' || value === 'kararlar' || value === 'gecis' || value === 'degisiklikler') setFilter(value)
+              }}
+              options={[
+                { value: 'hepsi', label: 'Hepsi' },
+                { value: 'kararlar', label: 'Kararlar' },
+                { value: 'gecis', label: 'Geçiş' },
+                { value: 'degisiklikler', label: 'Değişiklikler' },
+              ]}
+              aria-label="Kayıt türü"
+            />
+          </div>
           {entries.length === 0 ? (
             <Empty description={EMPTY_TEXT[filter]} />
           ) : (
             <Timeline
-              className="k-timeline"
+              className="k-timeline history-timeline"
+              aria-label="Geçmiş kayıtları"
               items={entries.map((e) =>
                 e.kind === 'karar'
-                  ? { key: e.d.id, icon: <span className={`tl-dot ${dotClass(e.d)}`.trim()}><Flag size={16} weight="fill" aria-hidden /></span>, content: decisionItem(e.d) }
+                  ? { key: `karar-${e.d.id}`, icon: <span className={`tl-dot ${dotClass(e.d)}`.trim()}><Flag size={16} weight="fill" aria-hidden /></span>, content: decisionItem(e.d) }
                   : e.kind === 'gecis'
-                    ? { key: e.t.id, icon: <span className={`tl-dot ${transitionDot(e.t)}`.trim()}><DoorOpen size={16} weight="fill" aria-hidden /></span>, content: transitionItem(e.t) }
-                    : { key: e.c.id, icon: <span className={`tl-dot ${e.c.needsReview && !e.c.reviewer ? 'is-hold' : ''}`.trim()}><PencilSimpleLine size={16} aria-hidden /></span>, content: changeItem(e.c) },
+                    ? { key: `gecis-${e.t.id}`, icon: <span className={`tl-dot ${transitionDot(e.t)}`.trim()}><DoorOpen size={16} weight="fill" aria-hidden /></span>, content: transitionItem(e.t) }
+                    : { key: `degisiklik-${e.c.id}`, icon: <span className={`tl-dot ${e.c.needsReview && !e.c.reviewer ? 'is-hold' : ''}`.trim()}><PencilSimpleLine size={16} aria-hidden /></span>, content: changeItem(e.c) },
               )}
             />
           )}
         </Card>
 
         <aside className="history-aside" aria-label="Özet">
-          <Card className="k-card is-plain" variant="borderless" title="Özet">
+          <Card className="k-card is-plain" variant="borderless" title={<h2 className="history-heading">Özet</h2>}>
             <div className="stat-list">
               <div><Statistic title="Karar sayısı" value={decisions.length} /></div>
               <div><Statistic title="Geçiş kararı sayısı" value={transitions.length} /></div>

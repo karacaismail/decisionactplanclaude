@@ -1,6 +1,5 @@
 import { useId, useMemo, useState } from 'react'
-import { Button, Card, DatePicker, Descriptions, Drawer, Dropdown, Form, Grid, Input, Popconfirm, Select, Statistic, Table, Tag, App as AntApp } from 'antd'
-import type { TableProps } from 'antd'
+import { Button, Card, Checkbox, DatePicker, Descriptions, Drawer, Dropdown, Form, Input, Pagination, Popconfirm, Select, Statistic, Table, Tag, App as AntApp } from 'antd'
 import dayjs from 'dayjs'
 import { Link } from 'react-router'
 import { Plus, Check, PencilSimple, DotsThree, Trash } from '@phosphor-icons/react'
@@ -13,11 +12,22 @@ import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
+import '@/styles/mobil-pano.css'
 
 const KIND_LABEL: Record<EvidenceKind, string> = { gozlem: 'Gözlem', tahmin: 'Tahmin', varsayim: 'Varsayım' }
 const KIND_OPTIONS = (Object.keys(KIND_LABEL) as EvidenceKind[]).map((k) => ({ value: k, label: KIND_LABEL[k] }))
-const KIND_FILTERS = KIND_OPTIONS.map((o) => ({ text: o.label, value: o.value }))
-const LADDER_FILTERS = LADDER.map((l) => ({ text: `${l.level}. ${l.label}`, value: l.level }))
+const LADDER_OPTIONS = LADDER.map((l) => ({ label: `${l.level}. ${l.label}`, value: l.level }))
+const SELECT_CLASS_NAMES = { popup: { root: 'mobil-evidence-select-popup' } }
+const PAGE_SIZE = 10
+const SORT_OPTIONS = [
+  { value: 'date-desc', label: 'Tarih: yeniden eskiye' },
+  { value: 'date-asc', label: 'Tarih: eskiden yeniye' },
+  { value: 'title-asc', label: 'Ad: A harfinden Z harfine' },
+  { value: 'title-desc', label: 'Ad: Z harfinden A harfine' },
+  { value: 'ladder-asc', label: 'Basamak: güçlüden zayıfa' },
+  { value: 'ladder-desc', label: 'Basamak: zayıftan güçlüye' },
+] as const
+type EvidenceSort = typeof SORT_OPTIONS[number]['value']
 
 type Panel = { mode: 'yeni'; item: Partial<Evidence> } | { mode: 'detay'; item: Evidence } | { mode: 'duzenle'; item: Evidence; draft: Partial<Evidence> }
 
@@ -26,8 +36,6 @@ const ladderLabel = (l: number) => `${l}. ${LADDER[l - 1]?.label ?? ''}`.trim()
 export function EvidenceScreen() {
   const uid = useId()
   const id = (k: string) => `${uid}-${k}`
-  const bp = Grid.useBreakpoint()
-  const narrow = bp.md === false
   const { message } = AntApp.useApp()
   const plan = useCurrentPlan()
   const addEvidence = usePlanStore((s) => s.addEvidence)
@@ -35,15 +43,38 @@ export function EvidenceScreen() {
   const removeEvidence = usePlanStore((s) => s.removeEvidence)
   const [panel, setPanel] = useState<Panel | null>(null)
   const [query, setQuery] = useState('')
+  const [kinds, setKinds] = useState<EvidenceKind[]>([])
+  const [ladders, setLadders] = useState<number[]>([])
+  const [sort, setSort] = useState<EvidenceSort>('date-desc')
+  const [page, setPage] = useState(1)
   const [selected, setSelected] = useState<string[]>([])
   const [confirmOpen, setConfirmOpen] = useState(false)
   const list = useMemo(() => {
     const all = plan?.evidence ?? []
     const q = query.trim().toLocaleLowerCase('tr-TR')
-    if (!q) return all
-    return all.filter((e) => [e.title, e.source, e.group, e.counterFinding].some((t) => t?.toLocaleLowerCase('tr-TR').includes(q)))
-  }, [plan, query])
+    const filtered = all.filter((e) =>
+      (!q || [e.title, e.source, e.group, e.counterFinding].some((t) => t?.toLocaleLowerCase('tr-TR').includes(q))) &&
+      (kinds.length === 0 || kinds.includes(e.kind)) &&
+      (ladders.length === 0 || ladders.includes(e.ladder)),
+    )
+    return filtered.sort((a, b) => {
+      const comparison = sort.startsWith('title') ? a.title.localeCompare(b.title, 'tr-TR')
+        : sort.startsWith('ladder') ? a.ladder - b.ladder
+          : (a.date ?? '').localeCompare(b.date ?? '')
+      return sort.endsWith('asc') ? comparison : -comparison
+    })
+  }, [plan, query, kinds, ladders, sort])
   if (!plan) return null
+  const currentPage = Math.min(page, Math.max(1, Math.ceil(list.length / PAGE_SIZE)))
+  const visibleEvidence = list.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
+  const pageSelected = visibleEvidence.filter((e) => selected.includes(e.id)).length
+  const hasFilters = Boolean(query || kinds.length || ladders.length)
+  const clearFilters = () => {
+    setQuery('')
+    setKinds([])
+    setLadders([])
+    setPage(1)
+  }
 
   const counts = {
     total: plan.evidence.length,
@@ -91,44 +122,15 @@ export function EvidenceScreen() {
   const stepsOfEvidence = (e: Evidence) => e.linkedSteps.map((sid) => STEPS[sid]).filter(Boolean)
 
   const kindTag = (k: EvidenceKind) => <Tag>{KIND_LABEL[k]}</Tag>
-  const wideColumns: TableProps<Evidence>['columns'] = [
-    { title: 'Kanıt', dataIndex: 'title', width: 240, className: 'is-sticky-col', sorter: (a, b) => a.title.localeCompare(b.title, 'tr-TR'), render: (t: string) => <span>{t}</span> },
-    { title: 'Tür', dataIndex: 'kind', width: 110, filters: KIND_FILTERS, onFilter: (v, e) => e.kind === v, render: (k: EvidenceKind) => kindTag(k) },
-    { title: 'Basamak', dataIndex: 'ladder', width: 190, filters: LADDER_FILTERS, onFilter: (v, e) => e.ladder === v, sorter: (a, b) => a.ladder - b.ladder, render: (l: number) => <span className="tabular">{ladderLabel(l)}</span> },
-    { title: 'Tarih', dataIndex: 'date', width: 140, sorter: (a, b) => (a.date ?? '').localeCompare(b.date ?? ''), defaultSortOrder: 'descend', render: (d?: string) => <span className="tabular">{formatDate(d, false)}</span> },
-    { title: 'Kaynak', dataIndex: 'source', width: bp.xxl ? 200 : undefined, render: (s?: string) => s ?? <span className="helper">Yazılmadı</span> },
-    /* Karşı bulgu sütunu yalnız 1600 ve üstünde; dar masaüstünde ayrıntı çekmecesinde okunur. */
-    ...(bp.xxl ? [{ title: 'Karşı bulgu', dataIndex: 'counterFinding', render: (s?: string) => s ?? <span className="helper">Yok</span> }] : []),
-  ]
-  const narrowColumns: TableProps<Evidence>['columns'] = [
-    {
-      title: 'Kanıt',
-      dataIndex: 'title',
-      filters: KIND_FILTERS,
-      onFilter: (v, e) => e.kind === v,
-      sorter: (a, b) => (a.date ?? '').localeCompare(b.date ?? ''),
-      defaultSortOrder: 'descend',
-      render: (_: string, e: Evidence) => (
-        <div className="cell-stack">
-          <span className="cell-title">{e.title}</span>
-          <span className="cell-line">{kindTag(e.kind)}<span className="tabular">{ladderLabel(e.ladder)}</span></span>
-          <span className="cell-line">
-            <span className="tabular">{formatDate(e.date, false)}</span>
-            {e.source ? <span>{e.source}</span> : null}
-          </span>
-        </div>
-      ),
-    },
-  ]
 
   const form = draft ? (
     <Form className="k-form" layout="vertical" requiredMark={false} onFinish={save}>
-      <Form.Item label="Kanıtın adı" htmlFor={id('ad')} extra="Tek cümle. Ne gördünüz ya da ne bekliyorsunuz?">
+      <Form.Item label="Kanıtın adı" htmlFor={id('ad')} extra="Gördüğünüz veya beklediğiniz sonucu tek cümleyle yazın.">
         <Input id={id('ad')} value={draft.title ?? ''} onChange={(e) => setDraft({ title: e.target.value })} />
       </Form.Item>
       <div className="two-col">
         <Form.Item label="Türü" htmlFor={id('tur')}>
-          <Select id={id('tur')} value={draft.kind ?? 'gozlem'} onChange={(v) => setDraft({ kind: v })} options={KIND_OPTIONS} />
+          <Select id={id('tur')} classNames={SELECT_CLASS_NAMES} value={draft.kind ?? 'gozlem'} onChange={(v) => setDraft({ kind: v })} options={KIND_OPTIONS} />
         </Form.Item>
         <Form.Item label="Olay tarihi" htmlFor={id('tarih')}>
           <DatePicker id={id('tarih')} format="D MMMM YYYY" placeholder="Tarih seçin" disabledDate={(d) => d.isAfter(dayjs().endOf('day'))} value={draft.date ? dayjs(draft.date) : null} onChange={(v) => setDraft({ date: v ? v.format('YYYY-MM-DD') : undefined })} />
@@ -149,26 +151,26 @@ export function EvidenceScreen() {
     </Form>
   ) : null
 
-  const detail = panel?.mode === 'detay' ? panel.item : null
+  const detail = panel?.mode === 'detay' ? plan.evidence.find((e) => e.id === panel.item.id) ?? panel.item : null
   const drawerTitle = panel?.mode === 'yeni' ? 'Yeni kanıt' : panel?.mode === 'duzenle' ? 'Kanıtı düzenle' : 'Kanıt'
 
   return (
-    <div className="page">
+    <div className="page mobil-evidence">
       <PageHeader
         kicker="Kanıt defteri"
         title="Kanıtlar"
-        description="Tek kanıt defteri. Aynı kanıt birden çok adımda kullanılır. Aynı haberin iki kopyası tek kaynaktır."
+        description="Bütün kanıtlar bu defterde durur. Aynı kanıt birden çok adımda kullanılır. Aynı haberin iki kopyası tek kaynaktır."
         actions={<Button type="primary" icon={<Plus size={16} />} onClick={() => setPanel({ mode: 'yeni', item: { kind: 'gozlem', ladder: 5 } })}>Kanıt ekle</Button>}
       />
 
       <div className="stat-grid is-three" role="group" aria-label="Kanıt özeti">
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Toplam kanıt" value={counts.total} />
-          <span className="stat-note">{strong} kanıt 1, 2 veya 3. basamakta.</span>
+          <span className="stat-note">{strong} kanıt ilk üç basamakta yer alır.</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Gözlem" value={counts.gozlem} />
-          <span className="stat-note">Kayda geçmiş olay.</span>
+          <span className="stat-note">Gözlem, kayda geçmiş olaydır.</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Tahmin" value={counts.tahmin} />
@@ -180,16 +182,40 @@ export function EvidenceScreen() {
       </div>
 
       <Card
-        className="k-card"
+        className="k-card evidence-register"
         variant="borderless"
         title="Kanıt listesi"
-        extra={
-          <>
-            <Input.Search className="toolbar-search" allowClear placeholder="Kanıt ara" aria-label="Kanıt ara" value={query} onChange={(e) => setQuery(e.target.value)} />
-            <span className="tabular">{list.length} kanıt</span>
-          </>
-        }
+        extra={<span className="tabular" role="status">{list.length} kanıt bulundu.</span>}
       >
+        <div className="evidence-toolbar" role="group" aria-label="Kanıt filtreleri">
+          <div className="evidence-filter">
+            <label htmlFor={id('arama')}>Kanıt ara</label>
+            <Input.Search id={id('arama')} allowClear placeholder="Kanıt ara" aria-label="Kanıt ara" value={query} onChange={(e) => { setQuery(e.target.value); setPage(1) }} />
+          </div>
+          <div className="evidence-filter">
+            <label htmlFor={id('tur-filtre')}>Tür</label>
+            <Select<EvidenceKind[]> id={id('tur-filtre')} aria-label="Kanıt türünü filtrele" classNames={SELECT_CLASS_NAMES} mode="multiple" allowClear placeholder="Bütün türler" value={kinds} options={KIND_OPTIONS} onChange={(values) => { setKinds(values); setPage(1) }} />
+          </div>
+          <div className="evidence-filter">
+            <label htmlFor={id('basamak-filtre')}>Basamak</label>
+            <Select<number[]> id={id('basamak-filtre')} aria-label="Kanıt basamağını filtrele" classNames={SELECT_CLASS_NAMES} mode="multiple" allowClear placeholder="Bütün basamaklar" value={ladders} options={LADDER_OPTIONS} onChange={(values) => { setLadders(values); setPage(1) }} />
+          </div>
+          <div className="evidence-filter">
+            <label htmlFor={id('sirala')}>Sıralama</label>
+            <Select<EvidenceSort> id={id('sirala')} aria-label="Kanıtları sırala" classNames={SELECT_CLASS_NAMES} value={sort} options={[...SORT_OPTIONS]} onChange={(value) => { setSort(value); setPage(1) }} />
+          </div>
+          <Button onClick={clearFilters} disabled={!hasFilters}>Filtreleri temizle</Button>
+        </div>
+        <div className="evidence-selection">
+          <Checkbox
+            checked={visibleEvidence.length > 0 && pageSelected === visibleEvidence.length}
+            indeterminate={pageSelected > 0 && pageSelected < visibleEvidence.length}
+            disabled={visibleEvidence.length === 0}
+            onChange={(event) => setSelected((previous) => event.target.checked
+              ? [...new Set([...previous, ...visibleEvidence.map((e) => e.id)])]
+              : previous.filter((key) => !visibleEvidence.some((e) => e.id === key)))}
+          >Bu sayfadaki kanıtları seç</Checkbox>
+        </div>
         {selected.length > 0 ? (
           <div className="bulk-bar" role="status">
             <span className="helper">{selected.length} kanıt seçildi.</span>
@@ -218,35 +244,53 @@ export function EvidenceScreen() {
             </Popconfirm>
           </div>
         ) : null}
-        <div className="table-scroll">
-          <Table<Evidence>
-            rowKey="id"
-            size="middle"
-            dataSource={list}
-            pagination={{ pageSize: 10, hideOnSinglePage: true, showSizeChanger: false }}
-            style={narrow ? undefined : { minWidth: 760 }}
-            locale={{ emptyText: query ? 'Aramaya uyan kanıt yok.' : 'Kanıt yok. İlk görüşme notunu ekleyin.' }}
-            rowSelection={{ selectedRowKeys: selected, onChange: (keys) => setSelected(keys.map(String)), columnWidth: 48 }}
-            rowClassName={() => 'is-link'}
-            onRow={(e) => ({
-              onClick: (ev) => {
-                if ((ev.target as HTMLElement).closest('.ant-table-selection-column, .ant-checkbox-wrapper')) return
-                setPanel({ mode: 'detay', item: e })
-              },
-            })}
-            columns={narrow ? narrowColumns : wideColumns}
-          />
-        </div>
+        <Table<Evidence>
+          className="evidence-table"
+          aria-label="Kanıt kayıtları"
+          rowKey="id"
+          dataSource={visibleEvidence}
+          pagination={false}
+          showHeader={false}
+          tableLayout="fixed"
+          size="middle"
+          rowHoverable={false}
+          locale={{ emptyText: <p className="helper" role="status">{hasFilters ? 'Filtrelere uyan kanıt yok.' : 'Kanıt yok. İlk görüşme notunu ekleyin.'}</p> }}
+          columns={[{
+            key: 'evidence',
+            title: 'Kanıt',
+            render: (_: unknown, e: Evidence) => (
+              <article className="evidence-card" aria-label={e.title}>
+                <div className="evidence-card-head">
+                  <h3 className="evidence-card-title">
+                    <Button type="link" aria-label={`Kanıtı aç: ${e.title}`} onClick={() => setPanel({ mode: 'detay', item: e })}>{e.title}</Button>
+                  </h3>
+                  <Checkbox aria-label={`Kanıtı seç: ${e.title}`} checked={selected.includes(e.id)} onChange={(event) => setSelected((previous) => event.target.checked ? [...previous, e.id] : previous.filter((key) => key !== e.id))} />
+                </div>
+                <dl className="evidence-fields">
+                  <div><dt>Tür</dt><dd>{kindTag(e.kind)}</dd></div>
+                  <div><dt>Basamak</dt><dd>{ladderLabel(e.ladder)}</dd></div>
+                  <div><dt>Olay tarihi</dt><dd className="tabular">{formatDate(e.date)}</dd></div>
+                  <div><dt>Kaynak</dt><dd>{e.source ?? 'Yazılmadı'}</dd></div>
+                  <div><dt>İlgili grup</dt><dd>{e.group ?? 'Yazılmadı'}</dd></div>
+                  <div><dt>Karşı bulgu</dt><dd>{e.counterFinding ?? 'Yok'}</dd></div>
+                </dl>
+              </article>
+            ),
+          }]}
+        />
+        <nav className="evidence-pagination" aria-label="Kanıt sayfaları">
+          <Pagination current={currentPage} pageSize={PAGE_SIZE} total={list.length} onChange={setPage} hideOnSinglePage showSizeChanger={false} simple={{ readOnly: true }} />
+        </nav>
       </Card>
 
       <Callout tone="ipucu" title="Bir bulgu neyi kanıtlar?">Gözlem kayda geçmiş olaydır. Tahmin gelecekte beklediğiniz sonuçtur. Varsayım doğru kabul ettiğiniz sözdür. Eksik ölçümü "bilinmiyor" diye kaydedin. Sıfır yazmayın.</Callout>
 
       <Drawer
-        rootClassName="k-drawer"
+        rootClassName="k-drawer mobil-evidence-drawer"
         open={Boolean(panel)}
         onClose={() => setPanel(null)}
         title={drawerTitle}
-        size={Math.min(560, typeof window !== 'undefined' ? window.innerWidth : 560)}
+        size="min(100vw, var(--evidence-drawer-width))"
         footer={
           <div className="drawer-footer">
             {detail ? (
@@ -277,11 +321,13 @@ export function EvidenceScreen() {
                 { key: 'kaynak', label: 'Kaynak', children: detail.source ?? 'Yazılmadı' },
                 { key: 'grup', label: 'İlgili grup', children: detail.group ?? 'Yazılmadı' },
                 { key: 'karsi', label: 'Karşı bulgu', children: detail.counterFinding ?? 'Yok' },
+                { key: 'ek', label: 'Ek dosya', children: detail.attachmentName ?? 'Yok' },
                 { key: 'eklendi', label: 'Eklendi', children: formatDate(detail.createdAt) },
+                { key: 'guncellendi', label: 'Güncellendi', children: formatDate(detail.updatedAt) },
               ]}
             />
             <div>
-              <h3 className="section-head" style={{ marginBottom: 8 }}><span style={{ fontSize: 16, fontWeight: 600 }}>Kullanıldığı adımlar</span></h3>
+              <h3 className="section-head">Kullanıldığı adımlar</h3>
               {stepsOfEvidence(detail).length === 0 ? (
                 <span className="helper">Bu kanıt henüz bir adıma bağlanmadı.</span>
               ) : (
