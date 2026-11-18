@@ -89,18 +89,39 @@ const storedValue = (page: Page, step: string, field: string) =>
 async function expectPathCompare(page: Page, label: string) {
   const region = page.getByRole('region', { name: 'Yol adayları karşılaştırması' })
   await expect(region).toBeVisible()
-  for (const name of ['Bugünkü durumu sürdürmek', 'Durakta kahve arabası']) await expect(region.getByRole('columnheader', { name })).toHaveCount(1)
-  // Ölçü adı geniş ekranda satır başlığıdır, dar ekranda her hücrenin üstünde yazar.
-  for (const m of MEASURES) await expect(region.getByText(m, { exact: true }).first()).toBeAttached()
-  await expect(region.locator('.ant-table-tbody > tr')).toHaveCount(MEASURES.length)
+  const viewport = page.viewportSize()!
+  const stacked = viewport.width < 768 || viewport.height < 560
+  if (stacked) {
+    const paths = region.locator('.path-stack-item')
+    await expect(paths).toHaveCount(4)
+    for (const name of ['Bugünkü durumu sürdürmek', 'Durakta kahve arabası']) {
+      await expect(region.getByRole('heading', { name })).toBeVisible()
+    }
+    const positions = await paths.evaluateAll((els) => els.map((el) => {
+      const box = el.getBoundingClientRect()
+      return { x: box.x, y: box.y, bottom: box.bottom }
+    }))
+    for (let i = 1; i < positions.length; i++) {
+      expect(positions[i].x).toBe(positions[0].x)
+      expect(positions[i].y).toBeGreaterThanOrEqual(positions[i - 1].bottom)
+    }
+    for (const path of await paths.all()) {
+      await expect(path.locator('dt')).toHaveText(MEASURES)
+      await expect(path.locator('dd')).toHaveCount(MEASURES.length)
+    }
+  } else {
+    for (const name of ['Bugünkü durumu sürdürmek', 'Durakta kahve arabası']) {
+      await expect(region.getByRole('columnheader', { name })).toHaveCount(1)
+    }
+    for (const m of MEASURES) await expect(region.getByText(m, { exact: true }).first()).toBeAttached()
+    await expect(region.locator('.ant-table-tbody > tr')).toHaveCount(MEASURES.length)
+    const box = await region.evaluate((el) => ({ overflowX: getComputedStyle(el).overflowX }))
+    expect(box.overflowX, `${label}: kap yatay kayar`).toBe('auto')
+    const breaks = await region.locator('.ant-table-cell').evaluateAll((els) => els.filter((e) => ['break-all', 'anywhere'].includes(getComputedStyle(e).wordBreak) || getComputedStyle(e).overflowWrap === 'anywhere').length)
+    expect(breaks, `${label}: kelime ortasından bölünen hücre`).toBe(0)
+  }
   await expect(page.locator('.path-compare')).not.toContainText(/önerilen/i)
   await expect(region.locator('.ant-tag')).toHaveCount(0)
-  // Tablo kendi kabında kayar. Sayfa taşmaz. Hücre kelime ortasından bölünmez.
-  const box = await region.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, overflowX: getComputedStyle(el).overflowX }))
-  expect(box.overflowX, `${label}: kap yatay kayar`).toBe('auto')
-  if ((page.viewportSize()?.width ?? 0) < 600) expect(box.sw, `${label}: dar ekranda tablo kabından geniş`).toBeGreaterThan(box.cw)
-  const breaks = await region.locator('.ant-table-cell').evaluateAll((els) => els.filter((e) => ['break-all', 'anywhere'].includes(getComputedStyle(e).wordBreak) || getComputedStyle(e).overflowWrap === 'anywhere').length)
-  expect(breaks, `${label}: kelime ortasından bölünen hücre`).toBe(0)
   await noHorizontalOverflow(page, label)
 }
 
