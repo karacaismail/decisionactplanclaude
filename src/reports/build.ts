@@ -6,6 +6,7 @@
 import type { Measure, PlanDoc } from '@/data/types'
 import { DIAGNOSIS_STEP, movesOf, TASKS_STEP } from '@/engine/strategy'
 import { lastStrategyReview } from '@/engine/renewal'
+import { indicatorScore, KIND_LABEL, latestCheckIn, objectiveScore, okrOf, openPeriod, percent, scoreText } from '@/engine/okr'
 import { RENEWAL_LABEL } from '@/data/types'
 import { OUTCOME_LABEL } from '@/data/types'
 import { DECISIONS, STRATEGY } from '@/data/decisions'
@@ -231,8 +232,41 @@ export function buildExecutiveReport(p: PlanDoc): Report {
   }
 }
 
+/**
+ * Hedef takibi bölümü. Yalnız hedef takibi açıkken ve en az bir hedef yazılmışken döner.
+ * Açık dönem yoksa son dönem yazılır. Bilinmeyen sayı "Bilinmiyor" diye yazılır, uydurulmaz.
+ */
+export function okrSection(p: PlanDoc): ReportSection | null {
+  const okr = okrOf(p)
+  if (!okr?.enabled) return null
+  const period = openPeriod(okr) ?? okr.periods[okr.periods.length - 1]
+  if (!period || period.objectives.length === 0) return null
+  const num = (n: number | null): string => (n === null ? 'Bilinmiyor' : formatNumber(n))
+  const lines = [
+    `Dönem: ${formatDate(`${period.startsAt}T00:00:00`, false)} ile ${formatDate(`${period.endsAt}T00:00:00`, false)} arası.${period.closedAt ? ' Dönem kapandı.' : ''}`,
+    ...period.objectives.map((o, i) => {
+      const parts = [`Hedef ${i + 1}: ${o.title.trim().replace(/\.$/, '') || 'Adı yazılmadı'}.`]
+      if (o.kind) parts.push(`${KIND_LABEL[o.kind]}.`)
+      if (o.owner?.trim()) parts.push(`Sorumlu: ${o.owner.trim()}.`)
+      parts.push(scoreText(objectiveScore(o), o.kind))
+      return parts.join(' ')
+    }),
+    ...(period.learned ? [`Bu dönemde öğrenilen: ${period.learned.replace(/\.$/, '')}.`] : []),
+    'Puan karar vermez. Karar sahibi "Seçim hâlâ doğru mu?" sorusunu 3.5 alt aşamasında cevaplar.',
+  ]
+  const rows = period.objectives.flatMap((o, i) =>
+    o.indicators.map((g) => {
+      const s = indicatorScore(g)
+      const today = latestCheckIn(g)
+      return [String(i + 1), g.name.trim() || 'Adı yazılmadı', num(g.baseline), num(g.target), today ? formatNumber(today.value) : 'Yazılmadı', s === null ? 'Hesaplanmadı' : `Yüzde ${percent(s)}`]
+    }),
+  )
+  return { title: 'Hedef takibi', lines, table: rows.length ? { head: ['Hedef', 'Gösterge', 'Başlangıç değeri', 'Varılacak sayı', 'Bugünkü sayı', 'İlerleme'], rows } : undefined }
+}
+
 export function buildActionPlan(p: PlanDoc): Report {
   const openTasks = p.tasks.filter((t) => t.status === 'acik' || t.status === 'taslak')
+  const okr = okrSection(p)
   /* Adımlar süreç sırasıyla: strateji öncesi, strateji oluşturma, strateji uygulama. */
   const stepRows = [...DECISIONS.filter((d) => d.n <= 5), STRATEGY, ...DECISIONS.filter((d) => d.n > 5)].flatMap((d) =>
     stepsOf(d.n).map((s) => {
@@ -271,6 +305,7 @@ export function buildActionPlan(p: PlanDoc): Report {
       { title: 'İlk iş ve engel', lines: openTasks.length ? [`${openTasks[0].action}. Sorumlu: ${openTasks[0].owner ?? 'eksik'}. Tarih: ${openTasks[0].dueDate ? formatDate(openTasks[0].dueDate, false) : 'belirlenmedi'}.`] : ['Açık iş yok. Sıradaki adımı doldurun.'] },
       { title: 'Yapılacak adımlar', lines: [], table: { head: ['Adım', 'Ad', 'Tür', 'Durum'], rows: stepRows } },
       { title: '90 günlük çalışma', lines: roadmapRows.length ? ['Şimdi kutusu ilk 90 gündür.'] : ['Yol haritası henüz yazılmadı. İşleri 3.2 Ana işler ve sorumlular adımında yazın.'], table: roadmapRows.length ? { head: ['İş', 'Sorumlu', 'Tarih'], rows: roadmapRows } : undefined },
+      ...(okr ? [okr] : []),
       {
         title: 'Doldurulmuş kayıtlar',
         lines: [
