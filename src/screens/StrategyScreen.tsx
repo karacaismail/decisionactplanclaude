@@ -17,6 +17,7 @@ import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { PathCompare } from '@/components/PathCompare'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-karar.css'
 import '@/styles/screens-strateji.css'
 
@@ -65,7 +66,7 @@ export function StrategyScreen() {
   ) : null
 
   return (
-    <div className="page page-karar page-strateji">
+    <div className="page mobil-kapi-page page-karar page-strateji">
       <PageHeader kicker="Strateji oluşturma" title={STRATEGY.question} description={STRATEGY.intro} documentTitle={STRATEGY.title} actions={action} />
 
       {locked ? (
@@ -87,7 +88,7 @@ export function StrategyScreen() {
 
       <div className="strateji-grid">
         <aside className="strateji-aside" aria-label="Geçiş kararı">
-          <Card title="Geçiş kararı" extra={<Link to="/gecis">Geçiş kapısını aç</Link>}>
+          <Card title="Geçiş kararı" extra={<Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını aç</Link>}>
             {last ? (
               <>
                 <div className="strateji-outcome">
@@ -148,7 +149,7 @@ export function StrategyScreen() {
             </Card>
           ) : null}
 
-          <Card title="Masadaki karar" extra={<Link to="/devir">Devir raporunu aç</Link>}>
+          <Card title="Masadaki karar" extra={<Link className="kapi-action-link" tabIndex={0} to="/devir">Devir raporunu aç</Link>}>
             <p className="strateji-question">{report.question}</p>
             {report.scope ? <p className="strateji-scope">Kapsam sınırı: ekip yalnız şu konuyu planlar. {report.scope}</p> : null}
             <p className="helper">Stratej yolu önerir. Karar sahibi seçer. Dayanaklar, sınırlar ve eksik bilgi devir raporundadır.</p>

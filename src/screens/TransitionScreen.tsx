@@ -12,6 +12,7 @@ import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { TransitionPanel, TransitionTag } from '@/components/TransitionPanel'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-gecis.css'
 
@@ -63,7 +64,7 @@ export function TransitionScreen() {
       <>
         <span className="helper">{c.hint}</span>
         <span className="gecis-criterion-meta">
-          <span>Dayanak: <Link to={stepPath(c.step)}>{step ? stepHeading(c.step) : 'Adım bulunamadı'}</Link></span>
+          <span>Dayanak: <Link className="kapi-action-link" tabIndex={0} to={stepPath(c.step)}>{step ? stepHeading(c.step) : 'Adım bulunamadı'}</Link></span>
           <span>{n > 0 ? `Bu adıma ${n} kanıt bağlı.` : 'Bu adıma bağlı kanıt yok.'}</span>
         </span>
       </>
@@ -142,7 +143,7 @@ export function TransitionScreen() {
   )
 
   return (
-    <div className="page gecis-page">
+    <div className="page mobil-kapi-page gecis-page">
       <PageHeader
         kicker="Geçiş kapısı"
         title="Stratejik planlamaya hazır mısınız?"
@@ -170,7 +171,7 @@ export function TransitionScreen() {
           <Statistic title="Devir raporu" value={report.coverageFilled} suffix={`/ ${coverageTotal}`} />
           <Progress percent={coveragePercent} showInfo={false} size="small" aria-label={`Devir raporunun ${coverageTotal} başlığından ${report.coverageFilled} tanesi dolu`} />
           <span className="stat-note">
-            <span className="tabular">{report.coverageFilled} / {coverageTotal} başlık dolu.</span> <Link to="/devir">Raporu aç</Link>
+            <span className="tabular">{report.coverageFilled} / {coverageTotal} başlık dolu.</span> <Link className="kapi-action-link" tabIndex={0} to="/devir">Raporu aç</Link>
           </span>
         </Card>
         <Card className="k-card ring-card" variant="borderless">
@@ -203,7 +204,7 @@ export function TransitionScreen() {
             </span>
             {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Strateji oluşturma kapalıdır. Kararı yeniden kaydedin.</span> : null}
             {!last.stale && expired(last) ? <span>Koşullu kararın son tarihi geçti. Sonuç "Henüz hazır değil" sayılır. Kararı yeniden kaydedin.</span> : null}
-            {transitionPassed(plan) ? <span>Strateji oluşturma açık. <Link to="/strateji">Strateji oluşturmaya gidin.</Link></span> : null}
+            {transitionPassed(plan) ? <span>Strateji oluşturma açık. <Link className="kapi-action-link" tabIndex={0} to="/strateji">Strateji oluşturmaya gidin.</Link></span> : null}
             {!last.stale && last.outcome === 'degil' ? <span>Strateji oluşturma kapalıdır. Eksik kanıtı tamamlayın, sonra kararı yeniden kaydedin.</span> : null}
           </div>
         </Callout>

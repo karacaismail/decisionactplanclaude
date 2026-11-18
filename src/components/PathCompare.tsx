@@ -1,9 +1,11 @@
-import { Empty, Grid, Table } from 'antd'
+import { useId, useSyncExternalStore } from 'react'
+import { Empty, Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { stepPath } from '@/data/registry'
 import { DOOR_LABEL, NO_PATHS, pathBasis, type PathColumn } from '@/reports/handoff'
 import '@/styles/screens-strateji.css'
+import '@/styles/mobil-kapi.css'
 
 interface CompareRow {
   key: string
@@ -30,6 +32,16 @@ const ROWS: CompareRow[] = [
 const MEASURE_WIDTH = 176
 const PATH_WIDTH = 232
 
+/* İki yol ve ölçü sütunu için alan gerekir. Kısa yükseklikte dikey okuma korunur. */
+const COMPARE_QUERY = '(min-width: 768px) and (min-height: 560px)'
+const subscribeComparison = (notify: () => void) => {
+  const media = window.matchMedia(COMPARE_QUERY)
+  media.addEventListener('change', notify)
+  return () => media.removeEventListener('change', notify)
+}
+const wideComparison = () => window.matchMedia(COMPARE_QUERY).matches
+const initialComparison = () => false
+
 export interface PathCompareProps {
   /** `buildHandoffReport(plan).paths` */
   paths: PathColumn[]
@@ -41,11 +53,11 @@ export interface PathCompareProps {
  * Yol adaylarını yan yana gösterir. Sütunlar yollardır, satırlar karşılaştırma ölçüleridir.
  * Bileşen salt okunurdur ve hiçbir yolu öne çıkarmaz. Stratej önerir, karar sahibi seçer.
  * Tablo kendi kabında yatay kayar. Sayfa taşmaz.
- * Dar ekranda ölçü sütunu yoktur. Ölçünün adı her hücrenin üstünde yazar.
+ * Dar veya kısa ekranda yollar alt alta durur. Her yol bütün ölçüleri gösterir.
  */
 export function PathCompare({ paths, label = 'Yol adayları karşılaştırması' }: PathCompareProps) {
-  const bp = Grid.useBreakpoint()
-  const narrow = bp.md === false
+  const uid = useId()
+  const wide = useSyncExternalStore(subscribeComparison, wideComparison, initialComparison)
 
   if (paths.length === 0) {
     return (
@@ -59,25 +71,42 @@ export function PathCompare({ paths, label = 'Yol adayları karşılaştırması
     const text = row.pick(p)
     return (
       <span className="path-cell">
-        {narrow ? <span className="path-cell-label">{row.label}</span> : null}
         {text ? <span className={row.key === 'score' ? 'tabular' : undefined}>{text}</span> : <span className="path-cell-empty">Yazılmadı</span>}
       </span>
     )
   }
   /* Tablo bu genişliğin altına inmez. Kap daha darsa tablo kabın içinde kayar. */
-  const minWidth = (narrow ? 0 : MEASURE_WIDTH) + paths.length * PATH_WIDTH
+  const minWidth = MEASURE_WIDTH + paths.length * PATH_WIDTH
   const columns: ColumnsType<CompareRow> = [
-    ...(narrow ? [] : [{ title: 'Ölçü', key: 'olcu', width: MEASURE_WIDTH, className: 'path-measure', rowScope: 'row' as const, render: (_: unknown, row: CompareRow) => row.label }]),
+    { title: 'Ölçü', key: 'olcu', width: MEASURE_WIDTH, className: 'path-measure', rowScope: 'row', render: (_: unknown, row: CompareRow) => row.label },
     ...paths.map((p) => ({ title: p.name, key: p.id, width: PATH_WIDTH, className: 'path-col', render: (_: unknown, row: CompareRow) => cell(row, p) })),
   ]
 
   return (
     <div className="path-compare">
       <div className="path-compare-scroll" role="region" aria-label={label} tabIndex={0}>
-        <Table<CompareRow> size="middle" pagination={false} rowKey="key" dataSource={ROWS} columns={columns} tableLayout="fixed" style={{ minWidth }} />
+        {wide ? (
+          <Table<CompareRow> size="middle" pagination={false} rowKey="key" dataSource={ROWS} columns={columns} tableLayout="fixed" style={{ minWidth }} />
+        ) : (
+          <div className="path-stack">
+            {paths.map((p, index) => (
+              <section className="path-stack-item" key={p.id} aria-labelledby={`${uid}-yol-${index}`}>
+                <h3 className="path-stack-title" id={`${uid}-yol-${index}`}>{p.name}</h3>
+                <dl className="path-stack-measures">
+                  {ROWS.map((row) => (
+                    <div key={row.key}>
+                      <dt>{row.label}</dt>
+                      <dd>{cell(row, p)}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
+            ))}
+          </div>
+        )}
       </div>
       <span className="helper">
-        {paths.length} yol yan yana durur. Puan bir öneri değildir.{narrow && paths.length > 1 ? ' Öteki yolları görmek için tabloyu yana kaydırın.' : ''}
+        {paths.length} yol {wide ? 'yan yana' : 'alt alta'} durur. Puan bir öneri değildir.
       </span>
     </div>
   )
