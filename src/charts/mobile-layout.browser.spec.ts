@@ -176,6 +176,104 @@ test('kanıt merdiveninde ok tuşları görünür odağı ve seçimi birlikte ta
   await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode', 'keyboard')
 })
 
+for (const reduced of [false, true]) {
+test(`kanıt merdiveni hareket tokenlarını ve odak kuralını korur${reduced ? ' (azaltılmış hareket)' : ''}`, async ({ page, browserName }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: reduced ? 'reduce' : 'no-preference' })
+  await openDemo(page)
+  await page.goto('/#/kanitlar')
+  await page.getByRole('button', { name: 'Kanıt ekle', exact: true }).click()
+  const picker = page.locator('.mobil-ladder.ladder-picker')
+  const items = picker.locator('.ant-segmented-item')
+  const radios = picker.getByRole('radio')
+  await items.first().click()
+  await radios.first().focus()
+  await page.keyboard.press('Shift+Tab')
+  // macOS WebKit'in varsayılan tam kontrol geçişi Option+Tab kullanır.
+  const entryKey = browserName === 'webkit' ? 'Alt+Tab' : 'Tab'
+  await page.keyboard.press(entryKey)
+  await expect(items.first()).toHaveClass(/ant-segmented-item-focused/)
+  await expect(radios.first()).toBeFocused()
+
+  const styles = await picker.evaluate((root) => {
+    const item = root.querySelector('.ant-segmented-item-focused')!
+    return [
+      [root.querySelector('.ant-segmented')!, null],
+      [item, null],
+      [item.querySelector('.ant-segmented-item-label')!, null],
+      [item, '::after'],
+    ].map(([element, pseudo]) => {
+      const style = getComputedStyle(element as Element, pseudo as string | null)
+      return { properties: style.transitionProperty, durations: style.transitionDuration, easing: style.transitionTimingFunction, outline: style.outlineStyle }
+    })
+  })
+  for (const style of styles) {
+    expect(style.properties.split(', ')).not.toContain('all')
+    expect(style.outline).toBe('none')
+    for (const seconds of style.durations.split(', ').map(Number.parseFloat)) {
+      if (reduced) expect(seconds).toBeLessThanOrEqual(0.001)
+      else { expect(seconds).toBeGreaterThan(0); expect(seconds).toBeLessThanOrEqual(0.32) }
+    }
+    expect(style.easing.split(/, (?=cubic-bezier)/).every((curve) => curve === 'cubic-bezier(0.65, 0, 0.35, 1)')).toBe(true)
+  }
+
+  await picker.evaluate((root) => {
+    const host = root as HTMLElement
+    const samples: { active: boolean; properties: string; durations: string; easing: string }[] = []
+    const events: { type: string; property: string; pseudo: string; thumb: boolean; elapsed: number }[] = []
+    const record = () => {
+      const thumb = root.querySelector('.ant-segmented-thumb')
+      if (!thumb) return
+      const style = getComputedStyle(thumb)
+      samples.push({ active: thumb.classList.contains('ant-segmented-thumb-motion-appear-active'), properties: style.transitionProperty, durations: style.transitionDuration, easing: style.transitionTimingFunction })
+      host.dataset.thumbMotion = JSON.stringify(samples)
+    }
+    new MutationObserver(record).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'style'] })
+    for (const type of ['transitionrun', 'transitionend', 'transitioncancel']) root.addEventListener(type, (event) => {
+      const transition = event as TransitionEvent
+      events.push({ type, property: transition.propertyName, pseudo: transition.pseudoElement, thumb: (event.target as Element).classList.contains('ant-segmented-thumb'), elapsed: transition.elapsedTime })
+      host.dataset.motionEvents = JSON.stringify(events)
+    })
+  })
+  const boxes = await items.evaluateAll((elements) => elements.map((element) => ({ width: element.clientWidth, height: element.clientHeight })))
+  for (const [key, index] of [['ArrowDown', 1], ['ArrowUp', 0]] as const) {
+    await page.keyboard.press(key)
+    await expect(radios.nth(index)).toBeChecked()
+    await expect(radios.nth(index)).toBeFocused()
+    await expect(picker.locator('.ant-segmented-thumb')).toHaveCount(0)
+    expect(await items.evaluateAll((elements) => elements.map((element) => ({ width: element.clientWidth, height: element.clientHeight })))).toEqual(boxes)
+  }
+  await page.keyboard.press('ArrowDown')
+  await expect(radios.nth(1)).toBeChecked()
+  await page.keyboard.press('ArrowUp')
+  await expect(radios.first()).toBeChecked()
+  await expect(radios.first()).toBeFocused()
+  await expect(picker.locator('.ant-segmented-thumb')).toHaveCount(0)
+  expect(await items.evaluateAll((elements) => elements.map((element) => ({ width: element.clientWidth, height: element.clientHeight })))).toEqual(boxes)
+  const samples = JSON.parse(await picker.getAttribute('data-thumb-motion') ?? '[]') as { active: boolean; properties: string; durations: string; easing: string }[]
+  expect(samples.some((sample) => sample.active)).toBe(true)
+  for (const sample of samples) {
+    expect(sample.properties.split(', ')).not.toContain('all')
+    if (sample.active) expect(sample.properties.split(', ')).toEqual(expect.arrayContaining(['transform', 'height', 'opacity']))
+    expect(sample.easing.split(/, (?=cubic-bezier)/).every((curve) => curve === 'cubic-bezier(0.65, 0, 0.35, 1)')).toBe(true)
+    for (const seconds of sample.durations.split(', ').map(Number.parseFloat)) {
+      if (reduced) expect(seconds).toBeLessThanOrEqual(0.001)
+      else expect(seconds).toBeGreaterThan(0)
+    }
+  }
+  if (!reduced) {
+    const events = JSON.parse(await picker.getAttribute('data-motion-events') ?? '[]') as { type: string; thumb: boolean; property: string; elapsed: number }[]
+    expect(events.filter((event) => event.type === 'transitionrun' && event.thumb && event.property === 'transform').length).toBeGreaterThanOrEqual(2)
+    // Kütüphane ilk bitiş olayında yüzeyi kaldırır. Aynı andaki diğer olaylar gelmeyebilir.
+    expect(events.filter((event) => event.type === 'transitionend' && event.thumb && event.elapsed > 0).length).toBeGreaterThanOrEqual(2)
+    await items.nth(2).hover()
+    await expect.poll(async () => JSON.parse(await picker.getAttribute('data-motion-events') ?? '[]').filter((event: { type: string; pseudo: string; property: string }) => event.type === 'transitionend' && event.pseudo === '::after' && event.property === 'opacity').length).toBeGreaterThanOrEqual(1)
+    await page.mouse.move(0, 0)
+    await expect.poll(async () => JSON.parse(await picker.getAttribute('data-motion-events') ?? '[]').filter((event: { type: string; pseudo: string; property: string }) => event.type === 'transitionend' && event.pseudo === '::after' && event.property === 'opacity').length).toBeGreaterThanOrEqual(2)
+  }
+  await testInfo.attach('ladder-motion.json', { body: JSON.stringify({ reduced, entryKey, styles, samples, events: JSON.parse(await picker.getAttribute('data-motion-events') ?? '[]') }, null, 2), contentType: 'application/json' })
+})
+}
+
 
 test('geçmiş filtresinin klavye odağı görünürdür', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })

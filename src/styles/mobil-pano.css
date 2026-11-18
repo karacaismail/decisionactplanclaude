@@ -168,6 +168,29 @@ html[data-focus-mode='keyboard'] :is(.mobil-chart-frame, .mobil-ladder, .mobil-h
 .mobil-ladder .ladder-text { display: grid; gap: var(--space-1); min-width: 0; }
 .mobil-ladder .ladder-title { font-size: var(--pano-font-body); word-break: normal; overflow-wrap: normal; }
 .mobil-ladder .ladder-hint { font-size: var(--pano-font-helper); }
+
+/* Kütüphanenin odak sınıfı halka çizmez. Görünür odak yukarıdaki alt çizgidir. */
+.mobil-ladder .ladder-steps .ant-segmented-item-focused { outline: none; outline-offset: 0; box-shadow: none; }
+/* Gizli girdi odakta satır yüksekliğini değiştirmez. */
+.mobil-ladder .ladder-steps .ant-segmented-item-input { position: absolute; }
+.mobil-ladder .ladder-steps .ant-segmented-item-input::before { content: none; }
+.mobil-ladder .ladder-steps.ant-segmented,
+.mobil-ladder .ladder-steps .ant-segmented-item,
+.mobil-ladder .ladder-steps .ant-segmented-item-label {
+  transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease);
+}
+.mobil-ladder .ladder-steps .ant-segmented-item::after {
+  transition: opacity var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease);
+}
+.mobil-ladder .ladder-steps .ant-segmented-thumb {
+  opacity: 0;
+  transition: opacity var(--motion-panel) var(--motion-ease);
+}
+/* Hızlı geri dönüşte konum aynı kalsa da görünüm geçişi tamamlanır. */
+.mobil-ladder .ladder-steps .ant-segmented-thumb-motion-appear-active {
+  opacity: 1;
+  transition: transform var(--motion-panel) var(--motion-ease), width var(--motion-panel) var(--motion-ease), height var(--motion-panel) var(--motion-ease), opacity var(--motion-panel) var(--motion-ease);
+}
 @media (max-height: 480px) and (max-width: 960px) { .mobil-start .entry-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* Kanıt kartları filtreyi ve seçimi aynı yerde tutar. */
