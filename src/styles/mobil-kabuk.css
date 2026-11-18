@@ -14,7 +14,9 @@
 .app-shell { --shell-nav-space: calc(var(--shell-nav-height) + var(--shell-safe-bottom)); }
 /* Sabit alt menü, kaydırılarak gösterilen bağlantıyı ve odağı örtmemeli. */
 html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--shell-nav-height) + var(--shell-safe-bottom)); }
+/* Form, klavye açıkken yer kalmazsa bu değeri static yapar. */
 .app-shell .topbar {
+  position: var(--shell-topbar-position, sticky);
   height: auto !important;
   min-height: calc(var(--shell-bar-height) + var(--shell-safe-top));
   line-height: 1.4 !important;

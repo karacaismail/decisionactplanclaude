@@ -22,7 +22,7 @@
   padding-block-end: var(--space-4);
 }
 .work-main :is(input, textarea, button, [role='combobox'], [tabindex]) {
-  scroll-margin-block-end: calc(var(--form-action-reserve) + var(--form-safe-bottom) + var(--form-keyboard-inset));
+  scroll-margin-block-end: calc(var(--form-action-reserve) + var(--form-safe-bottom) + max(var(--form-keyboard-inset), var(--shell-nav-space, 0px)));
 }
 
 /* Girişin odak işareti, en yakın alan kabında çizilir. İç içe kaplar ikinci işaret üretmez. */
@@ -412,7 +412,8 @@ html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wr
 /* İşlem şeridi metinle büyür. Alt boşluk ekranın güvenli alanını korur. */
 .step-actions.action-bar {
   position: var(--form-action-position, sticky);
-  align-self: start; bottom: var(--form-keyboard-inset); max-height: none; min-width: 0;
+  /* Alt gezinme çubuğu varsa şerit çubuğun üstünde durur. Klavye açıksa klavyenin üstünde durur. */
+  align-self: start; bottom: max(var(--form-keyboard-inset), var(--shell-nav-space, 0px)); max-height: none; min-width: 0;
   padding-block: var(--space-3) calc(var(--space-3) + var(--form-safe-bottom));
   padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px));
 }

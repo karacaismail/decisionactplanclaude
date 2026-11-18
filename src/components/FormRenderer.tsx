@@ -129,8 +129,12 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
       if (previous?.value) viewportPage?.style.setProperty(property, previous.value, previous.priority)
       else viewportPage?.style.removeProperty(property)
     }
+    /* Kısa görünür ekranda üst şerit de sayfa akışına katılır. Değer kökte durur, çünkü şerit formun dışındadır. */
+    const topbarProperty = '--shell-topbar-position'
+    const releaseTopbar = () => document.documentElement.style.removeProperty(topbarProperty)
     const clearViewportStyles = () => {
       properties.forEach(restoreStyle)
+      releaseTopbar()
       previousStyles.clear()
       viewportPage = null
     }
@@ -168,6 +172,7 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
       const visibleHeight = `${height}px`
       if (page && page.style.getPropertyValue(heightProperty) !== visibleHeight) page.style.setProperty(heightProperty, visibleHeight)
       restoreStyle(positionProperty)
+      releaseTopbar()
       if (!field) return
       const control = field.closest('.ant-input-affix-wrapper, .ant-input-number, .ant-picker, .ant-select-selector') ?? field
       const controlRect = control.getBoundingClientRect()
@@ -180,10 +185,15 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
         const bar = element.getBoundingClientRect()
         return bar.width > 0 && bar.height > 0 && bar.bottom > viewportTop && bar.top < viewportTop + height && bar.left < controlRect.right && bar.right > controlRect.left ? bar : null
       }
-      for (const element of document.querySelectorAll<HTMLElement>('.topbar, .product-nav')) {
-        const bar = overlappingBar(element)
-        if (bar) top = Math.max(top, bar.bottom)
+      const headerBars = () => {
+        let edge = viewportTop
+        for (const element of document.querySelectorAll<HTMLElement>('.topbar, .product-nav')) {
+          const bar = overlappingBar(element)
+          if (bar) edge = Math.max(edge, bar.bottom)
+        }
+        return edge
       }
+      top = headerBars()
       const actionElement = page?.querySelector<HTMLElement>('.step-actions')
       const actionBar = overlappingBar(actionElement)
       if (actionBar) bottom = Math.min(bottom, actionBar.top)
@@ -195,6 +205,11 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
         page.style.setProperty(positionProperty, 'static')
         const remainingBar = overlappingBar(actionElement)
         bottom = remainingBar ? Math.min(viewportTop + height, remainingBar.top) : viewportTop + height
+      }
+      /* Alan hâlâ sığmıyorsa üst şerit de yapışık kalmaz. Alan görünür kalır. */
+      if (top > viewportTop && bottom - top < bounds.bottom - bounds.top) {
+        document.documentElement.style.setProperty(topbarProperty, 'static')
+        top = headerBars()
       }
       if (bottom <= top) return
       const delta = bounds.top < top ? bounds.top - top : Math.max(0, bounds.bottom - bottom)
