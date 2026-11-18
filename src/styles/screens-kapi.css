@@ -99,7 +99,12 @@
 .criterion-icon.is-harm { color: var(--color-status-harm); }
 .criterion-icon.is-muted { color: var(--color-text-secondary); }
 .criterion-label { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: 16px; line-height: 1.5; min-width: 0; overflow-wrap: break-word; }
-.criterion-label .hint-icon { display: inline-flex; color: var(--color-text-secondary); cursor: help; }
+/* İpucu düğmesi dokunma ve tıklamayla da açılır. Basma alanı en az 44 CSS pikseldir. */
+.criterion-label .hint-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-inline-size: var(--target-touch); min-block-size: var(--target-touch);
+  padding: 0; border: 0; background: transparent; font: inherit; color: var(--color-text-secondary); cursor: help;
+}
 .criterion-label .hint-icon svg { display: block; }
 
 /* Tablo kabı: tablo içeride kayar, sayfa kaymaz */
