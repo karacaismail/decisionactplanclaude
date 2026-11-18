@@ -101,7 +101,7 @@ export function CommandPaletteButton() {
   const setOpen = useCommandPalette((s) => s.setOpen)
   const mac = isMac()
   return (
-    <Button className="cmdk-button" icon={<MagnifyingGlass size={16} aria-hidden />} onClick={() => setOpen(true)} aria-label={`Ara. Kısayol ${mac ? 'Komut K' : 'Kontrol K'}`} aria-haspopup="dialog">
+    <Button className="cmdk-button" icon={<MagnifyingGlass size={16} aria-hidden />} onClick={(event) => { event.currentTarget.focus(); setOpen(true) }} aria-label={`Ara. Kısayol ${mac ? 'Komut K' : 'Kontrol K'}`} aria-haspopup="dialog">
       <span className="cmdk-label">Ara</span>
       <kbd className="cmdk-kbd" aria-hidden>
         {mac ? '⌘K' : 'Ctrl K'}
@@ -176,6 +176,7 @@ export function CommandPalette() {
 
   return (
     <Modal
+      rootClassName="cmdk-root"
       className="cmdk-modal"
       open={open}
       onCancel={() => setOpen(false)}
@@ -184,28 +185,35 @@ export function CommandPalette() {
       title={null}
       destroyOnHidden
       width={600}
-      style={{ top: 72 }}
       aria-label="Komut paleti"
     >
-      <Input
-        className="cmdk-input"
-        autoFocus
-        size="large"
-        allowClear
-        prefix={<MagnifyingGlass size={18} aria-hidden />}
-        placeholder="Adım, karar ya da yöntem ara…"
-        value={query}
-        onChange={(e) => {
-          setQuery(e.target.value)
-          setActive(0)
-        }}
-        onKeyDown={onInputKey}
-        role="combobox"
-        aria-expanded={open}
-        aria-controls="cmdk-list"
-        aria-autocomplete="list"
-        aria-activedescendant={activeId}
-      />
+      <div className="cmdk-searchbar">
+        <Input
+          className="cmdk-input"
+          autoFocus
+          size="large"
+          allowClear={{ label: 'Aramayı temizle' }}
+          prefix={<MagnifyingGlass size={18} aria-hidden />}
+          placeholder="Adım, karar ya da yöntem ara…"
+          aria-label="Ara"
+          enterKeyHint="go"
+          autoComplete="off"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value)
+            setActive(0)
+          }}
+          onKeyDown={onInputKey}
+          role="combobox"
+          aria-expanded={open}
+          aria-controls="cmdk-list"
+          aria-autocomplete="list"
+          aria-activedescendant={activeId}
+        />
+        <Button className="cmdk-close" type="text" htmlType="button" aria-label="Aramayı kapat" onClick={() => setOpen(false)}>
+          Kapat
+        </Button>
+      </div>
       <div id="cmdk-list" ref={listRef} className="cmdk-list" role="listbox" aria-label="Sonuçlar">
         {results.length === 0 ? (
           <div className="cmdk-empty">
