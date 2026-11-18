@@ -163,7 +163,7 @@
 
 /* Plan kayıtları sekmeleri. */
 .pano-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 12px; }
-.pano-tabs.ant-tabs .ant-tabs-tab { padding: 8px 0; font-size: 16px; }
+.pano-tabs.ant-tabs .ant-tabs-tab { padding: 0; font-size: 16px; }
 .pano-tabs.ant-tabs .ant-tabs-tab-btn { font-weight: 400; }
 .pano-tabs.ant-tabs .ant-tabs-tab-active .ant-tabs-tab-btn { font-weight: 600; }
 .change-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; width: 100%; }

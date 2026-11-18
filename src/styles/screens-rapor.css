@@ -62,12 +62,12 @@
 .page-rapor .report-card > .ant-card-head { padding: 0 24px; }
 .report-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 0; }
 .report-tabs.ant-tabs .ant-tabs-nav::before { border-bottom: 0; }
-.report-tabs.ant-tabs .ant-tabs-tab { padding: 18px 0; font-size: 16px; }
+.report-tabs.ant-tabs .ant-tabs-tab { padding: var(--space-2) 0; font-size: 16px; }
 .report-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 24px; }
 /* 320 ile 479 px arasında iki sekme tek satıra sığar. Yazı 14 px kalır, kesilmez. */
 @media (max-width: 479px) {
   .page-rapor .report-card > .ant-card-head { padding: 0 16px; }
-  .report-tabs.ant-tabs .ant-tabs-tab { font-size: 14px; padding: 14px 0; }
+  .report-tabs.ant-tabs .ant-tabs-tab { font-size: 14px; padding: var(--space-1) 0; }
   .report-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 16px; }
 }
 .report-tabs.ant-tabs .ant-tabs-tab-btn { font-weight: 400; }

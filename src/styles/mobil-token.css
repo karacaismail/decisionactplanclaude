@@ -48,6 +48,45 @@
   block-size: var(--icon-small);
 }
 
+/* Dış kap tek başına yetmez. Odaklanan gerçek giriş de en az 44 CSS piksel olur. */
+input.ant-input,
+.ant-input-number-input,
+.ant-picker-input > input,
+.ant-select-input {
+  min-block-size: var(--hit-area-min);
+}
+
+:root .ant-select-multiple .ant-select-content .ant-select-input { min-inline-size: var(--hit-area-min); }
+
+.ant-select:is(.ant-select-single, .ant-select-multiple) { padding-block: 0; }
+
+.ant-select .ant-select-content {
+  min-block-size: var(--hit-area-min);
+  align-items: center;
+}
+
+/* Bağlı etiket de basma alanıdır. Yazı küçülmez, etiketin kutusu büyür. */
+:where(label[for]) {
+  display: inline-flex;
+  align-items: center;
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+}
+
+/* Sekme rolü iç düğmededir. Basma alanı bu öğede en az 44 CSS pikseldir. */
+:root .ant-tabs .ant-tabs-tab { padding-block: 0; }
+
+:root .ant-tabs .ant-tabs-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: var(--hit-area-min);
+}
+
+:root .ant-tabs .ant-tabs-nav-more {
+  min-inline-size: var(--hit-area-min);
+  min-block-size: var(--hit-area-min);
+}
+
 /* Sabit üst şerit, kaydırılan form odağını örtmemeli. */
 :is(input, textarea, .ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper) {
   scroll-margin-block: var(--focus-scroll-clearance);
