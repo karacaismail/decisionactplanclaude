@@ -1,7 +1,7 @@
 import '@/styles/bilesen/HedefTakibi.css'
 import { useId, useMemo, useState } from 'react'
-import { Button, Card, Input, Radio, Tag, App as AntApp } from 'antd'
-import { Warning } from '@phosphor-icons/react'
+import { Button, Card, Input, Popconfirm, Radio, Tag, App as AntApp } from 'antd'
+import { Trash, Warning } from '@phosphor-icons/react'
 import type { OkrConfidence, OkrIndicator, OkrObjective, OkrPeriod, PlanDoc } from '@/data/types'
 import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
@@ -263,9 +263,9 @@ export function HedefTakibi({ plan, onUseSummary }: { plan: PlanDoc; onUseSummar
                 ) : <p className="okr-text">Bu dönemde hedef yazılmadı.</p>}
                 <div className="okr-field">
                   <label className="okr-label" htmlFor={`${base}-ogrenilen`}>Bu dönemde ne öğrendiniz?</label>
-                  <Input.TextArea id={`${base}-ogrenilen`} rows={3} value={learned} aria-invalid={closeErrors.length > 0} onChange={(e) => setLearned(e.target.value)} placeholder="Örneğin: Kart satışı yağmurlu günlerde düşüyor." />
+                  <Input.TextArea id={`${base}-ogrenilen`} rows={3} value={learned} aria-invalid={closeErrors.length > 0} aria-describedby={closeErrors.length ? `${base}-ogrenilen-hata` : undefined} onChange={(e) => setLearned(e.target.value)} placeholder="Örneğin: Kart satışı yağmurlu günlerde düşüyor." />
                 </div>
-                {closeErrors.length ? <Callout tone="uyari" title="Dönem kapanmadı"><ul className="okr-errors">{closeErrors.map((e) => <li key={e}>{e}</li>)}</ul></Callout> : null}
+                {closeErrors.length ? <Callout tone="uyari" title="Dönem kapanmadı"><ul id={`${base}-ogrenilen-hata`} className="okr-errors">{closeErrors.map((e) => <li key={e}>{e}</li>)}</ul></Callout> : null}
                 <div className="okr-actions">
                   <Button onClick={close}>Kapat ve kaydet</Button>
                   <Button type="text" onClick={() => { setClosing(false); setCloseErrors([]) }}>Vazgeç</Button>
@@ -375,7 +375,9 @@ function Objective({ o, n, period, idBase, editObjective, editIndicator, remove,
               {last ? <p className="okr-help">Son yazılan sayı: {String(last.value).replace('.', ',')}{g.unit ? ` ${g.unit}` : ''}. Tahmin: {CONFIDENCE_LABEL[last.confidence]}. {formatDate(last.at, false)}.{last.note ? ` Engel: ${last.note}` : ''}</p> : null}
               {indicatorOverdue(g, period) ? <span><Tag>{OKR_OVERDUE}</Tag></span> : null}
               <div className="okr-actions">
-                <Button aria-label={`${label} sil`} onClick={() => removeIndicator(g.id)}>Sil</Button>
+                <Popconfirm title="Bu gösterge silinsin mi?" description="Yazılan haftalık sayılar da silinir. Geri alınmaz." okText="Sil" cancelText="Vazgeç" okButtonProps={{ danger: true }} icon={<Trash size={18} aria-hidden />} onConfirm={() => removeIndicator(g.id)}>
+                  <Button aria-label={`${label} sil`}>Sil</Button>
+                </Popconfirm>
               </div>
             </li>
           )
@@ -384,7 +386,9 @@ function Objective({ o, n, period, idBase, editObjective, editIndicator, remove,
       {tooManyIndicators(o) ? <p className="okr-warn"><Warning className="mt-icon-inline" aria-hidden />{OKR_TOO_MANY}</p> : null}
       <div className="okr-actions">
         <Button disabled={!canAddIndicator(o)} onClick={() => editObjective(o.id, (x) => void addIndicator(x))}>Gösterge ekle</Button>
-        <Button onClick={remove}>Hedefi sil</Button>
+        <Popconfirm title="Bu hedef silinsin mi?" description="Hedefin göstergeleri ve haftalık sayıları da silinir. Geri alınmaz." okText="Sil" cancelText="Vazgeç" okButtonProps={{ danger: true }} icon={<Trash size={18} aria-hidden />} onConfirm={remove}>
+          <Button>Hedefi sil</Button>
+        </Popconfirm>
       </div>
       {!canAddIndicator(o) ? <p className="okr-help">Bir hedefe en çok {OKR_MAX_INDICATORS} gösterge yazabilirsiniz.</p> : null}
     </div>

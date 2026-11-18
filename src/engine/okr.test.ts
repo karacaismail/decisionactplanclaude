@@ -126,6 +126,13 @@ describe('sayı okuma', () => {
     expect(parseNumber('Ekip belirler')).toBeNull()
     expect(parseNumber('1e999')).toBeNull()
   })
+  it('noktayı binlik ayırıcı sayar: "1.500" bin beş yüzdür', () => {
+    expect(parseNumber('1.500')).toBe(1500)
+    expect(parseNumber('1.500,5')).toBe(1500.5)
+    expect(parseNumber('12.345.678')).toBe(12345678)
+    expect(parseNumber('2.5')).toBe(2.5)
+    expect(parseNumber('1.50.0')).toBeNull()
+  })
 })
 
 describe('puan', () => {
@@ -247,6 +254,11 @@ describe('bozuk kayıt', () => {
     s.periods[0].objectives[0].indicators[0].checkIns = [{ at: '2026-11-10T00:00:00.000Z', value: 14, confidence: 'belki', note: 'Not' }]
     s.periods[0].taskLinks = { 'satir-1': 'g1' }
     expect(sanitizeOkr(structuredClone(s))).toEqual(s)
+  })
+  it('tarihi okunamayan dönem atılır', () => {
+    const s = state()
+    s.periods.push({ id: 'd2', startsAt: 'dün', endsAt: '2027-02-01', objectives: [] })
+    expect(sanitizeOkr(s)!.periods.map((p) => p.id)).toEqual(['d1'])
   })
   it('bozuk parçalar atılır, sayı olmayan değer boş sayılır', () => {
     const raw = {

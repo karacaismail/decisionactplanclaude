@@ -67,7 +67,8 @@ function sanitizeObjective(v: unknown): OkrObjective | null {
 }
 
 function sanitizePeriod(v: unknown): OkrPeriod | null {
-  if (!isRecord(v) || !isId(v.id) || !isText(v.startsAt) || !isText(v.endsAt)) return null
+  const isDay = (x: unknown): x is string => isText(x) && /^\d{4}-\d{2}-\d{2}$/.test(x)
+  if (!isRecord(v) || !isId(v.id) || !isDay(v.startsAt) || !isDay(v.endsAt)) return null
   const out: OkrPeriod = {
     id: v.id,
     startsAt: v.startsAt,
@@ -165,9 +166,15 @@ export function addIndicator(o: OkrObjective): OkrIndicator | null {
 
 /** Ekrana yazılan sayıyı okur. Virgül ondalık ayırıcıdır. Sayı değilse null döner. */
 export function parseNumber(text: string): number | null {
-  const t = text.trim().replace(/\s/g, '').replace(',', '.')
-  if (!/^-?\d+(\.\d+)?$/.test(t)) return null
-  const n = Number(t)
+  const t = text.trim().replace(/\s/g, '')
+  let plain: string
+  /* Türkçede nokta binlik ayırıcıdır. Örneğin "1.500" bin beş yüzdür. Virgül ondalık ayırıcıdır. */
+  if (/^-?\d{1,3}(\.\d{3})+(,\d+)?$/.test(t)) plain = t.replace(/\./g, '').replace(',', '.')
+  else if (/^-?\d+(,\d+)?$/.test(t)) plain = t.replace(',', '.')
+  /* Üç haneyle bölünmeyen nokta ondalık sayılır. Örneğin "2.5". */
+  else if (/^-?\d+\.\d+$/.test(t)) plain = t
+  else return null
+  const n = Number(plain)
   return Number.isFinite(n) ? n : null
 }
 

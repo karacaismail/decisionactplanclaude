@@ -157,7 +157,15 @@ test('gösterge, haftalık durum, puan ve uyarılar', async ({ page }) => {
   await p.getByRole('button', { name: 'Gösterge ekle' }).click()
   await expect(p.getByRole('button', { name: 'Gösterge ekle' })).toBeDisabled()
   expect(await stored(page, 'plan.okr.periods[0].objectives[0].indicators.length')).toBe(5)
-  for (const n of [5, 4, 3, 2]) await p.getByRole('button', { name: `Gösterge ${n} sil` }).click()
+  /* Silme onay ister. Vazgeçince gösterge kalır. */
+  await p.getByRole('button', { name: 'Gösterge 5 sil' }).click()
+  await page.getByRole('button', { name: 'Vazgeç' }).click()
+  expect(await stored(page, 'plan.okr.periods[0].objectives[0].indicators.length')).toBe(5)
+  for (const n of [5, 4, 3, 2]) {
+    await p.getByRole('button', { name: `Gösterge ${n} sil` }).click()
+    await page.getByRole('tooltip').getByRole('button', { name: 'Sil', exact: true }).click()
+    await expect(p.getByRole('button', { name: `Gösterge ${n} sil` })).toHaveCount(0)
+  }
   await expect(p.getByText('Üçten çok gösterge takibi zorlaştırır.')).toHaveCount(0)
 
   /* Haftalık durum: bugünkü sayı, tahmin ve isteğe bağlı not. */
