@@ -122,9 +122,6 @@ input.ant-input,
   font-size: var(--font-helper);
 }
 
-/* Native girişler ::before çizmez. Odak işareti en yakın alan kabının kenarında tek çizgi olarak çizilir.
-   İç içe kaplarda yalnız en içteki kap çizer. Kutu içine zemin işareti çizilmez. Böylece her kontrolde tek işaret görünür.
-   Kap listesi tests/uyarlanir/focus-audit.ts içindeki FOCUS_FIELD_HOSTS listesiyle aynı tutulur. */
 /* Kendi taşmasını kesen kapta ve kesen listede işaret kabın içinde kalır. Örneğin sayı alanı taşmayı keser. */
 .ant-input-number,
 .choice-list .choice,
@@ -138,6 +135,9 @@ input.ant-input,
   box-shadow: none !important;
 }
 
+/* Native girişler ::before çizmez. Odak işareti en yakın alan kabının kenarında tek çizgi olarak çizilir.
+   İç içe kaplarda yalnız en içteki kap çizer. Kutu içine zemin işareti çizilmez. Böylece her kontrolde tek işaret görünür.
+   Kap listesi tests/uyarlanir/focus-audit.ts içindeki FOCUS_FIELD_HOSTS listesiyle aynı tutulur. */
 html[data-focus-mode='keyboard'] :is(
     .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
     .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
@@ -189,10 +189,14 @@ html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, 
 @media (forced-colors: active) {
   /* Zorlanmış renklerde işaret yerine odaktaki öğenin CanvasText çizgisi görünür. */
   html[data-focus-mode='keyboard'] :is(
-    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+      .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
     .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
     .ant-pagination-simple-pager, .ant-modal-body > label
-  ):has(:is(input:not(.ant-segmented-item-input), textarea, select):focus-visible)::before {
+  ):has(:is(input:not(.ant-segmented-item-input), textarea, select):focus-visible):not(:has(:is(
+      .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ) :is(input:not(.ant-segmented-item-input), textarea, select):focus-visible))::before {
     display: none;
   }
 
