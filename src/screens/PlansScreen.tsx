@@ -8,6 +8,7 @@ import { App as AntApp, Button, Card, Dropdown, Empty, Input, Modal, Pagination,
 import { Plus, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSquareOut } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
+import { exportPlanFile, importPlanFile } from '@/store/bundle'
 import { formatDate } from '@/engine/format'
 import { downloadJson, safeFileName } from '@/engine/sync'
 import { buildDemoPlan } from '@/data/demo'
@@ -76,7 +77,6 @@ export function PlansScreen() {
   const deletePlan = usePlanStore((s) => s.deletePlan)
   const importPlan = usePlanStore((s) => s.importPlan)
   const markBackup = usePlanStore((s) => s.markBackup)
-  const importPlanText = usePlanStore((s) => s.importPlanText)
   /* Kayıt okunamadıysa yeni plan açılmaz. Açılırsa depoya yazılmaz ve kaybolur. */
   const loadFailed = usePlanStore((s) => s.loadFailed)
   const { message } = AntApp.useApp()
@@ -142,23 +142,26 @@ export function PlansScreen() {
     goTop(to ?? '/ozet')
   }
 
+  /* Modül verisi varsa dosya paket olur. Yoksa eski düz plan dosyası yazılır. */
   const downloadPlan = (plan: PlanDoc) => {
-    downloadJson(`${safeFileName(plan.name)}.json`, plan)
-    markBackup(plan.id)
+    exportPlanFile(plan).then((data) => {
+      downloadJson(`${safeFileName(plan.name)}.json`, data)
+      markBackup(plan.id)
+    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Plan dışa aktarılamadı.'))
   }
 
   const onFile = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     e.target.value = ''
     if (!file) return
-    file.text().then((t) => {
-      try {
-        importPlanText(t, file.size)
+    /* Eski düz plan dosyası ve paket dosyası aynı yoldan alınır. */
+    file.text()
+      .then((t) => importPlanFile(t, file.size))
+      .then(({ warnings }) => {
         message.success('Plan içe alındı.')
-      } catch (err) {
-        message.error(err instanceof Error ? err.message : 'Dosya okunamadı.')
-      }
-    })
+        for (const w of warnings) message.warning(w)
+      })
+      .catch((err: unknown) => message.error(err instanceof Error ? err.message : 'Dosya okunamadı.'))
   }
 
   const moreMenu = {

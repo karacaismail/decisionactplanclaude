@@ -20,6 +20,7 @@ import { DecisionBadge, outcomeColor } from '@/components/DecisionBadge'
 import { planPosition } from '@/engine/position'
 import { BACKUP_DAYS, backupState } from '@/engine/backup'
 import { downloadJson, safeFileName } from '@/engine/sync'
+import { exportPlanFile } from '@/store/bundle'
 import { PageHeader } from '@/components/PageHeader'
 import { KpiStrip, StatTile } from '@/components/StatTile'
 import { ChartFrame } from '@/charts/ChartFrame'
@@ -105,9 +106,18 @@ export function OverviewScreen() {
   if (!plan || !position) return null
   const lastBackupAt = backups[plan.id]
   const backup = backupState(plan, lastBackupAt)
+  /* Yedek modül verisini de taşır. Modül verisi yoksa düz plan dosyası yazılır. */
   const takeBackup = () => {
-    downloadJson(`${safeFileName(plan.name)}.json`, plan)
-    markBackup(plan.id)
+    /* Modül verisi okunamazsa yedek yine alınır. Plan dosyası modül verisi olmadan iner. */
+    void exportPlanFile(plan)
+      .catch((error: unknown) => {
+        console.error(error)
+        return plan
+      })
+      .then((data) => {
+        downloadJson(`${safeFileName(plan.name)}.json`, data)
+        markBackup(plan.id)
+      })
   }
   const { level, strategyDone, strategyTotal } = position
   const foundationPassed = FOUNDATION_DECISIONS.filter((n) => gatePassed(plan, n)).length

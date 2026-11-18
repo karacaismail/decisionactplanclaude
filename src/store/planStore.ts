@@ -8,6 +8,8 @@ import { createGuardedStorage, STORAGE_KEY, type SaveResult } from '@/engine/syn
 import { applyStrategyReview, reviewBlocked, validateReview, type ReviewDraft } from '@/engine/renewal'
 import { CHOICE_STEP, DIAGNOSIS_STEP, DOSSIER_STEP, GOALS_STEP, goalIssues, TASKS_STEP, taskIssues } from '@/engine/strategy'
 import { RENEWAL_LABEL } from '@/data/types'
+import { stampRowIds } from '@/engine/rowIds'
+import { notifyPlanDeleted } from '@/platform/lifecycle'
 
 export type SaveState = 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
 
@@ -111,14 +113,17 @@ export const usePlanStore = create<PlanState>()(
         set((s) => ({ plans: { ...s.plans, [id]: emptyPlan(id, name) }, currentId: id, saveState: 'kaydediliyor' }))
         return id
       },
-      deletePlan: (id) =>
+      deletePlan: (id) => {
         set((s) => {
           const plans = { ...s.plans }
           delete plans[id]
           const backups = { ...s.backups }
           delete backups[id]
           return { plans, backups, currentId: s.currentId === id ? undefined : s.currentId, saveState: 'kaydediliyor' }
-        }),
+        })
+        /* Modüllerin bu plana ait verisi de silinir. Modül hatası planın silinmesini durdurmaz. */
+        void notifyPlanDeleted(id)
+      },
       selectPlan: (id) => set({ currentId: id }),
       importPlan: (doc) => {
         if (get().loadFailed) throw new Error(LOAD_BLOCKED)
@@ -225,7 +230,7 @@ export const usePlanStore = create<PlanState>()(
     {
       name: STORAGE_KEY,
       storage,
-      version: 3,
+      version: 4,
       migrate: (persisted) => {
         const st = persisted as { plans?: Record<string, PlanDoc> }
         for (const plan of Object.values(st?.plans ?? {})) migratePlan(plan)
@@ -310,9 +315,12 @@ export function migratePlanSteps(plan: PlanDoc): PlanDoc {
   return plan
 }
 
-/** Bütün taşımalar. İçe alınan dosya ve depodaki eski kayıt aynı yoldan geçer. İki kez çalışması veriyi bozmaz. */
+/**
+ * Bütün taşımalar. İçe alınan dosya ve depodaki eski kayıt aynı yoldan geçer. İki kez çalışması veriyi bozmaz.
+ * Sürüm 4 taşıması tekrarlı satırlara kalıcı kimlik yazar. Ayrıntı: src/engine/rowIds.ts
+ */
 export function migratePlan(plan: PlanDoc): PlanDoc {
-  return migratePlanSteps(migrateChoiceFields(plan))
+  return stampRowIds(migratePlanSteps(migrateChoiceFields(plan)))
 }
 
 export function useCurrentPlan(): PlanDoc | undefined {

@@ -38,9 +38,10 @@ describe('sürüm 3 taşıması', () => {
     }
     migratePlan(p)
     expect(Object.keys(p.steps['19'].values).sort()).toEqual(['choiceReason', 'chosenPath', 'givenUp'])
-    expect(p.steps['U31'].values).toEqual({ objective: 'İlk 10 müşteri', keyResults: [{ kr: 'Müşteri', target: '10' }] })
+    /* Sürüm 4 taşıması satırlara kalıcı kimlik yazar. */
+    expect(p.steps['U31'].values).toEqual({ objective: 'İlk 10 müşteri', keyResults: [{ _id: 'r-u31-keyresults-0', kr: 'Müşteri', target: '10' }] })
     /* Boş liste taşınmaz. */
-    expect(p.steps['U32'].values).toEqual({ now: [{ action: 'Tezgâh kur', owner: 'Ali', dueDate: '2026-12-01' }], weeklyBottleneck: true })
+    expect(p.steps['U32'].values).toEqual({ now: [{ _id: 'r-u32-now-0', action: 'Tezgâh kur', owner: 'Ali', dueDate: '2026-12-01' }], weeklyBottleneck: true })
     /* Eski adım tamamdı ve yeni adımların denetimi geçiyor. Yeni adımlar da tamam sayılır. */
     expect([p.steps['U31'].status, p.steps['U32'].status]).toEqual(['tamam', 'tamam'])
     /* Yeni zorunlu alanlar (kazanma hedefi ve saha) boş. Seçim adımı taslağa döner. */
