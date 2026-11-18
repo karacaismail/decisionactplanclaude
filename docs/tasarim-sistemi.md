@@ -2,7 +2,7 @@
 
 Bu belge ortak bileşenlerin güncel kurallarını anlatır.
 Renkler `src/theme/tokens.ts` dosyasından gelir.
-Ortak ölçüler `src/styles/tokens.css` dosyasında bulunur.
+Ortak ölçüler `src/styles/temel/temel.css` dosyasında bulunur. CSS dosyalarının düzeni [CSS mimarisinde](css-mimarisi.md) anlatılır.
 Ant Design ayarları `src/theme/antdTheme.ts` dosyasında tutulur.
 
 ## Yazı
@@ -133,7 +133,7 @@ Kullanıcı hareketi azaltırsa mevcut azaltılmış hareket kuralı uygulanır.
 
 ## Bileşenler ve yükleme
 
-İş 3 ortak bileşenleri `src/styles/mobil-token.css` dosyasını kullanır.
+İş 3 ortak bileşenlerinin kuralları `src/styles/bilesen/` klasöründedir. Her bileşenin kendi dosyası vardır.
 Bu dosya `tokens.css` dosyasını yükler.
 Ant Design tema bağlantısı ortak ölçüleri uygulama başında yükler.
 Bu küçük ortak dosya, ayrı cihaz paketi değildir.

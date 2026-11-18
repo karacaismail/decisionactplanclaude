@@ -10,7 +10,7 @@ const css = (s: string) => checkCss(s, 'a.css') as string[]
 const tsx = (s: string) => checkTsx(s, 'a.tsx') as string[]
 
 describe('CSS ve JavaScript yoğunluk sözleşmesi', () => {
-  const tokenCss = readFileSync(new URL('../src/styles/tokens.css', import.meta.url), 'utf8')
+  const tokenCss = readFileSync(new URL('../src/styles/temel/temel.css', import.meta.url), 'utf8')
   const densityFields = {
     '--padding-control-block': 'paddingBlock',
     '--padding-control-inline': 'paddingInline',

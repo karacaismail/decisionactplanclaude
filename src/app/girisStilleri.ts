@@ -76,5 +76,10 @@ export function loadInputStyles() {
       fare: () => import('@/styles/giris/fare.css'),
     },
   })
-  void loader.start()
+  /*
+   * Yükleme, uygulamanın ilk çalışması bittikten sonra başlar. Giriş katmanı zorunlu değildir, ilk çizimi beklemez.
+   * Ayrıca WebKit, açılışta başlayan bir dinamik import başka bir ekran kodu beklerken sayfa görüntüsünü kilitliyor.
+   * Bu durum tests/teslim.spec.ts içindeki "ekran kodu beklenirken" testiyle yakalandı.
+   */
+  window.setTimeout(() => void loader.start(), 0)
 }
