@@ -1,0 +1,7 @@
+@import './tokens.css';
+
+/* İş 3 ortak bileşen kuralları burada toplanır. */
+.ant-btn {
+  min-width: var(--hit-area-min);
+  min-height: var(--hit-area-min);
+}

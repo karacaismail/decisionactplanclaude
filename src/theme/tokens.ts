@@ -110,7 +110,25 @@ export const motion = {
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32, section: 48 } as const
 export const radius = { control: 6, panel: 10, hero: 10 } as const
-export const control = { height: 44, dense: 32, touch: 44 } as const
+/** Görsel gövde ve gerçek etkileşim alanı birbirinden bağımsızdır. */
+export const control = {
+  visual: { comfortable: 44, compact: 36, dense: 32 },
+  hitArea: 44,
+  // Mevcut tüketicilerin adları korunur. dense yalnız görsel gövdedir.
+  height: 44,
+  dense: 32,
+  touch: 44,
+} as const
+
+export const density = {
+  comfortable: { paddingBlock: 10, paddingInline: 12, paddingPanel: 16, gapControl: 8, gapContent: 16, gapSection: 32 },
+  compact: { paddingBlock: 8, paddingInline: 10, paddingPanel: 12, gapControl: 6, gapContent: 12, gapSection: 24 },
+  dense: { paddingBlock: 6, paddingInline: 8, paddingPanel: 8, gapControl: 4, gapContent: 8, gapSection: 16 },
+} as const
+export type Density = keyof typeof density
+
+/** Kenar boşluğu yoğunluktan bağımsızdır. */
+export const gutter = { page: 16, precision: 20 } as const
 export const font = {
   family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
