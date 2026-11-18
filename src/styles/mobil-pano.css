@@ -197,6 +197,8 @@ html[data-focus-mode='keyboard'] :is(.mobil-chart-frame, .mobil-ladder, .mobil-h
 .mobil-evidence .evidence-toolbar { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); margin-block-end: var(--space-4); }
 .mobil-evidence .evidence-filter { display: grid; gap: var(--space-1); min-width: 0; }
 .mobil-evidence .evidence-filter :is(.ant-select, .ant-input-affix-wrapper) { width: 100%; min-width: 0; }
+.mobil-evidence-select-popup .ant-select-item-option { min-height: var(--target-touch); align-items: center; }
+.mobil-evidence-select-popup .ant-select-item-option-content { white-space: normal; word-break: normal; overflow-wrap: normal; }
 .mobil-evidence .evidence-selection { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin-block: var(--space-3); }
 .mobil-evidence :is(.evidence-selection, .evidence-card-head) .ant-checkbox-wrapper { min-height: var(--target-touch); min-width: var(--target-touch); align-items: center; }
 .mobil-evidence .evidence-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }

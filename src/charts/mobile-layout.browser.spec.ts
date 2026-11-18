@@ -114,6 +114,56 @@ test(`grafik ekrana girene kadar kod indirmez ve tablo erişilebilir kalır${wit
 })
 }
 
+test('kanıt filtre seçenekleri kırpılmaz ve dokunma alanını korur', async ({ page }, testInfo) => {
+  await openDemo(page)
+  await page.goto('/#/kanitlar')
+  const filter = page.getByRole('combobox', { name: 'Kanıt basamağını filtrele', exact: true })
+  const popup = page.locator('.mobil-evidence-select-popup:visible')
+  for (const [width, height] of [[320, 720], [360, 740], [375, 812], [390, 844], [844, 390], [768, 1024], [1280, 800]]) {
+    await page.setViewportSize({ width, height })
+    await filter.click()
+    await expect(popup).toBeVisible()
+    await expect(popup).toHaveCSS('opacity', '1')
+    await expect(popup).toHaveCSS('transform', 'none')
+    const visited = new Set<string>()
+    // Sanal liste bütün seçenekleri aynı anda DOM içinde tutmaz.
+    for (let index = 0; index < 7; index++) {
+      await page.keyboard.press('ArrowDown')
+      const active = popup.locator('.ant-select-item-option-active')
+      await expect(active).toBeVisible()
+      const option = await active.evaluate((element) => {
+        const label = element.querySelector<HTMLElement>('.ant-select-item-option-content')!
+        return { text: label.textContent!, height: element.getBoundingClientRect().height, textWidth: label.scrollWidth, visibleWidth: label.clientWidth }
+      })
+      visited.add(option.text)
+      expect(option.height, `${width}: ${option.text}`).toBeGreaterThanOrEqual(44)
+      expect(option.textWidth, `${width}: ${option.text}`).toBeLessThanOrEqual(option.visibleWidth)
+    }
+    expect(visited.size).toBe(7)
+    if (width === 320) await popup.screenshot({ path: testInfo.outputPath('evidence-options-320.png') })
+    const bounds = (await popup.boundingBox())!
+    expect(bounds.x).toBeGreaterThanOrEqual(0)
+    expect(bounds.x + bounds.width).toBeLessThanOrEqual(width)
+    await page.keyboard.press('Escape')
+    await expect(filter).toBeFocused()
+  }
+  await page.setViewportSize({ width: 320, height: 720 })
+  await page.keyboard.press('ArrowDown')
+  await expect(popup).toBeVisible()
+  await page.keyboard.press('ArrowDown')
+  await page.keyboard.press('Enter')
+  await expect(page.locator('.evidence-filter .ant-select-selection-item')).toHaveCount(1)
+  await page.keyboard.press('Escape')
+  await expect(filter).toBeFocused()
+  await page.getByRole('button', { name: 'Kanıt ekle', exact: true }).click()
+  const drawer = page.locator('.mobil-evidence-drawer .ant-drawer-content-wrapper')
+  for (const [width, height] of [[320, 720], [844, 390], [1280, 800]]) {
+    await page.setViewportSize({ width, height })
+    await expect(drawer).toBeVisible()
+    await expect.poll(async () => Math.round((await drawer.boundingBox())!.width)).toBe(Math.min(width, 560))
+  }
+})
+
 test('kanıt taslağı ve odak yatay görünümde korunur', async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await openDemo(page)
