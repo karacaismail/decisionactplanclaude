@@ -58,7 +58,7 @@ test('ayakkabı örneğinde bilinmeyen para bilgisi eksik görünür', async ({ 
     await expect(page.getByRole('spinbutton', { name: new RegExp(`^${label} \\(zorunlu\\)`) }), `${label} boş kalmalı.`).toHaveValue('')
   }
   await page.goto('/#/karar/1/kapi')
-  const row = page.locator('tr').filter({ hasText: 'Durdurma kuralları, pist ve üç sınır yazıldı.' })
+  const row = page.locator('tr').filter({ hasText: 'Durdurma kuralları, kasa süresi ve üç sınır yazıldı.' })
   await expect(row.getByText('Karşılanmadı').or(row.getByLabel('Karşılanmadı')).first()).toBeVisible()
 })
 
