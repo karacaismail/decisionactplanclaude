@@ -1,10 +1,10 @@
 /**
- * Geçiş kapısının kararı. Kuralın tek kaynağı budur.
+ * Hazırlık kontrolünün kararı. Kuralın tek kaynağı budur.
  * Kilit (gate.ts), hazırlık motoru (readiness.ts) ve ekranlar bu dosyayı kullanır.
  */
 import type { PlanDoc, TransitionOutcome, TransitionRecord } from '@/data/types'
 
-/** Geçiş kapısının son kararı. */
+/** Hazırlık kontrolünün son kararı. */
 export function lastTransition(plan: PlanDoc): TransitionRecord | undefined {
   return plan.transitions?.[plan.transitions.length - 1]
 }

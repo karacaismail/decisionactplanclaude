@@ -1,6 +1,6 @@
 /**
  * Asıl engel, başarı koşulları, yol bağları, serbest bütçe ve eşleşme oranı.
- * Bu kayıtlar strateje devir raporunu güçlendirir. Hiçbiri geçiş kapısının ölçütü değildir.
+ * Bu kayıtlar strateje teslim raporunu güçlendirir. Hiçbiri hazırlık kontrolünün ölçütü değildir.
  * Yazılım yorum yapmaz. Koşulun durumunu yalnız bağlı kanıtların yönünden çıkarır.
  * Bu dosya yalnız Adım 00 ile Adım 18 arasını okur.
  */

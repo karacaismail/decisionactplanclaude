@@ -154,7 +154,7 @@ const EXECUTION: SubStageDef[] = [
   {
     code: '3.4',
     title: 'Yürütme, ölçme ve gözden geçirme',
-    does: 'Ekip işleri yapar. Sonucu düzenli ölçer. Karar 6 ve Karar 7 kapılarında sonucu gözden geçirir.',
+    does: 'Ekip işleri yapar. Sonucu düzenli ölçer. Karar 6 ve Karar 7 kontrollerinde sonucu gözden geçirir.',
     why: 'Ölçme olmadan sonuç bilinmez.',
     frameworks: ['Kaplan ve Norton', 'Baldrige', 'Wheelen ve Hunger'],
     steps: [],
@@ -187,7 +187,7 @@ export const CLUSTERS: ClusterDef[] = [
     title: 'Strateji öncesi hazırlık',
     question: 'Strateji oluşturmaya hangi kanıtla başlıyorsunuz?',
     entry: 'Giriş koşulu yoktur. Plan bu kümeyle başlar.',
-    exit: 'Karar sahibi geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararını kaydeder.',
+    exit: 'Karar sahibi hazırlık kontrolünde "Planlamaya hazır" ya da "Koşullu hazır" kararını kaydeder.',
     path: '/karar/1',
     stages: ['temel', 'gecis'],
     subStages: [],
@@ -197,7 +197,7 @@ export const CLUSTERS: ClusterDef[] = [
     key: 'olusturma',
     title: 'Strateji oluşturma',
     question: STRATEGY.question,
-    entry: 'Geçiş kararı "Planlamaya hazır" ya da "Koşullu hazır" olmalıdır.',
+    entry: 'Hazırlık kararı "Planlamaya hazır" ya da "Koşullu hazır" olmalıdır.',
     exit: 'Karar sahibi strateji belgesini onaylar.',
     path: '/strateji',
     stages: ['strateji'],
@@ -209,7 +209,7 @@ export const CLUSTERS: ClusterDef[] = [
     title: 'Strateji uygulama',
     question: 'Seçimi nasıl gerçeğe çevirirsiniz? Seçim hâlâ doğru mu?',
     entry: 'Onaylanmış bir strateji belgesi olmalıdır.',
-    exit: 'Çıkış kapısı yoktur. Bu küme bir döngüdür. "Yeniden aç" kararı işi strateji oluşturmaya geri götürür.',
+    exit: 'Çıkış kontrolü yoktur. Bu küme bir döngüdür. "Yeniden aç" kararı işi strateji oluşturmaya geri götürür.',
     path: '/uygulama',
     stages: ['uygulama'],
     subStages: EXECUTION,
@@ -242,6 +242,6 @@ export function clusterState(plan: PlanDoc, key: ClusterKey): ClusterState {
     return FORMULATION.some((s) => s.state(plan) !== 'bos') || strategyReopened(plan) ? 'suruyor' : 'bos'
   }
   if (!transitionPassed(plan) || !strategyApproved(plan)) return 'kilitli'
-  /* Strateji uygulama bir döngüdür. Çıkış kapısı yoktur, bu yüzden "tamam" olmaz. */
+  /* Strateji uygulama bir döngüdür. Çıkış kontrolü yoktur, bu yüzden "tamam" olmaz. */
   return EXECUTION.some((s) => s.state(plan) !== 'bos') || EXECUTION_DECISIONS.some((n) => gatePassed(plan, n)) ? 'suruyor' : 'bos'
 }

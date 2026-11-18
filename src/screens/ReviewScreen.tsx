@@ -59,7 +59,7 @@ export function ReviewScreen() {
   const [draft, setDraft] = useState<OutcomeDraft | null>(null)
   const [saved, setSaved] = useState<{ to: string; label: string } | null>(null)
   const d = decisionOf(Number(n))
-  /* Kapı değişince ekran durumu sıfırlanır. Aynı bileşen farklı kapılar için kullanılır. */
+  /* Kontrol değişince ekran durumu sıfırlanır. Aynı bileşen farklı kontroller için kullanılır. */
   useEffect(() => {
     setSaved(null)
     setDraft(null)
@@ -106,13 +106,13 @@ export function ReviewScreen() {
         decidedBy: draft.decidedBy,
         reopenWhen: draft.reopenWhen || undefined,
       },
-      `Kapı ${d.n}: ${OUTCOME_LABEL[draft.chosen]}`,
+      `Kontrol ${d.n}: ${OUTCOME_LABEL[draft.chosen]}`,
     )
     if (draft.chosen === 'kosulluIlerle' && draft.conditional) {
       addTask({ action: `Koşullu iş: ${draft.conditional.scope}. Kapanış kanıtı: ${draft.conditional.closingEvidence}`, sourceDecisionId: id, owner: draft.conditional.owner, dueDate: draft.conditional.deadline, status: 'acik' })
     }
-    if (draft.chosen === 'beklet') addTask({ action: `Kapı ${d.n} bekliyor. İzlenecek olay: ${draft.reopenWhen || 'yazılmadı'}`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
-    if (draft.chosen === 'yenidenDene') addTask({ action: `Kapı ${d.n} için küçük deneme. Eksik ölçütü ölçün.`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
+    if (draft.chosen === 'beklet') addTask({ action: `Kontrol ${d.n} bekliyor. İzlenecek olay: ${draft.reopenWhen || 'yazılmadı'}`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
+    if (draft.chosen === 'yenidenDene') addTask({ action: `Kontrol ${d.n} için küçük deneme. Eksik ölçütü ölçün.`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
     if (draft.chosen === 'yonDegistir') addTask({ action: `Yön değişikliği. Etkilenen ilk adıma dönün. Gerekçe: ${draft.reason}`, sourceDecisionId: id, owner: draft.decidedBy, status: 'acik' })
     message.success('Karar günlüğüne yazıldı. Yeni sürüm alındı.')
     const advancing = draft.chosen === 'ilerle' || draft.chosen === 'kosulluIlerle'
@@ -162,12 +162,12 @@ export function ReviewScreen() {
     <div className="page mobil-kapi-page kapi-page">
       <PageHeader
         kicker={`Karar ${d.n}. ${d.title}`}
-        title={`Kapı ${d.n}. ${d.gate.title}`}
-        documentTitle={`Kapı ${d.n}`}
+        title={`Kontrol ${d.n}. ${d.gate.title}`}
+        documentTitle={`Kontrol ${d.n}`}
         description={<>Hangi işe karar veriyoruz? {d.question}</>}
       />
 
-      <div className="stat-grid has-ring" role="group" aria-label="Kapı özeti">
+      <div className="stat-grid has-ring" role="group" aria-label="Kontrol özeti">
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Karşılanan ölçüt" value={evaluation.metCount} suffix={`/ ${evaluation.total}`} />
           <span className="stat-note">{evaluation.metCount === evaluation.total && evaluation.total > 0 ? 'Bütün ölçütler tamam.' : 'Eksik ölçütler aşağıda kırmızı işaretli.'}</span>
@@ -178,10 +178,10 @@ export function ReviewScreen() {
         </Card>
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Kalan deneme hakkı" value={evaluation.retriesLeft} suffix={`/ ${Math.min(plan.limits.retriesPerDecision ?? d.gate.maxRetries, d.gate.maxRetries)}`} />
-          <span className="stat-note">{evaluation.retriesLeft > 0 ? '"Yeniden dene" bir hak düşürür.' : 'Bu kapıda deneme hakkı bitti.'}</span>
+          <span className="stat-note">{evaluation.retriesLeft > 0 ? '"Yeniden dene" bir hak düşürür.' : 'Bu kontrolde deneme hakkı bitti.'}</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
-          <Statistic title="Pist" value={runway !== null ? runway : 'Hesaplanmadı'} suffix={runway !== null ? 'ay' : undefined} />
+          <Statistic title="Kasa süresi" value={runway !== null ? runway : 'Hesaplanmadı'} suffix={runway !== null ? 'ay' : undefined} />
           <span className="stat-note">{runway !== null ? 'Eldeki para bu kadar ay dayanır.' : 'Adım 02 sınırları dolunca hesaplanır.'}</span>
         </Card>
         <Card className="k-card ring-card is-wide" variant="borderless">
@@ -201,7 +201,7 @@ export function ReviewScreen() {
               {last.stale ? <span className="tag is-hold">İnceleme bekliyor</span> : null}
             </span>
             <span>{last.reason}</span>
-            {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Kapı geçilmiş sayılmaz. Kararı yeniden kaydedin.</span> : null}
+            {last.stale ? <span>Bu kararın dayandığı veri sonradan değişti. Kontrol geçilmiş sayılmaz. Kararı yeniden kaydedin.</span> : null}
           </div>
         </Callout>
       ) : null}
@@ -378,7 +378,7 @@ export function ReviewScreen() {
                 status="success"
                 icon={<CheckCircle size={56} weight="fill" aria-hidden />}
                 title="Karar kaydedildi"
-                subTitle={`Kapı ${d.n} için karar günlüğüne yazıldı. Yeni sürüm alındı.`}
+                subTitle={`Kontrol ${d.n} için karar günlüğüne yazıldı. Yeni sürüm alındı.`}
                 extra={
                   <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(saved.to)}>
                     {saved.label}

@@ -83,7 +83,7 @@ export function TasksScreen() {
   const sourceLabel = (sid?: string) => {
     if (!sid) return 'Elle eklendi'
     const g = plan.decisions.find((d) => d.id === sid)?.gate
-    return g ? `Kapı ${g}` : 'Kaynak karar bulunamadı.'
+    return g ? `Kontrol ${g}` : 'Kaynak karar bulunamadı.'
   }
   /** Pano ve her genişlikte kullanılan liste aynı görev kaydını günceller. */
   const statusSelect = (t: Task, inList = false) => (
@@ -245,7 +245,7 @@ export function TasksScreen() {
 
       {tasks.length === 0 ? (
         <Card className="k-card" variant="borderless" title="İş listesi">
-          <Empty description={'Henüz iş yok. Kapı kararları iş doğurur. İlk işi "İş ekle" düğmesiyle de ekleyebilirsiniz.'} />
+          <Empty description={'Henüz iş yok. Kontrol kararları iş doğurur. İlk işi "İş ekle" düğmesiyle de ekleyebilirsiniz.'} />
         </Card>
       ) : (
         <Tabs

@@ -8,7 +8,7 @@ const COMPACT_LINES = 2
 const COMPACT_SOURCES = 1
 
 /**
- * Dayanak özeti: devir raporunun dayandığı altı soru ve cevapları. Kart değildir, kartın içine konur.
+ * Dayanak özeti: teslim raporunun dayandığı altı soru ve cevapları. Kart değildir, kartın içine konur.
  * `compact` kısa görünümdür: her sorudan ilk iki satır ve ilk kaynak yazılır. Kalanın sayısı altta yazar.
  * `columns={2}` geniş ekranda blokları iki sütuna dizer. Telefonda her zaman tek sütundur.
  * Kaynak satırı 14 piksel ve gridir: "Kaynak: Yürüyüş sayımı, 12 Eylül 2026 Cumartesi günü."
@@ -36,7 +36,7 @@ export function FoundationSummary({ plan, doc, compact, columns = 1 }: { plan?: 
               <p className="foundation-more">
                 {moreLines > 0 ? `${moreLines} satır daha var. ` : ''}
                 {moreSources > 0 ? `${moreSources} kaynak daha var. ` : ''}
-                Tamamı devir raporunda yazar.
+                Tamamı teslim raporunda yazar.
               </p>
             ) : null}
           </section>

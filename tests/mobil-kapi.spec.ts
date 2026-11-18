@@ -21,7 +21,7 @@ async function noPageOverflow(page: Page) {
 for (const { route, heading, destinations } of [
   { route: '/karar/1', heading: 'Bu işi araştırmaya değer mi?', destinations: ['/karar/1/adim/00', '/karar/1/kapi', '/yontemler'] },
   { route: '/karar/6', heading: 'İlk teslim gerçekten işe yarıyor mu?', destinations: ['/gecis', '/karar/6/kapi', '/yontemler'] },
-  { route: '/karar/5/kapi', heading: 'Kapı 5. Para, risk ve yol adayları hazır mı?', destinations: ['/karar/5/adim/16', '/karar/5/adim/17', '/karar/5/adim/18'] },
+  { route: '/karar/5/kapi', heading: 'Kontrol 5. Para, risk ve yol adayları hazır mı?', destinations: ['/karar/5/adim/16', '/karar/5/adim/17', '/karar/5/adim/18'] },
   { route: '/gecis', heading: 'Stratejik planlamaya hazır mısınız?', destinations: ['/devir', '/karar/2/adim/07', '/karar/5/adim/17', '/karar/1/adim/04'] },
   { route: '/strateji', heading: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?', destinations: ['/gecis', '/devir'] },
 ]) {
@@ -76,7 +76,7 @@ test('M03 geniş ekranda sabit panel bağlantısı üst menünün altında kalma
   await page.setViewportSize({ width: 1920, height: 1080 })
   await openDemo(page)
   await page.goto('/#/strateji')
-  const link = page.getByRole('link', { name: 'Geçiş kapısını aç', exact: true })
+  const link = page.getByRole('link', { name: 'Hazırlık kontrolünü aç', exact: true })
   await expect(link).toBeVisible()
   await page.evaluate(() => window.scrollTo(0, 600))
   const scrolledBounds = await link.evaluate((el) => ({ top: el.getBoundingClientRect().top, menuBottom: document.querySelector('.product-nav')!.getBoundingClientRect().bottom }))
@@ -120,7 +120,7 @@ test('M03 uzun karar panelinin bağlantısı Tab sonrasında üst şeridin altı
   await openDemo(page)
   await page.goto('/#/karar/1')
   await page.evaluate(() => document.fonts.ready)
-  const target = page.getByRole('link', { name: 'Kapıyı aç', exact: true })
+  const target = page.getByRole('link', { name: 'Kontrolü aç', exact: true })
   for (const link of await page.locator('.karar-table a[href]').all()) {
     await link.scrollIntoViewIfNeeded()
     await link.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' }))
@@ -163,10 +163,10 @@ test('M03 dayanak tablosu ikinci kaydırma çubuğuyla bağlantıları örtmez',
   await noPageOverflow(page)
 })
 
-test('M03 kapı bağlantısı tek odak işareti taşır ve kenarından açılır', async ({ page }, testInfo) => {
+test('M03 kontrol bağlantısı tek odak işareti taşır ve kenarından açılır', async ({ page }, testInfo) => {
   await openDemo(page)
   await page.goto('/#/karar/1')
-  const link = page.getByRole('link', { name: 'Kapıyı aç', exact: true })
+  const link = page.getByRole('link', { name: 'Kontrolü aç', exact: true })
   await link.focus()
   await page.keyboard.press('Shift+Tab')
   await page.keyboard.press('Tab')
@@ -309,7 +309,7 @@ test('Tab tuşu puan tablosunun ve yıldızların odağını görünür yapar', 
   await testInfo.attach('puan-odagi', { body: await page.screenshot(), contentType: 'image/png' })
 })
 
-test('kapı formu yön değişiminde korunur ve telefon düğmeleri tam genişliktedir', async ({ page }) => {
+test('kontrol formu yön değişiminde korunur ve telefon düğmeleri tam genişliktedir', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await openDemo(page)
   await page.goto('/#/karar/1/kapi')

@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 /**
  * Süreç sırası tek bir kuraldan gelir. Kural docs/surec-haritasi.md dosyasındadır.
- * Sıra: temel (Karar 1-5), geçiş kapısı, strateji oluşturma (2.1-2.5 ve strateji belgesi), strateji uygulama (Karar 6-8).
+ * Sıra: temel (Karar 1-5), hazırlık kontrolü, strateji oluşturma (2.1-2.5 ve strateji belgesi), strateji uygulama (Karar 6-8).
  * Bu dosya kilitlerin, panonun ve yol dizininin aynı sırayı gösterdiğini sınar.
  */
 
@@ -51,19 +51,19 @@ async function noHorizontalOverflow(page: Page, label: string) {
   expect(r.sw, `Sayfa yatay taşmamalı: ${label}`).toBeLessThanOrEqual(r.iw + 1)
 }
 
-test('geçiş kararı yokken Karar 6 ve Karar 7 geçiş kapısını bekler', async ({ page }) => {
+test('hazırlık kararı yokken Karar 6 ve Karar 7 hazırlık kontrolünü bekler', async ({ page }) => {
   await openDemo(page)
   for (const n of [6, 7]) {
     await page.goto(`/#/karar/${n}`)
-    await expect(lock(page)).toContainText('Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
-    await expect(page.getByRole('button', { name: 'Geçiş kapısına git' })).toBeVisible()
+    await expect(lock(page)).toContainText('Hazırlık kontrolünde "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
+    await expect(page.getByRole('button', { name: 'Hazırlık kontrolüne git' })).toBeVisible()
     await noHorizontalOverflow(page, `karar ${n} kilitli`)
   }
-  await page.getByRole('button', { name: 'Geçiş kapısına git' }).click()
+  await page.getByRole('button', { name: 'Hazırlık kontrolüne git' }).click()
   await expect(page).toHaveURL(/#\/gecis/)
 })
 
-test('geçiş kararından sonra Karar 6 strateji oluşturmayı bekler', async ({ page }) => {
+test('hazırlık kararından sonra Karar 6 strateji oluşturmayı bekler', async ({ page }) => {
   await openDemo(page)
   await patchPlan(page, TRANSITION)
   // Pano sıradaki işi strateji oluşturma olarak gösterir.
@@ -88,7 +88,7 @@ test('adımlar tamam görünse de seçim boşsa strateji oluşturma bitmiş say�
   await expect(lock(page)).toContainText('Strateji oluşturma bitmedi.')
 })
 
-test('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler', async ({ page }) => {
+test('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kontrol 6\'yı bekler', async ({ page }) => {
   await openDemo(page)
   await patchPlan(page, `${TRANSITION}\n${STRATEGY_DONE}`)
   await page.goto('/#/strateji')
@@ -102,8 +102,8 @@ test('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler
   await page.goto('/#/karar/6')
   await expect(lock(page)).toHaveCount(0)
   await page.goto('/#/karar/7')
-  await expect(lock(page)).toContainText('Kapı 6 henüz geçilmedi.')
-  await expect(page.getByRole('button', { name: 'Önceki kapıya git' })).toBeVisible()
+  await expect(lock(page)).toContainText('Kontrol 6 henüz geçilmedi.')
+  await expect(page.getByRole('button', { name: 'Önceki kontrole git' })).toBeVisible()
   // Pano sıradaki işi Karar 6 olarak gösterir.
   await page.goto('/#/ozet')
   await expect(page.locator('.hero')).toContainText('Karar 6')

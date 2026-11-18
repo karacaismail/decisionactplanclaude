@@ -41,7 +41,7 @@ function isDone(plan: PlanDoc, s: StepDef): boolean {
   return st === 'tamam' || st === 'atlandi'
 }
 
-/** Geçiş kapısının durumu tek cümlede. Karar yoksa "Karar yok". */
+/** Hazırlık kontrolünün durumu tek cümlede. Karar yoksa "Karar yok". */
 function transitionText(plan: PlanDoc): string {
   const t = lastTransition(plan)
   if (!t) return 'Karar yok'
@@ -137,7 +137,7 @@ export function OverviewScreen() {
   const retryTotal = Math.min(retriesPerDecision ?? retryMax, retryMax)
   const retryLeft = retriesLeft(plan, current.n, retryMax)
 
-  /* Hero sıradaki işi gösterir. Sıra: temel kararı, geçiş kapısı, strateji oluşturma, uygulama kararı. */
+  /* Hero sıradaki işi gösterir. Sıra: temel kararı, hazırlık kontrolü, strateji oluşturma, uygulama kararı. */
   const stageTitle = (key: StageKey) => STAGES.find((x) => x.key === key)?.title ?? ''
   const decisionTask = (kicker: string, stage: StageKey) => ({
     kicker,
@@ -150,7 +150,7 @@ export function OverviewScreen() {
   })
   const next =
     position.stage === 'gecis'
-      ? { kicker: 'Sıradaki iş', count: '', title: 'Geçiş kapısı', text: 'Dayanak yeterli mi? Kararı kaydedin.', long: false, button: 'Geçiş kapısını aç', to: '/gecis' }
+      ? { kicker: 'Sıradaki iş', count: '', title: 'Hazırlık kontrolü', text: 'Dayanak yeterli mi? Kararı kaydedin.', long: false, button: 'Hazırlık kontrolünü aç', to: '/gecis' }
       : position.stage === 'strateji'
         ? { kicker: 'Sıradaki iş', count: '', title: STRATEGY.title, text: 'Asıl güçlüğü yazın. Yolları sınayın ve birini seçin.', long: false, button: 'Strateji oluşturmayı aç', to: '/strateji' }
         : position.stage === 'bitti'
@@ -161,7 +161,7 @@ export function OverviewScreen() {
 
   /* Dört bölümün durumu. Yol kartı ve karar rotası bu durumu kümelere göre gösterir. */
   const stageState: Record<StageKey, { text: string; status: StepStatus }> = {
-    temel: { text: `${foundationPassed} / ${FOUNDATION_DECISIONS.length} kapı`, status: foundationDone ? 'finish' : 'process' },
+    temel: { text: `${foundationPassed} / ${FOUNDATION_DECISIONS.length} kontrol`, status: foundationDone ? 'finish' : 'process' },
     gecis: { text: gecisText, status: transitionOk ? 'finish' : position.stage === 'gecis' ? 'process' : 'wait' },
     strateji: { text: !transitionOk ? 'Kilitli' : `${strategyDone} / ${strategyTotal} adım`, status: !transitionOk ? 'wait' : position.strategyComplete ? 'finish' : 'process' },
     uygulama: {
@@ -174,7 +174,7 @@ export function OverviewScreen() {
     {
       key: 'hazirlik',
       title: clusterOf('hazirlik').title,
-      text: transitionOk ? `Geçiş: ${gecisText}` : `${stageState.temel.text}. ${gecisText === 'Karar yok' ? 'Geçiş kararı yok' : `Geçiş: ${gecisText}`}`,
+      text: transitionOk ? `Hazırlık kontrolü: ${gecisText}` : `${stageState.temel.text}. ${gecisText === 'Karar yok' ? 'Hazırlık kararı yok' : `Hazırlık kontrolü: ${gecisText}`}`,
       status: transitionOk ? 'finish' : 'process',
       to: transitionOk || foundationDone ? '/gecis' : `/karar/${current.n}`,
     },
@@ -199,7 +199,7 @@ export function OverviewScreen() {
       key: 'hazirlik',
       title: `1. ${clusterOf('hazirlik').title}`,
       summary: transitionOk ? 'Tamam' : stageState.temel.text,
-      items: [...FOUNDATION_DECISIONS.map(decisionRoute), { key: 'gecis-kapisi', title: 'Geçiş kapısı', content: gecisText, status: stageState.gecis.status, to: '/gecis' }],
+      items: [...FOUNDATION_DECISIONS.map(decisionRoute), { key: 'gecis-kapisi', title: 'Hazırlık kontrolü', content: gecisText, status: stageState.gecis.status, to: '/gecis' }],
     },
     {
       key: 'olusturma',
@@ -229,7 +229,7 @@ export function OverviewScreen() {
         <span className="tl-body">
           <span className="tl-head">
             <span className="tl-title">
-              Kapı {d.gate}. {def?.title ?? ''}
+              Kontrol {d.gate}. {def?.title ?? ''}
             </span>
             <DecisionBadge outcome={outcome} />
           </span>
@@ -350,13 +350,13 @@ export function OverviewScreen() {
         </Callout>
       ) : null}
       {transitionExpired ? (
-        <Callout tone="uyari" danger title="Koşullu geçiş kararının süresi doldu">
-          Açık soru son tarihe kadar kapanmadı. Strateji oluşturma yeniden kilitlendi. <Link to="/gecis">Geçiş kapısında yeni karar kaydedin.</Link>
+        <Callout tone="uyari" danger title="Koşullu hazırlık kararının süresi doldu">
+          Açık soru son tarihe kadar kapanmadı. Strateji oluşturma yeniden kilitlendi. <Link to="/gecis">Hazırlık kontrolünde yeni karar kaydedin.</Link>
         </Callout>
       ) : null}
       {transitionStale ? (
-        <Callout tone="uyari" title="Geçiş kararı inceleme bekliyor">
-          Temel verisi değişti. Geçiş kararı yeniden inceleme ister. <Link to="/gecis">Geçiş kapısını açın.</Link>
+        <Callout tone="uyari" title="Hazırlık kararı inceleme bekliyor">
+          Temel verisi değişti. Hazırlık kararı yeniden inceleme ister. <Link to="/gecis">Hazırlık kontrolünü açın.</Link>
         </Callout>
       ) : null}
 
@@ -385,17 +385,17 @@ export function OverviewScreen() {
               format={() => `${level} / 5`}
               strokeColor="var(--color-hero-action)"
               railColor="var(--color-hero-line)"
-              aria-label={`Doğrulama seviyesi ${level} / 5. ${LEVELS[level].title}.`}
+              aria-label={`Kanıt düzeyi ${level} / 5. ${LEVELS[level].title}.`}
             />
             <div className="hero-level-text">
-              <span className="hero-level-label">Doğrulama seviyesi</span>
+              <span className="hero-level-label">Kanıt düzeyi</span>
               <span className="hero-level-name">{LEVELS[level].title}</span>
             </div>
           </div>
         </section>
 
         {/* Yol bağlantıları bütün genişliklerde aynı DOM içinde kalır. */}
-        <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel taşları</Link>}>
+        <Card className="pano-card yol-card" title="Yol" extra={<Link to="/temel">Temel sorular</Link>}>
           <ol className="overview-route-list overview-stage-list" aria-label="Yol" role="list">
             {clusterRoad.map((cluster) => (
               <li key={cluster.key} data-status={cluster.status}>
@@ -409,27 +409,27 @@ export function OverviewScreen() {
         </Card>
 
         <div className="ozet-side">
-          <Card className="pano-card" title="Pist" extra={<Link to="/karar/1/adim/02">Sınırlar</Link>}>
+          <Card className="pano-card" title="Kasa süresi" extra={<Link to="/karar/1/adim/02">Sınırlar</Link>}>
             <div className="pist">
               <Statistic value={runway ?? 'Hesaplanmadı'} suffix={runway !== null ? 'ay' : undefined} />
-              <Progress percent={runwayPercent} showInfo={false} strokeColor={runway !== null && runway < 6 ? token.colorError : undefined} aria-label={`Pist ${runway ?? 0} ay, 12 ayın yüzde ${runwayPercent}'i`} />
+              <Progress percent={runwayPercent} showInfo={false} strokeColor={runway !== null && runway < 6 ? token.colorError : undefined} aria-label={`Kasa süresi ${runway ?? 0} ay, 12 ayın yüzde ${runwayPercent}'i`} />
               <p className="helper">
                 {runway === null ? 'Kasadaki parayı ve aylık gideri sınırlarda yazın.' : `Kasadaki para ${formatMoney(cashKurus)}. Aylık gider ${formatMoney(monthlyBurnKurus)}.`}
               </p>
             </div>
           </Card>
-          <Card className="pano-card" title="Deneme hakkı" extra={<Link to={`/karar/${current.n}/kapi`}>Kapı {current.n}</Link>}>
+          <Card className="pano-card" title="Deneme hakkı" extra={<Link to={`/karar/${current.n}/kapi`}>Kontrol {current.n}</Link>}>
             <div className="retry">
               <Progress type="circle" size={72} percent={retryTotal === 0 ? 0 : Math.round((retryLeft / retryTotal) * 100)} format={() => `${retryLeft} / ${retryTotal}`} strokeColor={retryLeft === 0 ? token.colorError : undefined} aria-label={`${retryLeft} deneme hakkı kaldı, toplam ${retryTotal}`} />
               <p className="helper">
-                {retryLeft === 0 ? `Kapı ${current.n} için deneme hakkı bitti. "Yeniden dene" seçilemez.` : `Kapı ${current.n} için ${retryLeft} deneme hakkı kaldı. Her "Yeniden dene" bir hak kullanır.`}
+                {retryLeft === 0 ? `Kontrol ${current.n} için deneme hakkı bitti. "Yeniden dene" seçilemez.` : `Kontrol ${current.n} için ${retryLeft} deneme hakkı kaldı. Her "Yeniden dene" bir hak kullanır.`}
               </p>
             </div>
           </Card>
         </div>
 
         <KpiStrip>
-          <StatTile icon={<Flag size={20} />} label="Geçilen kapı" value={foundationPassed} unit={`/ ${FOUNDATION_DECISIONS.length}`} note="Temelde 5 kapı var." to={nextPath} />
+          <StatTile icon={<Flag size={20} />} label="Geçilen kontrol" value={foundationPassed} unit={`/ ${FOUNDATION_DECISIONS.length}`} note="Temelde 5 kontrol var." to={nextPath} />
           <StatTile icon={<Path size={20} />} label="Tamamlanan adım" value={doneSteps} unit={`/ ${allSteps.length}`} note={allSteps.length - doneSteps === 0 ? 'Bütün adımlar tamam.' : `${allSteps.length - doneSteps} adım kaldı.`} to={nextPath} />
           <StatTile icon={<Notebook size={20} />} label="Kanıt" value={plan.evidence.length} unit="kayıt" note={plan.evidence.length === 0 ? 'Henüz kanıt yok.' : `${observations} gözlem, ${plan.evidence.length - observations} tahmin.`} to="/kanitlar" />
           <StatTile icon={<CheckSquare size={20} />} label="Açık iş" value={openTasks.length} unit="iş" note={lateTasks.length > 0 ? `${lateTasks.length} iş gecikti.` : openTasks.length === 0 ? 'Açık iş yok.' : 'Hepsi zamanında.'} to="/isler" />
@@ -490,7 +490,7 @@ export function OverviewScreen() {
               label: `Son kararlar (${timelineItems.length})`,
               children: (
                 <>
-                  {timelineItems.length === 0 ? <Empty description="Henüz karar kaydı yok. İlk kapıda kararı kaydedince burada görünür." /> : <Timeline className="pano-timeline" items={timelineItems} />}
+                  {timelineItems.length === 0 ? <Empty description="Henüz karar kaydı yok. İlk kontrolde kararı kaydedince burada görünür." /> : <Timeline className="pano-timeline" items={timelineItems} />}
                   <Link className="overview-record-actions" to="/gecmis">Hepsi</Link>
                 </>
               ),

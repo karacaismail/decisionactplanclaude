@@ -67,7 +67,7 @@ const FORCES: [key: string, label: string][] = [
 ]
 /** Beş üzerinden 4 ve 5 güçlü baskı sayılır. */
 const STRONG_FORCE = 4
-/** Olasılık çarpı etki 6 ve üstüyse risk kritiktir. Kapı 5 ile aynı kural. */
+/** Olasılık çarpı etki 6 ve üstüyse risk kritiktir. Kontrol 5 ile aynı kural. */
 const CRITICAL_RISK = 6
 
 export function buildSituation(plan: PlanDoc): Situation {
@@ -117,7 +117,7 @@ export interface CrossAnswer {
   text: string
 }
 
-/** Kullanıcının cevapladığı çapraz sorular. Devir raporu bunları yolların yanında gösterir. */
+/** Kullanıcının cevapladığı çapraz sorular. Teslim raporu bunları yolların yanında gösterir. */
 export function crossAnswers(plan: PlanDoc): CrossAnswer[] {
   return CROSS_QUESTIONS.map((q) => ({ label: ORIGIN_LABEL[q.origin], question: q.label, text: text(v(plan, '18', q.key)) })).filter((a): a is CrossAnswer => a.text !== null)
 }

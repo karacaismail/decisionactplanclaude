@@ -4,7 +4,7 @@ import { emptyPlan, type Decision, type PlanDoc } from '@/data/types'
 import { effectiveOutcome, evaluateGate, gatePassed, retriesLeft } from './gate'
 
 function gate(checks: (boolean | null)[], rows: GateDef['rows'] = []): GateDef {
-  return { n: 1, title: 'Deneme kapısı', maxRetries: 2, rows, criteria: checks.map((v, i) => ({ id: `c${i}`, label: `Ölçüt ${i}`, check: () => v })) }
+  return { n: 1, title: 'Deneme kontrolü', maxRetries: 2, rows, criteria: checks.map((v, i) => ({ id: `c${i}`, label: `Ölçüt ${i}`, check: () => v })) }
 }
 
 function decision(patch: Partial<Decision>): Decision {
@@ -75,7 +75,7 @@ describe('koşullu izin süresi', () => {
     expect(effectiveOutcome(d, new Date('2026-11-13T00:00:00.000Z'))).toBe('kosulluIlerle')
   })
 
-  it('karar yoksa kapı geçilmemiştir', () => {
+  it('karar yoksa kontrol geçilmemiştir', () => {
     expect(gatePassed(emptyPlan('p', 'Plan'), 1)).toBe(false)
   })
 })

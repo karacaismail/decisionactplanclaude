@@ -15,7 +15,7 @@ import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { planPosition, type PlanPosition } from '@/engine/position'
-/** Doğrulama seviyesinin en üst basamağı. Beş temel kapı geçilince 5 olur. */
+/** Kanıt düzeyinin en üst basamağı. Beş temel kontrol geçilince 5 olur. */
 const MAX_LEVEL = 5
 const PAGE_SIZE = 10
 const SORT_OPTIONS = [
@@ -23,8 +23,8 @@ const SORT_OPTIONS = [
   { value: 'updated-asc', label: 'Son değişiklik: eskiden yeniye' },
   { value: 'name-asc', label: 'Plan adı: A harfinden Z harfine' },
   { value: 'name-desc', label: 'Plan adı: Z harfinden A harfine' },
-  { value: 'level-asc', label: 'Doğrulama seviyesi: düşükten yükseğe' },
-  { value: 'level-desc', label: 'Doğrulama seviyesi: yüksekten düşüğe' },
+  { value: 'level-asc', label: 'Kanıt düzeyi: düşükten yükseğe' },
+  { value: 'level-desc', label: 'Kanıt düzeyi: yüksekten düşüğe' },
   { value: 'revision-asc', label: 'Sürüm: küçükten büyüğe' },
   { value: 'revision-desc', label: 'Sürüm: büyükten küçüğe' },
 ] as const
@@ -42,7 +42,7 @@ function toRow(plan: PlanDoc): Row {
 /** Planın yol üzerindeki yeri tek etikette. */
 function stageTag(p: PlanPosition): { label: string; color: string } {
   if (p.stage === 'temel') return { label: `Strateji öncesi hazırlık, Karar ${p.decision} açık`, color: 'processing' }
-  if (p.stage === 'gecis') return { label: 'Geçiş kapısı bekliyor', color: 'warning' }
+  if (p.stage === 'gecis') return { label: 'Hazırlık kontrolü bekliyor', color: 'warning' }
   if (p.stage === 'strateji') return { label: 'Strateji oluşturma', color: 'processing' }
   if (p.stage === 'uygulama') return { label: `Strateji uygulama, Karar ${p.decision} açık`, color: 'processing' }
   return { label: 'Tamamlandı', color: 'success' }
@@ -59,7 +59,7 @@ function StatusTags({ row }: { row: Row }) {
 }
 
 function LevelBar({ level }: { level: number }) {
-  return <Progress percent={Math.round((level / MAX_LEVEL) * 100)} format={() => `${level} / ${MAX_LEVEL}`} aria-label={`Doğrulama seviyesi ${level} / ${MAX_LEVEL}`} />
+  return <Progress percent={Math.round((level / MAX_LEVEL) * 100)} format={() => `${level} / ${MAX_LEVEL}`} aria-label={`Kanıt düzeyi ${level} / ${MAX_LEVEL}`} />
 }
 
 export function PlansScreen() {
@@ -98,7 +98,7 @@ export function PlansScreen() {
   // Kayıt azalınca saklanan sayfa da düzelir. Yeni kayıt eski sayfaya sıçratmaz.
   if (currentPage !== page) setPage(currentPage)
   const visibleRows = sorted.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE)
-  /* Beş temel kapıyı geçen plan geçiş kapısına ulaşmıştır. */
+  /* Beş temel kontrolü geçen plan hazırlık kontrolüne ulaşmıştır. */
   const reachedCount = rows.filter((r) => r.position.stage !== 'temel').length
   const latest = rows[0]?.plan.updatedAt
 
@@ -203,8 +203,8 @@ export function PlansScreen() {
           <p className="helper">{rows.length === 0 ? 'Henüz plan yok.' : rows.filter((r) => r.plan.example).length > 0 ? 'Biri örnek plan.' : 'Hepsi sizin planınız.'}</p>
         </Card>
         <Card className="pano-card">
-          <Statistic title="Geçiş kapısına ulaşan plan" value={reachedCount} suffix="plan" />
-          <p className="helper">{reachedCount === 0 ? 'Henüz hiçbir plan beş temel kapıyı geçmedi.' : `${reachedCount} plan beş temel kapıyı geçti.`}</p>
+          <Statistic title="Hazırlık kontrolüne ulaşan plan" value={reachedCount} suffix="plan" />
+          <p className="helper">{reachedCount === 0 ? 'Henüz hiçbir plan beş temel kontrolü geçmedi.' : `${reachedCount} plan beş temel kontrolü geçti.`}</p>
         </Card>
         <Card className="pano-card">
           <Statistic title="Son değişiklik" value={latest ? formatDate(latest) : 'Henüz yok'} />
@@ -245,7 +245,7 @@ export function PlansScreen() {
                   <h3 className="mobil-plan-card-title" id={`plan-title-${encodeURIComponent(r.plan.id)}`}>{r.plan.name}</h3>
                   <dl className="mobil-plan-metadata">
                     <div>
-                      <dt>Doğrulama seviyesi</dt>
+                      <dt>Kanıt düzeyi</dt>
                       <dd><LevelBar level={r.position.level} /></dd>
                     </div>
                     <div>

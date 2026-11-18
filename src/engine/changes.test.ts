@@ -14,7 +14,7 @@ function planWithDecisions(): PlanDoc {
 }
 
 describe('eskiyen kararlar', () => {
-  it('kapıya eşit ve sonraki kapıların yalnız son kararı eskir', () => {
+  it('kontrole eşit ve sonraki kontrollerin yalnız son kararı eskir', () => {
     const p = planWithDecisions()
     expect(markStale(p, 2)).toBe(2)
     expect(p.decisions.find((d) => d.id === 'a')?.stale).toBeUndefined()
@@ -23,7 +23,7 @@ describe('eskiyen kararlar', () => {
     expect(p.decisions.find((d) => d.id === 'd')?.stale).toBe(true)
   })
 
-  it('eski karar kapıyı geçmiş saymaz', () => {
+  it('eski karar kontrolü geçmiş saymaz', () => {
     const p = planWithDecisions()
     expect(gatePassed(p, 3)).toBe(true)
     markStale(p, 3)
@@ -47,7 +47,7 @@ describe('eskiyen kararlar', () => {
     expect(p.decisions.every((d) => !d.stale)).toBe(true)
   })
 
-  it('profil ve sınır değişikliği bütün kapıları eskitir', () => {
+  it('profil ve sınır değişikliği bütün kontrolleri eskitir', () => {
     const p = planWithDecisions()
     p.profile = { team: 'ekip' }
     expect(applyProfile(p, { team: 'ekip' })).toBe(false)
@@ -60,7 +60,7 @@ describe('eskiyen kararlar', () => {
     expect(gatePassed(q, 1)).toBe(false)
   })
 
-  it('adım atlanınca o kapı eskir', () => {
+  it('adım atlanınca o kontrol eskir', () => {
     const p = planWithDecisions()
     expect(applySkip(p, '09', 'Bu profilde gerekmez')).toBe(true)
     expect(gatePassed(p, 2)).toBe(true)

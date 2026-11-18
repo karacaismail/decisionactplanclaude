@@ -155,7 +155,7 @@ export const KARAR8: StepDef[] = [
         fields: [
           { key: 'transferee', type: 'text', label: 'Devralan kişi', maxLength: 80 },
           { key: 'acceptedInWriting', type: 'toggle', label: 'Devralan kişi üç şeyi yazılı kabul etti mi?', help: 'Açık siparişler, ödemeler ve destek görevi.', onLabel: 'Evet, yazılı kabul var', offLabel: 'Hayır' },
-          { key: 'acceptNote', type: 'info', label: 'Beklet', tone: 'uyari', text: 'Yazılı kabul yok. Devir tamam sayılmaz. Kapı 8 bekletir.', when: { field: { key: 'acceptedInWriting', truthy: false } } },
+          { key: 'acceptNote', type: 'info', label: 'Beklet', tone: 'uyari', text: 'Yazılı kabul yok. Devir tamam sayılmaz. Kontrol 8 bekletir.', when: { field: { key: 'acceptedInWriting', truthy: false } } },
         ],
       },
       {
@@ -168,7 +168,7 @@ export const KARAR8: StepDef[] = [
     ],
     output: 'Devir sözleşmesi veya kapanış listesi. Öğrenim notu.',
     outcomeTable: [
-      { condition: 'Devralan kişi yazılı kabul vermedi', result: 'Devir tamam sayılmaz. Kapı 8 bekletir.' },
+      { condition: 'Devralan kişi yazılı kabul vermedi', result: 'Devir tamam sayılmaz. Kontrol 8 bekletir.' },
       { condition: 'Açık taahhüt kaldı', result: 'Kapanış tamam sayılmaz. Taahhüdü sonuçlandırın.' },
       { condition: 'Öğrenim notu yazıldı', result: 'Plan burada biter. Yeni bir işte Karar 1\'e dönün.' },
     ],

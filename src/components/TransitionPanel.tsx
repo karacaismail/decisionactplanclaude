@@ -42,7 +42,7 @@ export interface TransitionPanelProps {
 }
 
 /**
- * Geçiş kararı paneli. Yazılım öneriyi gösterir. Kararı karar sahibi seçer ve kaydeder.
+ * Hazırlık kararı paneli. Yazılım öneriyi gösterir. Kararı karar sahibi seçer ve kaydeder.
  * Kayıt engellerini `validateTransition` üretir. Engel varken düğme kapalıdır.
  */
 export function TransitionPanel({ plan, evaluation, secondReader, onSecondReaderChange }: TransitionPanelProps) {
@@ -103,7 +103,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
     })
     if (conditional) {
       addTask({
-        action: `Geçiş kapısı açık sorusu: ${conditional.openQuestion}`,
+        action: `Hazırlık kontrolü açık sorusu: ${conditional.openQuestion}`,
         acceptance: `Soru kanıtla cevaplandı. Planlanan konu: ${conditional.topic}`,
         owner: conditional.owner,
         dueDate: conditional.deadline,
@@ -112,7 +112,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
     }
     const missing = [...evaluation.mandatory, ...evaluation.supporting].find((c) => c.met !== true)
     if (outcome !== 'degil') setLocation('/strateji')
-    message.success('Geçiş kararı kaydedildi. Yeni sürüm alındı.')
+    message.success('Hazırlık kararı kaydedildi. Yeni sürüm alındı.')
     setSaved({ outcome, backTo: missing ? stepPath(missing.step) : '/ozet' })
   }
 
@@ -129,7 +129,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
         className={`k-result gecis-result${open ? '' : ' is-neutral'}`}
         status={open ? 'success' : 'info'}
         icon={open ? <CheckCircle size={56} weight="fill" aria-hidden /> : <Info size={56} weight="fill" aria-hidden />}
-        title="Geçiş kararı kaydedildi"
+        title="Hazırlık kararı kaydedildi"
         subTitle={subTitle}
         extra={
           open ? (
@@ -238,7 +238,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
       <Form.Item>
         <div className="gecis-check-row">
           <Checkbox id={id('inceledim')} className="gecis-check" checked={reviewed} onChange={(e) => { touch(); setReviewed(e.target.checked) }}>
-            Strateje devir raporunu okudum.
+            Strateje teslim raporunu okudum.
           </Checkbox>
           {/* Yeni sekmede açılır. Aynı sekmede açılırsa yarım doldurulan karar formu silinir. */}
           <a className="kapi-action-link" tabIndex={0} href="#/devir" target="_blank" rel="noopener noreferrer">Raporu yeni sekmede aç</a>
@@ -251,14 +251,14 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
             <ul id={id('engel')} className="gecis-errors" aria-live="polite">
               {errors.map((e) => <li key={e}>{e}</li>)}
             </ul>
-            {openReviews > 0 ? <Link className="kapi-action-link" tabIndex={0} to="/karar/5/kapi">İkinci görüşü Kapı 5 ekranında kaydedin.</Link> : null}
+            {openReviews > 0 ? <Link className="kapi-action-link" tabIndex={0} to="/karar/5/kapi">İkinci görüşü Kontrol 5 ekranında kaydedin.</Link> : null}
           </Callout>
         </Form.Item>
       ) : null}
 
       <div className="save-row">
         <Button type="primary" size="large" htmlType="submit" disabled={!canSave} aria-describedby={canSave ? undefined : id('kilit')}>
-          Geçiş kararını kaydet
+          Hazırlık kararını kaydet
         </Button>
         {canSave ? null : <span className="helper" id={id('kilit')}>Düğme şu nedenle kapalı: {errors[0]}</span>}
       </div>

@@ -120,7 +120,7 @@ export function EvidenceScreen() {
     setPanel(null)
   }
   const removeSelected = () => {
-    // Depo kanıtı siler, bağlı kararları ve geçiş kararını eskitir.
+    // Depo kanıtı siler, bağlı kararları ve hazırlık kararını eskitir.
     removeEvidence(selected)
     message.success(`${selected.length} kanıt silindi.`)
     setSelected([])

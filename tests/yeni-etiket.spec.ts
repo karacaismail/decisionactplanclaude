@@ -7,9 +7,9 @@ import { expect, test, type Page } from '@playwright/test'
  */
 
 const NEW_PAGES = [
-  { route: '/#/gecis', menu: 'Geçiş kapısı' },
-  { route: '/#/devir', menu: 'Devir raporu' },
-  { route: '/#/temel', menu: 'Temel taşları' },
+  { route: '/#/gecis', menu: 'Hazırlık kontrolü' },
+  { route: '/#/devir', menu: 'Teslim raporu' },
+  { route: '/#/temel', menu: 'Temel sorular' },
   { route: '/#/varsayimlar', menu: 'Varsayımlar' },
   { route: '/#/strateji', menu: 'Strateji oluşturma' },
   { route: '/#/uygulama', menu: 'Uygulama özeti' },

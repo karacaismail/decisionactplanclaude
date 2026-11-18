@@ -13,7 +13,7 @@ interface CompareRow {
   pick: (p: PathColumn) => string | null
 }
 
-/** Karşılaştırma satırları. Sıra, devir raporunun dördüncü bölümüyle aynıdır. */
+/** Karşılaştırma satırları. Sıra, teslim raporunun dördüncü bölümüyle aynıdır. */
 const ROWS: CompareRow[] = [
   { key: 'where', label: 'Kime ve nereden?', pick: (p) => p.where },
   { key: 'how', label: 'Neyle kazanılır?', pick: (p) => p.how },

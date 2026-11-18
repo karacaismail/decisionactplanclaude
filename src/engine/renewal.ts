@@ -47,7 +47,7 @@ export function validateReview(draft: ReviewDraft): string[] {
 }
 
 /**
- * Kaydı plana yazar. "Yeniden aç" kararında strateji belgesi taslağa döner ve uygulama kapılarının kararları eskir.
+ * Kaydı plana yazar. "Yeniden aç" kararında strateji belgesi taslağa döner ve uygulama kontrollerinin kararları eskir.
  * Geçersiz taslak yazılmaz. O durumda null döner.
  */
 export function applyStrategyReview(plan: PlanDoc, draft: ReviewDraft, now = new Date()): StrategyReview | null {

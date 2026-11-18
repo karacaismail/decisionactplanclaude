@@ -35,7 +35,7 @@ test('Adım 00 doldurulur, tamamlanır ve Adım 01 açılır', async ({ page }) 
   await noHorizontalOverflow(page)
 })
 
-test('kapı ekranı öneri gösterir ve karar kaydeder', async ({ page }) => {
+test('kontrol ekranı öneri gösterir ve karar kaydeder', async ({ page }) => {
   await createPlan(page)
   await page.goto('/#/karar/1/kapi')
   await expect(page.getByText('Sistemin önerisi')).toBeVisible()
@@ -46,7 +46,7 @@ test('kapı ekranı öneri gösterir ve karar kaydeder', async ({ page }) => {
   await expect(save).toBeEnabled()
   await save.click()
   await page.goto('/#/gecmis')
-  await expect(page.getByText('Kapı 1', { exact: true })).toBeVisible()
+  await expect(page.getByText('Kontrol 1', { exact: true })).toBeVisible()
   await noHorizontalOverflow(page)
 })
 
@@ -84,7 +84,7 @@ test('42 adımın hepsi hatasız açılır', async ({ page }) => {
   page.on('console', (m) => { if (m.type() === 'error' && !m.text().includes('antd')) errors.push(m.text()) })
   await createPlan(page)
   /* Kodu olan adımlar alt aşama koduyla, öteki adımlar "Adım NN" diye görünür. */
-  const coded: Record<string, [number, string]> = { S21: [9, '2.1'], S22: [9, '2.2'], S23: [9, '2.3'], '19': [9, '2.4'], S25: [9, '2.5'], '20': [9, 'Çıkış kapısı'], U31: [6, '3.1'], U32: [6, '3.2'], U33: [6, '3.3'] }
+  const coded: Record<string, [number, string]> = { S21: [9, '2.1'], S22: [9, '2.2'], S23: [9, '2.3'], '19': [9, '2.4'], S25: [9, '2.5'], '20': [9, 'Çıkış kontrolü'], U31: [6, '3.1'], U32: [6, '3.2'], U33: [6, '3.3'] }
   const numbered = Array.from({ length: 35 }, (_, i) => String(i).padStart(2, '0')).filter((id) => !(id in coded))
   for (const id of numbered) {
     const k = Number(id)

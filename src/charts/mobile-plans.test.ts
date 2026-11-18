@@ -140,7 +140,7 @@ describe('PlansScreen ortak kart listesi', () => {
     expect(heading?.textContent).toBe(plan.name)
     expect(article!.getAttribute('aria-labelledby')).toBe(heading?.id)
     expect([...article!.querySelectorAll('dt')].map((el) => el.textContent)).toEqual([
-      'Doğrulama seviyesi', 'Durum', 'Son değişiklik', 'Sürüm',
+      'Kanıt düzeyi', 'Durum', 'Son değişiklik', 'Sürüm',
     ])
     expect(article!.textContent).toContain('0 / 5')
     expect(article!.textContent).toContain('Örnek')
@@ -248,7 +248,7 @@ describe('PlansScreen ortak kart listesi', () => {
 
   it.each([
     ['Plan adı', 'A harfinden Z harfine', 'Z harfinden A harfine', ['Ada', 'Çınar', 'Zeytin'], ['Zeytin', 'Çınar', 'Ada']],
-    ['Doğrulama seviyesi', 'düşükten yükseğe', 'yüksekten düşüğe', ['Çınar', 'Ada', 'Zeytin'], ['Zeytin', 'Ada', 'Çınar']],
+    ['Kanıt düzeyi', 'düşükten yükseğe', 'yüksekten düşüğe', ['Çınar', 'Ada', 'Zeytin'], ['Zeytin', 'Ada', 'Çınar']],
     ['Son değişiklik', 'eskiden yeniye', 'yeniden eskiye', ['Çınar', 'Zeytin', 'Ada'], ['Ada', 'Zeytin', 'Çınar']],
     ['Sürüm', 'küçükten büyüğe', 'büyükten küçüğe', ['Zeytin', 'Çınar', 'Ada'], ['Ada', 'Çınar', 'Zeytin']],
   ] as const)('%s alanını iki yönde sıralar', async (field, ascending, descending, ascNames, descNames) => {

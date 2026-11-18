@@ -53,7 +53,7 @@ describe('buildHandoffReport', () => {
   it('verilmiş kararları ve sınırları ayırır', () => {
     const r = buildHandoffReport(buildDemoPlan())
     expect(r.locked).toHaveLength(5)
-    expect(r.limits.some((l) => l.label === 'Pist')).toBe(true)
+    expect(r.limits.some((l) => l.label === 'Kasa süresi')).toBe(true)
     expect(r.stopRules.length).toBeGreaterThanOrEqual(3)
     expect(r.redLines).toBeTruthy()
   })

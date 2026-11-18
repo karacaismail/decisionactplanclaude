@@ -30,7 +30,7 @@ const measure = (name: string, unit: string, period: string, value: number, thre
   baseline: null,
 })
 
-/** 15 görüşme. Tüketici için Kapı 2 en az 15 görüşme ve 9 tanıma ister. */
+/** 15 görüşme. Tüketici için Kontrol 2 en az 15 görüşme ve 9 tanıma ister. */
 function interviews(): Row[] {
   const people: [string, string, boolean, boolean, number, string][] = [
     ['Ayşe, öğretmen', 'Her sabah', true, true, 1, 'Okula giderken kahve alırım. Yakın yer yok.'],
@@ -92,8 +92,8 @@ function offers(): Row[] {
 
 /**
  * Örnek plan: Mahalle kafesi. Ekranları tanıtır. Kullanıcı verisi değildir.
- * Adım 00 ile 17 arası dolu. Beş kapı "İlerle" ile geçildi. Geçiş kapısı açık.
- * Adım 19 ve 20 boştur. Geçiş kararını kullanıcı kendisi kaydeder.
+ * Adım 00 ile 17 arası dolu. Beş kontrol "İlerle" ile geçildi. Hazırlık kontrolü açık.
+ * Adım 19 ve 20 boştur. Hazırlık kararını kullanıcı kendisi kaydeder.
  */
 export function buildDemoPlan(): PlanDoc {
   const p = emptyPlan('ornek-mahalle-kafesi', 'Örnek: Mahalle kafesi')
@@ -453,7 +453,7 @@ export function buildDemoPlan(): PlanDoc {
     task('is-2', 'Reddeden 3 kişiyi arayıp fiyat önerisini sor.', 'Kurucu', 3, 'acik', 'Üç kişinin cevabı teklif defterine yazıldı.', '15', p.decisions[3].id),
     task('is-3', 'İki tedarikçiden çekirdek fiyatı al.', 'Kurucu', -4, 'bitti', 'İki yazılı teklif alındı.', '04', p.decisions[0].id),
   ]
-  p.revisions = p.decisions.map((d) => ({ id: `surum-${d.gate}`, label: `Kapı ${d.gate} kararı: İlerle`, createdAt: d.decidedAt, snapshot: '' }))
+  p.revisions = p.decisions.map((d) => ({ id: `surum-${d.gate}`, label: `Kontrol ${d.gate} kararı: İlerle`, createdAt: d.decidedAt, snapshot: '' }))
   for (const r of p.revisions) r.snapshot = JSON.stringify({ ...p, revisions: [] })
   p.updatedAt = iso(-2)
   return p
@@ -468,23 +468,23 @@ function task(id: string, action: string, owner: string, dueInDays: number, stat
 }
 
 const GATE_REASON: Record<number, string> = {
-  1: 'Dört ölçüt tamam. Pist 8 ay. Kurucu uyum puanı 16. Araştırmaya başlıyorum.',
+  1: 'Dört ölçüt tamam. Kasa süresi 8 ay. Kurucu uyum puanı 16. Araştırmaya başlıyorum.',
   2: '15 görüşmede 13 kişi problemi tanıdı. 10 kişi bugün zaman harcıyor. Üç ölçü eşiği geçti.',
   3: 'Üç farklı yol puanlandı. Küçük kafe öne çıktı. 350 müşteri hedefi 300’ü karşılıyor.',
   4: '14 teklifte 11 taahhüt. 7 ödeme. Eşik 10 idi. Reddedenlerin gerekçesi yazıldı.',
-  5: 'Bir siparişten 30 TL kalıyor. Kasa hiçbir ödeme gününde eksiye düşmüyor. İki kritik riskin kuralı yazıldı. Pist 8 ay.',
+  5: 'Bir siparişten 30 TL kalıyor. Kasa hiçbir ödeme gününde eksiye düşmüyor. İki kritik riskin kuralı yazıldı. Kasa süresi 8 ay.',
 }
-/** Beş kapı kararının kaç gün önce verildiği. Kapı 5, Adım 18'den sonra gelir. */
+/** Beş kontrol kararının kaç gün önce verildiği. Kontrol 5, Adım 18'den sonra gelir. */
 const GATE_DAYS = [60, 45, 30, 5, 2]
 
-/** Kapı kararını motorun ölçütlerinden üretir. Alan adları değişirse test bunu yakalar. */
+/** Kontrol kararını motorun ölçütlerinden üretir. Alan adları değişirse test bunu yakalar. */
 function gateDecision(p: PlanDoc, gate: number, daysAgo: number, revision: number): Decision {
   const def = DECISIONS.find((d) => d.n === gate)!
   const ev = evaluateGate(def.gate, p)
   return {
     id: `karar-ornek-${gate}`,
     gate,
-    scope: `Kapı ${gate}: ${def.gate.title}`,
+    scope: `Kontrol ${gate}: ${def.gate.title}`,
     criteria: def.gate.criteria.map((c) => ({ id: c.id, label: c.label, met: ev.criteria[c.id] })),
     suggested: ev.suggested,
     chosen: 'ilerle',

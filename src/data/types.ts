@@ -200,7 +200,7 @@ export interface StrategyReview {
   revision: number
 }
 
-/** Geçiş kapısı kaydı. Yazılım önerir, karar sahibi kaydeder. */
+/** Hazırlık kontrolü kaydı. Yazılım önerir, karar sahibi kaydeder. */
 export interface TransitionRecord {
   id: string
   outcome: TransitionOutcome
@@ -242,7 +242,7 @@ export interface PlanDoc {
   revisions: Revision[]
   outputs: OutputVersion[]
   takeover?: Record<string, unknown>
-  /** Stratejik planlamaya geçiş kararları. Son kayıt geçerlidir. */
+  /** Stratejik planlamaya hazırlık kararları. Son kayıt geçerlidir. */
   transitions?: TransitionRecord[]
   /** Strateji gözden geçirme kayıtları. Son kayıt geçerlidir. */
   strategyReviews?: StrategyReview[]

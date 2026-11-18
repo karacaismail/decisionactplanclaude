@@ -36,7 +36,7 @@ test('Adım 16 başabaş sayısını hesaplar ve alana yazar', async ({ page }) 
   await noOverflow(page, 'adım 16')
 })
 
-test('çürüyen kritik varsayım geçiş kapısını "Henüz hazır değil" yapar', async ({ page }) => {
+test('çürüyen kritik varsayım hazırlık kontrolünü "Henüz hazır değil" yapar', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/gecis')
   await expect(page.getByText('Yazılımın önerisi')).toBeVisible()

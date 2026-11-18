@@ -22,19 +22,19 @@ const MAX_RESULTS = 12
 
 const SCREENS: { title: string; to: string; subtitle: string }[] = [
   { title: 'Planlar', to: '/', subtitle: 'Bütün planlar' },
-  { title: 'Plan özeti', to: '/ozet', subtitle: 'Sıradaki iş, yol ve kapılar' },
-  { title: 'Strateje devir raporu', to: '/devir', subtitle: 'Stratej bu raporla başlar' },
-  { title: 'Geçiş kapısı', to: '/gecis', subtitle: 'Dayanak yeterli mi? Geçiş kararı' },
+  { title: 'Plan özeti', to: '/ozet', subtitle: 'Sıradaki iş, yol ve kontroller' },
+  { title: 'Strateje teslim raporu', to: '/devir', subtitle: 'Stratej bu raporla başlar' },
+  { title: 'Hazırlık kontrolü', to: '/gecis', subtitle: 'Dayanak yeterli mi? Hazırlık kararı' },
   { title: 'Strateji oluşturma', to: '/strateji', subtitle: 'Beş alt aşama ve strateji belgesi' },
     { title: 'Strateji uygulama', to: '/uygulama', subtitle: 'Beş alt aşama ve gözden geçirme kaydı' },
-  { title: 'Temel taşları', to: '/temel', subtitle: 'Yirmi temel taşı ve kanıt gücü' },
+  { title: 'Temel sorular', to: '/temel', subtitle: 'Yirmi temel soru ve kanıt gücü' },
   { title: 'Varsayımlar', to: '/varsayimlar', subtitle: 'Denenmedi, doğrulandı, çürüdü' },
   { title: 'Devralma', to: '/devralma', subtitle: 'Çalışan işi devralma girişi' },
   { title: 'Kanıtlar', to: '/kanitlar', subtitle: 'Gözlem, tahmin ve varsayımlar' },
   { title: 'İşler', to: '/isler', subtitle: 'Açık işler ve sorumlular' },
   { title: 'Göstergeler', to: '/gostergeler', subtitle: 'Grafikler ve ölçüler' },
-  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Devir raporu özeti, yönetici raporu ve aksiyon planı' },
-  { title: 'Geçmiş', to: '/gecmis', subtitle: 'Karar, geçiş ve değişiklik kaydı' },
+  { title: 'Çıktılar', to: '/ciktilar', subtitle: 'Teslim raporu özeti, yönetici raporu ve aksiyon planı' },
+  { title: 'Geçmiş', to: '/gecmis', subtitle: 'Karar, hazırlık ve değişiklik kaydı' },
   { title: 'Karar Kitabı', to: '/yontemler', subtitle: '128 yöntem' },
 ]
 

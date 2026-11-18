@@ -159,13 +159,13 @@ function ramp(c: InsightPalette, n: number): string[] {
   return Array.from({ length: n }, (_x, i) => base[Math.min(i, base.length - 1)])
 }
 
-/** Dört özet değer. Pist, ödeme günü açığı, bütçe kullanımı ve deneme hakkı. */
+/** Dört özet değer. Kasa süresi, ödeme günü açığı, bütçe kullanımı ve deneme hakkı. */
 export function summaryTiles(plan: PlanDoc): SummaryTile[] {
   const { cashKurus, monthlyBurnKurus, budgetKurus, retriesPerDecision } = plan.limits
 
   const runway: SummaryTile = cashKurus && monthlyBurnKurus
-    ? { key: 'pist', title: 'Pist', value: `${Math.floor(cashKurus / monthlyBurnKurus)} ay`, note: `Elinizde ${formatMoney(cashKurus)} var. Aylık gider ${formatMoney(monthlyBurnKurus)}.`, numeric: true }
-    : { key: 'pist', title: 'Pist', value: 'Hesaplanmadı', note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
+    ? { key: 'pist', title: 'Kasa süresi', value: `${Math.floor(cashKurus / monthlyBurnKurus)} ay`, note: `Elinizde ${formatMoney(cashKurus)} var. Aylık gider ${formatMoney(monthlyBurnKurus)}.`, numeric: true }
+    : { key: 'pist', title: 'Kasa süresi', value: 'Hesaplanmadı', note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
 
   const days = rows(plan, '16', 'paymentDays').filter((r) => num(r.balanceAfterKurus) !== null)
   let gap: SummaryTile
@@ -199,7 +199,7 @@ const MEASURE_KEYS: [string, string][] = [['07', 'repeatMeasure'], ['07', 'effor
 const clampPct = (x: number): number => Math.max(0, Math.min(100, Math.round(x)))
 
 /**
- * Dört istatistik kartı: pist (12 aya oranı), bütçe kullanımı, ölçülen ölçüt yüzdesi ve deneme hakkı.
+ * Dört istatistik kartı: kasa süresi (12 aya oranı), bütçe kullanımı, ölçülen ölçüt yüzdesi ve deneme hakkı.
  * Her kartın altında yüzde çizgisi vardır. Hesaplanamayan değerde çizgi çizilmez.
  */
 export function statCards(plan: PlanDoc): StatCard[] {
@@ -207,8 +207,8 @@ export function statCards(plan: PlanDoc): StatCard[] {
 
   const months = cashKurus && monthlyBurnKurus ? Math.floor(cashKurus / monthlyBurnKurus) : null
   const runway: StatCard = months !== null
-    ? { key: 'pist', title: 'Pist', value: String(months), suffix: 'ay', percent: clampPct((months / 12) * 100), note: `12 ayın yüzde ${clampPct((months / 12) * 100)}’i. Elinizde ${formatMoney(cashKurus!)} var.`, numeric: true }
-    : { key: 'pist', title: 'Pist', value: 'Hesaplanmadı', percent: null, note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
+    ? { key: 'pist', title: 'Kasa süresi', value: String(months), suffix: 'ay', percent: clampPct((months / 12) * 100), note: `12 ayın yüzde ${clampPct((months / 12) * 100)}’i. Elinizde ${formatMoney(cashKurus!)} var.`, numeric: true }
+    : { key: 'pist', title: 'Kasa süresi', value: 'Hesaplanmadı', percent: null, note: 'Adım 02’de elinizdeki parayı ve aylık gideri yazın.', numeric: false }
 
   const spent = rows(plan, '24', 'results').reduce((s, r) => s + (num(r.costKurus) ?? 0), 0)
   let budget: StatCard
@@ -497,8 +497,8 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
 function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
   const s = styles(c)
   const decisions = [...plan.decisions].sort((a, b) => a.decidedAt.localeCompare(b.decidedAt))
-  const base = { id: 'kapilar', title: 'Karar zaman çizgisi', source: 'Noktalar kayıtlı kapı kararlarından gelir. Renk karar sonucunu gösterir.' }
-  if (decisions.length === 0) return { ...base, empty: true, hint: 'Bir kararın kapı ekranında kararı kaydedin.', link: { label: 'Kapı 1’e gidin', to: '/karar/1/kapi' } }
+  const base = { id: 'kapilar', title: 'Karar zaman çizgisi', source: 'Noktalar kayıtlı kontrol kararlarından gelir. Renk karar sonucunu gösterir.' }
+  if (decisions.length === 0) return { ...base, empty: true, hint: 'Bir kararın kontrol ekranında kararı kaydedin.', link: { label: 'Kontrol 1’e gidin', to: '/karar/1/kapi' } }
   const points = decisions.map((d, i) => {
     const o = effectiveOutcome(d)
     return { i, gate: d.gate, outcome: o, label: OUTCOME_LABEL[o], date: formatDate(d.decidedAt, false), by: d.decidedBy, color: c.outcome(o) }
@@ -507,9 +507,9 @@ function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
   return {
     ...base,
     empty: false,
-    summary: `${points.length} kapı kararı var. Son karar Kapı ${last.gate}: ${last.label}, ${last.date}.`,
+    summary: `${points.length} kontrol kararı var. Son karar Kontrol ${last.gate}: ${last.label}, ${last.date}.`,
     option: whenNarrow({
-      tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { dataIndex: number }) => { const x = points[p.dataIndex]; return `Kapı ${x.gate}: ${x.label}<br/>${x.date}<br/>${x.by}` } },
+      tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { dataIndex: number }) => { const x = points[p.dataIndex]; return `Kontrol ${x.gate}: ${x.label}<br/>${x.date}<br/>${x.by}` } },
       grid: { ...GRID, top: 16, right: 64 },
       xAxis: { type: 'category', data: points.map((p) => p.date), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } },
       yAxis: { type: 'category', data: DECISIONS.map((d) => d.title), inverse: true, ...s.categoryAxis, splitLine: { show: true, lineStyle: { color: s.grid, width: 1 } }, axisLabel: { ...s.categoryAxis.axisLabel, width: 140, overflow: 'truncate' } },
@@ -531,14 +531,14 @@ function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
       yAxis: { axisLabel: { width: 140, formatter: '{value}' } },
       series: [{ label: { show: true } }],
     }),
-    table: { head: ['Kapı', 'Sonuç', 'Tarih', 'Karar veren'], rows: points.map((p) => [`Kapı ${p.gate}`, p.label, p.date, p.by]) },
+    table: { head: ['Kontrol', 'Sonuç', 'Tarih', 'Karar veren'], rows: points.map((p) => [`Kontrol ${p.gate}`, p.label, p.date, p.by]) },
   }
 }
 
 function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
   const s = styles(c)
   const r = rows(plan, '06', 'interviews')
-  const base = { id: 'gorusmeler', title: 'Görüşmelerde tanıma ve çaba', source: 'Sayılar Adım 06 görüşmelerinden gelir. Hedefler Kapı 2 ölçütlerinden gelir.' }
+  const base = { id: 'gorusmeler', title: 'Görüşmelerde tanıma ve çaba', source: 'Sayılar Adım 06 görüşmelerinden gelir. Hedefler Kontrol 2 ölçütlerinden gelir.' }
   if (r.length === 0) return { ...base, empty: true, hint: 'Adım 06’da görüşmeleri yazın.', link: stepLink('06') }
   const t = plan.profile.customer
   const target = t === 'tuketici' ? [15, 9, 5] : t === 'kamu' ? [6, 4, 2] : [10, 6, 3]
@@ -548,7 +548,7 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
   return {
     ...base,
     empty: false,
-    summary: ok ? 'Üç sayı da Kapı 2 hedefini karşılıyor.' : `${labels.filter((_l, i) => actual[i] < target[i]).join(' ve ')} hedefin altında.`,
+    summary: ok ? 'Üç sayı da Kontrol 2 hedefini karşılıyor.' : `${labels.filter((_l, i) => actual[i] < target[i]).join(' ve ')} hedefin altında.`,
     option: whenNarrow({
       tooltip: s.tooltip,
       legend: s.legend,

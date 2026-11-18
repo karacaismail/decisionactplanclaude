@@ -112,7 +112,7 @@ test('kısa yolda Adım 17 görünür ve üç bölüm taşır', async ({ page })
   await designRules(page, 'main', 'kısa yol Adım 17')
 })
 
-test('devir raporu belirsizlik seviyesini, en kötü durumu ve etkileyen kişileri gösterir', async ({ page }) => {
+test('teslim raporu belirsizlik seviyesini, en kötü durumu ve etkileyen kişileri gösterir', async ({ page }) => {
   await openDemo(page)
   const before = await stored(page, 'plan.revision')
   await page.goto('/#/devir')
@@ -138,7 +138,7 @@ test('seviyesi seçilmemiş belirsizlik "Seçilmedi" diye görünür', async ({ 
   await expect(page.locator('.devir-uncertainties li').nth(0)).toContainText('Seçilmedi')
 })
 
-test('devir raporu atlanan ve kısa yolda gizlenen adımı bakılmayan alan diye gösterir', async ({ page }) => {
+test('teslim raporu atlanan ve kısa yolda gizlenen adımı bakılmayan alan diye gösterir', async ({ page }) => {
   await openDemo(page)
   await patchPlan(page, `plan.steps['04'] = { values: {}, status: 'atlandi', skipReason: 'Sektörü iyi tanıyorum.', updatedAt: '' }`)
   await page.goto('/#/devir')

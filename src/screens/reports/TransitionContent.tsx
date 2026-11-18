@@ -38,9 +38,9 @@ const dotClass = (t: TransitionRecord) => (t.stale || expired(t) ? 'is-hold' : t
 const evidenceCount = (plan: PlanDoc, step: string) => plan.evidence.filter((e) => e.linkedSteps.includes(step)).length
 
 /**
- * Geçiş kapısı. Yazılım zorunlu ve destekleyici ölçütlere bakar, öneri üretir. Ölçüt sayıları motordan gelir.
- * Karar sahibi strateje devir raporunu okur ve kararı sağdaki panelden kaydeder.
- * Üstteki "Devir raporu" kartı raporun kaç başlığının dolu olduğunu gösterir. Sayı rapor ekranıyla aynıdır.
+ * Hazırlık kontrolü. Yazılım zorunlu ve destekleyici ölçütlere bakar, öneri üretir. Ölçüt sayıları motordan gelir.
+ * Karar sahibi strateje teslim raporunu okur ve kararı sağdaki panelden kaydeder.
+ * Üstteki "Teslim raporu" kartı raporun kaç başlığının dolu olduğunu gösterir. Sayı rapor ekranıyla aynıdır.
  */
 export function TransitionScreen() {
   const plan = useCurrentPlan()
@@ -132,7 +132,7 @@ export function TransitionScreen() {
       <div className="tl-notes">
         <span>Karar sahibi: {t.decidedBy}</span>
         {t.secondOpinion ? <span>İkinci okur: {t.secondOpinion}</span> : null}
-        <span className="tabular">Zorunlu ölçüt {t.mandatoryMet} / {t.mandatoryTotal}. Destekleyici ölçüt {t.supportingMet} / {t.supportingTotal}. Seviye {t.level} / 5.</span>
+        <span className="tabular">Zorunlu ölçüt {t.mandatoryMet} / {t.mandatoryTotal}. Destekleyici ölçüt {t.supportingMet} / {t.supportingTotal}. Kanıt düzeyi {t.level} / 5.</span>
         {t.suggested !== t.outcome ? <span>Yazılımın önerisi "{TRANSITION_LABEL[t.suggested]}" idi.</span> : null}
         {t.conditional ? (
           <>
@@ -150,9 +150,9 @@ export function TransitionScreen() {
     <div className="page mobil-kapi-page gecis-page">
       <PageHeader
         newPath="/gecis"
-        kicker="Geçiş kapısı"
+        kicker="Hazırlık kontrolü"
         title="Stratejik planlamaya hazır mısınız?"
-        documentTitle="Geçiş kapısı"
+        documentTitle="Hazırlık kontrolü"
         description="Yazılım öneri üretir. Kararı siz verir ve kaydedersiniz."
       />
 
@@ -168,13 +168,13 @@ export function TransitionScreen() {
           <span className="stat-note">En az {SUPPORTING_MIN} ölçüt gerekir.</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
-          <Statistic title="Doğrulama seviyesi" value={evaluation.level} suffix="/ 5" />
-          <Progress percent={evaluation.level * 20} showInfo={false} size="small" aria-label={`Doğrulama seviyesi 5 üzerinden ${evaluation.level}`} />
+          <Statistic title="Kanıt düzeyi" value={evaluation.level} suffix="/ 5" />
+          <Progress percent={evaluation.level * 20} showInfo={false} size="small" aria-label={`Kanıt düzeyi 5 üzerinden ${evaluation.level}`} />
           <span className="stat-note">{level.title}</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
-          <Statistic title="Devir raporu" value={report.coverageFilled} suffix={`/ ${coverageTotal}`} />
-          <Progress percent={coveragePercent} showInfo={false} size="small" aria-label={`Devir raporunun ${coverageTotal} başlığından ${report.coverageFilled} tanesi dolu`} />
+          <Statistic title="Teslim raporu" value={report.coverageFilled} suffix={`/ ${coverageTotal}`} />
+          <Progress percent={coveragePercent} showInfo={false} size="small" aria-label={`Teslim raporunun ${coverageTotal} başlığından ${report.coverageFilled} tanesi dolu`} />
           <span className="stat-note">
             <span className="tabular">{report.coverageFilled} / {coverageTotal} başlık dolu.</span> <Link className="kapi-action-link" tabIndex={0} to="/devir">Raporu aç</Link>
           </span>
@@ -188,7 +188,7 @@ export function TransitionScreen() {
         </Card>
       </div>
 
-      <Card className="k-card" variant="borderless" title="Doğrulama seviyesi" extra={<span>Seviye {evaluation.level} / 5. {level.title}.</span>}>
+      <Card className="k-card" variant="borderless" title="Kanıt düzeyi" extra={<span>Düzey {evaluation.level} / 5. {level.title}.</span>}>
         <Steps
           className="k-steps"
           size="small"
@@ -239,7 +239,7 @@ export function TransitionScreen() {
       </div>
 
       {history.length > 0 ? (
-        <Card className="k-card" variant="borderless" title="Önceki geçiş kararları" extra={<span>{history.length} kayıt. Son kayıt geçerlidir.</span>}>
+        <Card className="k-card" variant="borderless" title="Önceki hazırlık kararları" extra={<span>{history.length} kayıt. Son kayıt geçerlidir.</span>}>
           <Timeline
             className="k-timeline gecis-timeline"
             items={history.map((t) => ({ key: t.id, icon: <span className={`tl-dot ${dotClass(t)}`.trim()}><Flag size={16} weight="fill" aria-hidden /></span>, content: historyItem(t) }))}

@@ -266,7 +266,7 @@ export const KARAR6: StepDef[] = [
     mandatory: true,
     who: 'Kurucu.',
     timebox: 'Her kanal için 2 hafta.',
-    /* Kapı bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
+    /* Kontrol bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
     shortPath: true,
     howTo: [
       'Profilinize göre 2 veya 3 kanal seçin.',
@@ -347,17 +347,17 @@ export const KARAR6: StepDef[] = [
   {
     id: '25',
     decision: 6,
-    title: 'İlk ürün kapısı',
+    title: 'İlk ürün kontrolü',
     question: 'Eşikler geçildi mi? Devam, yön değiştir, yeniden dene veya durdur?',
     mandatory: true,
     who: 'Karar sahibi.',
     timebox: '1 gün.',
     shortPath: true,
-    intro: 'Bu adım Kapı 6\'nın kendisidir. Kapı 6 en çok 3 döngü tekrar eder. Üçüncü döngüde ilerleme yoksa durdurma kuralı işler.',
+    intro: 'Bu adım Kontrol 6\'nın kendisidir. Kontrol 6 en çok 3 döngü tekrar eder. Üçüncü döngüde ilerleme yoksa durdurma kuralı işler.',
     howTo: [
       'Adım 22\'de yazdığınız üç eşiği açın. Gerçekleşen sayıları yanına yazın.',
       'Dördüncü ölçüt faydadır. Kullanıcıların kaçı işi yardımsız bitirdi, yazın.',
-      'Umut kontrolü yapın. Denenecek yeni fikir var mı? Pist devam ediyor mu? Biri "hayır" ise durdurun.',
+      'Umut kontrolü yapın. Denenecek yeni fikir var mı? Kasa süresi yetiyor mu? Biri "hayır" ise durdurun.',
       'Gözlenen durumu seçin. Yön değiştirme tablosu dönülecek adımı gösterir.',
       'Kararı karar günlüğüne yazın.',
     ],
@@ -384,8 +384,8 @@ export const KARAR6: StepDef[] = [
         title: 'Umut kontrolü',
         fields: [
           { key: 'hasIdeas', type: 'toggle', label: 'Denenecek yeni fikir var mı?', onLabel: 'Evet', offLabel: 'Hayır', span: 12 },
-          { key: 'runwayOk', type: 'toggle', label: 'Pist devam ediyor mu?', help: 'Pist, elinizdeki paranın kaç ay dayandığıdır.', onLabel: 'Evet', offLabel: 'Hayır', span: 12 },
-          { key: 'hopeNote', type: 'info', label: 'Durdur', tone: 'uyari', text: 'Yeni fikir yok veya pist bitti. Durdurma kuralı işler. Öğrenimleri yazın.', when: { any: [{ field: { key: 'hasIdeas', truthy: false } }, { field: { key: 'runwayOk', truthy: false } }] } },
+          { key: 'runwayOk', type: 'toggle', label: 'Kasa süresi yetiyor mu?', help: 'Kasa süresi, elinizdeki paranın kaç ay dayandığıdır.', onLabel: 'Evet', offLabel: 'Hayır', span: 12 },
+          { key: 'hopeNote', type: 'info', label: 'Durdur', tone: 'uyari', text: 'Yeni fikir yok veya kasa süresi bitti. Durdurma kuralı işler. Öğrenimleri yazın.', when: { any: [{ field: { key: 'hasIdeas', truthy: false } }, { field: { key: 'runwayOk', truthy: false } }] } },
         ],
       },
       {

@@ -38,10 +38,10 @@ function filled(v: unknown): boolean {
 }
 
 /**
- * Adım değişince eskiyen ilk kapı. Profil ve sınırlar 1. karara bağlıdır.
+ * Adım değişince eskiyen ilk kontrol. Profil ve sınırlar 1. karara bağlıdır.
  * Strateji oluşturmanın adımları süreçte Karar 6'dan önce gelir.
- * Bu adımlar değişince Kapı 6, 7 ve 8'in kararları eskir. Geçiş kararı eskimez.
- * Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kapı okumaz. Bu adımlar değişince hiçbir karar eskimez: null döner.
+ * Bu adımlar değişince Kontrol 6, 7 ve 8'in kararları eskir. Hazırlık kararı eskimez.
+ * Uygulama planı adımlarını (3.1, 3.2 ve 3.3) hiçbir kontrol okumaz. Bu adımlar değişince hiçbir karar eskimez: null döner.
  */
 export function gateOfStep(step: string): number | null {
   if (PLAN_STEPS.includes(step)) return null
@@ -49,7 +49,7 @@ export function gateOfStep(step: string): number | null {
   return n === STRATEGY_N ? EXECUTION_DECISIONS[0] : n
 }
 
-/** Adımın kapısından başlayarak kararları eskitir. Hiçbir kapının okumadığı adımda bir şey yapmaz. */
+/** Adımın kontrolünden başlayarak kararları eskitir. Hiçbir kontrolün okumadığı adımda bir şey yapmaz. */
 function markStaleForStep(plan: PlanDoc, step: string): number {
   const gate = gateOfStep(step)
   return gate === null ? 0 : markStale(plan, gate)
@@ -68,7 +68,7 @@ export function isIncrease(key: string, before: unknown, after: unknown): boolea
 
 const LAST_FOUNDATION = FOUNDATION_DECISIONS[FOUNDATION_DECISIONS.length - 1]
 
-/** Geçiş kapısının son kararını eskitir. Eskittiyse 1 döndürür. */
+/** Hazırlık kontrolünün son kararını eskitir. Eskittiyse 1 döndürür. */
 function staleTransition(plan: PlanDoc): number {
   const t = plan.transitions?.[plan.transitions.length - 1]
   if (!t || t.stale) return 0
@@ -77,17 +77,17 @@ function staleTransition(plan: PlanDoc): number {
 }
 
 /**
- * Bir temel kapısı yeniden karara bağlandı. Ondan sonraki her şey eskir.
- * Sonraki kapıların kararları eskir. Kapı temel aşamasındaysa geçiş kararı da eskir.
+ * Bir temel kontrolü yeniden karara bağlandı. Ondan sonraki her şey eskir.
+ * Sonraki kontrollerin kararları eskir. Kontrol temel aşamasındaysa hazırlık kararı da eskir.
  */
 export function markStaleAfterGate(plan: PlanDoc, gate: number): number {
   const transition = gate <= LAST_FOUNDATION ? staleTransition(plan) : 0
   return transition + markStale(plan, gate + 1)
 }
 
-/** Verilen kapıya eşit ya da sonraki kapıların son kararları eskir. Eskiyen karar sayısını döndürür. */
+/** Verilen kontrole eşit ya da sonraki kontrollerin son kararları eskir. Eskiyen karar sayısını döndürür. */
 export function markStale(plan: PlanDoc, fromGate: number): number {
-  // Temel aşaması (Karar 1-5) değişince geçiş kapısının son kararı da eskir.
+  // Temel aşaması (Karar 1-5) değişince hazırlık kontrolünün son kararı da eskir.
   let count = fromGate <= LAST_FOUNDATION ? staleTransition(plan) : 0
   const seen = new Set<number>()
   for (let i = plan.decisions.length - 1; i >= 0; i--) {

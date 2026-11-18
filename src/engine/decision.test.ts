@@ -4,7 +4,7 @@ import { emptyPlan, type Decision, type PlanDoc } from '@/data/types'
 import { evaluateGate, remainingBudgetKurus, validateDecision, type DecisionDraft } from './gate'
 
 function gate(n: number, checks: (boolean | null)[]): GateDef {
-  return { n, title: 'Deneme kapısı', maxRetries: 2, rows: [], criteria: checks.map((v, i) => ({ id: `c${i}`, label: `Ölçüt ${i}`, check: () => v })) }
+  return { n, title: 'Deneme kontrolü', maxRetries: 2, rows: [], criteria: checks.map((v, i) => ({ id: `c${i}`, label: `Ölçüt ${i}`, check: () => v })) }
 }
 
 function decision(patch: Partial<Decision>): Decision {
@@ -86,7 +86,7 @@ describe('validateDecision', () => {
     expect(errors.join(' ')).toContain('planın bitiş tarihini geçemez')
   })
 
-  it('aynı kapıda ikinci koşullu izin verilmez', () => {
+  it('aynı kontrolde ikinci koşullu izin verilmez', () => {
     const p = plan()
     p.decisions = [decision({ id: 'a', gate: 1, chosen: 'kosulluIlerle', conditional: { ...permit, amountKurus: 1000, issuedAt: '' } })]
     const def = gate(1, [true])
@@ -94,11 +94,11 @@ describe('validateDecision', () => {
     expect(errors.join(' ')).toContain('daha önce kullanıldı')
   })
 
-  it('önceki kapı geçilmemişse ilerleme yok', () => {
+  it('önceki kontrol geçilmemişse ilerleme yok', () => {
     const p = plan()
     const def = gate(2, [true])
     const ev = evaluateGate(def, p)
-    expect(validateDecision(def, p, ev, draft({}))[0]).toBe('Kapı 1 henüz geçilmedi. Önce önceki kapıyı kapatın.')
+    expect(validateDecision(def, p, ev, draft({}))[0]).toBe('Kontrol 1 henüz geçilmedi. Önce önceki kontrolü kapatın.')
     expect(validateDecision(def, p, ev, draft({ chosen: 'beklet' }))).toEqual([])
     p.decisions = [decision({ id: 'a', gate: 1, stale: true })]
     expect(validateDecision(def, p, ev, draft({}))).toHaveLength(1)

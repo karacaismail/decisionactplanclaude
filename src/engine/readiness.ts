@@ -40,7 +40,7 @@ const v = (p: PlanDoc, step: string, key: string): unknown => p.steps[step]?.val
 const rows = (p: PlanDoc, step: string, key: string): Record<string, unknown>[] => (v(p, step, key) as Record<string, unknown>[]) ?? []
 const filled = (x: unknown): boolean => (typeof x === 'string' ? x.trim().length > 0 : Array.isArray(x) ? x.length > 0 : x !== null && x !== undefined && x !== false)
 
-/** Bir kapı ölçütünün sonucu. Ölçüt yoksa null. */
+/** Bir kontrol ölçütünün sonucu. Ölçüt yoksa null. */
 function crit(plan: PlanDoc, gate: number, id: string): boolean | null {
   const def = DECISIONS.find((d) => d.n === gate)?.gate.criteria.find((c) => c.id === id)
   return def ? def.check(plan) : null
@@ -95,7 +95,7 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
       step: refutedOpen.length > 0 ? '10' : '17',
       hint: 'Her kritik risk için "şu olursa şunu yaparım" cümlesi ve en az üç varsayım gerekir. Etkisi yüksek bir varsayım çürüdüyse ne değiştirdiğinizi sonuç notuna yazın.',
     },
-    { id: 'Z9', label: 'İlk beş kapının kararı geçerli. Zarar ya da izin engeli yok.', met: plan.decisions.length === 0 ? null : gatesOk, step: '17', hint: 'Her kapının son kararı "İlerle" ya da süresi dolmamış "Koşullu ilerle" olmalı.' },
+    { id: 'Z9', label: 'İlk beş kontrolün kararı geçerli. Zarar ya da izin engeli yok.', met: plan.decisions.length === 0 ? null : gatesOk, step: '17', hint: 'Her kontrolün son kararı "İlerle" ya da süresi dolmamış "Koşullu ilerle" olmalı.' },
   ]
 
   const price = Number(v(plan, '15', 'priceOfferedKurus') ?? 0)
@@ -137,14 +137,14 @@ export function evaluateReadiness(plan: PlanDoc, opts: { secondReader?: string }
 
 export const LEVELS = [
   { level: 0, title: 'Fikir', description: 'Henüz kanıt yok.' },
-  { level: 1, title: 'Sınır konuldu', description: 'Kapı 1 geçildi.' },
-  { level: 2, title: 'Sorun doğrulandı', description: 'Kapı 2 geçildi.' },
-  { level: 3, title: 'Yol seçildi', description: 'Kapı 3 geçildi.' },
-  { level: 4, title: 'Talep doğrulandı', description: 'Kapı 4 geçildi.' },
-  { level: 5, title: 'Hesap tutuyor', description: 'Kapı 5 geçildi. Para, risk ve yol adayları tamam.' },
+  { level: 1, title: 'Sınır konuldu', description: 'Kontrol 1 geçildi.' },
+  { level: 2, title: 'Sorun doğrulandı', description: 'Kontrol 2 geçildi.' },
+  { level: 3, title: 'Yol seçildi', description: 'Kontrol 3 geçildi.' },
+  { level: 4, title: 'Talep doğrulandı', description: 'Kontrol 4 geçildi.' },
+  { level: 5, title: 'Hesap tutarlı', description: 'Kontrol 5 geçildi. Para, risk ve yol adayları tamam.' },
 ] as const
 
-/** Doğrulama seviyesi 0 ile 5 arasıdır. Kapılar sırayla geçilmelidir. */
+/** Kanıt düzeyi 0 ile 5 arasıdır. Kontroller sırayla geçilmelidir. */
 export function validationLevel(plan: PlanDoc): number {
   let level = 0
   for (const n of [1, 2, 3, 4, 5]) {
@@ -171,7 +171,7 @@ export function validateTransition(plan: PlanDoc, evaluation: ReadinessEvaluatio
   const errors: string[] = []
   if (!draft.reason.trim()) errors.push('Gerekçeyi yazın.')
   if (!draft.decidedBy.trim()) errors.push('Karar sahibini yazın.')
-  if (!draft.reviewed) errors.push('"Strateje devir raporunu okudum" kutusunu işaretleyin.')
+  if (!draft.reviewed) errors.push('"Strateje teslim raporunu okudum" kutusunu işaretleyin.')
   if (evaluation.suggested === 'degil' && draft.outcome !== 'degil') errors.push('Zorunlu ölçüt eksikken yalnız "Henüz hazır değil" kaydedilir.')
   if (evaluation.suggested === 'kosullu' && draft.outcome === 'hazir') {
     if (!draft.secondOpinion?.trim()) errors.push('Öneriyi aşmak için ikinci görüş sahibini yazın.')

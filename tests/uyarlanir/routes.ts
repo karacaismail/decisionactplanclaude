@@ -33,7 +33,7 @@ if (steps.size !== STEP_LIST.length) throw new Error('Adım kimliği tekrarlanı
 const declaredSteps = new Set<string>()
 for (const decision of decisions.values()) {
   if (!Number.isInteger(decision.n) || decision.n < 1 || decision.gate.n !== decision.n) {
-    throw new Error(`Karar ve kapı numaraları geçersiz: ${decision.n}`)
+    throw new Error(`Karar ve kontrol numaraları geçersiz: ${decision.n}`)
   }
   for (const id of decision.steps) {
     if (declaredSteps.has(id) || steps.get(id)?.decision !== decision.n) {
@@ -215,10 +215,10 @@ const screenHeadings = new Map<string, string>(Object.entries({
   HistoryScreen: 'Geçmiş',
   InsightsScreen: 'Göstergeler',
   TakeoverScreen: 'Devralma girişi',
-  HandoffScreen: 'Strateje devir raporu',
+  HandoffScreen: 'Strateje teslim raporu',
   OutputsScreen: 'Çıktılar',
   MethodsScreen: 'Karar Kitabı',
-  FoundationScreen: 'Strateji öncesi 20 temel taşı',
+  FoundationScreen: 'Strateji öncesi 20 temel soru',
   AssumptionsScreen: 'Varsayımlar',
   TransitionScreen: 'Stratejik planlamaya hazır mısınız?',
   StrategyScreen: STRATEGY.question,
@@ -241,7 +241,7 @@ export function expectedHeading(route: AuditRoute): string {
     const gate = target.screen === 'ReviewScreen'
     const decision = DECISIONS.find((entry) => target.path === `/karar/${entry.n}${gate ? '/kapi' : ''}`)
     if (!decision) throw new Error(`Başlık için geçerli karar bulunamadı: ${target.path}`)
-    return gate ? `Kapı ${decision.n}. ${decision.gate.title}` : decision.question
+    return gate ? `Kontrol ${decision.n}. ${decision.gate.title}` : decision.question
   }
   const heading = screenHeadings.get(target.screen)
   if (!heading) throw new Error(`Ekranın beklenen başlığı tanımlı değil: ${target.screen}`)

@@ -26,11 +26,11 @@ import { PathCompare } from '@/components/PathCompare'
 const OUTCOME_COLOR: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
 
 /**
- * Strateji oluşturma. İkinci ana kümedir. Beş zorunlu alt aşaması ve bir çıkış kapısı vardır.
+ * Strateji oluşturma. İkinci ana kümedir. Beş zorunlu alt aşaması ve bir çıkış kontrolü vardır.
  * Alt aşamalar `clusters.ts` dosyasından, adımlar `stepsOf` ile veriden gelir.
- * Küme, geçiş kapısı kararı olmadan kilitlidir.
- * Ekran stratej'in okuma sırasıyla dizilir: önündeki karar, ilk günü, yol adayları, alt aşamalar, çıkış kapısı.
- * Telefonda tek sütundur ve geçiş kararı en üsttedir. Masaüstünde geçiş kararı sağ sütundadır.
+ * Küme, hazırlık kontrolü kararı olmadan kilitlidir.
+ * Ekran stratej'in okuma sırasıyla dizilir: önündeki karar, ilk günü, yol adayları, alt aşamalar, çıkış kontrolü.
+ * Telefonda tek sütundur ve hazırlık kararı en üsttedir. Masaüstünde hazırlık kararı sağ sütundadır.
  * Ekranda en çok bir dolu düğme vardır: sıradaki adımı açar. Kilitliyken dolu düğme yoktur.
  * Yazılım yol seçmez. Yol adayları tablosu hiçbir yolu öne çıkarmaz.
  */
@@ -59,7 +59,7 @@ export function StrategyScreen() {
 
   const action = locked ? (
     <Button icon={<ArrowLeft size={16} />} onClick={() => nav('/gecis')}>
-      Geçiş kapısına git
+      Hazırlık kontrolüne git
     </Button>
   ) : next ? (
     <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" onClick={() => nav(stepPath(next.id))}>
@@ -73,7 +73,7 @@ export function StrategyScreen() {
 
       {locked ? (
         <Callout tone="uyari" title="Strateji oluşturma kilitli">
-          {reason} Adımları inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında karar kaydedin.
+          {reason} Adımları inceleyebilirsiniz. Adımları doldurmak için önce hazırlık kontrolünde karar kaydedin.
         </Callout>
       ) : null}
 
@@ -89,8 +89,8 @@ export function StrategyScreen() {
       ) : null}
 
       <div className="strateji-grid">
-        <aside className="strateji-aside" aria-label="Geçiş kararı">
-          <Card title="Geçiş kararı" extra={<Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını aç</Link>}>
+        <aside className="strateji-aside" aria-label="Hazırlık kararı">
+          <Card title="Hazırlık kararı" extra={<Link className="kapi-action-link" tabIndex={0} to="/gecis">Hazırlık kontrolünü aç</Link>}>
             {last ? (
               <>
                 <div className="strateji-outcome">
@@ -99,7 +99,7 @@ export function StrategyScreen() {
                 </div>
                 {last.stale ? (
                   <Callout tone="uyari" title="Karar eskidi">
-                    Karardan sonra dayanak değişti. Geçiş kapısında yeniden karar kaydedin.
+                    Karardan sonra dayanak değişti. Hazırlık kontrolünde yeniden karar kaydedin.
                   </Callout>
                 ) : null}
                 {expired ? (
@@ -128,7 +128,7 @@ export function StrategyScreen() {
                 />
               </>
             ) : (
-              <p className="strateji-empty">Geçiş kararı henüz kaydedilmedi. Karar, geçiş kapısında kaydedilir.</p>
+              <p className="strateji-empty">Hazırlık kararı henüz kaydedilmedi. Karar, hazırlık kontrolünde kaydedilir.</p>
             )}
           </Card>
         </aside>
@@ -151,10 +151,10 @@ export function StrategyScreen() {
             </Card>
           ) : null}
 
-          <Card title="Masadaki karar" extra={<Link className="kapi-action-link" tabIndex={0} to="/devir">Devir raporunu aç</Link>}>
+          <Card title="Masadaki karar" extra={<Link className="kapi-action-link" tabIndex={0} to="/devir">Teslim raporunu aç</Link>}>
             <p className="strateji-question">{report.question}</p>
             {report.scope ? <p className="strateji-scope">Kapsam sınırı: ekip yalnız şu konuyu planlar. {report.scope}</p> : null}
-            <p className="helper">Stratej yolu önerir. Karar sahibi seçer. Dayanaklar, sınırlar ve eksik bilgi devir raporundadır.</p>
+            <p className="helper">Stratej yolu önerir. Karar sahibi seçer. Dayanaklar, sınırlar ve eksik bilgi teslim raporundadır.</p>
           </Card>
 
           <Card title="Stratej'in ilk günü" extra={<span>{report.firstDay.length} adım</span>}>
@@ -174,7 +174,7 @@ export function StrategyScreen() {
             <SubStageList plan={plan} items={cluster.subStages} locked={locked} />
           </Card>
 
-          <Card title={<h2 className="card-heading">Çıkış kapısı</h2>} extra={<Tag color={dossierDone && !reopened ? 'success' : undefined}>{SUB_STAGE_LABEL[dossierDone && !reopened ? 'tamam' : plan.steps[DOSSIER_STEP] ? 'suruyor' : 'bos']}</Tag>}>
+          <Card title={<h2 className="card-heading">Çıkış kontrolü</h2>} extra={<Tag color={dossierDone && !reopened ? 'success' : undefined}>{SUB_STAGE_LABEL[dossierDone && !reopened ? 'tamam' : plan.steps[DOSSIER_STEP] ? 'suruyor' : 'bos']}</Tag>}>
             <p className="helper">{cluster.exit} Strateji uygulama bu altı koşul dolunca açılır.</p>
             <ul className="criteria-list">
               {criteria.map((c) => (

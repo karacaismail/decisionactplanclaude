@@ -163,7 +163,7 @@ export const KARAR7: StepDef[] = [
     ],
     output: 'Anket veya oran sonucu. Kohort tablosu. Uyum işareti var veya yok.',
     outcomeTable: [
-      { condition: 'Uyum işareti var', result: 'Adım 30\'a geçin. Karar 7 sonunda Kapı 7\'ye gidin.' },
+      { condition: 'Uyum işareti var', result: 'Adım 30\'a geçin. Karar 7 sonunda Kontrol 7\'ye gidin.' },
       { condition: 'Uyum işareti yok ve geri dönüş sıfıra iniyor', result: 'Adım 26\'ya dönün. Değer önerisini yeniden test edin.' },
       { condition: 'Uyum bir alt grupta var', result: 'O alt gruba daralın. Adım 08\'i güncelleyin.' },
       { condition: '12 ay geçti ve işaret yok', result: 'Ciddi yön değişikliği veya durdurma. Karar günlüğüne yazın.' },
@@ -317,7 +317,7 @@ export const KARAR7: StepDef[] = [
     output: '3 kanal deney raporu. Seçilen kanal.',
     outcomeTable: [
       { condition: 'Bir kanal kazanma maliyetini düşürüyor', result: 'O kanala odaklanın. Diğer ikisini bırakın.' },
-      { condition: 'Hiçbir kanal maliyeti düşürmüyor', result: 'Kapı 7\'de "uyum var, kanal yok" satırı işler. 1 döngü daha deneyin.' },
+      { condition: 'Hiçbir kanal maliyeti düşürmüyor', result: 'Kontrol 7\'de "uyum var, kanal yok" satırı işler. 1 döngü daha deneyin.' },
     ],
     models: [38, 39],
     completeWhen: ['allChannels', 'trial', 'winner'],
@@ -331,7 +331,7 @@ export const KARAR7: StepDef[] = [
     whenNote: 'İlk düzenli satıştan önce yapılır. Dış para ise yatırımcı görüşmesinden önce yapılır. Hangisi önce gelirse o tarih geçerlidir. Yüksek düzenleme ise ilk satıştan önce zorunludur.',
     who: 'Kurucu. Muhasebeci ve avukatla.',
     timebox: '2 ile 6 hafta. İzinler daha uzun sürebilir.',
-    /* Kapı bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
+    /* Kontrol bu adımı okur. Bu yüzden adım kısa yolda da görünür. */
     shortPath: true,
     howTo: [
       'Muhasebeciyle görüşün. Kalıcı şirket türünü seçin.',
@@ -369,7 +369,7 @@ export const KARAR7: StepDef[] = [
     ],
     output: 'Şirket. Sözleşmeler. İzin başvuruları. Fatura ve tahsilat düzeni.',
     outcomeTable: [
-      { condition: 'Gerekli izin veya yetki eksik', result: 'Kapı 7 bekletir. İzne bağlı işi açmayın.' },
+      { condition: 'Gerekli izin veya yetki eksik', result: 'Kontrol 7 bekletir. İzne bağlı işi açmayın.' },
       { condition: 'Bir izin 6 aydan uzun sürüyor', result: 'Bekleme süresini Karar 8 planına ekleyin.' },
     ],
     models: [],
@@ -425,14 +425,14 @@ export const KARAR7: StepDef[] = [
           ] },
           { key: 'longestWait', type: 'text', label: 'En uzun bekleme nerede?', maxLength: 160 },
           { key: 'delayGrowing', type: 'toggle', label: 'Yeni sipariş geldikçe gecikme büyüyor mu?', onLabel: 'Evet, büyüyor', offLabel: 'Hayır' },
-          { key: 'delayNote', type: 'info', label: 'Darboğaz', tone: 'uyari', text: 'Gecikme büyüyor. Kapı 7 "yeniden dene" der. Önce darboğazı giderin.', when: { field: { key: 'delayGrowing', truthy: true } } },
+          { key: 'delayNote', type: 'info', label: 'Darboğaz', tone: 'uyari', text: 'Gecikme büyüyor. Kontrol 7 "yeniden dene" der. Önce darboğazı giderin.', when: { field: { key: 'delayGrowing', truthy: true } } },
           { key: 'supportOwner', type: 'text', label: 'Destek, arıza ve şikâyet sorumlusu', maxLength: 80 },
         ],
       },
     ],
     output: 'Sorun listesi. Sürüm planı.',
     outcomeTable: [
-      { condition: 'Yeni sipariş geldikçe gecikme büyüyor', result: 'Önce darboğazı giderin. Sonra Kapı 7\'ye gidin.' },
+      { condition: 'Yeni sipariş geldikçe gecikme büyüyor', result: 'Önce darboğazı giderin. Sonra Kontrol 7\'ye gidin.' },
       { condition: 'Kalite, çalışan yükü veya iade kötüleşiyor', result: 'Büyümeyi bekletin. Üçünü kasa ile birlikte izleyin.' },
     ],
     models: [122, 90, 71],

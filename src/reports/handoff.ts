@@ -1,5 +1,5 @@
 /**
- * Strateje devir raporu.
+ * Strateje teslim raporu.
  * Stratej, stratejiyi geliştiren kişinin unvanıdır. Bu rapor onun önüne konur.
  * Rapor seçim yapmaz. Stratej yolu önerir, karar sahibi seçer. Rapor soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir.
  * Eksik bilgi uydurulmaz. Kural docs/strateje-devir-uygulama-plani.md dosyasındadır.
@@ -168,7 +168,7 @@ export interface SixQuestion {
   step: string
 }
 
-export const HANDOFF_TITLE = 'Strateje devir raporu'
+export const HANDOFF_TITLE = 'Strateje teslim raporu'
 export const NO_PATHS = 'Yol adayı henüz yazılmadı.'
 export const FIRST_DAY = [
   'Raporu sorgulayın. Hangi cümle kaynaklı, hangisi hesap, hangisi varsayım?',
@@ -277,7 +277,7 @@ function decisionQuestion(paths: PathColumn[], open: OpenDecision[]): string {
   return `Şu yollardan hangisi: ${real.map((n) => `"${n}"`).join(', ')}?`
 }
 
-/** Küçük ve geri alınabilir işte iki yol, ağır yatırımda üç yol gerekir. Kapı 5 ile aynı kural. */
+/** Küçük ve geri alınabilir işte iki yol, ağır yatırımda üç yol gerekir. Kontrol 5 ile aynı kural. */
 const plan7Title = (p: PlanDoc): string => (p.profile.smallReversible ? 'Bugünkü durum ve en az iki yol adayı' : 'Bugünkü durum ve en az üç yol adayı')
 const grade = (parts: boolean[]): CoverageStatus => (parts.every(Boolean) ? 'dolu' : parts.some(Boolean) ? 'kismen' : 'bos')
 
@@ -349,7 +349,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   if (L.retriesPerDecision) limits.push({ label: 'Karar başına deneme hakkı', value: String(L.retriesPerDecision) })
   if (L.cashKurus) limits.push({ label: 'Kasadaki para', value: formatMoney(L.cashKurus) })
   if (L.monthlyBurnKurus) limits.push({ label: 'Aylık gider', value: formatMoney(L.monthlyBurnKurus) })
-  if (L.cashKurus && L.monthlyBurnKurus) limits.push({ label: 'Pist', value: `${Math.floor(L.cashKurus / L.monthlyBurnKurus)} ay` })
+  if (L.cashKurus && L.monthlyBurnKurus) limits.push({ label: 'Kasa süresi', value: `${Math.floor(L.cashKurus / L.monthlyBurnKurus)} ay` })
   const free = freeBudget(plan)
   if (free.state === 'hesap') limits.push({ label: 'Serbest bütçe', value: `${formatMoney(free.freeKurus)}. Harcanan ve ödenmemiş taahhüt düşüldü` })
   if (free.state === 'bilinmiyor') limits.push({ label: 'Serbest bütçe', value: 'Bilinmiyor. Ödenmemiş taahhüt bilinmiyor' })
@@ -425,7 +425,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
 
   const locked = DECISIONS.filter((d) => d.n <= 5 && gatePassed(plan, d.n)).map((d) => {
     const last = lastDecision(plan, d.n)!
-    return { text: `${d.gate.title} ${OUTCOME_LABEL[effectiveOutcome(last)]}. ${last.reason}`, source: `Kapı ${d.n}, ${formatDate(last.decidedAt)}` }
+    return { text: `${d.gate.title} ${OUTCOME_LABEL[effectiveOutcome(last)]}. ${last.reason}`, source: `Kontrol ${d.n}, ${formatDate(last.decidedAt)}` }
   })
 
   const t = lastTransition(plan)
@@ -455,7 +455,7 @@ export function buildHandoffReport(plan: PlanDoc, now: Date = new Date()): Hando
   return {
     title: HANDOFF_TITLE,
     stamp: foundation.stamp,
-    meta: [`Plan: ${plan.name}`, plan.profile.group ? 'Düzey: tek işin planı. İş bir gruba bağlı.' : 'Düzey: tek işin planı.', `Sürüm: ${plan.revision}`, `Doğrulama seviyesi: ${level} / 5. ${LEVELS[level].title}.`, `Oluşturma: ${formatDate(now.toISOString())}`],
+    meta: [`Plan: ${plan.name}`, plan.profile.group ? 'Düzey: tek işin planı. İş bir gruba bağlı.' : 'Düzey: tek işin planı.', `Sürüm: ${plan.revision}`, `Kanıt düzeyi: ${level} / 5. ${LEVELS[level].title}.`, `Oluşturma: ${formatDate(now.toISOString())}`],
     question: decisionQuestion(paths, openDecisions),
     crux,
     conditions,
@@ -511,7 +511,7 @@ export function handoffToMarkdown(r: HandoffReport): string {
     out.push('')
   }
   if (r.scope) out.push(`Kapsam sınırı: yalnız şu konu planlanır. ${r.scope}`, '')
-  if (r.transition) out.push(`Geçiş kararı: ${r.transition.label}. ${r.transition.reason} Karar sahibi ${r.transition.decidedBy}. ${r.transition.date}.${r.transition.stale ? ' Karar inceleme bekliyor.' : ''}`, '')
+  if (r.transition) out.push(`Hazırlık kararı: ${r.transition.label}. ${r.transition.reason} Karar sahibi ${r.transition.decidedBy}. ${r.transition.date}.${r.transition.stale ? ' Karar inceleme bekliyor.' : ''}`, '')
   if (r.locked.length) out.push('### Verilmiş kararlar', '', ...r.locked.map((l) => `- ${l.text} (${l.source})`), '')
   out.push('## 2. Dayanaklar', '')
   if (r.knowledge) out.push(r.knowledge.sentence, '')

@@ -56,7 +56,7 @@ export interface KnowledgeRatio {
 
 type Status = 'kaynakli' | 'hesap' | 'karar' | 'varsayim'
 
-/** Devir raporundaki cümlelerin kaçı varsayım, kaçı kaynaklı? Cümle yoksa null döner. */
+/** Teslim raporundaki cümlelerin kaçı varsayım, kaçı kaynaklı? Cümle yoksa null döner. */
 export function knowledgeRatio(groups: { claims: { status: Status }[] }[]): KnowledgeRatio | null {
   const all = groups.flatMap((g) => g.claims)
   if (all.length === 0) return null

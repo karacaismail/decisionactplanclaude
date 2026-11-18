@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test'
 /**
  * Strateji oluşturma ekranı (/strateji), Adım 19 kilidi, yol adayları tablosu ve öneriler.
  * Kabul ölçütleri docs/strateje-devir-uygulama-plani.md dosyasının 6. adımındadır.
- * Strateje devir raporu ekranı (/devir) bu dosyada sınanmaz.
+ * Strateje teslim raporu ekranı (/devir) bu dosyada sınanmaz.
  */
 
 const STORAGE_KEY = 'decisionactplan-v1'
@@ -68,7 +68,7 @@ async function designRules(page: Page, label: string) {
   expect(await filledButtons(page), `${label}: dolu düğme sayısı`).toBeLessThanOrEqual(1)
 }
 
-/** Örnek plana "Planlamaya hazır" geçiş kararı yazar. Kayıt tarayıcı deposuna doğrudan eklenir. */
+/** Örnek plana "Planlamaya hazır" hazırlık kararı yazar. Kayıt tarayıcı deposuna doğrudan eklenir. */
 async function recordTransition(page: Page) {
   await page.evaluate((key) => {
     const raw = JSON.parse(localStorage.getItem(key) ?? '{}')
@@ -125,15 +125,15 @@ async function expectPathCompare(page: Page, label: string) {
   await noHorizontalOverflow(page, label)
 }
 
-test('geçiş kararı yokken strateji oluşturma kilitli görünür', async ({ page }) => {
+test('hazırlık kararı yokken strateji oluşturma kilitli görünür', async ({ page }) => {
   await openDemo(page)
   await page.goto('/#/strateji')
   await expect(page.getByRole('heading', { level: 1, name: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?' })).toBeVisible()
   await expect(page.locator('.page-kicker')).toHaveText('Strateji oluşturma')
   const lock = page.getByRole('alert').filter({ hasText: 'Strateji oluşturma kilitli' })
   await expect(lock).toBeVisible()
-  await expect(lock).toContainText('Geçiş kapısında "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
-  await expect(page.getByRole('button', { name: 'Geçiş kapısına git' })).toBeVisible()
+  await expect(lock).toContainText('Hazırlık kontrolünde "Planlamaya hazır" ya da "Koşullu hazır" kararı yok.')
+  await expect(page.getByRole('button', { name: 'Hazırlık kontrolüne git' })).toBeVisible()
   // Beş alt aşama listelenir. Adım 18 bu kümede değildir. Kilitliyken dolu düğme yoktur.
   await expect(page.locator('.substage')).toHaveCount(5)
   await expect(page.locator('.substage-code')).toHaveText(['2.1', '2.2', '2.3', '2.4', '2.5'])
@@ -149,14 +149,14 @@ test('geçiş kararı yokken strateji oluşturma kilitli görünür', async ({ p
   await expect(question.locator('.strateji-question')).toHaveText(/\S/)
   await expect(question.locator('.strateji-question')).not.toHaveText('Yol adayı henüz yazılmadı.')
   expect(Number.parseFloat(await question.locator('.strateji-question').evaluate((el) => getComputedStyle(el).fontSize))).toBeGreaterThanOrEqual(20)
-  await expect(question.getByRole('link', { name: 'Devir raporunu aç' })).toHaveAttribute('href', '#/devir')
+  await expect(question.getByRole('link', { name: 'Teslim raporunu aç' })).toHaveAttribute('href', '#/devir')
   const firstDay = page.locator('.ant-card').filter({ hasText: "Stratej'in ilk günü" })
   await expect(firstDay.locator('ol > li')).toHaveCount(4)
   await expect(firstDay.locator('ol > li').first()).toContainText('Raporu sorgulayın.')
   await expectPathCompare(page, 'strateji kilitli')
   await designRules(page, 'strateji kilitli')
 
-  await page.getByRole('button', { name: 'Geçiş kapısına git' }).click()
+  await page.getByRole('button', { name: 'Hazırlık kontrolüne git' }).click()
   await expect(page).toHaveURL(/#\/gecis/)
 })
 
@@ -176,20 +176,20 @@ test('kilitli Adım 19 salt okunur açılır ve kayıt düğmeleri kapalıdır',
   expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
   await designRules(page, 'adım 19 kilitli')
 
-  await page.getByRole('link', { name: 'Geçiş kapısına git' }).click()
+  await page.getByRole('link', { name: 'Hazırlık kontrolüne git' }).click()
   await expect(page).toHaveURL(/#\/gecis/)
 
   // Eski adres de çalışır. Adım kendi grubunu bilir.
   await page.goto('/#/karar/5/adim/20')
-  await expect(page.getByRole('heading', { name: /Çıkış kapısı\. Strateji belgesi/ })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /Çıkış kontrolü\. Strateji belgesi/ })).toBeVisible()
   await expect(page.getByRole('button', { name: 'Adımı tamamla' })).toBeDisabled()
   await page.getByRole('button', { name: 'Strateji oluşturma özetine git' }).click()
   await expect(page).toHaveURL(/#\/strateji/)
 })
 
-test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kapı 5\'e gider', async ({ page }) => {
+test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kontrol 5\'e gider', async ({ page }) => {
   await openDemo(page)
-  // Geçiş kararı yok. Adım 18 yine de açıktır.
+  // Hazırlık kararı yok. Adım 18 yine de açıktır.
   await page.goto('/#/karar/5/adim/18')
   await expect(page.getByRole('heading', { name: 'Adım 18. Yol adayları' })).toBeVisible()
   await expect(page.locator('.page-kicker')).toHaveText(/^Karar 5\./)
@@ -206,7 +206,7 @@ test('Adım 18 "Yol adayları" kilitli değildir, Karar 5\'tedir ve Kapı 5\'e g
   await expect(page.getByText('Bugünkü durumu sürdürmek').first()).toBeAttached()
   const bar = page.locator('.action-bar')
   expect(await bar.locator('.ant-btn').evaluateAll((els) => els.filter((e) => (e as HTMLElement).offsetParent !== null).length)).toBeLessThanOrEqual(3)
-  await expect(page.getByRole('button', { name: 'Kapıya git' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Kontrole git' })).toBeVisible()
   await designRules(page, 'adım 18')
 
   // Eski strateji adresi de aynı adımı kilitsiz açar.
@@ -234,14 +234,14 @@ test('boş planda yol adayları boş durumu Adım 18\'e götürür', async ({ pa
   await expect(page).toHaveURL(/#\/karar\/5\/adim\/18/)
 })
 
-test('geçiş kararından sonra Adım 19 açılır, yazılım yolu seçmez, öneri yalnız onayla yazılır', async ({ page }) => {
+test('hazırlık kararından sonra Adım 19 açılır, yazılım yolu seçmez, öneri yalnız onayla yazılır', async ({ page }) => {
   await openDemo(page)
   await recordTransition(page)
   await page.goto('/#/strateji')
   await expect(page.getByRole('alert').filter({ hasText: 'Strateji oluşturma kilitli' })).toHaveCount(0)
   await expect(page.locator('.strateji-outcome .ant-tag')).toHaveText('Planlamaya hazır')
   await expect(page.getByText('Dayanaklar incelendi. Zorunlu ölçütler tamam.')).toBeVisible()
-  await expect(page.getByRole('link', { name: 'Devir raporunu aç' })).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Teslim raporunu aç' })).toBeVisible()
   // Tek dolu düğme sıradaki adımı açar.
   const open = page.getByRole('button', { name: 'Sıradaki adım: 2.1. Teşhis' })
   await expect(open).toBeVisible()

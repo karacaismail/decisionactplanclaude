@@ -2,7 +2,7 @@ import { DECISIONS } from './decisions'
 import type { PlanDoc } from './types'
 
 /**
- * Stratejik planlamadan önce elde olması gereken 20 temel taşı.
+ * Stratejik planlamadan önce elde olması gereken 20 temel soru.
  * Her taş bir soruya cevap verir ve bir adıma bağlıdır.
  */
 export type StoneStatus = 'var' | 'eksik' | 'zayif'
@@ -49,10 +49,10 @@ export const STONES: StoneDef[] = [
   { no: 14, group: 'Talep ve para', title: 'Bağlılık işareti', question: 'Bir müşteri sözden öte ne yaptı?', example: '7 kişi aylık kahve kartına ön ödeme yaptı.', step: '15', check: (p) => crit(p, 4, 'esik') },
   { no: 15, group: 'Talep ve para', title: 'Fiyat kanıtı', question: 'Müşteri bu fiyata razı mı?', example: 'Kart 600 TL\'ye satıldı. 14 kişiden 7\'si aldı.', step: '15', check: (p) => (p.steps['15'] ? Number(v(p, '15', 'priceOfferedKurus') ?? 0) > 0 && Number(v(p, '15', 'priceAcceptedCount') ?? 0) >= 1 : null) },
   { no: 16, group: 'Talep ve para', title: 'İlk para hesabı', question: 'Bir satıştan ne kalıyor? Kaç satış gideri karşılar?', example: 'Kahve 80 TL, maliyeti 30 TL. Günde 40 kahve gerekir.', step: '16', check: (p) => crit(p, 5, 'plan') },
-  { no: 17, group: 'Talep ve para', title: 'Nakit ve pist', question: 'Kasadaki para kaç ay yeter?', example: '240.000 TL var. Aylık gider 30.000 TL. Pist 8 ay.', step: '16', check: (p) => { const a = crit(p, 5, 'kasa'), b = crit(p, 5, 'pist'); return a === false || b === false ? false : a === true && b === true ? true : null } },
+  { no: 17, group: 'Talep ve para', title: 'Nakit ve kasa süresi', question: 'Kasadaki para kaç ay yeter?', example: '240.000 TL var. Aylık gider 30.000 TL. Kasa süresi 8 ay.', step: '16', check: (p) => { const a = crit(p, 5, 'kasa'), b = crit(p, 5, 'pist'); return a === false || b === false ? false : a === true && b === true ? true : null } },
   { no: 18, group: 'Risk ve kayıt', title: 'Varsayım haritası', question: 'Hangi varsayım yanlış çıkarsa iş çöker?', example: '"Öğlen de müşteri gelir." Henüz denenmedi.', step: '10', check: (p) => (p.steps['10'] ? rows(p, '10', 'assumptions').filter((a) => filled(a.assumption)).length >= 3 : null) },
   { no: 19, group: 'Risk ve kayıt', title: 'Risk ve kural', question: 'İşi bitirebilecek tehlikeler için kural var mı?', example: '"Ruhsat 30 günde çıkmazsa dururum."', step: '17', check: (p) => crit(p, 5, 'risk') },
-  { no: 20, group: 'Risk ve kayıt', title: 'Kanıt ve karar kaydı', question: 'Her bulgunun kaynağı ve her kararın gerekçesi yazılı mı?', example: 'Görüşme defteri, banka dekontu, kapı kararları.', step: '15', check: (p) => (p.evidence.length === 0 && p.decisions.length === 0 ? null : p.evidence.length >= 3 && p.decisions.length >= 1) },
+  { no: 20, group: 'Risk ve kayıt', title: 'Kanıt ve karar kaydı', question: 'Her bulgunun kaynağı ve her kararın gerekçesi yazılı mı?', example: 'Görüşme defteri, banka dekontu, kontrol kararları.', step: '15', check: (p) => (p.evidence.length === 0 && p.decisions.length === 0 ? null : p.evidence.length >= 3 && p.decisions.length >= 1) },
 ]
 
 /** Basamak 1 en güçlü (100), basamak 7 en zayıf kanıttır. */
