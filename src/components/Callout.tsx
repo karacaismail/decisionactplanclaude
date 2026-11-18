@@ -21,7 +21,7 @@ export function Callout({ tone = 'bilgi', title, danger, children }: { tone?: Ca
   return (
     <div role={tone === 'uyari' || danger ? 'alert' : 'note'} className={`note mt-callout ${danger ? 'is-danger' : cls}`.trim()}>
       <span className="note-title">
-        <Icon size="var(--icon-inline)" className="mt-callout-icon" aria-hidden />
+        <Icon className="mt-callout-icon mt-icon-inline" aria-hidden />
         {title ?? label}
       </span>
       <div className="note-body">{children}</div>

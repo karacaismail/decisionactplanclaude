@@ -23,7 +23,7 @@ export function ModelChips({ indexes, showTitle = true }: { indexes: number[]; s
     <div className="model-chips mt-model-chips">
       {showTitle ? (
         <span className="helper model-chips-title mt-model-chips-title">
-          <BookOpen size="var(--icon-inline)" aria-hidden /> Karar Kitabı'nda hangi yöntemler var?
+          <BookOpen className="mt-icon-inline" aria-hidden /> Karar Kitabı'nda hangi yöntemler var?
         </span>
       ) : null}
       <ul className="model-chip-row mt-model-chip-row" role="list">
@@ -39,7 +39,7 @@ export function ModelChips({ indexes, showTitle = true }: { indexes: number[]; s
                 onClick={() => setOpen(m)}
               >
                 <span className="mt-model-chip-visual">
-                  <BookOpen className="mt-model-chip-icon" size="var(--icon-small)" aria-hidden />
+                  <BookOpen className="mt-model-chip-icon mt-icon-small" aria-hidden />
                   <span className="mt-model-chip-label">{m.title}</span>
                 </span>
               </button>

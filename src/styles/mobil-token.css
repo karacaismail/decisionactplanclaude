@@ -35,6 +35,19 @@
   padding-inline-start: calc(var(--focus-marker-width) + var(--focus-marker-inset));
 }
 
+/* SVG width ve height nitelikleri CSS değişkeni almaz. İkon boyutu sınıfla verilir. */
+.mt-icon-inline {
+  flex-shrink: 0;
+  inline-size: var(--icon-inline);
+  block-size: var(--icon-inline);
+}
+
+.mt-icon-small {
+  flex-shrink: 0;
+  inline-size: var(--icon-small);
+  block-size: var(--icon-small);
+}
+
 /* Sabit üst şerit, kaydırılan form odağını örtmemeli. */
 :is(input, textarea, .ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper) {
   scroll-margin-block: var(--focus-scroll-clearance);

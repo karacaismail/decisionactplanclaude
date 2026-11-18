@@ -36,7 +36,7 @@ export function LimitsBar({ plan, retriesLeft, compact }: { plan: PlanDoc; retri
   return (
     <KpiStrip label="Sınırlar">
       {items.map((i) => (
-        <StatTile key={i.label} icon={<i.Icon size="var(--icon-inline)" />} label={i.label} value={i.value} />
+        <StatTile key={i.label} icon={<i.Icon className="mt-icon-inline" />} label={i.label} value={i.value} />
       ))}
     </KpiStrip>
   )
