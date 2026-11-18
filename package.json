@@ -5,14 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && npm run check:bundle",
     "preview": "vite preview",
     "lint": "tsc -b --noEmit && node scripts/check-ui.mjs",
     "check:ui": "node scripts/check-ui.mjs",
+    "check:bundle": "node scripts/check-bundle.mjs",
+    "check:bundle:test": "node scripts/check-bundle.mjs --self-test",
     "test": "vitest run",
-    "test:unit": "vitest run",
-    "test:e2e": "playwright test",
-    "test:e2e:ci": "playwright test --project=chromium-320 --project=chromium-1280",
+    "test:unit": "vitest run && npm run check:bundle:test",
+    "test:e2e": "PW_PORT=\"${PW_PORT:-${PLAYWRIGHT_PORT:-5179}}\" playwright test",
+    "test:e2e:ci": "PW_PORT=\"${PW_PORT:-${PLAYWRIGHT_PORT:-5179}}\" playwright test --project=chromium-320 --project=chromium-1280 --workers=2 && npm run test:teslim:production",
+    "test:teslim:production": "npm run build && node scripts/check-bundle.mjs --production-test",
     "ci": "npm run lint && npm run test:unit && npm run test:e2e:ci"
   },
   "dependencies": {
