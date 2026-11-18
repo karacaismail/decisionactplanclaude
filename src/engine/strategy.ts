@@ -8,6 +8,7 @@ import type { PlanDoc } from '@/data/types'
 import { formatMoney } from './format'
 import { freeBudget } from './crux'
 import { norm } from './integrity'
+import { rowIdOf } from './rowIds'
 
 type Row = Record<string, unknown>
 
@@ -166,6 +167,8 @@ export const CAPABILITY_LABEL: Record<CapabilityState, string> = { var: 'Bugün 
 export const CAPABILITY_OPTIONS = (Object.keys(CAPABILITY_LABEL) as CapabilityState[]).map((value) => ({ value, label: CAPABILITY_LABEL[value] }))
 
 export interface Move {
+  /** Kalıcı satır kimliği. Modüller hamleye bu kimlikle bağlanır. */
+  id: string
   move: string
   serves: string | null
   capability: string | null
@@ -174,8 +177,9 @@ export interface Move {
 
 export function movesOf(plan: PlanDoc, v: Row = values(plan, MOVES_STEP)): Move[] {
   return list(v.moves)
-    .filter((r) => text(r.move))
-    .map((r) => ({ move: text(r.move)!, serves: text(r.serves), capability: text(r.capability), have: r.have === 'var' || r.have === 'kurulacak' || r.have === 'disaridan' ? r.have : null }))
+    .map((r, i) => ({ r, id: rowIdOf(r, MOVES_STEP, 'moves', i) }))
+    .filter(({ r }) => text(r.move))
+    .map(({ r, id }) => ({ id, move: text(r.move)!, serves: text(r.serves), capability: text(r.capability), have: r.have === 'var' || r.have === 'kurulacak' || r.have === 'disaridan' ? r.have : null }))
 }
 
 export function moveIssues(v: Row): string[] {
@@ -189,15 +193,17 @@ export function moveIssues(v: Row): string[] {
 
 export interface Goal {
   objective: string | null
-  indicators: { name: string; baseline: string | null; target: string | null }[]
+  /** Her göstergenin kalıcı satır kimliği vardır. */
+  indicators: { id: string; name: string; baseline: string | null; target: string | null }[]
 }
 
 export function goalOf(plan: PlanDoc, v: Row = values(plan, GOALS_STEP)): Goal {
   return {
     objective: text(v.objective),
     indicators: list(v.keyResults)
-      .filter((r) => text(r.kr))
-      .map((r) => ({ name: text(r.kr)!, baseline: text(r.baseline), target: text(r.target) })),
+      .map((r, i) => ({ r, id: rowIdOf(r, GOALS_STEP, 'keyResults', i) }))
+      .filter(({ r }) => text(r.kr))
+      .map(({ r, id }) => ({ id, name: text(r.kr)!, baseline: text(r.baseline), target: text(r.target) })),
   }
 }
 
@@ -216,6 +222,8 @@ export function dossierComplete(v: Row): boolean {
 /* ---- 3.2 Ana işler ve sorumlular ---- */
 
 export interface TaskRow {
+  /** Kalıcı satır kimliği. */
+  id: string
   action: string
   owner: string | null
   dueDate: string | null
@@ -223,8 +231,9 @@ export interface TaskRow {
 
 export function tasksOf(plan: PlanDoc, key: 'now' | 'next' | 'later' = 'now', v: Row = values(plan, TASKS_STEP)): TaskRow[] {
   return list(v[key])
-    .filter((r) => text(r.action))
-    .map((r) => ({ action: text(r.action)!, owner: text(r.owner), dueDate: text(r.dueDate) }))
+    .map((r, i) => ({ r, id: rowIdOf(r, TASKS_STEP, key, i) }))
+    .filter(({ r }) => text(r.action))
+    .map(({ r, id }) => ({ id, action: text(r.action)!, owner: text(r.owner), dueDate: text(r.dueDate) }))
 }
 
 /** İlk 90 günün her işi tek bir sorumlu ve bir tarih ister. */
@@ -236,6 +245,8 @@ export function taskIssues(v: Row, plan: PlanDoc): string[] {
 /* ---- 3.3 Kaynak ve bütçe ---- */
 
 export interface Resource {
+  /** Kalıcı satır kimliği. */
+  id: string
   item: string
   budgetKurus: number | null
   people: string | null
@@ -243,8 +254,9 @@ export interface Resource {
 
 export function resourcesOf(plan: PlanDoc, v: Row = values(plan, RESOURCES_STEP)): Resource[] {
   return list(v.resources)
-    .filter((r) => text(r.item))
-    .map((r) => ({ item: text(r.item)!, budgetKurus: typeof r.budgetKurus === 'number' ? r.budgetKurus : null, people: text(r.people) }))
+    .map((r, i) => ({ r, id: rowIdOf(r, RESOURCES_STEP, 'resources', i) }))
+    .filter(({ r }) => text(r.item))
+    .map(({ r, id }) => ({ id, item: text(r.item)!, budgetKurus: typeof r.budgetKurus === 'number' ? r.budgetKurus : null, people: text(r.people) }))
 }
 
 /** Bağlanan toplam para, harcama sınırı ve serbest bütçeyle karşılaştırılır. Bilinmeyen tutar uydurulmaz. */
