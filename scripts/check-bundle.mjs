@@ -13,16 +13,17 @@ import { gzipSync } from 'node:zlib'
 // Bölünmüş ilk açılış: 1.979.633 ham, 623.553 gzip bayt. Sınır yaklaşık %6 pay bırakır.
 // Ant Design tek başına 1.337.749 ham, 420.404 gzip bayttır.
 // Bölünmüş toplam JS: 3.137.949 ham, 1.015.130 gzip bayt. Pay yaklaşık %8 ile %12 arasındadır.
-// On CSS dosyası 155.014 ham, 29.191 gzip bayttır. Pay yaklaşık %10 ile %13 arasındadır.
-// Eski tek CSS dosyasının gzip boyutu 22.579 bayttı. Bölünmüş dosyalar ayrı sıkıştırılır.
-// İlk açılış CSS'i 59.279 ham, 10.625 gzip bayttır. Ayrı sınır erken yüklemeyi yakalar.
+// 18 Kasım 2026: CSS yedi katmana bölündü. Ayrıntı: docs/css-mimarisi.md
+// Bütün CSS dosyaları 250.485 ham, 58.735 gzip bayttır. Pay yaklaşık %10'dur. Kullanıcı bu toplamı hiçbir zaman birlikte indirmez.
+// Bölünmüş dosyalar ayrı sıkıştırılır. Bu yüzden toplam gzip boyutu tek dosyadan büyüktür.
+// İlk açılış CSS'i 55.165 ham, 11.725 gzip bayttır. Asıl koruma ilk açılış sınırıdır. Bu sınır değişmedi.
 // Bunlar ağ aktarımı veya genel web standardı değildir. Yeni bağımlılık gerekçelendirilmelidir.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
   totalJs: { raw: 3_500_000, gzip: 1_100_000 },
   initialCss: { raw: 65_000, gzip: 12_000 },
-  css: { raw: 175_000, gzip: 32_000 },
+  css: { raw: 275_000, gzip: 65_000 },
 }
 
 // routes.tsx içindeki her ekran ayrı dinamik giriş olarak korunur.
