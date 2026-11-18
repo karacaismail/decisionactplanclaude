@@ -323,8 +323,18 @@ export async function settleFocusAnimations(page: Page, timeout = 3000) {
     for (;;) {
       const el = document.activeElement
       const dialog = el?.closest('.ant-modal-root, .ant-modal-wrap, .ant-drawer, [role="dialog"]') ?? null
+      // İşaret alanın 8 piksel dışına taşar. Yandaki öğenin renk geçişi o pikselleri değiştirir.
+      // Bu yüzden odaklı alanın 16 piksel çevresiyle kesişen öğelerin geçişi de beklenir.
+      const hostBox = el ? (el.closest('label, .ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper, .ant-select, .ant-input-affix-wrapper, .ant-picker, .ant-input-number') ?? el).getBoundingClientRect() : null
+      const near = (target: Element) => {
+        if (!hostBox) return false
+        const box = target.getBoundingClientRect()
+        return box.right >= hostBox.left - 16 && box.left <= hostBox.right + 16
+          && box.bottom >= hostBox.top - 16 && box.top <= hostBox.bottom + 16
+          && !target.contains(el!) // Sayfa ve bölüm gibi geniş üst kapsayıcılar zaten aşağıda sayılır.
+      }
       const related = (target: Element) => Boolean(el) && (target === el || target.contains(el!) || el!.contains(target)
-        || Boolean(dialog?.contains(target)))
+        || Boolean(dialog?.contains(target)) || near(target))
       const running = document.getAnimations().filter((animation) => {
         // Duraklatılmış animasyon kararlı bir durumdur. Bitmiş animasyon da beklenmez.
         if (animation.playState !== 'running') return false
