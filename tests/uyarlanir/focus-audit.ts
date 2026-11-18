@@ -51,7 +51,7 @@ async function readFocus(page: Page, screenshot?: Buffer) {
     const supportsContent = !el.matches('input, textarea, select, img, iframe, video, canvas')
     const tabbable = (node: Element) => node instanceof HTMLElement && node.tabIndex >= 0
       && !(node as HTMLInputElement).disabled && (node as HTMLInputElement).type !== 'hidden'
-      && node.getClientRects().length > 0
+      && node.getClientRects().length > 0 && getComputedStyle(node).visibility === 'visible'
       && node.matches('a[href], button, input, select, textarea, summary, [tabindex], [contenteditable]:not([contenteditable="false"])')
     const fieldHosts: HTMLElement[] = []
     let sharedHost: HTMLElement | null = null

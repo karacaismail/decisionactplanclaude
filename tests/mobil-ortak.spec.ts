@@ -1,4 +1,6 @@
 import { expect, test, type Locator, type Page, type TestInfo } from '@playwright/test'
+import { installProbe } from './uyarlanir/audit'
+import { captureFocus, settleFocusAnimations } from './uyarlanir/focus-audit'
 
 async function openDemo(page: Page) {
   await page.goto('/')
@@ -32,19 +34,53 @@ async function hitArea(locator: Locator) {
 }
 
 // Aynı kontrolün işaretçi ve klavye görüntülerindeki boyanmış pikselleri karşılaştırır.
-// Bir stilin tanımlanması, görünür odak kanıtı sayılmaz.
+// Bir stilin tanımlanması, görünür odak kanıtı sayılmaz. Klavye odağı tam bir işaret çizmelidir.
+// İşaret alan kabının dışında da çizilebilir. Bu yüzden kontrolün çevresi de karşılaştırılır.
 async function visibleFocus(page: Page, input: Locator, host: Locator, info: TestInfo, name: string) {
+  await installProbe(page)
   await input.scrollIntoViewIfNeeded()
-  await input.focus()
   await page.evaluate(() => document.fonts.ready)
-  const before = await host.screenshot()
   await page.keyboard.press('Tab')
   await input.focus()
   await expect(input).toBeFocused()
   await expect(page.locator('html')).toHaveAttribute('data-focus-mode', 'keyboard')
-  const after = await host.screenshot()
-  await info.attach(`${name}-once`, { body: before, contentType: 'image/png' })
-  await info.attach(`${name}-sonra`, { body: after, contentType: 'image/png' })
+  const { capture, stableCapture } = await captureFocus(page)
+  // Karşılaştırma alanı kontrolü ve ölçülen işareti birlikte kapsar.
+  const marked = (capture.reading.pseudos ?? []).filter((p) => p.visible).map((p) => p.rect)
+  const area = await host.evaluate((el, marked) => {
+    const rects = [el.getBoundingClientRect(), ...marked]
+    const left = Math.max(0, Math.floor(Math.min(...rects.map((r) => r.left)) - 8))
+    const top = Math.max(0, Math.floor(Math.min(...rects.map((r) => r.top)) - 8))
+    const right = Math.min(innerWidth, Math.ceil(Math.max(...rects.map((r) => r.right)) + 8))
+    const bottom = Math.min(innerHeight, Math.ceil(Math.max(...rects.map((r) => r.bottom)) + 8))
+    return { x: left, y: top, width: right - left, height: bottom - top }
+  }, marked)
+  const scroll = () => page.evaluate(() => [scrollX, scrollY, ...[...document.querySelectorAll('*')].filter((el) => el.scrollTop || el.scrollLeft).map((el) => el.scrollTop + el.scrollLeft)].join())
+  const position = await scroll()
+  const after = await page.screenshot({ clip: area, scale: 'css' })
+  // İşaretçi olayı modu kapatır. Odak ve kaydırma yerinde kalır. Böylece iki görüntü aynı yeri gösterir.
+  await page.evaluate(() => window.dispatchEvent(new PointerEvent('pointerdown')))
+  await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode', 'keyboard')
+  await expect(input).toBeFocused()
+  await settleFocusAnimations(page)
+  const before = await page.screenshot({ clip: area, scale: 'css' })
+  expect(await scroll(), 'İki görüntü arasında sayfa kaymamalı.').toBe(position)
+  const reading = capture.reading
+  expect(stableCapture, 'Odak kararlı görüntüyle ölçülmeli.').toBe(true)
+  // Yardımcı tek işareti, kontrastı, kırpılmayı ve çevreleyen halkayı birlikte denetler.
+  expect(reading.issues, `${name}: odak sorunları`).toEqual([])
+  expect(reading.measurementIssues, `${name}: ölçüm sorunları`).toEqual([])
+  const markers = (reading.pseudos ?? []).filter((p) => p.visible && p.singleEdge)
+  expect(markers, 'Tam bir kenar işareti çizilmeli.').toHaveLength(1)
+  expect(markers[0].contrastRatio, 'İşaretin komşu renkle farkı en az 3:1 olmalı.').toBeGreaterThanOrEqual(3)
+  // İşaretin ortası sabit başlığın veya alt şeridin altında kalmamalı.
+  const covered = await page.evaluate(({ rect, host }) => {
+    const hit = document.elementFromPoint((rect.left + rect.right) / 2, (rect.top + rect.bottom) / 2)
+    const owner = document.querySelector(host)
+    return !hit || !owner || !(owner.contains(hit) || hit.contains(owner))
+  }, { rect: markers[0].rect, host: markers[0].host })
+  expect(covered, 'Odak işaretini başka bir katman örtmemeli.').toBe(false)
+  // Pikselde de yalnız bir yeni işaret görünür. Kutudaki zemin işareti ikinci işaret sayılır.
   const result = await page.evaluate(async ({ before, after }) => {
     async function pixels(data: string) {
       const image = new Image()
@@ -67,20 +103,26 @@ async function visibleFocus(page: Page, input: Locator, host: Locator, info: Tes
       return [0, 1, 2].every(i => Math.abs(b.data[offset + i] - color[i]) <= 1)
         && [0, 1, 2].some(i => Math.abs(b.data[offset + i] - a.data[offset + i]) > 8)
     }
-    let longest = 0
+    // En az 2 × 8 piksellik dikey şeritler bulunur. Bitişik sütunlar aynı işarete aittir.
+    const columns: number[] = []
     for (let x = 0; x < b.width - 1; x++) {
-      let run = 0
+      let run = 0, longest = 0
       for (let y = 0; y < b.height; y++) {
         run = changed(x, y) && changed(x + 1, y) ? run + 1 : 0
         longest = Math.max(longest, run)
       }
+      if (longest >= 8) columns.push(x)
     }
-    return { sameSize: a.width === b.width && a.height === b.height, longest }
+    const groups = columns.filter((x, i) => i === 0 || x - columns[i - 1] > 1).length
+    return { sameSize: a.width === b.width && a.height === b.height, groups }
   }, { before: before.toString('base64'), after: after.toString('base64') })
   expect(result.sameSize, 'Odak kontrolün boyutunu değiştirmemeli.').toBe(true)
-  expect(result.longest, 'En az 2 × 8 piksel görünür odak işareti çizilmeli.').toBeGreaterThanOrEqual(8)
+  expect(result.groups, 'Klavye odağı tam bir işaret çizmeli.').toBe(1)
   await expect(input).toHaveCSS('outline-style', 'none')
   await expect(host).toHaveCSS('outline-style', 'none')
+  // Gerçek fare tıklaması da klavye modunu kapatır.
+  await page.keyboard.press('Tab')
+  await expect(page.locator('html')).toHaveAttribute('data-focus-mode', 'keyboard')
   await page.mouse.click(1, 1)
   await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode', 'keyboard')
 }
@@ -147,6 +189,40 @@ test('M12 Adım 00 seçeneklerinde görünür klavye odağı çizilir', async ({
   await page.keyboard.press('ArrowRight')
   await expect(page.getByRole('radio', { name: 'İşletme', exact: true })).toBeChecked()
 })
+
+// Her native alan türü aynı tek kenar işaretini gösterir. Kutu içindeki zemin işareti kullanılmaz.
+const alanlar: { ad: string; yol: string; alan: string; temizle?: string }[] = [
+  { ad: 'metin-kutusu', yol: '/#/karar/1/adim/00', alan: 'main textarea.ant-input' },
+  { ad: 'metin', yol: '/#/karar/1/adim/01', alan: 'main .field input.ant-input' },
+  { ad: 'sayi', yol: '/#/karar/1/adim/02', alan: 'main .ant-input-number input' },
+  // Dolu seçim ve tarih kutusunda temizleme düğmesi de Tab ile odaklanır. Bu kap tek kontrollü sayılmaz.
+  // Bu yüzden ölçüm boş alanla yapılır. Dolu alan durumu teslim raporunda açık karar olarak durur.
+  { ad: 'tarih', yol: '/#/karar/1/adim/02', alan: 'main .ant-picker input', temizle: 'main .ant-picker .ant-picker-clear' },
+  { ad: 'secim-kutusu', yol: '/#/karar/1/adim/06', alan: 'main .ant-select:not(:has(.ant-select-clear)) input' },
+  { ad: 'onay-kutusu', yol: '/#/karar/1/adim/14', alan: 'main .ant-checkbox-wrapper input' },
+  { ad: 'radyo', yol: '/#/gecis', alan: 'main .ant-radio-wrapper input' },
+  { ad: 'radyo-dugmesi', yol: '/#/gecmis', alan: 'main .ant-radio-button-wrapper input' },
+  { ad: 'arama-kutusu', yol: '/#/kanitlar', alan: 'main .ant-input-affix-wrapper input' },
+  { ad: 'varsayim', yol: '/#/varsayimlar', alan: 'main .assumption-field input' },
+  { ad: 'kapi-alani', yol: '/#/karar/1/kapi', alan: 'main .ant-form-item-control-input-content > input' },
+  { ad: 'sayfa-no', yol: '/#/yontemler', alan: '.ant-pagination-simple-pager input' },
+]
+for (const { ad, yol, alan, temizle } of alanlar) {
+  test(`M12 ${ad} alanında tek kenar odak işareti çizilir`, async ({ page }, info) => {
+    if (yol !== '/#/yontemler') await openDemo(page)
+    await page.goto(yol)
+    if (temizle) {
+      await page.locator(temizle).first().locator('xpath=..').hover()
+      await page.locator(temizle).first().click()
+      await expect(page.locator(temizle)).toHaveCount(0)
+      await page.mouse.click(1, 1)
+    }
+    const input = page.locator(alan).first()
+    test.skip(await input.count() === 0 && yol === '/#/yontemler', 'Sayfa numarası yalnız küçük ekranda vardır.')
+    await expect(input).toBeAttached()
+    await visibleFocus(page, input, input, info, ad)
+  })
+}
 
 test('M12 zorlanmış renklerde seçenek odağı görünür kalır', async ({ page }) => {
   await openDemo(page)
