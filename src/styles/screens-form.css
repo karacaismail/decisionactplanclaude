@@ -4,6 +4,39 @@
   Kart: antd `Card` (.step-card). Alan: antd `Form.Item` (.step-field). Hücre girişi: .cell-input.
 */
 
+:root {
+  --form-text-body: 16px;
+  --form-text-helper: 14px;
+  --form-field-min: 160px;
+  --form-threshold-column-min: 224px;
+  --form-action-reserve: calc(var(--target-touch) * 3 + var(--space-8));
+  --form-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --form-keyboard-inset: env(keyboard-inset-height, 0px);
+  --form-focus-marker-width: 3px;
+  --form-calendar-width: calc(var(--target-touch) * 7 + var(--space-3));
+  --form-action-line-height: 1.25;
+}
+
+.work-page {
+  --form-keyboard-inset: max(env(keyboard-inset-height, 0px), var(--form-viewport-bottom-inset, 0px));
+  padding-block-end: var(--space-4);
+}
+.work-main :is(input, textarea, button, [role='combobox'], [tabindex]) {
+  scroll-margin-block-end: calc(var(--form-action-reserve) + var(--form-safe-bottom) + var(--form-keyboard-inset));
+}
+
+/* Girişin odak işareti, en yakın alan kabında çizilir. İç içe kaplar ikinci işaret üretmez. */
+.work-page :is(.field, .ant-form-item-control-input-content) { position: relative; }
+html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-input-content):has(:is(input:not([type='radio'], [type='checkbox']), textarea):focus-visible):not(:has(:is(.field, .ant-form-item-control-input-content) :focus-visible))::before {
+  content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2)); inset-block: var(--space-1);
+  width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
+}
+html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::before { display: none; }
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .work-page :focus-visible { outline: 2px solid CanvasText !important; }
+  html[data-focus-mode='keyboard'] .work-page :is(.field, .ant-form-item-control-input-content)::before { display: none; }
+}
+
 /* Başlık altı tek satır: gereklilik etiketi, durum etiketi ve "Kim yapar?" */
 .work-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .work-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
@@ -37,7 +70,7 @@
 /* ------------------------------------------------------------------ */
 .step-field.ant-form-item { margin-bottom: 0; min-width: 0; }
 .step-field .ant-form-item-label { padding-bottom: 6px; }
-.step-field .ant-form-item-label > label { height: auto; min-height: 24px; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); align-items: flex-start; }
+.step-field .ant-form-item-label > label { height: auto; min-height: 24px; max-width: 100%; white-space: normal; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); align-items: flex-start; }
 .step-field .ant-form-item-label > label::after { display: none; }
 .step-field .ant-form-item-tooltip { display: inline-flex; align-items: center; color: var(--color-text-secondary); margin-inline-start: 6px; cursor: help; }
 .step-field .ant-form-item-tooltip svg { display: block; }
@@ -45,13 +78,40 @@
 .field-extra { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
 .field-required { font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 4px; }
 .step-field .ant-input, .step-field .ant-input-number, .step-field .ant-select, .step-field .ant-picker, .step-field .ant-input-number-group-wrapper, .step-field .ant-input-affix-wrapper { width: 100%; }
+/* Yükseklik dış kontrolde uygulanır. İç girişin yüksekliği ikinci kez büyütülmez. */
+.work-page :is(.step-field, .field) :is(.ant-input-affix-wrapper, .ant-input-number, .ant-picker, .ant-select),
+.work-page :is(.step-field, .field) input.ant-input:not(.ant-input-affix-wrapper input) { min-height: var(--target-touch); min-width: var(--target-touch); }
+.work-page :is(.step-field, .field) textarea.ant-input { min-height: var(--target-touch) !important; }
 .step-field .ant-input-prefix { color: var(--color-text-secondary); margin-inline-end: 8px; }
 .step-field .ant-input-number-prefix { color: var(--color-text-secondary); }
-.unit-suffix { font-size: 14px; color: var(--color-text-secondary); white-space: nowrap; }
+.unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
+.step-field :is(.ant-form-item-control, .ant-form-item-control-input-content, .ant-input-number-input-wrap) { min-width: 0; }
+.step-field .ant-input-number-suffix { min-width: 0; max-width: 50%; }
 .ant-input-number-suffix { margin-inline-end: 4px; }
 .step-field .ant-input-number-group-addon { color: var(--color-text-secondary); font-size: 14px; background: var(--color-surface-context); }
 .step-field .ant-input-data-count { font-size: 14px; color: var(--color-text-secondary); }
 .step-field .ant-form-item-control-input { min-height: 0; }
+/* Form takvimi yedi dokunma sütununu korur. Kural yalnız bu portala uygulanır. */
+.form-date-popup {
+  --form-calendar-top-gap: max(var(--space-2), env(safe-area-inset-top, 0px));
+  --form-calendar-bottom-gap: max(var(--space-2), var(--form-safe-bottom));
+  --form-calendar-visible-height: min(var(--form-viewport-height, 100dvh), calc(100dvh - var(--form-keyboard-inset, 0px)));
+  max-width: 100vw;
+}
+.form-date-popup :is(.ant-picker-date-panel, .ant-picker-month-panel, .ant-picker-year-panel, .ant-picker-decade-panel) { width: min(100vw, var(--form-calendar-width)); }
+.form-date-popup.ant-picker-dropdown .ant-picker-panel .ant-picker-body { padding-inline: calc(var(--space-3) / 2); }
+.form-date-popup .ant-picker-content { width: 100%; table-layout: fixed; }
+.form-date-popup .ant-picker-header button,
+.form-date-popup .ant-picker-now { display: inline-flex; align-items: center; justify-content: center; min-width: var(--target-touch); min-height: var(--target-touch); }
+@media (max-width: 599px) {
+  .form-date-popup.ant-picker-dropdown {
+    position: fixed !important; inset-block-start: auto !important;
+    inset-block-end: calc(var(--form-keyboard-inset, 0px) + var(--form-calendar-bottom-gap)) !important;
+    inset-inline-start: max(0px, calc((100vw - var(--form-calendar-width)) / 2)) !important;
+    inset-inline-end: auto !important; max-height: calc(var(--form-calendar-visible-height) - var(--form-calendar-top-gap) - var(--form-calendar-bottom-gap));
+    overflow-y: auto; overscroll-behavior: contain;
+  }
+}
 /* Yardım balonu içindeki seçenek listesi */
 .tooltip-list { margin: 0; padding: 0 0 0 16px; display: grid; gap: 4px; font-size: 14px; line-height: 1.45; }
 .tooltip-list strong { font-weight: 600; }
@@ -73,14 +133,14 @@
 .field .ant-input, .field .ant-input-number, .field .ant-select, .field .ant-picker, .field .ant-input-number-group-wrapper, .field .ant-input-affix-wrapper { width: 100%; }
 
 /* Yan yana küçük alanlar (ölçü adı, birim, dönem) */
-.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; min-width: 0; align-items: start; }
+.field-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--form-field-min)), 1fr)); gap: var(--space-4); min-width: 0; align-items: start; }
 .measure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 .measure-divider.ant-divider { margin: 4px 0 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
 .measure-divider.ant-divider .ant-divider-inner-text { padding-inline-start: 0; font-size: 16px; }
 
 /* Seçim düğmeleri: sarılır, seçili olan tonlu zemin ve eylem rengi kenar. */
 .choice-buttons.ant-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
-.choice-buttons .ant-radio-button-wrapper { height: auto; min-height: 40px; line-height: 1.3; padding-block: 9px; white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: 14px; font-size: 16px; color: var(--color-text-primary); border-color: var(--color-border-strong); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
+.choice-buttons .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; height: auto; min-height: var(--target-touch); min-width: var(--target-touch); line-height: 1.3; padding-block: var(--space-2); white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: var(--space-3); font-size: var(--form-text-body); color: var(--color-text-primary); border-color: var(--color-border-strong); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 .choice-buttons .ant-radio-button-wrapper::before { display: none; }
 .choice-buttons .ant-radio-button-wrapper > span:not(.ant-radio-button) { display: inline-block; line-height: 1.3; }
 .choice-buttons .ant-radio-button-wrapper:hover { color: var(--color-text-primary); border-color: var(--color-text-secondary); }
@@ -90,7 +150,8 @@
 
 /* Çoklu seçim çipleri: düğme, seçilince onay işareti */
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 14px; border: 1px solid var(--color-border-strong); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: 16px; line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-strong); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: var(--form-text-body); line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+.chip svg { flex-shrink: 0; }
 .chip:hover { border-color: var(--color-text-secondary); }
 .chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
 .chip.is-selected svg { color: var(--color-action-primary); }
@@ -100,10 +161,13 @@
 .plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
 .plain-list .ant-checkbox-wrapper { min-height: 44px; align-items: center; font-size: 16px; margin: 0; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
 .plain-list .ant-checkbox-wrapper:last-child { border-bottom: 0; }
-.toggle-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
+.toggle-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
+.toggle-field .ant-switch::after { content: ''; position: absolute; inset: calc((100% - var(--target-touch)) / 2) 0; }
 .toggle-text { font-size: 16px; color: var(--color-text-primary); }
-.rate-field { display: flex; align-items: center; gap: 12px; min-height: 40px; flex-wrap: wrap; }
-.rate-field .ant-rate { font-size: 26px; line-height: 1; }
+.rate-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
+.rate-field .ant-rate { display: flex; flex-wrap: wrap; font-size: 26px; line-height: 1; }
+.rate-field .ant-rate .ant-rate-star { margin-inline-end: 0; }
+.rate-field .ant-rate-star > [role='radio'] { display: flex; align-items: center; justify-content: center; min-width: var(--target-touch); min-height: var(--target-touch); }
 .ant-rate .ant-rate-star svg { display: block; }
 
 /* Kanıt basamakları: dikey Segmented, 7 satır. Satır metni sarılır, kesilmez. */
@@ -141,21 +205,21 @@
 
 /* Tekrarlı tablo: hücre içi girişler .cell-input, satır 44 px. İlk sütun sola sabit; sabit hücre zemini opak. */
 .repeater { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
-.repeater .ant-table-wrapper { width: 100%; }
+.repeater .ant-table-wrapper { width: 100%; min-width: 0; }
+.repeater-cell-label { display: none; }
+.repeater-cell-help { display: block; font-size: var(--form-text-helper); line-height: 1.5; color: var(--color-text-secondary); }
+.repeater-table .repeater-field-cell { min-width: var(--form-field-min); }
+.repeater-table .repeater-row-actions { min-width: calc(var(--target-touch) * 3 + var(--space-1) * 2 + var(--space-8)); }
+.repeater-table .ant-table-thead > tr > th { word-break: normal; overflow-wrap: normal; }
 .repeater-table .ant-table-tbody > tr > td { padding-top: 1.5px !important; padding-bottom: 1.5px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
 .repeater-table .ant-table-cell .ant-input { padding-top: 8px; padding-bottom: 8px; }
 .repeater-table .ant-table-cell .field { gap: 0; }
 .repeater-table .ant-table-cell .toggle-field { flex-wrap: nowrap; white-space: nowrap; }
 .repeater-table .ant-select, .repeater-table .ant-input-number, .repeater-table .ant-picker { width: 100%; }
 .repeater-table .row-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
-.repeater-actions { display: flex; align-items: center; gap: 4px; flex-wrap: nowrap; }
-.repeater .ant-btn-dashed { height: 44px; font-size: 16px; }
-/* Telefonda satırlar kart listesi olur. Kart antd Card değildir; kart içinde kart yoktur. */
-.repeater-cards { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
-.repeater-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 14px; min-width: 0; background: var(--color-surface-context); border-radius: var(--radius-panel); }
-.repeater-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.repeater-card-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
-.repeater-card .ant-input, .repeater-card .ant-input-affix-wrapper, .repeater-card .ant-input-number, .repeater-card .ant-select-selector, .repeater-card .ant-picker { background: var(--color-surface-work) !important; }
+.repeater-actions { display: flex; align-items: center; gap: var(--space-1); flex-wrap: nowrap; }
+.repeater-actions .ant-btn { min-width: var(--target-touch); width: var(--target-touch); min-height: var(--target-touch); height: var(--target-touch); flex-shrink: 0; }
+.repeater .ant-btn-dashed { height: auto; min-height: var(--target-touch); padding-block: var(--space-2); white-space: normal; font-size: var(--form-text-body); }
 
 /* Sabit sütun (antd 6 sınıfı .ant-table-cell-fix-start / -end): zemin opak kalır, kaydırılan içerik altından görünmez.
    Satır vurgusunda bağlam rengi. Dokunmatik ekranda vurgu yoktur. */
@@ -183,6 +247,30 @@
 /* antd ölçüm satırı hücresi satır içi "font-weight: bold" taşır (@rc-component/table MeasureCell). Adım ekranındaki bütün tablolar için 400'e çekilir. */
 .work-main .ant-table-measure-row td, .work-main .ant-table-measure-row td * { font-weight: 400 !important; }
 
+/* Dar veya kısa yatay alanda aynı tablo kayıt listesi olur. Girdi öğeleri değişmez. */
+@media (max-width: 767px), (max-width: 1023px) and (max-height: 480px) and (orientation: landscape) {
+  .repeater-table .ant-table-content { overflow: visible !important; background: none !important; }
+  .repeater-table .ant-table-content > table { display: block; width: 100% !important; min-width: 0 !important; table-layout: auto !important; }
+  .repeater-table colgroup, .repeater-table .ant-table-tbody > tr.ant-table-measure-row { display: none; }
+  .repeater-table .ant-table-thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; }
+  .repeater-table .ant-table-tbody { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+  .repeater-table .ant-table-tbody > tr { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-width: 0; padding: var(--space-3); background: var(--color-surface-context); border-radius: var(--radius-panel); }
+  .repeater-table .ant-table-tbody > tr > td.ant-table-cell {
+    display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1);
+    position: static !important; inset: auto !important; min-width: 0; width: auto !important;
+    padding: 0 !important; border: 0 !important; background: transparent !important;
+  }
+  .repeater-table .ant-table-tbody > tr > td.repeater-field-cell:empty { display: none; }
+  .repeater-table .ant-table-cell-fix-start::after,
+  .repeater-table .ant-table-container::before,
+  .repeater-table .ant-table-container::after { display: none; }
+  .repeater-table .ant-table-tbody > tr > td:first-child { justify-items: start; }
+  .repeater-table .ant-table-tbody > tr > td:last-child { justify-items: end; }
+  .repeater-table .repeater-cell-label { display: block; font-size: var(--form-text-helper); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); white-space: normal; word-break: normal; overflow-wrap: normal; }
+  .repeater-table .ant-table-cell .toggle-field { flex-wrap: wrap; white-space: normal; }
+  .repeater-table .cell-input { background: var(--color-surface-work) !important; }
+}
+
 /* Puan tablosu: yıldızlı hücreler, kilit anahtarı, toplam etiketi */
 .score-matrix { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .score-matrix .ant-table-tbody > tr > td { padding-top: 6px !important; padding-bottom: 6px !important; vertical-align: middle; word-break: normal; overflow-wrap: normal; }
@@ -209,10 +297,9 @@
 .score-lock .ant-switch { flex-shrink: 0; }
 
 /* Eşik: iki alan yan yana, dar ekranda alt alta */
-.threshold-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
-@media (min-width: 720px) { .threshold-grid { grid-template-columns: minmax(200px, 1fr) minmax(0, 2fr); } }
-.threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
-.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: auto; min-width: 140px; max-width: 220px; }
+.threshold-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--form-threshold-column-min)), 1fr)); gap: var(--space-4); min-width: 0; align-items: start; }
+.threshold-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); min-width: 0; }
+.threshold-row .ant-input-number-group-wrapper, .threshold-row .ant-input-number { width: 100%; min-width: 0; max-width: 100%; }
 
 /* Kanıt bağlama */
 .evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
@@ -220,12 +307,11 @@
 .evidence-link-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
 .drawer-foot { display: flex; justify-content: flex-end; gap: 8px; }
 
-/* Yöntem etiketleri: tıklanabilir Tag. Dokunma alanı 36 px (::after). */
+/* Yöntem etiketleri. Görünen alan dokunma hedefini de sağlar. */
 .model-chips { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
 .model-chips-title { display: inline-flex; align-items: center; gap: 6px; }
 .model-chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
-.model-chip.ant-tag { position: relative; margin: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: auto; min-height: 32px; padding: 4px 12px !important; white-space: normal; text-align: left; line-height: 1.3; font-size: 14px; color: var(--color-text-primary); background: var(--color-surface-context); border-color: transparent; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
-.model-chip.ant-tag::after { content: ''; position: absolute; inset: -4px 0; }
+.model-chip.ant-tag { position: relative; margin: 0; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; height: auto; min-height: var(--target-touch); min-width: var(--target-touch); padding: var(--space-1) var(--space-3) !important; white-space: normal; text-align: left; line-height: 1.3; font-size: var(--form-text-helper); color: var(--color-text-primary); background: var(--color-surface-context); border-color: transparent; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 .model-chip.ant-tag:hover { background: var(--color-selected-bg); color: var(--color-action-primary); }
 .model-chip.ant-tag .ant-tag-icon { display: inline-flex; color: var(--color-text-secondary); }
 .drawer-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; align-content: start; min-width: 0; }
@@ -290,28 +376,37 @@
 .aside-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 16px 16px; }
 .aside-collapse .step-progress-text strong { font-size: 16px; }
 
-/* Alt işlem şeridi: solda "Geri" bağlantısı, sağda "Daha fazla" menüsü ve iki düğme. En çok üç .ant-btn.
-   "Geri" düğme değildir: 16 px metin, altı çizili değil, 40 px kutu ve 44 px dokunma alanı (::after). */
-.step-actions { align-self: start; }
-.step-actions .bar-link { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 8px; border-radius: var(--radius-control); font-size: 16px; font-weight: 600; line-height: 1.5; color: var(--color-text-primary); text-decoration: none; transition: background-color var(--motion-small) var(--motion-ease); }
-.step-actions .bar-link::after { content: ''; position: absolute; inset: -2px 0; }
+/* İşlem şeridi metinle büyür. Alt boşluk ekranın güvenli alanını korur. */
+.step-actions.action-bar {
+  position: var(--form-action-position, sticky);
+  align-self: start; bottom: var(--form-keyboard-inset); max-height: none; min-width: 0;
+  padding-block: var(--space-3) calc(var(--space-3) + var(--form-safe-bottom));
+  padding-inline: max(var(--gutter), env(safe-area-inset-left, 0px)) max(var(--gutter), env(safe-area-inset-right, 0px));
+}
+.step-actions .ant-btn { height: auto; min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; padding-block: var(--space-2); white-space: normal; }
+.step-actions .ant-btn > span { min-width: 0; white-space: normal; }
+.step-actions .bar-link { position: relative; display: inline-flex; align-items: center; min-height: var(--target-touch); min-width: var(--target-touch); padding: 0 var(--space-2); border-radius: var(--radius-control); font-size: var(--form-text-body); font-weight: 600; line-height: 1.5; color: var(--color-text-primary); text-decoration: none; transition: background-color var(--motion-small) var(--motion-ease); }
 .step-actions .bar-link:hover { color: var(--color-text-primary); background: var(--color-surface-context); }
 .step-actions .bar-more { color: var(--color-text-primary); }
-/* 320 px: iki satır. Üstte "Geri" (sol) ve "Daha fazla" (sağ). Altta "Taslak bırak, ilerle" ve dolu "Adımı tamamla". Toplam 112 px. */
+/* Dar alanda eşit iki sütun, uzun metinler kelimeler arasından sarılır. */
 @media (max-width: 599px) {
+  .step-actions.action-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-1); padding-block: var(--space-2) calc(var(--space-2) + var(--form-safe-bottom)); }
+  .step-actions .ant-btn { padding-block: calc(var(--space-1) / 2); line-height: var(--form-action-line-height); }
   .step-actions .bar-link { grid-column: 1; grid-row: 1; justify-self: start; }
-  .step-actions .bar-more { grid-column: 3; grid-row: 1; justify-self: end; }
-  .step-actions .bar-draft { grid-column: 1 / 2; grid-row: 2; }
-  .step-actions .ant-btn-primary { grid-column: 2 / 4; grid-row: 2; }
-  .step-actions .bar-draft, .step-actions .ant-btn-primary { padding-inline: 12px; white-space: nowrap; }
+  .step-actions .bar-more { grid-column: 2; grid-row: 1; justify-self: end; }
+  .step-actions .bar-draft { grid-column: 1; grid-row: 2; }
+  .step-actions .ant-btn-primary { grid-column: 2; grid-row: 2; }
+  .step-actions .bar-draft, .step-actions .ant-btn-primary { padding-inline: var(--space-2); align-self: stretch; }
 }
-@media (max-width: 359px) { .step-actions .bar-draft, .step-actions .ant-btn-primary { padding-inline: 8px; } }
 
 /* Yalnız ekran okuyucuya görünen metin */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
 /* Otomatik hesap kutusu */
 .calc-box { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; justify-items: start; padding: 16px 20px; background: var(--color-surface-context); border-radius: var(--radius-panel); min-width: 0; }
+.calc-apply.ant-btn { min-width: var(--target-touch); max-width: 100%; height: auto; min-height: var(--target-touch); padding-block: var(--space-2); white-space: normal; }
+.calc-apply.ant-btn > span { min-width: 0; white-space: normal; }
+.calc-apply.ant-btn > .ant-btn-icon { flex-shrink: 0; }
 .calc-title { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
 .calc-value { font-size: 28px; line-height: 1.1; font-weight: 600; letter-spacing: -0.03em; color: var(--color-text-primary); }
 .calc-lines { margin: 0; padding-left: 18px; display: grid; gap: 2px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
@@ -324,9 +419,8 @@
 .form-tabs-note { margin: 0; }
 .form-section-extra { display: inline-flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 6px; min-width: 0; }
 .form-section-extra .ant-tag { margin: 0; }
-/* Görünen düğme 32 pikseldir. Dokunma alanı 44 pikseldir. */
-.form-section-toggle.ant-btn { position: relative; font-size: 14px; min-height: 32px; }
-.form-section-toggle.ant-btn::after { content: ''; position: absolute; inset: -6px 0; }
+.form-section-toggle.ant-btn { position: relative; font-size: var(--form-text-helper); min-height: var(--target-touch); min-width: var(--target-touch); height: auto; white-space: normal; }
+.form-section-toggle.ant-btn::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
 /* Sağ sütundaki bağlantı kartı yapışkan üst şeridin altına getirir. */
 .step-card.form-section { scroll-margin-top: 84px; }
 .form-section .ant-card-head-title > span:focus { outline: 0; }

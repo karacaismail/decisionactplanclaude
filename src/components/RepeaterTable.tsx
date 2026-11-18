@@ -1,18 +1,19 @@
-import { Button, Grid, Popconfirm, Table, Tag } from 'antd'
+import { Button, Popconfirm, Table, Tag } from 'antd'
 import { Plus, Trash, ArrowUp, ArrowDown } from '@phosphor-icons/react'
 import type { Field } from '@/data/schema'
 import type { PlanDoc } from '@/data/types'
 import { FieldControl } from './FieldControl'
 import { uid } from '@/engine/format'
+import { evalCondition } from '@/engine/conditions'
 
 export type Row = Record<string, unknown> & { _id: string }
 
 const WIDE_TYPES = new Set(['text', 'textarea', 'select', 'evidenceLink'])
 
 /**
- * Satır ekleyip silinen tablo. Geniş ekranda `Table size="middle"`; hücre girişleri `.cell-input` ile alt çizgilidir.
- * İlk sütun sola sabittir; tablo kendi kabında yatay kayar. Satır silme `Popconfirm` ile onay ister.
- * Satır ekleme kesikli, tam genişlik düğmedir. Dar ekranda her satır bir `.repeater-card` olur. Satır kimliği korunur.
+ * Tek tablo yapısı her genişlikte korunur. CSS, dar ekranda satırları kart olarak gösterir.
+ * Alanlar yeniden kurulmadığı için taslak metin ve odak korunur.
+ * Geniş tablo kendi kabında kayar. Satır silme işlemi onay ister.
  */
 export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekle', minRows = 0, maxRows, fixedFirstRow, plan, idPrefix }: {
   columns: Field[]
@@ -25,8 +26,6 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
   plan: PlanDoc
   idPrefix: string
 }) {
-  const bp = Grid.useBreakpoint()
-  const wide = bp.md
   /* Eski kayıtlarda kimlik eksik olabilir; sıra numarasından kimlik verilir. */
   let rows: Row[] = (value ?? []).map((r, i) => (r._id ? r : { ...r, _id: `satir-${i}` }))
   if (fixedFirstRow && rows.length === 0) rows = [{ _id: 'sabit', ...fixedFirstRow, _fixed: true }]
@@ -69,50 +68,39 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
     <Tag className="fill-tag">En çok {maxRows} satır. Sınıra ulaşıldı.</Tag>
   )
 
-  if (wide) {
-    return (
-      <div className="repeater">
-        <Table<Row>
-          className="repeater-table"
-          size="middle"
-          pagination={false}
-          rowKey="_id"
-          dataSource={rows}
-          scroll={{ x: 'max-content' }}
-          locale={{ emptyText: 'Henüz satır yok. Aşağıdan satır ekleyin.' }}
-          columns={[
-            { title: <span className="sr-only">Sıra</span>, key: '_n', width: 56, fixed: 'left' as const, render: (_: unknown, __: Row, i: number) => <span className="row-no tabular">{i + 1}</span> },
-            ...columns.map((c, ci) => ({
-              title: c.label,
-              dataIndex: c.key,
-              width: ci === 0 ? 240 : WIDE_TYPES.has(c.type) ? 220 : c.type === 'toggle' ? 200 : 160,
-              render: (_: unknown, r: Row, i: number) => (
-                <FieldControl field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} compact idPrefix={`${idPrefix}-${r._id}`} />
-              ),
-            })),
-            { title: <span className="sr-only">İşlemler</span>, key: '_a', width: 112, render: (_: unknown, r: Row, i: number) => actions(i, r) },
-          ]}
-        />
-        {addButton}
-      </div>
-    )
-  }
   return (
     <div className="repeater">
-      <div className="repeater-cards">
-        {rows.map((r, i) => (
-          <div key={r._id} className="repeater-card">
-            <div className="repeater-card-head">
-              <span className="repeater-card-title">{i + 1}. kayıt</span>
-              {actions(i, r)}
-            </div>
-            {columns.map((c) => (
-              <FieldControl key={c.key} field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} idPrefix={`${idPrefix}-${r._id}`} />
-            ))}
-          </div>
-        ))}
-        {rows.length === 0 ? <p className="helper">Henüz satır yok. Aşağıdan satır ekleyin.</p> : null}
-      </div>
+      <Table<Row>
+        className="repeater-table"
+        size="middle"
+        pagination={false}
+        rowKey="_id"
+        rowClassName="repeater-card"
+        dataSource={rows}
+        scroll={{ x: 'max-content' }}
+        locale={{ emptyText: 'Henüz satır yok. Aşağıdan satır ekleyin.' }}
+        columns={[
+          { title: <span className="sr-only">Sıra</span>, key: '_n', className: 'repeater-row-number', width: 56, fixed: 'left' as const, render: (_: unknown, __: Row, i: number) => <span className="row-no tabular" aria-label={`${i + 1}. kayıt`}>{i + 1}</span> },
+          ...columns.map((c, ci) => ({
+            title: c.label,
+            dataIndex: c.key,
+            onCell: () => ({ className: 'repeater-field-cell', 'data-label': c.label }),
+            width: ci === 0 ? 240 : WIDE_TYPES.has(c.type) ? 220 : c.type === 'toggle' ? 200 : 160,
+            render: (_: unknown, r: Row, i: number) => {
+              if (!evalCondition(c.when, plan, undefined, r)) return null
+              return (
+                <div>
+                  <span className="repeater-cell-label" aria-hidden="true">
+                    {c.label}{c.required ? <span className="field-required"> (zorunlu)</span> : null}
+                  </span>
+                  <FieldControl field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} compact idPrefix={`${idPrefix}-${r._id}`} />
+                </div>
+              )
+            },
+          })),
+          { title: <span className="sr-only">İşlemler</span>, key: '_a', className: 'repeater-row-actions', width: 112, render: (_: unknown, r: Row, i: number) => actions(i, r) },
+        ]}
+      />
       {addButton}
     </div>
   )
