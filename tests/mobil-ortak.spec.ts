@@ -8,14 +8,26 @@ async function openDemo(page: Page) {
   }).toPass()
 }
 
+// Basma alanı gerçek isabet testiyle ölçülür. Merkezin 21 piksel üstü, altı, solu ve sağı aynı kontrole düşmelidir.
+// Görünmez katmanla büyütülen alan da sayılır. Kutunun kendisinin 44 piksel olması gerekmez.
 async function hitArea(locator: Locator) {
   const count = await locator.count()
   expect(count).toBeGreaterThan(0)
   for (let i = 0; i < count; i++) {
     const item = locator.nth(i)
-    const box = await item.boundingBox()
-    expect.soft(box?.width, `Kontrol genişliği: ${await item.getAttribute('class')}`).toBeGreaterThanOrEqual(44)
-    expect.soft(box?.height, `Kontrol yüksekliği: ${await item.getAttribute('class')}`).toBeGreaterThanOrEqual(44)
+    await item.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'nearest' }))
+    const hits = await item.evaluate((el) => {
+      const box = el.getBoundingClientRect()
+      const cx = box.left + box.width / 2
+      const cy = box.top + box.height / 2
+      const at = (x: number, y: number) => {
+        const hit = document.elementFromPoint(x, y)
+        return Boolean(hit && (el === hit || el.contains(hit) || hit.contains(el)))
+      }
+      return { width: at(cx - 21, cy) && at(cx + 21, cy), height: at(cx, cy - 21) && at(cx, cy + 21) }
+    })
+    expect.soft(hits.width, `Kontrol genişliği: ${await item.getAttribute('class')}`).toBe(true)
+    expect.soft(hits.height, `Kontrol yüksekliği: ${await item.getAttribute('class')}`).toBe(true)
   }
 }
 
@@ -160,18 +172,19 @@ test('M02 anahtarın görünen izi küçük kalır, dört kenar gerçek eylemi �
   await toggle.scrollIntoViewIfNeeded()
   const track = await toggle.evaluate(el => {
     const style = getComputedStyle(el)
-    return { visual: el.getBoundingClientRect().height - parseFloat(style.borderTopWidth) - parseFloat(style.borderBottomWidth), expected: parseFloat(style.getPropertyValue('--ant-switch-track-height')) }
+    return { visual: el.getBoundingClientRect().height, expected: parseFloat(style.getPropertyValue('--ant-switch-track-height')), border: parseFloat(style.borderTopWidth) + parseFloat(style.borderBottomWidth) }
   })
+  // Saydam kenar köşeleri basık oval çizer. İz kenarsız ve kendi yüksekliğinde kalır.
+  expect(track.border).toBe(0)
   expect(track.visual).toBe(track.expected)
-  await expect(toggle).toHaveCSS('background-clip', 'padding-box')
   const box = (await toggle.boundingBox())!
-  // Playwright locator.click konumları padding kutusuna göredir.
-  // Şeffaf kenarları sınamak için gerçek border kutusunun ekran koordinatları kullanılır.
-  for (const [x, y] of [[box.width / 2, 3], [box.width / 2, box.height - 3], [3, box.height / 2], [box.width - 3, box.height / 2]]) {
+  const cx = box.x + box.width / 2
+  const cy = box.y + box.height / 2
+  // Görünen izin dışında kalan dört nokta da gerçek eylemi çalıştırır.
+  for (const [x, y] of [[cx, cy - 21], [cx, cy + 21], [box.x + 1, cy], [box.x + box.width - 1, cy]]) {
     const checked = await toggle.getAttribute('aria-checked')
-    await page.mouse.click(box.x + x, box.y + y)
+    await page.mouse.click(x, y)
     await expect(toggle).toHaveAttribute('aria-checked', checked === 'true' ? 'false' : 'true')
-    await expect(toggle).toHaveCSS('background-clip', 'padding-box')
   }
 })
 

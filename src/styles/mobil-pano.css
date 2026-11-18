@@ -65,15 +65,6 @@
 
 :is(.mobil-overview, .mobil-tasks, .mobil-history) .ant-tabs-nav-more { min-width: var(--target-touch); }
 
-/* Anahtar görünüşte küçük kalır. Görünmez basma alanı 44 CSS px olur. ::before odak işaretine ayrılmıştır. */
-.mobil-overview .toggle-row .ant-switch { position: relative; overflow: visible; }
-.mobil-overview .toggle-row .ant-switch::after {
-  content: '';
-  position: absolute;
-  inset-block: calc(50% - var(--target-touch) / 2);
-  inset-inline: min(0px, calc(50% - var(--target-touch) / 2));
-}
-
 .mobil-chart-frame .chart-view.ant-segmented .ant-segmented-item-label {
   min-height: var(--target-touch);
   min-width: var(--target-touch);

@@ -106,7 +106,7 @@
 .page-devralma .devralma-check-question { margin: 0; font: inherit; font-weight: var(--cikti-weight-strong); }
 .page-devralma .devralma-result { display: grid; gap: var(--space-2); justify-items: start; }
 .page-devralma .devralma-result a { display: inline-flex; align-items: center; min-height: var(--target-touch); }
-.page-devralma .ant-switch { min-height: var(--target-touch); min-width: var(--target-touch); justify-self: start; }
+.page-devralma .ant-switch { justify-self: start; }
 .page-devralma .ant-switch:not(.ant-switch-checked) { background: var(--color-text-secondary); }
 .page-devralma .ant-switch:not(.ant-switch-checked):not(:disabled):hover { background: var(--color-text-primary); }
 .page-devralma .ant-switch.ant-switch-checked,

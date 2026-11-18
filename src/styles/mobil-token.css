@@ -15,16 +15,18 @@
   align-items: center;
 }
 
-/* Anahtarın izi aynı kalır. Şeffaf kenarlar da düğmenin basma alanıdır. */
+/* Anahtarın izi hap biçimli ve küçük kalır. Görünmez katman basma alanını en az 44 CSS piksel yapar.
+   Saydam kenar kullanılmaz, çünkü kenar köşeleri basık oval çizer. ::before odak işaretine ayrılmıştır. */
 .ant-switch {
-  min-inline-size: var(--hit-area-min);
-  min-block-size: var(--hit-area-min);
-  border-block: calc((var(--hit-area-min) - var(--ant-switch-track-height)) / 2) solid transparent;
-  background-clip: padding-box !important;
+  position: relative;
+  overflow: visible;
 }
 
-.ant-switch.ant-switch-small {
-  border-block-width: calc((var(--hit-area-min) - var(--ant-switch-track-height-sm)) / 2);
+.ant-switch::after {
+  content: '';
+  position: absolute;
+  inset-block: min(0px, calc(50% - var(--hit-area-min) / 2));
+  inset-inline: min(0px, calc(50% - var(--hit-area-min) / 2));
 }
 
 .ant-input-affix-wrapper:has(> input.ant-input) { padding-block: 0; }
