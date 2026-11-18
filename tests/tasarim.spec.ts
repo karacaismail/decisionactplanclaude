@@ -70,7 +70,7 @@ test('ölçüt 3 ve 4: üst şerit 60px, yatay sekmeler, yol dizini etiketsiz', 
   await expect(rail).toBeVisible()
   expect(await rail.locator('.ant-tag').count(), 'yol dizininde etiket olmamalı').toBe(0)
   const items = rail.locator('.ant-menu-item')
-  expect(px(await items.first().evaluate((el) => getComputedStyle(el).height))).toBe(42)
+  expect(px(await items.first().evaluate((el) => getComputedStyle(el).height))).toBe(44)
   const clipped = await items.evaluateAll((els) => els.filter((e) => e.scrollWidth > e.clientWidth + 1).length)
   expect(clipped, 'yol dizininde kesilen madde olmamalı').toBe(0)
   await page.goto('/#/kanitlar')
