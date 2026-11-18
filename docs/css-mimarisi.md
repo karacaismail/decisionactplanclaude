@@ -81,11 +81,35 @@ Yükleyici `src/app/girisStilleri.ts` dosyasıdır. Yükleyici şu sırayla çal
 
 Yükleyici cihaz adına bakmaz. `isMobile` ve `userAgent` kullanılmaz. Yükleyici yalnız tarayıcının giriş sorgusunu kullanır. Bu sorgular `any-pointer` ve `any-hover` sorgularıdır.
 
+Giriş katmanına yalnız sayfayı kaydırmayan etkiler girer. Örneğin fare üzerine gelince değişen renk bu katmana girer. Kenar boşluğu ve yazı boyutu bu katmana girmez. Giriş dosyası sayfadan biraz sonra iner. Düzeni değiştiren bir kural bu dosyada durursa sayfa çizildikten sonra kayar.
+
+Bileşene özel küçük giriş kuralları bileşenin kendi dosyasında kalabilir. Örneğin `@media (hover: none)` içindeki bir tablo kuralı tablo dosyasında kalır.
+
 Her giriş dosyasının kuralları ayrıca kendi sorgusunun içinde durur. Örneğin `fare.css` kuralları `@media (any-hover: hover)` içinde durur. Dosya yanlışlıkla inerse kurallar yanlış cihazda çalışmaz.
 
 ### 7. Yazdırma katmanı
 
 Yazdırma kuralları yalnız rapor ekranlarında gerekir. Bu yüzden yalnız rapor ekranları bu dosyayı içe aktarır.
+
+## Sıra kuralları
+
+CSS'te aynı güçteki iki kuraldan sonra gelen kazanır. Bu yüzden dosyaların yüklenme sırası önemlidir. Sıra iki kuralla sabitlenir:
+
+1. Her dosya kendi CSS'ini en üstte içe aktarır. Örneğin `RepeaterTable.tsx` dosyasının ilk satırı `import '@/styles/bilesen/RepeaterTable.css'` satırıdır. Böylece dış bileşenin CSS'i içindeki bileşenlerin CSS'inden önce gelir.
+2. Bazı dosyalar birden çok CSS içe aktarır. Bu dosyalarda önce desen, sonra bileşen, en son ekran dosyası gelir.
+
+Aynı sınıfı iki dosyada iki farklı değerle tanımlamayın. Örneğin `.tl-reason` sınıfı yalnız bir dosyada tanımlanır. Eski kodda bu kural çiğnenmişti. Bu yüzden görünüm, ekranların açılma sırasına bağlıydı.
+
+## Yeni kural nereye yazılır?
+
+Yeni bir kural yazarken şu soruları sırayla sorun:
+
+1. Kural her ekranda gerekiyor mu? Öyleyse kural `temel/temel.css` dosyasına yazılır.
+2. Kural üst şeridi ya da menüyü mü çiziyor? Öyleyse kural `kabuk/kabuk.css` dosyasına yazılır.
+3. Kural tek bir bileşene mi ait? Öyleyse kural `bilesen/<Bileşen>.css` dosyasına yazılır.
+4. Kural tek bir ekrana mı ait? Öyleyse kural `ekran/<Ekran>.css` dosyasına yazılır.
+5. Kuralı birden çok ekran mı kullanıyor? Öyleyse kural `desen/<sınıf-adı>.css` dosyasına yazılır.
+6. Kural yalnız fare üzerine gelince mi çalışıyor? Öyleyse kural `giris/fare.css` dosyasına yazılabilir.
 
 ## Kapılar
 
