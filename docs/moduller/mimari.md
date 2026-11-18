@@ -117,6 +117,11 @@ Sürüm 3 kaydında yalnız bu iş çalışır. Eski taşımalar yeniden çalı�
 
 Kimlik plan içinde tektir. Eski sürüm bazı listelere aynı kimliği yazmıştı. Örneğin iki listede `satir-0` olabilir. Bu durumda ilk satır kimliğini korur. Sonraki satır yeni kimlik alır.
 
+Hedef takibi 3.2 adımının "Şimdi" işlerine bağlanır. Bağın anahtarı işin kimliğidir. Bu yüzden iki kural vardır:
+
+1. "Şimdi" listesi önce işlenir. Kimliği olan iş kimliğini hep korur.
+2. Kimliksiz iş kimlik alınca hedef takibi bağı da yeni kimliğe taşınır.
+
 ## Gezinme
 
 Telefonda alt menü beş bağlantıdır. Sıra şöyledir: Planlar, Pano, Yol, Projeler ve Menü.
