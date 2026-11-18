@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ComponentProps, ReactNode } from 'react'
 import { Checkbox, DatePicker, Form, Input, InputNumber, Radio, Rate, Select, Switch, Tag } from 'antd'
 import { CalendarBlank, ChatCircleText, Check, Hash, Info, LinkSimple, Quotes, Star, TextAa, User } from '@phosphor-icons/react'
 import dayjs from 'dayjs'
@@ -18,6 +18,15 @@ import { EvidenceLink } from './EvidenceLink'
 dayjs.locale('tr')
 
 const RATE_DEFAULT = ['1', '2', '3', '4', '5']
+
+/** Tarih ve aramalı seçim alanları bu özellikleri iç girişe aktarmıyor. */
+function TextEntryInput(props: ComponentProps<'input'>) {
+  return <input {...props} inputMode="text" enterKeyHint="done" autoComplete="off" />
+}
+
+const TEXT_INPUT_COMPONENTS = { input: TextEntryInput }
+const DATE_CLASS_NAMES = { popup: { root: 'form-date-popup' } }
+const formPopupContainer = (trigger: HTMLElement) => trigger.closest<HTMLElement>('.work-page') ?? document.body
 
 /** Metin alanının başındaki ikon. Alan adına göre seçilir. */
 function prefixFor(key: string): ReactNode {
@@ -44,7 +53,7 @@ function optionsTooltip(options: Option[]): ReactNode | null {
 
 /**
  * Tek form alanı. Geniş görünümde antd `Form.Item` düzenidir: etiket, bilgi balonu, giriş, altta ipucu (`extra`).
- * `compact` tablo hücresi içindir: etiket çizilmez, girişe aria-label verilir, giriş kenarlıksızdır (`.cell-input`).
+ * `compact` tablo hücresi içindir. Girişin adı ve grubun açıklaması korunur. Kart yardımını CSS gösterir.
  */
 export function FieldControl({ field, value, onChange, plan, values, compact, idPrefix }: {
   field: Field
@@ -64,8 +73,22 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
 
   /** Etiket, balon ve ipucu ile alanı sarar. `labelAs: 'span'` grup kontrolleri içindir (htmlFor verilmez). */
   const wrap = (control: ReactNode, opts: { extra?: ReactNode; tooltip?: ReactNode; labelAs?: 'label' | 'span' } = {}) => {
-    if (compact) return <div className="field is-compact">{control}</div>
-    const tip = opts.tooltip ?? (field.required ? 'Bu alan zorunludur. Boş kalırsa adım tamamlanmaz.' : undefined)
+    const requiredHelp = field.required ? 'Bu alan zorunludur. Boş kalırsa adım tamamlanmaz.' : undefined
+    if (compact) {
+      const details = [field.help, opts.extra, opts.tooltip, requiredHelp].filter(Boolean)
+      const descriptionId = details.length ? `${id}-aciklama` : undefined
+      return (
+        <div className="field is-compact" role="group" aria-label={field.label || undefined} aria-describedby={descriptionId}>
+          {control}
+          {descriptionId ? (
+            <div id={descriptionId} className="repeater-cell-help field-extra">
+              {details.map((detail, index) => <div key={index} className="field-extra-line">{detail}</div>)}
+            </div>
+          ) : null}
+        </div>
+      )
+    }
+    const tip = opts.tooltip ?? requiredHelp
     const extra = [field.help, opts.extra].filter(Boolean)
     const label = field.label ? (
       <>
@@ -92,15 +115,15 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
   switch (field.type) {
     case 'text':
       return wrap(
-        <Input id={id} className={cellClass} variant={variant} aria-label={ariaLabel} prefix={compact ? undefined : prefixFor(field.key)} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />,
+        <Input id={id} className={cellClass} variant={variant} aria-label={ariaLabel} inputMode="text" enterKeyHint="done" autoComplete="off" prefix={compact ? undefined : prefixFor(field.key)} value={(value as string) ?? ''} maxLength={field.maxLength} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />,
       )
     case 'textarea':
       return wrap(
-        <Input.TextArea id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as string) ?? ''} rows={compact ? 1 : field.rows ?? 3} autoSize={compact ? { minRows: 1, maxRows: 3 } : { minRows: field.rows ?? 3, maxRows: 10 }} maxLength={field.maxLength} showCount={Boolean(field.maxLength) && !compact} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />,
+        <Input.TextArea id={id} className={cellClass} variant={variant} aria-label={ariaLabel} inputMode="text" enterKeyHint="enter" autoComplete="off" value={(value as string) ?? ''} rows={compact ? 1 : field.rows ?? 3} autoSize={compact ? { minRows: 1, maxRows: 3 } : { minRows: field.rows ?? 3, maxRows: 10 }} maxLength={field.maxLength} showCount={Boolean(field.maxLength) && !compact} onChange={(e) => onChange(e.target.value)} placeholder={cellPlaceholder(field.placeholder)} aria-required={field.required} />,
       )
     case 'number':
       return wrap(
-        <InputNumber id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} suffix={field.unit ? <span className="unit-suffix">{field.unit}</span> : undefined} prefix={compact ? undefined : <Hash size={16} aria-hidden />} placeholder={compact ? 'Sayı' : 'Sayı yazın'} onChange={(v) => onChange(v ?? null)} />,
+        <InputNumber id={id} className={cellClass} variant={variant} aria-label={ariaLabel} inputMode="decimal" enterKeyHint="done" autoComplete="off" decimalSeparator="," value={(value as number) ?? undefined} min={field.min} max={field.max} step={field.step} suffix={field.unit ? <span className="unit-suffix">{field.unit}</span> : undefined} prefix={compact ? undefined : <Hash size={16} aria-hidden />} placeholder={compact ? 'Sayı' : 'Sayı yazın'} onChange={(v) => onChange(v ?? null)} />,
         { tooltip: field.min !== undefined || field.max !== undefined ? `En az ${field.min ?? 0}${field.max !== undefined ? `, en çok ${field.max}` : ''}${field.unit ? ` ${field.unit}` : ''}.` : undefined },
       )
     case 'money':
@@ -110,6 +133,9 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
           className={cellClass}
           variant={variant}
           aria-label={ariaLabel}
+          inputMode="decimal"
+          enterKeyHint="done"
+          autoComplete="off"
           placeholder={compact ? '0' : '0'}
           value={typeof value === 'number' ? value / 100 : undefined}
           min={0}
@@ -127,12 +153,12 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
       )
     case 'date':
       return wrap(
-        <DatePicker id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={value ? dayjs(value as string) : null} format="D MMMM YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün seçin" suffix={<CalendarBlank size={18} aria-hidden />} />,
+        <DatePicker id={id} className={cellClass} classNames={DATE_CLASS_NAMES} getPopupContainer={formPopupContainer} variant={variant} aria-label={ariaLabel} components={TEXT_INPUT_COMPONENTS} autoComplete="off" value={value ? dayjs(value as string) : null} format="D MMMM YYYY" onChange={(d) => onChange(d ? d.format('YYYY-MM-DD') : null)} placeholder="Gün seçin" suffix={<CalendarBlank size={18} aria-hidden />} />,
         { extra: value ? formatDate(value as string) : null, tooltip: 'Takvimden gün seçin. Tarih "13 Kasım 2026" biçiminde görünür.' },
       )
     case 'select':
       return wrap(
-        <Select id={id} className={cellClass} variant={variant} aria-label={ariaLabel} value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" notFoundContent="Eşleşen seçenek yok." />,
+        <Select id={id} className={cellClass} variant={variant} aria-label={ariaLabel} components={TEXT_INPUT_COMPONENTS} autoComplete="off" value={(value as string) ?? undefined} options={field.options} onChange={onChange} placeholder={field.placeholder ?? 'Seçin'} allowClear showSearch optionFilterProp="label" notFoundContent="Eşleşen seçenek yok." />,
         { tooltip: optionsTooltip(field.options), extra: field.options.find((o) => o.value === value)?.help },
       )
     case 'segmented':
@@ -195,7 +221,9 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
     }
     case 'evidenceLadder':
       if (compact) {
-        return wrap(<Select id={id} className="cell-input" variant="borderless" aria-label={ariaLabel} value={(value as number) ?? undefined} onChange={onChange} placeholder="Basamak seçin" options={LADDER.map((l) => ({ value: l.level, label: `${l.level}. ${l.label}` }))} />)
+        return wrap(<Select id={id} className="cell-input" variant="borderless" aria-label={ariaLabel} value={(value as number) ?? undefined} onChange={onChange} placeholder="Basamak seçin" options={LADDER.map((l) => ({ value: l.level, label: `${l.level}. ${l.label}` }))} />, {
+          tooltip: <><span>1. basamak en güçlü kanıttır. 7. basamak en zayıf kanıttır.</span><ul className="tooltip-list">{LADDER.filter((level) => level.hint).map((level) => <li key={level.level}><strong>{level.level}. {level.label}.</strong> {level.hint}</li>)}</ul></>,
+        })
       }
       return wrap(<EvidenceLadderPicker id={id} value={value as number} onChange={onChange} />, { labelAs: 'span', tooltip: '1. basamak en güçlü kanıttır. 7. basamak en zayıf kanıttır.' })
     case 'threshold':
@@ -214,7 +242,7 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
     case 'checklist': {
       const sel = (value as string[]) ?? []
       return wrap(
-        <Checkbox.Group className="plain-list" aria-labelledby={field.label ? `${id}-etiket` : undefined} value={sel} onChange={(v) => onChange(v)} options={field.items} />,
+        <Checkbox.Group className="plain-list" aria-labelledby={field.label && !compact ? `${id}-etiket` : undefined} aria-label={ariaLabel} value={sel} onChange={(v) => onChange(v)} options={field.items} />,
         { labelAs: 'span', extra: `İşaretli: ${sel.length} / ${field.items.length}.` },
       )
     }

@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, ConfigProvider, Dropdown, Grid, Input, Modal, Progress, Table, Tag, App as AntApp } from 'antd'
 import { DotsThree, ListNumbers, BookOpen, Compass } from '@phosphor-icons/react'
 import { Link, useNavigate, useParams } from 'react-router'
@@ -141,16 +141,16 @@ export function WorkScreen() {
   const setLocation = usePlanStore((s) => s.setLocation)
   const step = id ? STEPS[id] : undefined
   const isProfile = step?.id === '00'
-  const stored = useMemo(() => (isProfile ? (plan?.profile as Record<string, unknown>) : plan?.steps[step?.id ?? '']?.values) ?? {}, [plan, step, isProfile])
-  const [values, setValues] = useState<Record<string, unknown>>(stored)
+  const values = useMemo(() => (isProfile ? (plan?.profile as Record<string, unknown>) : plan?.steps[step?.id ?? '']?.values) ?? {}, [plan, step, isProfile])
   const [skipOpen, setSkipOpen] = useState(false)
   const [reveal, setReveal] = useState<{ id: string; n: number } | undefined>(undefined)
   const [skipReason, setSkipReason] = useState('')
-  const timer = useRef<number | null>(null)
 
   useEffect(() => {
-    setValues(stored)
-  }, [step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+    setSkipOpen(false)
+    setSkipReason('')
+    setReveal(undefined)
+  }, [plan?.id, step?.id]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (step) setLocation(stepPath(step.id))
@@ -175,8 +175,16 @@ export function WorkScreen() {
   const subStage = subStageOfStep(step.id)
   const gatePath = isStrategy ? '/strateji' : `/karar/${step.decision}/kapi`
 
+  const editablePlan = () => {
+    const current = usePlanStore.getState()
+    if (current.currentId !== plan.id) return undefined
+    const active = current.plans[plan.id]
+    if (!active || ((isStrategy || EXECUTION_DECISIONS.includes(step.decision)) && decisionLocked(active, lockGroup))) return undefined
+    if (active.steps[step.id]?.status === 'atlandi' && plan.steps[step.id]?.status !== 'atlandi') return undefined
+    return active
+  }
   const persist = (next: Record<string, unknown>, status?: 'tamam') => {
-    if (locked) return
+    if (!editablePlan()) return false
     if (isProfile) setProfile(next)
     else setStepValues(step.id, next, status)
     if (step.id === '02') {
@@ -184,17 +192,17 @@ export function WorkScreen() {
       for (const k of LIMIT_KEYS) if (k in next) (patch as Record<string, unknown>)[k] = next[k]
       setLimits(patch)
     }
+    return true
   }
   const onChange = (key: string, v: unknown) => {
-    if (locked) return
-    const next = { ...values, [key]: v }
-    setValues(next)
-    if (timer.current) window.clearTimeout(timer.current)
-    timer.current = window.setTimeout(() => persist(next), 400)
+    /* Yalnız değişen alanı hemen kaydet. Diğer alanların güncel değerlerini koru. */
+    return persist({ [key]: v })
   }
   const complete = () => {
-    if (locked) return
-    const missing = requiredKeys(step, plan, values).filter((k) => !isFilled(values[k]))
+    const current = editablePlan()
+    if (!current) return
+    const draft = (isProfile ? (current.profile as Record<string, unknown>) : current.steps[step.id]?.values) ?? {}
+    const missing = requiredKeys(step, current, draft).filter((k) => !isFilled(draft[k]))
     if (missing.length) {
       message.warning(`Eksik alan var: ${missing.length}. Zorunlu alanları doldurun.`)
       /* Eksik alan öteki sekmede olabilir. Form ilk eksik bölümü açar ve ekrana getirir. */
@@ -202,12 +210,12 @@ export function WorkScreen() {
       if (at >= 0) setReveal((r) => ({ id: `b${step.id}-${at}`, n: (r?.n ?? 0) + 1 }))
       return
     }
-    const issues = step.validate?.(values, plan) ?? []
+    const issues = step.validate?.(draft, current) ?? []
     if (issues.length) {
       message.warning(issues[0])
       return
     }
-    persist(values, 'tamam')
+    if (!persist({}, 'tamam')) return
     message.success('Adım tamamlandı.')
     const nx = nextStepId(step.id)
     if (nx && STEPS[nx].decision === step.decision) nav(stepPath(nx))
@@ -223,13 +231,12 @@ export function WorkScreen() {
   const example = decision ? <Callout tone="ornek" title="Günlük Hayattan">{decision.example}</Callout> : null
   const suggestions = !locked ? foundationSuggestions(step.id, plan, values) : []
   const applySuggestion = (s: Suggestion) => {
-    onChange(s.key, s.build())
-    message.success('Öneri alana yazıldı. Alanı düzenleyebilirsiniz.')
+    if (onChange(s.key, s.build())) message.success('Öneri alana yazıldı. Alanı düzenleyebilirsiniz.')
   }
   const form = <FormRenderer step={step} plan={plan} values={values} onChange={onChange} readOnly={locked} revealId={reveal} />
 
   return (
-    <div className="page">
+    <div className="page work-page">
       <div className="work-head">
         <PageHeader kicker={decision ? groupLabel(step.decision) : undefined} title={title} description={step.question} documentTitle={title} />
         <div className="work-meta">
@@ -398,17 +405,17 @@ export function WorkScreen() {
           <Button type="text" className="bar-more" aria-label="Daha fazla" icon={<DotsThree size={20} weight="bold" />} />
         </Dropdown>
         {nextInDecision ? (
-          <Button className="bar-draft" disabled={locked} onClick={() => { persist(values); nav(stepPath(nextInDecision)) }}>Taslak bırak, ilerle</Button>
+          <Button className="bar-draft" disabled={locked} onClick={() => { if (editablePlan()) nav(stepPath(nextInDecision)) }}>Taslak bırak, ilerle</Button>
         ) : (
-          <Button className="bar-draft" onClick={() => { persist(values); nav(gatePath) }}>{isStrategy ? 'Strateji oluşturma özetine git' : 'Kapıya git'}</Button>
+          <Button className="bar-draft" onClick={() => nav(gatePath)}>{isStrategy ? 'Strateji oluşturma özetine git' : 'Kapıya git'}</Button>
         )}
         <Button type="primary" disabled={locked} onClick={complete}>Adımı tamamla</Button>
       </div>
 
-      <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { if (locked) return; skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(stepPath(next)) }}>
+      <Modal open={skipOpen} title="Bu adımı atla" onCancel={() => setSkipOpen(false)} okText="Atla" cancelText="Vazgeç" okButtonProps={{ disabled: !skipReason.trim() }} onOk={() => { if (!editablePlan()) return; skipStep(step.id, skipReason.trim()); setSkipOpen(false); if (next) nav(stepPath(next)) }}>
         <div className="field">
           <label htmlFor="atlama-nedeni" className="field-label">Neden atlıyorsunuz? Neden rapora yazılır.</label>
-          <Input.TextArea id="atlama-nedeni" rows={2} value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />
+          <Input.TextArea id="atlama-nedeni" rows={2} inputMode="text" enterKeyHint="enter" autoComplete="off" value={skipReason} onChange={(e) => setSkipReason(e.target.value)} />
         </div>
       </Modal>
     </div>

@@ -28,7 +28,7 @@ export function ThresholdInput({ value, onChange, unit, idPrefix }: { value?: Th
         tooltip={{ title: 'Eşik, "bu sayının altı yetmez" dediğiniz sınırdır.', icon: <Info size={16} aria-label="Yardım" /> }}
       >
         <div className="threshold-row">
-          <InputNumber id={`${idPrefix}-deger`} value={v.value ?? undefined} onChange={(n) => set({ value: n ?? null })} suffix={unit ? <span className="unit-suffix">{unit}</span> : undefined} placeholder="Sayı" />
+          <InputNumber id={`${idPrefix}-deger`} inputMode="decimal" enterKeyHint="next" autoComplete="off" decimalSeparator="," value={v.value ?? undefined} onChange={(n) => set({ value: n ?? null })} suffix={unit ? <span className="unit-suffix">{unit}</span> : undefined} placeholder="Sayı" />
           <Tag className="threshold-tag" color={v.isGuess ? 'warning' : 'success'}>{v.isGuess ? 'İlk tahmin' : 'Dayanağı var'}</Tag>
         </div>
       </Form.Item>
@@ -39,7 +39,7 @@ export function ThresholdInput({ value, onChange, unit, idPrefix }: { value?: Th
         htmlFor={`${idPrefix}-dayanak`}
         extra='Dayanak yazılmazsa eşik "ilk tahmin" sayılır. İlk tahmin ağır harcamaya tek başına yetki vermez.'
       >
-        <Input id={`${idPrefix}-dayanak`} value={v.basis} onChange={(e) => set({ basis: e.target.value })} placeholder="Bu sayı nereden geliyor? Örneğin makine gideri bölü sipariş katkısı." />
+        <Input id={`${idPrefix}-dayanak`} inputMode="text" enterKeyHint="next" autoComplete="off" value={v.basis} onChange={(e) => set({ basis: e.target.value })} placeholder="Bu sayı nereden geliyor? Örneğin makine gideri bölü sipariş katkısı." />
       </Form.Item>
     </div>
   )
