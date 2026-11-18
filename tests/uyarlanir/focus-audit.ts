@@ -316,9 +316,15 @@ export async function settleFocusAnimations(page: Page, timeout = 3000) {
         : animation instanceof CSSAnimation ? animation.animationName : animation.id || 'animasyon'
       return `${target ? window.__mobileQA?.selector(target) ?? target.localName : '?'}${effect?.pseudoElement ?? ''} ${name}`
     }
+    const frame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+    // Geçiş sınıfı animasyon başlamadan önce eklenir. Örneğin pencere açılırken ant-zoom-appear gelir.
+    const motionClass = /-(appear|enter|leave)(-(prepare|start|active))?$/
+    let quietFrames = 0
     for (;;) {
       const el = document.activeElement
       const dialog = el?.closest('.ant-modal-root, .ant-modal-wrap, .ant-drawer, [role="dialog"]') ?? null
+      const related = (target: Element) => Boolean(el) && (target === el || target.contains(el!) || el!.contains(target)
+        || Boolean(dialog?.contains(target)))
       const running = document.getAnimations().filter((animation) => {
         // Duraklatılmış animasyon kararlı bir durumdur. Bitmiş animasyon da beklenmez.
         if (animation.playState !== 'running') return false
@@ -326,15 +332,25 @@ export async function settleFocusAnimations(page: Page, timeout = 3000) {
         // Sonsuz animasyon bitmez. Bu animasyonlar ölçümün kararlılık denetimine kalır.
         if (!effect || !Number.isFinite(effect.getComputedTiming().endTime)) return false
         const target = effect instanceof KeyframeEffect ? effect.target : null
-        if (!target || !el) return false
-        return target === el || target.contains(el) || el.contains(target) || Boolean(dialog?.contains(target))
+        return Boolean(target) && related(target!)
       })
-      if (running.length === 0) return []
+      const moving = [...(dialog ? [dialog, ...dialog.querySelectorAll('[class]')] : []),
+        ...(el ? (() => { const up: Element[] = []; for (let n: Element | null = el; n; n = n.parentElement) up.push(n); return up })() : [])]
+        .filter((node) => [...node.classList].some((name) => motionClass.test(name)))
+      if (running.length === 0 && moving.length === 0) {
+        // Geçiş sınıfı bir sonraki karede eklenebilir. İki sakin kare görülünce ölçüm başlar.
+        if (++quietFrames >= 2) return []
+        await frame()
+        continue
+      }
+      quietFrames = 0
       const left = deadline - performance.now()
-      if (left <= 0) return running.map(describe)
+      if (left <= 0) {
+        return [...running.map(describe), ...moving.map((node) => `${window.__mobileQA?.selector(node) ?? node.localName} geçiş sınıfı`)]
+      }
       let timer = 0
       await Promise.race([
-        Promise.allSettled(running.map((animation) => animation.finished)),
+        running.length > 0 ? Promise.allSettled(running.map((animation) => animation.finished)) : frame(),
         new Promise<void>((resolve) => { timer = window.setTimeout(resolve, left) }),
       ])
       window.clearTimeout(timer)
