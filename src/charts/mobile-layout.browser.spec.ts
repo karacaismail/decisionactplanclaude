@@ -469,6 +469,44 @@ test('yol ve varsayılan rota bağlantıları daralmada odağı korur', async ({
   }
 })
 
+/** Her dokunma hedefinin ortasındaki 44 × 44 alan aynı hedefe basar. Görünen boyut daha küçük olabilir. */
+async function smallHitAreas(page: Page) {
+  return page.evaluate(async () => {
+    const selector = 'a[href], button, [role="tab"], [role="switch"], input:not([type="hidden"]), .ant-segmented-item, .ant-select-selector'
+    const targets = [...document.querySelectorAll<HTMLElement>(`main :is(${selector})`)].map((node) =>
+      // Sekmede tıklama işleyicisi dıştaki .ant-tabs-tab kutusundadır.
+      node.closest<HTMLElement>('.ant-tabs-tab, .ant-input-affix-wrapper, .ant-select, .ant-checkbox-wrapper, .ant-radio-wrapper, .ant-segmented-item') ?? node)
+    const failures: string[] = []
+    for (const target of new Set(targets)) {
+      const rect = target.getBoundingClientRect()
+      if (!rect.width || !rect.height || getComputedStyle(target).visibility === 'hidden' || target.closest('.sr-only, [aria-hidden="true"], [inert]')) continue
+      target.scrollIntoView({ block: 'center', inline: 'nearest' })
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()))
+      const box = target.getBoundingClientRect()
+      const cx = box.left + box.width / 2
+      const cy = box.top + box.height / 2
+      const points = [[cx, cy], [cx, cy - 21.5], [cx, cy + 21.5], [Math.max(1, cx - 21.5), cy], [Math.min(innerWidth - 1, cx + 21.5), cy]]
+      const missed = points.filter(([x, y]) => { const hit = document.elementFromPoint(x, y); return !hit || !(hit === target || target.contains(hit)) })
+      if (missed.length) failures.push(`${(target.textContent || target.getAttribute('aria-label') || target.className).trim().slice(0, 40)} ${Math.round(box.width)}×${Math.round(box.height)}`)
+    }
+    return failures
+  })
+}
+
+test('pano ve plan listesindeki her hedefin dokunma alanı en az 44 pikseldir', async ({ page }, testInfo) => {
+  await openDemo(page)
+  for (const [width, height] of [[320, 720], [390, 844], [844, 390], [1280, 800]]) {
+    await page.setViewportSize({ width, height })
+    for (const route of ['ozet', 'planlar']) {
+      await page.goto(`/#/${route}`)
+      await expect(page.locator(`.mobil-${routeRoots[route]} h1`)).toBeVisible()
+      await page.evaluate(() => document.fonts.ready)
+      expect(await smallHitAreas(page), `${route}, ${width}`).toEqual([])
+      if (width === 320) await page.screenshot({ path: testInfo.outputPath(`hit-${route}-320.png`), fullPage: true })
+    }
+  }
+})
+
 for (const reduced of [false, true]) {
 test(`kısa yol anahtarı boşluk ve tıklamayla açılıp kapanır${reduced ? ' (azaltılmış hareket)' : ''}`, async ({ page }) => {
   if (reduced) await page.emulateMedia({ reducedMotion: 'reduce' })
