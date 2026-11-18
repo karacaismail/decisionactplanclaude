@@ -14,6 +14,7 @@ import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { SubStageList } from '@/components/SubStageList'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-karar.css'
 import '@/styles/screens-strateji.css'
 
@@ -85,7 +86,7 @@ export function ExecutionScreen() {
   ) : null
 
   return (
-    <div className="page page-karar page-strateji">
+    <div className="page mobil-kapi-page page-karar page-strateji">
       <PageHeader kicker="Strateji uygulama" title={cluster.question} description="Seçimi hedefe, işe ve kaynağa çevirirsiniz. Sonra yürütür, ölçer ve seçimi düzenli sınarsınız." documentTitle={cluster.title} actions={action} />
 
       {locked ? (

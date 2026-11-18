@@ -14,6 +14,7 @@ import { OUTCOME_LABEL, type Outcome } from '@/data/types'
 import { formatDate, formatMoney } from '@/engine/format'
 import { openReviews } from '@/engine/changes'
 import { OUTCOME_PRIORITY } from '@/engine/gate'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-kapi.css'
 
 interface RuleRow { condition: string; outcome: Outcome; note?: string }
@@ -150,7 +151,7 @@ export function ReviewScreen() {
   const stepCurrent = saved ? 3 : draft && draft.reason.trim() && draft.decidedBy.trim() ? 2 : draft && (draft.reason.trim() || draft.decidedBy.trim() || draft.chosen !== evaluation.suggested) ? 1 : 0
 
   return (
-    <div className="page kapi-page">
+    <div className="page mobil-kapi-page kapi-page">
       <PageHeader
         kicker={`Karar ${d.n}. ${d.title}`}
         title={`Kapı ${d.n}. ${d.gate.title}`}
@@ -234,14 +235,18 @@ export function ReviewScreen() {
                   <span className="switch-row-title" id="zarar-baslik">Ciddi zarar tehlikesi var</span>
                   <span className="switch-row-desc" id="zarar-aciklama">Etkilenen iş durdurulmalı. Açıkken yalnız "Durdur" seçilebilir.</span>
                 </div>
-                <Switch checked={harm} onChange={setHarm} aria-labelledby="zarar-baslik" aria-describedby="zarar-aciklama" />
+                <label className="kapi-switch-target" htmlFor="zarar-anahtar">
+                  <Switch id="zarar-anahtar" tabIndex={0} checked={harm} onChange={setHarm} aria-labelledby="zarar-baslik" aria-describedby="zarar-aciklama" />
+                </label>
               </div>
               <div className="switch-row">
                 <div className="switch-row-text">
                   <span className="switch-row-title" id="izin-baslik">Gerekli izin veya yetki eksik</span>
                   <span className="switch-row-desc" id="izin-aciklama">İzne bağlı iş açılmamalı. Açıkken öneri "Beklet" olur.</span>
                 </div>
-                <Switch checked={permitMissing} onChange={setPermitMissing} aria-labelledby="izin-baslik" aria-describedby="izin-aciklama" />
+                <label className="kapi-switch-target" htmlFor="izin-anahtar">
+                  <Switch id="izin-anahtar" tabIndex={0} checked={permitMissing} onChange={setPermitMissing} aria-labelledby="izin-baslik" aria-describedby="izin-aciklama" />
+                </label>
               </div>
             </div>
           </Card>

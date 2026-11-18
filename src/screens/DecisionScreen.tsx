@@ -14,6 +14,7 @@ import { Callout } from '@/components/Callout'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { modelByIndex } from '@/components/ModelChip'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-karar.css'
 
 /** "Kapı 1'e git", "Kapı 2'ye git" gibi doğru ek. */
@@ -96,7 +97,7 @@ export function DecisionScreen() {
   )
 
   return (
-    <div className="page page-karar">
+    <div className="page mobil-kapi-page page-karar">
       <PageHeader title={d.question} documentTitle={`Karar ${d.n}. ${d.title}`} kicker={kicker} description={d.intro} actions={gateButton} />
 
       {lockedByTransition ? (

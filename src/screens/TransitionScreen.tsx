@@ -12,6 +12,7 @@ import { buildHandoffReport } from '@/reports/handoff'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { TransitionPanel, TransitionTag } from '@/components/TransitionPanel'
+import '@/styles/mobil-kapi.css'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-gecis.css'
 
@@ -142,7 +143,7 @@ export function TransitionScreen() {
   )
 
   return (
-    <div className="page gecis-page">
+    <div className="page mobil-kapi-page gecis-page">
       <PageHeader
         kicker="Geçiş kapısı"
         title="Stratejik planlamaya hazır mısınız?"
