@@ -1,10 +1,12 @@
-import { Button, Card, Form, Input, Switch, Table, Tag } from 'antd'
+import { Button, Card, ConfigProvider, Form, Input, Switch, Tag } from 'antd'
 import { ArrowRight } from '@phosphor-icons/react'
 import { Link, useNavigate } from 'react-router'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { control, space } from '@/theme/tokens'
 import '@/styles/screens-karar.css'
+import '@/styles/mobil-cikti.css'
 
 type Check = { key: string; q: string; yes: string; no: string; to: string }
 
@@ -91,53 +93,37 @@ export function TakeoverScreen() {
         <Card title="İlk iki haftanın soruları" extra={<span>{answered} / {QUESTIONS.length} cevaplandı</span>}>
           <Form layout="vertical" className="devralma-form" requiredMark={false} onFinish={() => nav('/karar/1/adim/00')}>
             {QUESTIONS.map((q) => (
-              <Form.Item key={q.key} label={q.label} tooltip={q.tooltip} extra={q.extra}>
-                <Input.TextArea rows={2} value={(t[q.key] as string) ?? ''} onChange={(e) => set(q.key, e.target.value)} placeholder={q.placeholder} aria-label={q.label} />
+              <Form.Item key={q.key} label={q.label} htmlFor={`devralma-${q.key}`} tooltip={q.tooltip} extra={<span id={`devralma-${q.key}-help`}>{q.extra}</span>}>
+                <Input.TextArea id={`devralma-${q.key}`} aria-describedby={`devralma-${q.key}-help`} autoSize={{ minRows: 2, maxRows: 8 }} value={(t[q.key] as string) ?? ''} onChange={(e) => set(q.key, e.target.value)} placeholder={q.placeholder} aria-label={q.label} />
               </Form.Item>
             ))}
           </Form>
         </Card>
 
-        <Card title="Kontrol tablosu" extra={<span>{yesCount} / {CHECKS.length} evet</span>}>
+        <Card title="Devralma kontrolleri" extra={<span>{yesCount} / {CHECKS.length} evet</span>}>
           <p className="helper" style={{ margin: 0 }}>
-            Her soruya Evet ya da Hayır deyin. Hayır olan satır sizi doğru adıma götürür.
+            Her soruya Evet ya da Hayır deyin. Hayır cevabının altındaki bağlantı, ilgili adımı açar.
           </p>
-          <Table<Check>
-            className="devralma-table"
-            size="middle"
-            pagination={false}
-            rowKey="key"
-            dataSource={CHECKS}
-            scroll={{ x: 'max-content' }}
-            columns={[
-              { title: 'Soru', dataIndex: 'q', width: 260 },
-              {
-                title: 'Cevap',
-                key: 'c',
-                width: 110,
-                render: (_, r) => <Switch checked={Boolean(t[r.key])} onChange={(v) => set(r.key, v)} checkedChildren="Evet" unCheckedChildren="Hayır" aria-label={r.q} />,
-              },
-              {
-                title: 'Sonuç',
-                key: 's',
-                width: 280,
-                render: (_, r) =>
-                  t[r.key] ? (
-                    <span className="devralma-result">
-                      <Tag color="success" style={{ justifySelf: 'start' }}>
-                        Geçildi
-                      </Tag>
-                      <span>{r.yes}</span>
-                    </span>
-                  ) : (
-                    <span className="devralma-result">
-                      <span>{r.no}</span>
-                      <Link to={r.to}>Oraya git</Link>
-                    </span>
-                  ),
-              },
-            ]}
-          />
+          <ConfigProvider theme={{ components: { Switch: {
+            trackHeight: control.touch,
+            trackMinWidth: control.touch * 2,
+            handleSize: control.touch - space.sm,
+            trackPadding: space.xs,
+            innerMinMargin: space.sm,
+            innerMaxMargin: control.touch,
+          } } }}>
+            <ul className="devralma-checks" aria-label="Devralma kontrolleri">
+              {CHECKS.map((check) => (
+                <li key={check.key}>
+                  <h3 className="devralma-check-question" id={`devralma-${check.key}`}>{check.q}</h3>
+                  <Switch checked={Boolean(t[check.key])} onChange={(value) => set(check.key, value)} checkedChildren="Evet" unCheckedChildren="Hayır" aria-labelledby={`devralma-${check.key}`} />
+                  <div className="devralma-result">
+                    {t[check.key] ? <><Tag color="success">Geçildi</Tag><span>{check.yes}</span></> : <><span>{check.no}</span><Link to={check.to}>Oraya git</Link></>}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </ConfigProvider>
         </Card>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { Anchor, Button, Card, Descriptions, Empty, Grid, Progress, Segmented, Table, Tag } from 'antd'
+import { Button, Collapse, Descriptions, Empty, Grid, Progress, Segmented, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link, useNavigate } from 'react-router'
 import { CheckCircle, CircleHalf, DownloadSimple, FileCode, Printer, XCircle } from '@phosphor-icons/react'
@@ -29,6 +29,7 @@ import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-devir.css'
+import '@/styles/mobil-cikti.css'
 import '@/styles/print.css'
 
 /** İçindekiler ve bölüm kimlikleri. Sıra raporun sırasıdır. */
@@ -291,6 +292,23 @@ const coverageIcon = (s: CoverageStatus) =>
  * Rapor seçim yapmaz: soruyu, dayanağı, sınırı, yolları ve eksik bilgiyi gösterir.
  * Masaüstünde sağda yapışkan içindekiler durur. Telefonda tablolar blok listesine döner.
  */
+/** Bölümler açık başlar. Kapatılan bölüm yazdırmada yine bütünüyle görünür. */
+function HandoffSection({ id, className, title, closed, onToggle, children }: {
+  id: string; className: string; title: string; closed: boolean; onToggle: () => void; children: ReactNode
+}) {
+  return (
+    <section id={id} className={className} aria-labelledby={`${id}-title`}>
+      <Collapse
+        className="devir-section"
+        ghost
+        activeKey={closed ? [] : [id]}
+        onChange={onToggle}
+        items={[{ key: id, label: <h2 id={`${id}-title`} className="devir-card-title">{title}</h2>, forceRender: true, children }]}
+      />
+    </section>
+  )
+}
+
 export function HandoffScreen() {
   const plan = useCurrentPlan()
   const navigate = useNavigate()
@@ -298,6 +316,8 @@ export function HandoffScreen() {
   const { ref: mainRef, density } = useDensity(bp.md === false)
   const narrow = density === 'liste'
   const [filter, setFilter] = useState<Filter>('hepsi')
+  const [closedSections, setClosedSections] = useState<string[]>([])
+  const [tocOpen, setTocOpen] = useState<boolean>()
   const report = useMemo(() => (plan ? buildHandoffReport(plan) : null), [plan])
   if (!plan || !report) return null
 
@@ -334,9 +354,13 @@ export function HandoffScreen() {
     { title: 'Geri alınır mı?', render: (d) => doorTag(d.door), width: 136 },
   ]
 
+  const toggleSection = (id: string) => setClosedSections((closed) => closed.includes(id) ? closed.filter((key) => key !== id) : [...closed, id])
+
   const scrollTo = (id: string) => {
-    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    document.getElementById(id)?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' })
+    setClosedSections((closed) => closed.filter((key) => key !== id))
+    const section = document.getElementById(id)
+    section?.querySelector<HTMLElement>('.ant-collapse-header')?.focus({ preventScroll: true })
+    section?.scrollIntoView({ block: 'start' })
   }
 
   /* Telefonda dışa aktarma düğmeleri sayfanın sonundadır. Böylece karar sorusu ilk ekranda okunur. */
@@ -361,8 +385,21 @@ export function HandoffScreen() {
       {report.stamp ? <Callout tone="uyari" title="Örnek">{report.stamp}</Callout> : null}
 
       <div className="devir-layout">
+        <aside className="devir-toc no-print" aria-label="İçindekiler">
+          <Collapse ghost className="devir-toc-toggle" activeKey={(tocOpen ?? bp.xl) ? ['bolumler'] : []} onChange={(keys) => setTocOpen(keys.length > 0)} items={[{
+            key: 'bolumler',
+            label: 'İçindekiler',
+            children: (
+          <nav aria-label="Rapor bölümleri">
+            {SECTIONS.map((section) => (
+              <a href={`#${section.id}`} key={section.id} onClick={(event) => { event.preventDefault(); scrollTo(section.id) }}>{section.toc}</a>
+            ))}
+          </nav>
+            ),
+          }]} />
+        </aside>
         <div className="devir-main" ref={mainRef}>
-          <Card id={SECTIONS[0].id} className="devir-card devir-lead" title={<h2 className="devir-card-title">1. Bugün hangi karar verilecek?</h2>}>
+          <HandoffSection id={SECTIONS[0].id} className="devir-card devir-lead" title="1. Bugün hangi karar verilecek?" closed={closedSections.includes(SECTIONS[0].id)} onToggle={() => toggleSection(SECTIONS[0].id)}>
             <p className="devir-question">{report.question}</p>
             {report.scope ? (
               <p className="devir-line">
@@ -453,9 +490,9 @@ export function HandoffScreen() {
                 <p className="helper devir-missing">Henüz geçilen kapı yok. <Link className="no-print" to="/ozet">Plan özetini aç</Link></p>
               )}
             </div>
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[1].id} className="devir-card" title={<h2 className="devir-card-title">2. Dayanaklar</h2>}>
+          <HandoffSection id={SECTIONS[1].id} className="devir-card" title="2. Dayanaklar" closed={closedSections.includes(SECTIONS[1].id)} onToggle={() => toggleSection(SECTIONS[1].id)}>
             <div className="devir-filter">
               <Segmented<Filter> className="no-print" aria-label="Cümle türüne göre süz" options={FILTERS} value={filter} onChange={setFilter} />
               <p className="helper tabular">
@@ -466,9 +503,9 @@ export function HandoffScreen() {
             {visibleGroups.map((g) => (
               <ClaimGroupBlock key={`${g.title}-${filter}`} title={g.title} decision={g.decision} claims={g.shown} step={g.step} density={density} />
             ))}
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[2].id} className="devir-card" title={<h2 className="devir-card-title">3. Bağlayıcı sınırlar</h2>}>
+          <HandoffSection id={SECTIONS[2].id} className="devir-card" title="3. Bağlayıcı sınırlar" closed={closedSections.includes(SECTIONS[2].id)} onToggle={() => toggleSection(SECTIONS[2].id)}>
             {report.limits.length ? (
               <Descriptions className="devir-facts" size="small" column={{ xs: 1, sm: 2, lg: 3 }} items={report.limits.map((l) => ({ key: l.label, label: l.label, children: l.value }))} />
             ) : (
@@ -499,9 +536,9 @@ export function HandoffScreen() {
                 </ul>
               </div>
             ) : null}
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[3].id} className="devir-card" title={<h2 className="devir-card-title">4. Karşılaştırılacak yollar</h2>}>
+          <HandoffSection id={SECTIONS[3].id} className="devir-card" title="4. Karşılaştırılacak yollar" closed={closedSections.includes(SECTIONS[3].id)} onToggle={() => toggleSection(SECTIONS[3].id)}>
             {report.paths.length ? (
               <>
                 <p className="helper">Yollar yan yana durur. Rapor yol seçmez. Stratej yolu önerir. Karar sahibi seçer.</p>
@@ -556,9 +593,9 @@ export function HandoffScreen() {
                 <StepLink step="18" />
               </Empty>
             )}
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[4].id} className="devir-card" title={<h2 className="devir-card-title">5. Seçimi değiştirebilecek eksik bilgi</h2>}>
+          <HandoffSection id={SECTIONS[4].id} className="devir-card" title="5. Seçimi değiştirebilecek eksik bilgi" closed={closedSections.includes(SECTIONS[4].id)} onToggle={() => toggleSection(SECTIONS[4].id)}>
             <div className="devir-block">
               <h3 className="devir-sub">Kırılgan sayı</h3>
               {report.fragile ? <p className="devir-line">{report.fragile}</p> : <Missing step="16" />}
@@ -623,9 +660,9 @@ export function HandoffScreen() {
               <h3 className="devir-sub">Açık karar defteri</h3>
               {report.openDecisions.length ? <Records rows={report.openDecisions} columns={decisionColumns} narrow={density !== 'genis'} label="Açık karar defteri" /> : <Missing step="18" />}
             </div>
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[5].id} className="devir-card" title={<h2 className="devir-card-title">Ek 1. Kapsam</h2>}>
+          <HandoffSection id={SECTIONS[5].id} className="devir-card" title="Ek 1. Kapsam" closed={closedSections.includes(SECTIONS[5].id)} onToggle={() => toggleSection(SECTIONS[5].id)}>
             <div className="devir-progress">
               <Progress percent={percent} showInfo={false} aria-label={`14 başlığın ${report.coverageFilled} tanesi dolu`} />
               <p className="devir-coverage-count tabular">{coverageText}</p>
@@ -664,18 +701,18 @@ export function HandoffScreen() {
                 <p className="devir-line">Bakılmayan alan yok. Atlanan ya da boş bırakılan temel adımı yok.</p>
               )}
             </div>
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[6].id} className="devir-card" title={<h2 className="devir-card-title">Ek 2. Stratej'in ilk günü</h2>}>
+          <HandoffSection id={SECTIONS[6].id} className="devir-card" title="Ek 2. Stratej'in ilk günü" closed={closedSections.includes(SECTIONS[6].id)} onToggle={() => toggleSection(SECTIONS[6].id)}>
             <ol className="devir-list devir-first-day">
               {report.firstDay.map((s) => <li key={s}>{s}</li>)}
             </ol>
             <div className="no-print">
               <Button onClick={() => navigate('/strateji')}>Strateji oluşturmaya git</Button>
             </div>
-          </Card>
+          </HandoffSection>
 
-          <Card id={SECTIONS[7].id} className="devir-card" title={<h2 className="devir-card-title">Ek 3. Altı soru</h2>}>
+          <HandoffSection id={SECTIONS[7].id} className="devir-card" title="Ek 3. Altı soru" closed={closedSections.includes(SECTIONS[7].id)} onToggle={() => toggleSection(SECTIONS[7].id)}>
             <p className="helper">Yazılım altı cevabı plandan bulur. Yeni bilgi eklemez. Cevap yoksa soruyu ilgili adımda cevaplayın.</p>
             <ol className="devir-six">
               {report.sixQuestions.map((q, i) => (
@@ -685,7 +722,7 @@ export function HandoffScreen() {
                 </li>
               ))}
             </ol>
-          </Card>
+          </HandoffSection>
         </div>
 
         {phone ? (
@@ -695,22 +732,7 @@ export function HandoffScreen() {
           </section>
         ) : null}
 
-        {bp.xl ? (
-          <aside className="devir-toc no-print" aria-label="İçindekiler">
-            <span className="devir-toc-title">İçindekiler</span>
-            <Anchor
-              affix={false}
-              getContainer={() => window}
-              targetOffset={124}
-              items={SECTIONS.map((s) => ({ key: s.id, href: `#${s.id}`, title: s.toc }))}
-              onClick={(e, link) => {
-                // HashRouter adresi "#/devir" tutar. Bağlantı adresi değiştirmez, yalnız kaydırır.
-                e.preventDefault()
-                scrollTo(link.href.slice(1))
-              }}
-            />
-          </aside>
-        ) : null}
+
       </div>
     </div>
   )

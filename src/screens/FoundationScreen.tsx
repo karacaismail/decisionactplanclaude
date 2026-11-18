@@ -10,6 +10,7 @@ import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-temel.css'
+import '@/styles/mobil-cikti.css'
 
 type Filter = 'hepsi' | StoneStatus
 
@@ -84,7 +85,7 @@ export function FoundationScreen() {
   const levelTitle = LEVELS.find((l) => l.level === level)?.title ?? ''
 
   return (
-    <div className="page">
+    <div className="page page-foundation">
       <PageHeader
         kicker="Temel taşları"
         title="Strateji öncesi 20 temel taşı"

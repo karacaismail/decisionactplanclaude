@@ -8,6 +8,7 @@ import { ModelCard, type ModelEntry } from '@/components/ModelCard'
 import { ModelDrawer } from '@/components/ModelDrawer'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-rapor.css'
+import '@/styles/mobil-cikti.css'
 
 const ALL = models as ModelEntry[]
 const TUMU = '__tumu__'
@@ -81,7 +82,7 @@ export function MethodsScreen() {
   }
 
   return (
-    <div className="page page-rapor">
+    <div className="page page-rapor page-methods">
       <PageHeader kicker="Kitaplık" title="Karar Kitabı" description="Kitapta 128 yöntem var. Her yöntem bir soruya cevap verir. Yöntemi arayın ya da bölüm seçin." />
 
       <div className="method-tools" ref={listRef}>
