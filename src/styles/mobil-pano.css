@@ -232,7 +232,6 @@ html[data-focus-mode='keyboard'] :is(.mobil-chart-frame, .mobil-ladder, .mobil-h
 :root { --evidence-drawer-width: 35rem; }
 .mobil-history .history-filter .ant-radio-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); width: 100%; }
 .mobil-history .history-filter .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; min-height: var(--target-touch); height: auto; min-width: var(--target-touch); flex: 1 1 auto; white-space: normal; line-height: 1.5; }
-html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-input:focus-visible + .ant-radio-button + span { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: var(--space-1); }
 .mobil-evidence :is(.ant-select, .ant-picker), .mobil-evidence-drawer :is(.ant-select, .ant-picker) { min-height: var(--target-touch); }
 
 /* İş kartları ortak veriyi ve durum seçimini korur. */
@@ -294,13 +293,8 @@ html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-vi
 }
 html[data-focus-mode='keyboard'] .mobil-chart-frame .chart-table-scroll:focus-visible::before { display: none; }
 
-/* Radyo düğmesinin çevre çizgisi yerine yalnız etiket altı işaretlenir. */
+/* Radyo düğmesinde çevre çizgisi yoktur. Odak işareti ortak kenar çizgisidir. */
 .mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus) { outline: none; box-shadow: none; }
-html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus-visible) > span:last-child {
-  text-decoration: underline;
-  text-decoration-thickness: var(--pano-focus-thickness);
-  text-underline-offset: var(--space-1);
-}
 
 /* Gerçek tablo satırları kanıt kartlarını taşır. Ayrım çizgi yerine boşluktur. */
 .mobil-evidence .evidence-table :is(.ant-table, .ant-table-container, .ant-table-content) { background: transparent; }
@@ -325,5 +319,4 @@ html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-wrapper:has(.a
   html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus-visible) {
     outline: 2px solid CanvasText !important;
   }
-  html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-wrapper:has(.ant-radio-button-input:focus-visible) > span:last-child { text-decoration: none; }
 }

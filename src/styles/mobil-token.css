@@ -122,18 +122,63 @@ input.ant-input,
   font-size: var(--font-helper);
 }
 
-/* Native girişler ::before çizmez. İşaret doğrudan yüzeyde boyanır. */
-html[data-focus-mode='keyboard'] :is(input, textarea):not([type='radio']):not([type='checkbox']):focus-visible,
-html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
-  background-image: linear-gradient(var(--focus-marker), var(--focus-marker)) !important;
-  background-size: var(--focus-marker-width) calc(100% - var(--focus-marker-inset) * 2) !important;
-  background-position: left center !important;
-  background-repeat: no-repeat !important;
+/* Native girişler ::before çizmez. Odak işareti en yakın alan kabının kenarında tek çizgi olarak çizilir.
+   İç içe kaplarda yalnız en içteki kap çizer. Kutu içine zemin işareti çizilmez. Böylece her kontrolde tek işaret görünür.
+   Kap listesi tests/uyarlanir/focus-audit.ts içindeki FOCUS_FIELD_HOSTS listesiyle aynı tutulur. */
+/* Kendi taşmasını kesen kapta ve kesen listede işaret kabın içinde kalır. Örneğin sayı alanı taşmayı keser. */
+.ant-input-number,
+.choice-list .choice,
+.cmdk-root .cmdk-input {
+  --focus-field-marker-start: var(--focus-marker-inset);
 }
 
-html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
+/* İşaretçi odağında da kap çevresine halka çizilmez. */
+:is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
   outline: none !important;
   box-shadow: none !important;
+}
+
+html[data-focus-mode='keyboard'] :is(
+    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ):has(:is(input:not(.ant-segmented-item-input), textarea, select):focus-visible):not(:has(:is(
+    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ) :is(input:not(.ant-segmented-item-input), textarea, select):focus-visible)) {
+  position: relative;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html[data-focus-mode='keyboard'] :is(
+    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ):has(:is(input:not(.ant-segmented-item-input), textarea, select):focus-visible):not(:has(:is(
+    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ) :is(input:not(.ant-segmented-item-input), textarea, select):focus-visible))::before {
+  content: '';
+  display: block;
+  position: absolute;
+  inset-inline-start: var(--focus-field-marker-start, calc(-1 * var(--space-2)));
+  inset-inline-end: auto;
+  inset-block: var(--space-1);
+  inline-size: var(--focus-marker-width);
+  block-size: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  transform: none;
+  transition: none;
+  background: var(--focus-marker);
+  opacity: 1;
+  visibility: visible;
+  pointer-events: none;
 }
 
 /* Gizli native seçenek odağı, görünür etikette tek işaretle temsil edilir. */
@@ -142,9 +187,13 @@ html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, 
 }
 
 @media (forced-colors: active) {
-  html[data-focus-mode='keyboard'] :is(input, textarea):focus-visible,
-  html[data-focus-mode='keyboard'] :is(.ant-radio-button-wrapper, .ant-radio-wrapper, .ant-checkbox-wrapper):has(input:focus-visible) {
-    background-image: none !important;
+  /* Zorlanmış renklerde işaret yerine odaktaki öğenin CanvasText çizgisi görünür. */
+  html[data-focus-mode='keyboard'] :is(
+    .ant-input-affix-wrapper, .ant-select, .ant-input-number, .ant-picker, .ant-radio-wrapper, .ant-radio-button-wrapper,
+    .ant-checkbox-wrapper, .cmdk-input, .field, .ant-form-item-control-input-content, .assumption-field,
+    .ant-pagination-simple-pager, .ant-modal-body > label
+  ):has(:is(input:not(.ant-segmented-item-input), textarea, select):focus-visible)::before {
+    display: none;
   }
 
   /* Halka yalnız odaktaki native öğeye aittir. Gizli giriş görünür alanı alır. */
