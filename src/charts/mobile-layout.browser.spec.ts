@@ -151,6 +151,53 @@ test('geçmiş filtresinin klavye odağı görünürdür', async ({ page }) => {
   await expect(page.getByRole('radio', { name: 'Kararlar', exact: true })).toBeChecked()
 })
 
+test('geçmiş kartları dar alanda çizgisizdir ve filtre iki sütunda kalır', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page)
+  await page.goto('/#/gecmis')
+  await page.evaluate(() => document.fonts.ready)
+  const timeline = page.locator('.history-timeline')
+  const entries = timeline.locator('article.history-entry')
+  await expect(entries.first()).toBeVisible()
+  const firstEntry = await entries.first().elementHandle()
+  const entryCount = await entries.count()
+  const choices = page.locator('.history-filter label')
+  await expect(choices).toHaveCount(4)
+  const radio = page.getByRole('radio', { name: 'Hepsi', exact: true })
+  await page.keyboard.press('Tab')
+  await radio.focus()
+  for (const [width, height] of [[320, 720], [360, 740], [375, 812], [390, 844], [844, 390], [767, 1024], [768, 1024], [769, 1024], [844, 479], [844, 480], [844, 481], [1280, 800]]) {
+    await page.setViewportSize({ width, height })
+    await expect(radio).toBeFocused()
+    expect(await firstEntry!.evaluate((element) => element.isConnected)).toBe(true)
+    await expect(entries).toHaveCount(entryCount)
+    const boxes = await choices.evaluateAll((elements) => elements.map((element) => {
+      const rect = element.getBoundingClientRect()
+      return { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+    }))
+    if ([320, 1280].includes(width)) await page.screenshot({ path: testInfo.outputPath(`history-${width}.png`), fullPage: true })
+    expect.soft(boxes[0].y, `${width}: ilk sıra`).toBeCloseTo(boxes[1].y)
+    expect.soft(boxes[2].y, `${width}: ikinci sıra`).toBeCloseTo(boxes[3].y)
+    expect.soft(boxes[0].x, `${width}: ilk sütun`).toBeCloseTo(boxes[2].x)
+    expect.soft(boxes[1].x, `${width}: ikinci sütun`).toBeCloseTo(boxes[3].x)
+    expect.soft(boxes[2].y, `${width}: ayrı sıralar`).toBeGreaterThanOrEqual(boxes[0].y + boxes[0].height)
+    for (const box of boxes) {
+      expect(box.width).toBeGreaterThanOrEqual(44)
+      expect(box.height).toBeGreaterThanOrEqual(44)
+    }
+    const decorations = timeline.locator('.ant-timeline-item-icon:visible, .ant-timeline-item-rail:visible')
+    if (width < 768 || height < 481) {
+      expect.soft(await decorations.count(), `${width} × ${height}: dekoratif sütun`).toBe(0)
+      expect.soft((await entries.first().boundingBox())!.x, 'Kart boş ikon sütunu bırakmamalı').toBeCloseTo((await timeline.boundingBox())!.x)
+    } else {
+      expect(await decorations.count()).toBeGreaterThan(0)
+    }
+    expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(width)
+  }
+  await page.keyboard.press('ArrowRight')
+  await expect(page.getByRole('radio', { name: 'Kararlar', exact: true })).toBeChecked()
+})
+
 test('iş listesinde tek durum kontrolü vardır ve yatay görünüm odağı korur', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await openDemo(page)

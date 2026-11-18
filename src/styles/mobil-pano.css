@@ -194,12 +194,16 @@ html[data-focus-mode='keyboard'] :is(.mobil-chart-frame, .mobil-ladder, .mobil-h
 .mobil-history .history-heading { margin: 0; font: inherit; }
 .mobil-history .history-entry .tl-title { margin: 0; }
 .mobil-history .history-timeline { margin-block-start: var(--space-4); }
+/* Dar veya kısa görünümde aynı kayıtlar dekoratif sütunsuz yerleşir. */
+@media (max-width: 767px), (max-height: 480px) {
+  .mobil-history .history-timeline :is(.ant-timeline-item-icon, .ant-timeline-item-rail) { display: none; }
+}
 .mobil-history .history-change-values { display: grid; gap: var(--space-3); margin: 0; }
 .mobil-history .history-change-values dt { font-size: var(--pano-font-helper); color: var(--color-text-secondary); }
 .mobil-history .history-change-values dd { margin: 0; min-width: 0; overflow-wrap: break-word; }
 
 :root { --evidence-drawer-width: 35rem; }
-.mobil-history .history-filter .ant-radio-group { display: flex; flex-wrap: wrap; gap: var(--space-2); width: 100%; }
+.mobil-history .history-filter .ant-radio-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); width: 100%; }
 .mobil-history .history-filter .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; min-height: var(--target-touch); height: auto; min-width: var(--target-touch); flex: 1 1 auto; white-space: normal; line-height: 1.5; }
 html[data-focus-mode='keyboard'] .mobil-history .ant-radio-button-input:focus-visible + .ant-radio-button + span { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: var(--space-1); }
 .mobil-evidence :is(.ant-select, .ant-picker), .mobil-evidence-drawer :is(.ant-select, .ant-picker) { min-height: var(--target-touch); }
