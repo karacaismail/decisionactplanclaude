@@ -298,7 +298,7 @@ async function keyboardRoute(page: Page, name: string, browserName: string, test
     await expect(page.getByRole('dialog', { name: 'Menü', exact: true })).toBeVisible()
   }
   const link = !mobile && name === 'Planlar'
-    ? page.getByRole('navigation', { name: 'Konum' }).getByRole('link', { name: 'Ağ denetimi planı', exact: true })
+    ? page.getByRole('navigation', { name: 'Konum' }).getByRole('link', { name: 'Ağ denetimi planı. Planlara git', exact: true })
     : page.getByRole('navigation', { name: 'Ana bölümler' }).getByRole('link', { name, exact: true })
   await tabTo(page, link, browserName)
   await page.keyboard.press(tabKey(browserName, true))

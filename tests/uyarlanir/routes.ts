@@ -119,6 +119,8 @@ function routeElement(attribute: ts.JsxAttribute | undefined, pattern: string): 
   return { screen, redirect }
 }
 
+const LAYOUT_ROUTES = new Set(['AppShell', 'RouteContent'])
+
 function collectRoutes(container: ts.JsxElement | ts.JsxFragment) {
   for (const route of children(container)) {
     if (opening(route).tagName.getText(source) !== 'Route') throw new Error('Routes içinde tanınmayan öğe var.')
@@ -132,9 +134,11 @@ function collectRoutes(container: ts.JsxElement | ts.JsxFragment) {
     if (!path && !index) {
       const shell = attrs.get('element')?.initializer
       const value = shell && unwrap(shell)
+      // Yolu olmayan rota yalnız bilinen yerleşim sarmalayıcısı olabilir.
+      // RouteContent, ekranı yüklenirken bekletir ve ekran hatasını yakalar. Adres eklemez.
       if (!ts.isJsxElement(route) || !value || !ts.isJsxSelfClosingElement(value)
-        || value.tagName.getText(source) !== 'AppShell' || attributes(value).size) {
-        throw new Error('Yolu olmayan rota için AppShell bekleniyor.')
+        || !LAYOUT_ROUTES.has(value.tagName.getText(source)) || attributes(value).size) {
+        throw new Error('Yolu olmayan rota için AppShell veya RouteContent bekleniyor.')
       }
       collectRoutes(route)
       continue

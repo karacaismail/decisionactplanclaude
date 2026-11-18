@@ -12,6 +12,8 @@
   --shell-safe-right: env(safe-area-inset-right, 0px);
 }
 .app-shell { --shell-nav-space: calc(var(--shell-nav-height) + var(--shell-safe-bottom)); }
+/* Sabit alt menü, kaydırılarak gösterilen bağlantıyı ve odağı örtmemeli. */
+html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--shell-nav-height) + var(--shell-safe-bottom)); }
 .app-shell .topbar {
   height: auto !important;
   min-height: calc(var(--shell-bar-height) + var(--shell-safe-top));
@@ -189,6 +191,7 @@ html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before {
   .app-shell .shell-body.has-rail { grid-template-columns: var(--rail) minmax(0, 1fr); }
   .app-shell .journey-rail { display: block; top: calc(var(--shell-bar-height) + var(--space-12) + var(--shell-safe-top)); max-height: calc(100dvh - var(--shell-bar-height) - var(--space-12) - var(--shell-safe-top)); }
   .bottom-nav { display: none; }
+  html:has(.app-shell .bottom-nav) { scroll-padding-block-end: 0px; }
 }
 @media (max-height: 500px) and (orientation: landscape) {
   .app-shell { --shell-bar-height: var(--target-touch); --shell-nav-height: var(--target-touch); }
@@ -196,6 +199,7 @@ html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before {
   .bottom-nav a, .bottom-nav button { flex-direction: row; }
   .app-shell .shell-content { padding-top: var(--space-3); }
   .cmdk-root .cmdk-foot { padding-block: var(--space-1); }
+  html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--target-touch) + var(--shell-safe-bottom)); }
 }
 @media (forced-colors: active) {
   html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before { display: none; }
