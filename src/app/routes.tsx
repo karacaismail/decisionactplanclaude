@@ -5,6 +5,7 @@ import { AppShell } from './AppShell'
 import { Callout } from '@/components/Callout'
 import { LoadingState } from '@/components/LoadingState'
 import { useCurrentPlan } from '@/store/planStore'
+import { MODULE_ROUTES } from '@/platform/modules'
 
 type ScreenModule = { default: ComponentType }
 
@@ -41,6 +42,12 @@ const [ExecutionScreen, loadExecution] = lazyScreen(() => import('@/screens/Exec
 const [FoundationScreen, loadFoundation] = lazyScreen(() => import('@/screens/FoundationScreen').then((m) => ({ default: m.FoundationScreen })))
 const [AssumptionsScreen, loadAssumptions] = lazyScreen(() => import('@/screens/AssumptionsScreen').then((m) => ({ default: m.AssumptionsScreen })))
 
+/* Modül ekranları bildirimden gelir. Yeni modül için bu dosya değişmez. */
+const moduleScreens = MODULE_ROUTES.map((route) => {
+  const [Screen, load] = lazyScreen(route.load)
+  return { ...route, Screen, preload: load }
+})
+
 const preloadRoutes: { path: string; load?: () => Promise<ScreenModule> }[] = [
   { path: '/', load: loadPlans },
   { path: '/baslangic', load: loadStart },
@@ -64,6 +71,7 @@ const preloadRoutes: { path: string; load?: () => Promise<ScreenModule> }[] = [
   // Eski adresler aynı strateji ekranına yönlenir.
   { path: '/karar/9', load: loadStrategy },
   { path: '/karar/9/kapi', load: loadStrategy },
+  ...moduleScreens.map((route) => ({ path: route.path, load: route.preload })),
 ]
 
 /** HashRouter bağlantılarını ve ekran yollarını önceden yükler. Gezinmeyi başlatmaz. */
@@ -132,6 +140,11 @@ function WorkRoute() {
   return <WorkScreen key={id} />
 }
 
+/* Modül rotaları. Plan isteyen ekran, plan yokken Planlar ekranına döner. */
+const moduleRouteElements = moduleScreens.map(({ path, Screen, requiresPlan }) => (
+  <Route key={path} path={path} element={requiresPlan ? <RequirePlan><Screen /></RequirePlan> : <Screen />} />
+))
+
 export function AppRoutes() {
   return (
     <Routes>
@@ -158,6 +171,7 @@ export function AppRoutes() {
           <Route path="/gecmis" element={<RequirePlan><HistoryScreen /></RequirePlan>} />
           <Route path="/gostergeler" element={<RequirePlan><InsightsScreen /></RequirePlan>} />
           <Route path="/yontemler" element={<MethodsScreen />} />
+          {moduleRouteElements}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Route>
