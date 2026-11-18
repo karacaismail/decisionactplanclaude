@@ -1,0 +1,69 @@
+/* Ortak ölçüler. Yoğunluk metni ve dokunma alanını küçültmez. */
+:root {
+  --hit-area-min: 44px;
+  --gutter-page: 16px;
+  --font-body: 16px;
+  --font-helper: 14px;
+  --font-page-title: clamp(30px, 3.2vw, 44px);
+  --font-section-title: 22px;
+  --font-subsection-title: 17px;
+  --font-stat-value: 36px;
+  --icon-small: 14px;
+  --icon-inline: 16px;
+  --icon-control: 20px;
+  --badge-visual-size: 24px;
+  --line-body: 1.5;
+  --line-control: 1.4;
+  --weight-strong: 600;
+  --padding-note-edge: 16px;
+  --gap-label: 4px;
+  --gap-icon: 6px;
+  --size-loading-label: 120px;
+  --size-loading-copy: 70%;
+  --size-loading-title: 50%;
+  --size-art-compact: 180px;
+  --size-art-wide: 340px;
+  --size-step-marker: 28px;
+}
+
+:root,
+[data-density='comfortable'] {
+  --control-visual-size: 44px;
+  --padding-control-block: 10px;
+  --padding-control-inline: 12px;
+  --padding-panel: 16px;
+  --gap-control: 8px;
+  --gap-content: 16px;
+  --gap-section: 32px;
+}
+
+[data-density='compact'] {
+  --control-visual-size: 36px;
+  --padding-control-block: 8px;
+  --padding-control-inline: 10px;
+  --padding-panel: 12px;
+  --gap-control: 6px;
+  --gap-content: 12px;
+  --gap-section: 24px;
+}
+
+[data-density='dense'] {
+  --control-visual-size: 32px;
+  --padding-control-block: 6px;
+  --padding-control-inline: 8px;
+  --padding-panel: 8px;
+  --gap-control: 4px;
+  --gap-content: 8px;
+  --gap-section: 16px;
+}
+
+/* Hassas işaretçi sıkı aralığı kullanabilir. Klavye davranışı değişmez. */
+@media (pointer: fine) and (hover: hover) {
+  :root { --gutter-page: 20px; }
+}
+
+/* Hibrit girişte dokunma aralığı korunur. Hover eylemi gizlemez. */
+@media (pointer: coarse), (any-pointer: coarse), (hover: none) {
+  :root,
+  [data-density] { --gap-control: 8px; }
+}
