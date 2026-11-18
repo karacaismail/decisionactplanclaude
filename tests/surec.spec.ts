@@ -94,7 +94,8 @@ test('strateji oluşturma bitince Karar 6 açılır, Karar 7 Kapı 6\'yı bekler
   await page.goto('/#/strateji')
   await expect(page.getByText('Strateji oluşturma tamam', { exact: true })).toBeVisible()
   if ((page.viewportSize()?.width ?? 0) >= 1200) {
-    await expect(page.locator('.journey-rail a[aria-label="Strateji oluşturma, Tamam"]')).toHaveCount(1)
+    // Yeni sayfa etiketi süresince ad ", yeni" ile biter. Durum kısmı yine tam eşleşir.
+    await expect(page.locator('.journey-rail').getByRole('link', { name: /^Strateji oluşturma, Tamam(?:, yeni)?$/ })).toHaveCount(1)
   }
   await page.getByRole('button', { name: 'Strateji uygulamaya geç' }).click()
   await expect(page).toHaveURL(/#\/uygulama/)
