@@ -95,27 +95,29 @@ export function SyncGuard() {
     <>
       {loadFailed ? (
         <Alert
+          className="sync-alert"
           type="error"
           showIcon
           role="alert"
           message="Kayıtlı planlar okunamadı"
           description={HYDRATION_ERROR}
           action={<Button size="small" onClick={downloadRaw}>Ham kaydı indir</Button>}
-          style={{ position: 'fixed', top: 8, left: 8, right: 8, zIndex: 1100, fontSize: 14 }}
         />
       ) : null}
       {saveState === 'kaydedilemedi' && !loadFailed ? (
         <Alert
+          className="sync-alert"
           type="error"
           showIcon
           role="alert"
           message="Plan kaydedilemedi"
           description={saveError ?? 'Plan tarayıcıya kaydedilemedi. Kopyanızı indirin.'}
           action={<Button size="small" onClick={downloadMine} disabled={!plan}>Kopyamı indir (JSON)</Button>}
-          style={{ position: 'fixed', top: 8, left: 8, right: 8, zIndex: 1100, fontSize: 14 }}
         />
       ) : null}
       <Modal
+        className="sync-modal"
+        rootClassName="sync-modal-root"
         open={saveState === 'cakisma'}
         title="Başka bir sekme bu planı değiştirdi"
         closable={false}
@@ -123,11 +125,11 @@ export function SyncGuard() {
         keyboard={false}
         footer={null}
       >
-        <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: 12 }}>
+        <div className="sync-content">
           <Typography.Text>Bu plan başka bir sekmede kaydedildi. İki sürüm farklı. Önce hangisini saklayacağınızı seçin.</Typography.Text>
           {incoming ? <Typography.Text style={{ fontSize: 14 }}>Kayıtlı sürüm: {formatDateTime(incoming.updatedAt)}.</Typography.Text> : null}
           {plan ? <Typography.Text style={{ fontSize: 14 }}>Bu sekmedeki sürüm: {formatDateTime(plan.updatedAt)}.</Typography.Text> : null}
-          <Space wrap>
+          <Space className="sync-actions" wrap>
             <Button type="primary" onClick={loadStored}>Kayıtlı sürümü yükle</Button>
             <Button onClick={downloadMine} disabled={!plan}>Kopyamı indir (JSON)</Button>
             <Button onClick={keepMine}>Bu sekmedeki sürümü kaydet</Button>
