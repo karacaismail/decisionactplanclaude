@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test'
 async function openDemo(page: Page) {
   await page.goto('/')
   await expect(async () => {
-    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Kafe örneğini aç').first().click({ timeout: 2000 })
     await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
   }).toPass()
 }

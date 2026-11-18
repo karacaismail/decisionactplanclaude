@@ -11,7 +11,7 @@ Yalnız şu dosyalar değiştirildi:
 
 ## Beklenen davranış
 
-Her test uygulamanın başlangıç ekranından “Örnek planı aç” düğmesini kullanır. Testler veriyi depoya doğrudan yazmaz. Mevcut `openDemo(page, hasTouch)` yardımcısı korunur.
+Her test uygulamanın başlangıç ekranından “Kafe örneğini aç” düğmesini kullanır. Testler veriyi depoya doğrudan yazmaz. Mevcut `openDemo(page, hasTouch)` yardımcısı korunur.
 
 1. İlk test hareket azaltma tercihini dener. Test Chromium'da Tab, WebKit'te Alt+Tab kullanır. Bu seçim mevcut `smoke.spec.ts` ve `klavye.spec.ts` testleriyle aynıdır. Kullanıcı bu tuşlarla “En kısa yol” seçeneğine ulaşabilir. Space tuşu seçeneği açar ve kapatır. Hareket tercihi sonradan değişince seçim ve odak korunur. Odak işareti görünür kalır. İşaret kontrolü çevrelemez. Kontrolün ve alt öğelerinin hareket süreleri azaltılır. Mevcut kaynak, azaltılmış süreyi `0.01ms` olarak tanımlar.
 2. İkinci test kök yazı boyutunu iki katına çıkarır. Bu, deneme ayarıdır. Her örnek metnin iki kat büyümesi kabul koşulu değildir. Başlık, sayfa açıklaması ve seçenek etiketi görünür kalmalıdır. Metinler okunabilir kalmalıdır. Sayfa yana taşmamalıdır. Görünen yazılar 14 CSS pikselden küçük olmamalıdır. “En kısa yol” seçeneği açılıp kapanabilmelidir. Test, projenin ayarına göre dokunma veya fare kullanır.
