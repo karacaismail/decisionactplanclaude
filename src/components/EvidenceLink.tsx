@@ -45,13 +45,13 @@ export function EvidenceLink({ id, plan, value, onChange }: { id: string; plan: 
         options={options}
         onChange={onChange}
         placeholder="Kanıt seçin"
-        suffixIcon={<Paperclip size="var(--icon-inline)" aria-hidden />}
+        suffixIcon={<Paperclip className="mt-icon-inline" aria-hidden />}
         notFoundContent="Kanıt yok. Yeni kanıt ekleyin."
         maxTagCount="responsive"
       />
       <div className="evidence-link-foot mt-evidence-link-foot">
         <Tag className="fill-tag">Seçili kanıt: {value.length}</Tag>
-        <Button className="mt-evidence-link-action" icon={<Plus size="var(--icon-inline)" />} onClick={() => setOpen(true)}>Yeni kanıt</Button>
+        <Button className="mt-evidence-link-action" icon={<Plus className="mt-icon-inline" />} onClick={() => setOpen(true)}>Yeni kanıt</Button>
       </div>
       <Drawer
         rootClassName="mt-evidence-link-drawer"

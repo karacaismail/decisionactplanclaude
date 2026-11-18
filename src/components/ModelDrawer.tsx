@@ -77,7 +77,7 @@ export function ModelDrawer({ model, onClose }: { model: ModelEntry | null; onCl
           {help?.warn.map((w, i) => <Callout key={`uyari-${i}`} tone="uyari" title="Dikkat">{w}</Callout>)}
           {help?.tip.map((t, i) => <Callout key={`ipucu-${i}`} tone="ipucu" title="İpucu">{t}</Callout>)}
 
-          <Button type="link" className="mt-model-drawer-link" href={modelLink(model)} target="_blank" rel="noreferrer" icon={<ArrowSquareOut size="var(--icon-inline)" aria-hidden />} iconPlacement="end">
+          <Button type="link" className="mt-model-drawer-link" href={modelLink(model)} target="_blank" rel="noreferrer" icon={<ArrowSquareOut className="mt-icon-inline" aria-hidden />} iconPlacement="end">
             Karar Kitabı'nda aç
           </Button>
         </div>

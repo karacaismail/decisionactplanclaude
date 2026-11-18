@@ -38,7 +38,7 @@ export function DecisionBadge({ outcome }: { outcome: Outcome; size?: 'sm' | 'md
   const Icon = ICON[outcome]
   return (
     <span className={`decision-badge mt-decision-badge is-${outcome}`}>
-      <Icon size="var(--icon-inline)" weight={outcome === 'kosulluIlerle' ? 'regular' : 'fill'} aria-hidden />
+      <Icon className="mt-icon-inline" weight={outcome === 'kosulluIlerle' ? 'regular' : 'fill'} aria-hidden />
       {OUTCOME_LABEL[outcome]}
     </span>
   )
