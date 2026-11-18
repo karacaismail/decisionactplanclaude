@@ -1,6 +1,6 @@
-import { useLayoutEffect, useState } from 'react'
-import { Button, Drawer, Grid, Layout, Menu, theme } from 'antd'
-import { Link, Outlet, useLocation, useNavigate } from 'react-router'
+import { useEffect, useLayoutEffect, useRef, useState, type MouseEvent } from 'react'
+import { Button, Drawer, Layout, Menu, theme } from 'antd'
+import { Link, Outlet, useLocation } from 'react-router'
 import { List, ListChecks, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
@@ -12,6 +12,7 @@ import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPalette, CommandPaletteButton } from '@/components/CommandPalette'
 import { cssVariables } from '@/theme/tokens'
 import { resolveMode } from '@/theme/antdTheme'
+import '@/styles/mobil-kabuk.css'
 
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
@@ -27,17 +28,56 @@ function useThemeVariables(pref: 'light' | 'dark' | 'system') {
   }, [pref])
 }
 
+/** CSS bir gezinmeyi gizlerse odağı görünür eşine taşır. Yerleşimi değiştirmez. */
+function useShellFocusContinuity() {
+  useEffect(() => {
+    let focused: HTMLElement | null = null
+    const onFocus = (event: FocusEvent) => {
+      focused = event.target instanceof HTMLElement ? event.target : null
+    }
+    const onResize = () => {
+      if (!focused?.closest('.app-shell') || focused.getClientRects().length) return
+      const href = focused.closest('a')?.getAttribute('href')
+      const candidates = [...document.querySelectorAll<HTMLElement>('.app-shell a, .app-shell button')]
+        .filter((element) => element.getClientRects().length)
+      const counterpart = candidates.find((element) => href && element.getAttribute('href') === href)
+      const fallback = candidates.find((element) => element.classList.contains('shell-menu-toggle'))
+        ?? candidates.find((element) => element.classList.contains('brand'))
+      const target = counterpart ?? fallback
+      target?.focus({ preventScroll: true })
+    }
+    document.addEventListener('focusin', onFocus)
+    window.addEventListener('resize', onResize)
+    return () => {
+      document.removeEventListener('focusin', onFocus)
+      window.removeEventListener('resize', onResize)
+    }
+  }, [])
+}
+
 export function AppShell() {
   const { token } = theme.useToken()
-  const bp = Grid.useBreakpoint()
-  const wide = bp.lg
   const loc = useLocation()
-  const nav = useNavigate()
   const plan = useCurrentPlan()
   const themeMode = usePlanStore((s) => s.theme)
   const setTheme = usePlanStore((s) => s.setTheme)
   const [open, setOpen] = useState(false)
+  const menuTrigger = useRef<HTMLButtonElement | null>(null)
   useThemeVariables(themeMode)
+  useShellFocusContinuity()
+
+  const openMenu = (event: MouseEvent<HTMLButtonElement>) => {
+    menuTrigger.current = event.currentTarget
+    event.currentTarget.focus()
+    setOpen(true)
+  }
+  const restoreMenuFocus = (visible: boolean) => {
+    if (visible || !menuTrigger.current) return
+    const target = menuTrigger.current.getClientRects().length
+      ? menuTrigger.current
+      : document.querySelector<HTMLAnchorElement>('.app-shell .brand')
+    target?.focus({ preventScroll: true })
+  }
 
   const decisionItem = (n: number) => {
     const d = DECISIONS.find((x) => x.n === n)!
@@ -167,30 +207,27 @@ export function AppShell() {
       </span>
     </Link>
   )
-  const showRail = Boolean(wide && plan && isJourney)
+  const showRail = Boolean(plan && isJourney)
 
   return (
-    <Layout style={{ minHeight: '100dvh', background: token.colorBgLayout }}>
+    <Layout className={`app-shell${plan ? ' has-plan' : ''}`} style={{ minHeight: '100dvh', background: token.colorBgLayout }}>
       <Layout.Header className="no-print topbar">
-        {!wide ? <Button type="text" aria-label="Menüyü aç" icon={<List size={22} />} onClick={() => setOpen(true)} /> : null}
+        <Button className="shell-menu-toggle" type="text" aria-label="Menüyü aç" aria-haspopup="dialog" aria-expanded={open} icon={<List size={22} />} onClick={openMenu} />
         {brand}
-        {bp.md ? <span className="topbar-divider" aria-hidden /> : null}
+        <span className="topbar-divider" aria-hidden />
         <nav className="topbar-context" aria-label="Konum">
-          {bp.md ? (
-            <Link to="/" title="Planlar">
+            <Link to="/" title={plan?.name ?? 'Planlar'} aria-label={plan ? `${plan.name}. Planlara git` : 'Planlar'}>
               <Folders size={18} aria-hidden />
               <span className="crumb">{plan?.name ?? 'Planlar'}</span>
             </Link>
-          ) : null}
-          {plan?.example && bp.md ? <span className="tag">Örnek plan</span> : null}
+          {plan?.example ? <span className="tag">Örnek plan</span> : null}
         </nav>
         <div className="topbar-actions">
           <CommandPaletteButton />
-          {plan ? <SaveStatus /> : null}
           <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
         </div>
+        {plan ? <div className="topbar-save"><SaveStatus /></div> : null}
       </Layout.Header>
-      {wide ? (
         <nav className="no-print product-nav" aria-label="Ana bölümler">
           {!plan ? (
             <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined}>
@@ -203,7 +240,6 @@ export function AppShell() {
             </Link>
           ))}
         </nav>
-      ) : null}
       <div className={`shell-body ${showRail ? 'has-rail' : ''}`}>
         {showRail ? (
           <aside className="no-print journey-rail" aria-label="Yol dizini">
@@ -218,14 +254,35 @@ export function AppShell() {
           <Outlet />
         </Layout.Content>
       </div>
+      <nav className="no-print bottom-nav" aria-label="Alt gezinme">
+        <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined}>
+          <Folders size={20} aria-hidden />
+          <span>Planlar</span>
+        </Link>
+        {plan ? tabs.filter((t) => t.label === 'Pano' || t.label === 'Yol').map((t) => (
+          <Link key={t.label} to={t.to} aria-current={t.active ? 'page' : undefined}>
+            <t.Icon size={20} weight={t.active ? 'fill' : 'regular'} aria-hidden />
+            <span>{t.label}</span>
+          </Link>
+        )) : (
+          <Link to="/yontemler" aria-current={loc.pathname === '/yontemler' ? 'page' : undefined}>
+            <BookOpenText size={20} aria-hidden />
+            <span>Karar Kitabı</span>
+          </Link>
+        )}
+        <button type="button" onClick={openMenu} aria-haspopup="dialog" aria-expanded={open}>
+          <List size={20} aria-hidden />
+          <span>Menü</span>
+        </button>
+      </nav>
       <CommandPalette />
-      <Drawer open={open} onClose={() => setOpen(false)} placement="left" title="Menü" size={Math.min(320, typeof window !== 'undefined' ? window.innerWidth - 24 : 320)} styles={{ body: { padding: '0 0 24px' } }} afterOpenChange={(o) => { if (!o) nav(loc.pathname, { replace: true }) }}>
+      <Drawer rootClassName="shell-drawer" open={open} onClose={() => setOpen(false)} afterOpenChange={restoreMenuFocus} placement="left" title="Menü" size="var(--shell-drawer-width)">
         <nav className="drawer-nav" aria-label="Ana bölümler">
           <Link to="/" aria-current={loc.pathname === '/' ? 'page' : undefined} onClick={() => setOpen(false)}>
             <Folders size={20} aria-hidden /> Planlar
           </Link>
           {tabs.map((t) => (
-            <Link key={t.label} to={t.to} aria-current={t.active && !isJourney ? 'page' : undefined} onClick={() => setOpen(false)}>
+            <Link key={t.label} to={t.to} aria-current={t.active ? 'page' : undefined} onClick={() => setOpen(false)}>
               <t.Icon size={20} aria-hidden /> {t.label}
             </Link>
           ))}
@@ -233,7 +290,7 @@ export function AppShell() {
         {plan ? (
           <>
             <p className="drawer-section">Yol dizini</p>
-            <div style={{ padding: '0 12px' }}>{journeyMenu}</div>
+            <div className="drawer-journey">{journeyMenu}</div>
           </>
         ) : null}
       </Drawer>

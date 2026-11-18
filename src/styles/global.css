@@ -50,7 +50,7 @@ html[data-focus-mode='keyboard'] :focus-visible::before {
 html[data-focus-mode='keyboard'] a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; }
 html[data-focus-mode='keyboard'] .hero :focus-visible::before { background: var(--color-hero-action); }
 @media (forced-colors: active) {
-  html[data-focus-mode='keyboard'] :focus-visible { outline: 2px solid CanvasText; }
+  html[data-focus-mode='keyboard'] :focus-visible { outline: 2px solid CanvasText !important; }
   html[data-focus-mode='keyboard'] :focus-visible::before { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
