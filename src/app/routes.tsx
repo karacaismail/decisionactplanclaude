@@ -25,18 +25,18 @@ const [PlansScreen, loadPlans] = lazyScreen(() => import('@/screens/PlansScreen'
 const [StartScreen, loadStart] = lazyScreen(() => import('@/screens/StartScreen').then((m) => ({ default: m.StartScreen })))
 const [OverviewScreen, loadOverview] = lazyScreen(() => import('@/screens/OverviewScreen').then((m) => ({ default: m.OverviewScreen })))
 const [DecisionScreen, loadDecision] = lazyScreen(() => import('@/screens/DecisionScreen').then((m) => ({ default: m.DecisionScreen })))
-const [WorkScreen] = lazyScreen(() => import('@/screens/WorkScreen').then((m) => ({ default: m.WorkScreen })))
+const [WorkScreen, loadWork] = lazyScreen(() => import('@/screens/WorkScreen').then((m) => ({ default: m.WorkScreen })))
 const [ReviewScreen, loadReview] = lazyScreen(() => import('@/screens/ReviewScreen').then((m) => ({ default: m.ReviewScreen })))
 const [EvidenceScreen, loadEvidence] = lazyScreen(() => import('@/screens/EvidenceScreen').then((m) => ({ default: m.EvidenceScreen })))
 const [TasksScreen, loadTasks] = lazyScreen(() => import('@/screens/TasksScreen').then((m) => ({ default: m.TasksScreen })))
-const [OutputsScreen] = lazyScreen(() => import('@/screens/OutputsScreen').then((m) => ({ default: m.OutputsScreen })))
+const [OutputsScreen, loadOutputs] = lazyScreen(() => import('@/screens/OutputsScreen').then((m) => ({ default: m.OutputsScreen })))
 const [HistoryScreen, loadHistory] = lazyScreen(() => import('@/screens/HistoryScreen').then((m) => ({ default: m.HistoryScreen })))
 const [TakeoverScreen, loadTakeover] = lazyScreen(() => import('@/screens/TakeoverScreen').then((m) => ({ default: m.TakeoverScreen })))
 const [InsightsScreen, loadInsights] = lazyScreen(() => import('@/screens/InsightsScreen').then((m) => ({ default: m.InsightsScreen })))
 const [MethodsScreen, loadMethods] = lazyScreen(() => import('@/screens/MethodsScreen').then((m) => ({ default: m.MethodsScreen })))
-const [TransitionScreen] = lazyScreen(() => import('@/screens/TransitionScreen').then((m) => ({ default: m.TransitionScreen })))
-const [HandoffScreen] = lazyScreen(() => import('@/screens/HandoffScreen').then((m) => ({ default: m.HandoffScreen })))
-const [StrategyScreen] = lazyScreen(() => import('@/screens/StrategyScreen').then((m) => ({ default: m.StrategyScreen })))
+const [TransitionScreen, loadTransition] = lazyScreen(() => import('@/screens/TransitionScreen').then((m) => ({ default: m.TransitionScreen })))
+const [HandoffScreen, loadHandoff] = lazyScreen(() => import('@/screens/HandoffScreen').then((m) => ({ default: m.HandoffScreen })))
+const [StrategyScreen, loadStrategy] = lazyScreen(() => import('@/screens/StrategyScreen').then((m) => ({ default: m.StrategyScreen })))
 const [ExecutionScreen, loadExecution] = lazyScreen(() => import('@/screens/ExecutionScreen').then((m) => ({ default: m.ExecutionScreen })))
 const [FoundationScreen, loadFoundation] = lazyScreen(() => import('@/screens/FoundationScreen').then((m) => ({ default: m.FoundationScreen })))
 const [AssumptionsScreen, loadAssumptions] = lazyScreen(() => import('@/screens/AssumptionsScreen').then((m) => ({ default: m.AssumptionsScreen })))
@@ -56,15 +56,14 @@ const preloadRoutes: { path: string; load?: () => Promise<ScreenModule> }[] = [
   { path: '/gecmis', load: loadHistory },
   { path: '/gostergeler', load: loadInsights },
   { path: '/yontemler', load: loadMethods },
-  // Bu ekranlar rapor kodunu da yükler. Fareyle gezinmek rapor isteği sayılmaz.
-  { path: '/ciktilar' },
-  { path: '/devir' },
-  { path: '/gecis' },
-  { path: '/strateji' },
-  { path: '/karar/:n/adim/:id' },
-  // Eski adresler rapor üreten strateji ekranına yönlenir.
-  { path: '/karar/9' },
-  { path: '/karar/9/kapi' },
+  { path: '/ciktilar', load: loadOutputs },
+  { path: '/devir', load: loadHandoff },
+  { path: '/gecis', load: loadTransition },
+  { path: '/strateji', load: loadStrategy },
+  { path: '/karar/:n/adim/:id', load: loadWork },
+  // Eski adresler aynı strateji ekranına yönlenir.
+  { path: '/karar/9', load: loadStrategy },
+  { path: '/karar/9/kapi', load: loadStrategy },
 ]
 
 /** HashRouter bağlantılarını ve ekran yollarını önceden yükler. Gezinmeyi başlatmaz. */

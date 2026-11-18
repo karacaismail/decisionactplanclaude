@@ -22,7 +22,7 @@ export default defineConfig(({ mode }) => ({
           groups: [
             {
               name: 'report-build',
-              test: /\/src\/reports\/build\.ts$/,
+              test: /\/src\/reports\/(build|handoff|foundation)\.ts$/,
               // Ortak veri ve motor kodu rapor parçasına taşınmamalı.
               includeDependenciesRecursively: false,
             },
