@@ -40,7 +40,7 @@ html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::
 /* Başlık altı tek satır: gereklilik etiketi, durum etiketi ve "Kim yapar?" */
 .work-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 .work-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; min-width: 0; }
-.work-meta .ant-tag { margin: 0; }
+.work-meta .ant-tag { margin: 0; max-width: 100%; height: auto; white-space: normal; }
 .work-main { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
 @media (max-width: 599px) { .work-main { gap: var(--space-4); } .work-head { gap: var(--space-2); } }
 .work-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
@@ -72,6 +72,7 @@ html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::
 .step-field .ant-form-item-label { padding-bottom: 6px; }
 .step-field .ant-form-item-label > label { height: auto; min-height: 24px; max-width: 100%; white-space: normal; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); align-items: flex-start; }
 .step-field .ant-form-item-label > label::after { display: none; }
+.step-field .ant-form-item-label > label[for] { min-height: var(--target-touch); align-items: center; }
 .step-field .ant-form-item-tooltip { display: inline-flex; align-items: center; color: var(--color-text-secondary); margin-inline-start: 6px; cursor: help; }
 .step-field .ant-form-item-tooltip svg { display: block; }
 .step-field .ant-form-item-extra, .field-extra { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
@@ -82,6 +83,15 @@ html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::
 .work-page :is(.step-field, .field) :is(.ant-input-affix-wrapper, .ant-input-number, .ant-picker, .ant-select),
 .work-page :is(.step-field, .field) input.ant-input:not(.ant-input-affix-wrapper input) { min-height: var(--target-touch); min-width: var(--target-touch); }
 .work-page :is(.step-field, .field) textarea.ant-input { min-height: var(--target-touch) !important; }
+/* Görünen kabın yanında gerçek giriş ve temizleme hedefi de dokunmaya açık kalır. */
+.work-page :is(.step-field, .field) :is(.ant-input-affix-wrapper, .ant-picker, .ant-select) { padding-block: 0; }
+.work-page :is(.step-field, .field) :is(input.ant-input, .ant-input-number-input, .ant-picker-input > input, .ant-select-input) { min-height: var(--target-touch); }
+.work-page :is(.step-field, .field) .ant-select-content { min-height: var(--target-touch); display: flex; align-items: center; }
+.work-page :is(.step-field, .field) .ant-select-allow-clear { padding-inline-end: calc(var(--target-touch) + var(--space-2)); }
+.work-page :is(.step-field, .field) .ant-select-clear {
+  display: flex; align-items: center; justify-content: center; width: var(--target-touch); height: var(--target-touch);
+  inset-inline-end: 0; top: 50%; transform: translateY(-50%); margin: 0;
+}
 .step-field .ant-input-prefix { color: var(--color-text-secondary); margin-inline-end: 8px; }
 .step-field .ant-input-number-prefix { color: var(--color-text-secondary); }
 .unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
@@ -142,6 +152,19 @@ html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::
 .choice-buttons.ant-radio-group { display: flex; flex-wrap: wrap; gap: 8px; }
 .choice-buttons .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; height: auto; min-height: var(--target-touch); min-width: var(--target-touch); line-height: 1.3; padding-block: var(--space-2); white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: var(--space-3); font-size: var(--form-text-body); color: var(--color-text-primary); border-color: var(--color-border-strong); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 .choice-buttons .ant-radio-button-wrapper::before { display: none; }
+html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wrapper:has(input:focus-visible)::before {
+  display: block; content: ''; position: absolute; inset-inline-start: calc(-1 * var(--space-2));
+  inset-block: var(--space-1); width: var(--form-focus-marker-width); background: var(--focus-marker); pointer-events: none;
+}
+@media (forced-colors: active) {
+  html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button-wrapper:has(input:focus-visible)::before { display: none; }
+  html[data-focus-mode='keyboard'] .work-page .choice-buttons .ant-radio-button:has(input:focus-visible) { position: static; }
+  html[data-focus-mode='keyboard'] .work-page .choice-buttons input:focus-visible {
+    position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+    min-width: var(--target-touch); min-height: var(--target-touch);
+    appearance: none; opacity: 1; background: transparent;
+  }
+}
 .choice-buttons .ant-radio-button-wrapper > span:not(.ant-radio-button) { display: inline-block; line-height: 1.3; }
 .choice-buttons .ant-radio-button-wrapper:hover { color: var(--color-text-primary); border-color: var(--color-text-secondary); }
 .choice-buttons .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) { background: var(--color-selected-bg); color: var(--color-text-primary); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
@@ -332,7 +355,7 @@ html[data-focus-mode='keyboard'] .work-page :is(input, textarea):focus-visible::
 .chart-frame .chart-canvas { min-width: 0; width: 100%; }
 .chart-frame .chart-summary { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
 .chart-view.ant-segmented { background: var(--color-surface-context); }
-.chart-view .ant-segmented-item-label { font-size: 14px; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; }
+.chart-view .ant-segmented-item-label { font-size: 14px; min-height: var(--target-touch); display: inline-flex; align-items: center; gap: 6px; }
 
 /* ------------------------------------------------------------------ */
 /* Sağ sütun "Bu adım" kartı: halka, bölüm bağlantıları, nasıl yapılır, örnek, yöntemler */
