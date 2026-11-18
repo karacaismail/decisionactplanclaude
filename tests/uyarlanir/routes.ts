@@ -1,10 +1,21 @@
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import ts from 'typescript'
 import { DECISIONS, STRATEGY } from '../../src/data/decisions'
 import { STEP_LIST } from '../../src/data/steps'
 import { stepHeading } from '../../src/data/registry'
 import { buildDemoPlan } from '../../src/data/demo'
 import { clusterOf } from '../../src/data/clusters'
+import type { ModuleManifest } from '../../src/platform/types'
+
+/* Modül rotaları bildirimden gelir. routes.tsx bunları {moduleRouteElements} ile ekler. */
+const MODULE_SLOT = 'moduleRouteElements'
+const moduleManifests: ModuleManifest[] = await Promise.all(
+  readdirSync('src/modules')
+    .filter((id) => existsSync(`src/modules/${id}/manifest.ts`))
+    .sort()
+    .map(async (id) => (await import(`../../src/modules/${id}/manifest.ts`)).default as ModuleManifest),
+)
+if (!moduleManifests.length) throw new Error('Modül bildirimi bulunamadı.')
 
 export interface AuditRoute {
   pattern: string
@@ -51,7 +62,7 @@ for (const step of STEP_LIST) {
 const source = ts.createSourceFile('routes.tsx', readFileSync('src/app/routes.tsx', 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX)
 
 type Element = ts.JsxElement | ts.JsxSelfClosingElement
-type RouteDefinition = { pattern: string; screen: string; redirect?: string }
+type RouteDefinition = { pattern: string; screen: string; redirect?: string; example?: string; heading?: string }
 const definitions: RouteDefinition[] = []
 
 function opening(node: Element) {
@@ -81,10 +92,16 @@ function literal(attribute: ts.JsxAttribute | undefined, label: string): string 
   throw new Error(`Rota için sabit metin gerekiyor: ${label}`)
 }
 
+let moduleSlots = 0
 function children(node: ts.JsxElement | ts.JsxFragment): Element[] {
   return node.children.flatMap((child): Element[] => {
     if (ts.isJsxText(child) && !child.text.trim()) return []
     if (ts.isJsxExpression(child) && !child.expression) return []
+    // Modül rotalarının yeri. Rotalar aşağıda bildirimden eklenir.
+    if (ts.isJsxExpression(child) && child.expression && ts.isIdentifier(child.expression) && child.expression.text === MODULE_SLOT) {
+      moduleSlots++
+      return []
+    }
     if (ts.isJsxFragment(child)) return children(child)
     const value = unwrap(child)
     if (ts.isJsxElement(value) || ts.isJsxSelfClosingElement(value)) return [value]
@@ -169,14 +186,25 @@ function visit(node: ts.Node) {
 }
 visit(source)
 if (routeTrees !== 1 || !definitions.length) throw new Error('Tek ve dolu bir Routes ağacı bekleniyor.')
+if (moduleSlots !== 1) throw new Error('routes.tsx içinde modül rotalarının yeri tek olmalı.')
+// Bilinmeyen adres rotası en sonda kalır. Modül rotaları ondan önce eklenir.
+const fallback = definitions.findIndex((d) => d.pattern === '*')
+for (const m of moduleManifests) {
+  for (const route of m.routes) {
+    const screen = `Modül ${m.id}: ${route.path}`
+    owners.set(screen, `Modül ${m.id}`)
+    definitions.splice(fallback < 0 ? definitions.length : definitions.findIndex((d) => d.pattern === '*'), 0, { pattern: route.path, screen, example: route.example, heading: route.title })
+  }
+}
 
 const patterns = new Set<string>()
 const paths = new Set<string>()
-export const auditRoutes: AuditRoute[] = definitions.flatMap(({ pattern, screen, redirect }) => {
+export const auditRoutes: AuditRoute[] = definitions.flatMap(({ pattern, screen, redirect, example }) => {
   if (patterns.has(pattern)) throw new Error(`Rota kalıbı tekrarlanıyor: ${pattern}`)
   patterns.add(pattern)
   let examples: string[]
-  if (pattern === '/karar/:n/adim/:id') examples = STEP_LIST.map((step) => `/karar/${step.decision}/adim/${encodeURIComponent(step.id)}`)
+  if (example) examples = [example]
+  else if (pattern === '/karar/:n/adim/:id') examples = STEP_LIST.map((step) => `/karar/${step.decision}/adim/${encodeURIComponent(step.id)}`)
   else if (pattern === '/karar/:n' || pattern === '/karar/:n/kapi') examples = DECISIONS.map((decision) => pattern.replace(':n', String(decision.n)))
   else if (pattern.includes(':')) throw new Error(`Yeni rota için örnek değer gerekiyor: ${pattern}`)
   else examples = [pattern === '*' ? '/qa-bilinmeyen-rota' : pattern]
@@ -243,6 +271,8 @@ export function expectedHeading(route: AuditRoute): string {
     if (!decision) throw new Error(`Başlık için geçerli karar bulunamadı: ${target.path}`)
     return gate ? `Kontrol ${decision.n}. ${decision.gate.title}` : decision.question
   }
+  const moduleHeading = definitions.find((d) => d.screen === target.screen)?.heading
+  if (moduleHeading) return moduleHeading
   const heading = screenHeadings.get(target.screen)
   if (!heading) throw new Error(`Ekranın beklenen başlığı tanımlı değil: ${target.screen}`)
   return heading
