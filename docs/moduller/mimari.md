@@ -113,6 +113,10 @@ Kimlik alan satırlar şunlardır:
 
 Kayıt sürümü 4 oldu. Uygulama eski kaydı açınca kimliği eksik satıra kimlik yazar. Bu iş adım durumunu, plan sürümünü ve eskime işaretini değiştirmez. İş iki kez çalışınca sonuç değişmez.
 
+Sürüm 3 kaydında yalnız bu iş çalışır. Eski taşımalar yeniden çalışmaz. Böylece strateji kilidi değişmez.
+
+Kimlik plan içinde tektir. Eski sürüm bazı listelere aynı kimliği yazmıştı. Örneğin iki listede `satir-0` olabilir. Bu durumda ilk satır kimliğini korur. Sonraki satır yeni kimlik alır.
+
 ## Gezinme
 
 Telefonda alt menü beş bağlantıdır. Sıra şöyledir: Planlar, Pano, Yol, Projeler ve Menü.
@@ -128,6 +132,9 @@ Geniş ekranda iki bağlantı üst menüde durur. Bu bağlantılar "Projeler" ve
 `npm run lint` komutu şu kapıları çalıştırır:
 
 1. Modül sınır kapısı `scripts/check-module-boundaries.mjs` dosyasıdır. Kapı yanlış yönde içe aktarmayı durdurur. Örneğin modül plan deposunu içe aktaramaz.
+   - Kapı içe aktarma zincirini de izler. Plan deposuna yazan bir bileşen modülde kullanılamaz.
+   - Modül altyapının çekirdeğe ayrılmış parçalarını kullanamaz. Örneğin `registerPlanSource` işlevi çekirdeğindir.
+   - Modüldeki dinamik içe aktarmanın yolu sabit metin olur.
 2. CSS mimari kapısı modül CSS dosyalarını da denetler. Modül CSS dosyasının adı önekle başlar. Her seçici de önekle başlar. Örneğin `.pj-bos-ekran` seçicisi geçerlidir.
 
 Boyut kapısı `npm run build` içinde çalışır. Kapı modül ekranlarını bildirimden bulur. Modül kodu ilk açılışa girerse kapı durur. İlk açılış sınırları değişmedi.
@@ -138,4 +145,5 @@ Uçtan uca test modül rotalarını bildirimden okur. Test her modül ekranını
 
 - Modül ekranları yalnız açıklama ve boş durum gösterir. Asıl işler sonraki sürümde gelir.
 - Taslakları gösteren ekran henüz yoktur. Taslak kaydetme işlevi hazırdır.
+- Plan silinirken modül verisi silinemezse uyarı yalnız konsola yazılır. Kalan veriyi sonradan temizleyen bir iş henüz yoktur.
 - Çekirdek yolların listesi iki yerde durur. Liste `src/platform/manifest.ts` ve `src/app/routes.tsx` dosyalarındadır. Yeni çekirdek yol eklenince iki liste de güncellenir.
