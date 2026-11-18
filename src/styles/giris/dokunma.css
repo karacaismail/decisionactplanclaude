@@ -1,0 +1,7 @@
+/*
+ * Dokunma katmanı. Yalnız parmakla kullanılan cihazda iner.
+ * Bu dosya yalnız iyileştirme taşır. 44 piksel basma alanı ve odak temel katmandadır.
+ * Her kural aşağıdaki sorgunun içinde durur. Dosya yanlış cihazda inerse kural çalışmaz.
+ */
+@media (any-pointer: coarse) {
+}

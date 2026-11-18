@@ -1,0 +1,7 @@
+/*
+ * Fare katmanı. Yalnız fare ve üzerine gelme olan cihazda iner.
+ * Bu dosya yalnız iyileştirme taşır. Fare üzerine gelme hiçbir eylemin tek yolu değildir.
+ * Her kural aşağıdaki sorgunun içinde durur. Dosya yanlış cihazda inerse kural çalışmaz.
+ */
+@media (any-pointer: fine) and (any-hover: hover) {
+}

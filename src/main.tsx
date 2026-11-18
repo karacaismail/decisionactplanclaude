@@ -11,6 +11,7 @@ import { usePlanStore } from './store/planStore'
 import { FocusMode } from './app/FocusMode'
 import { SyncGuard } from './app/SyncGuard'
 import { AppRoutes, preloadRoute } from './app/routes'
+import { loadInputStyles } from './app/girisStilleri'
 
 function Root() {
   const mode = usePlanStore((s) => s.theme)
@@ -71,6 +72,9 @@ function Root() {
     </ConfigProvider>
   )
 }
+
+/* Dokunma ve fare katmanı cihazın giriş türüne göre iner. */
+loadInputStyles()
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
