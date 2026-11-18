@@ -182,10 +182,10 @@ export function CommandPalette() {
       onCancel={() => setOpen(false)}
       footer={null}
       closable={false}
-      title={null}
+      title="Komut paleti"
+      classNames={{ header: 'visually-hidden' }}
       destroyOnHidden
       width={600}
-      aria-label="Komut paleti"
     >
       <div className="cmdk-searchbar">
         <Input

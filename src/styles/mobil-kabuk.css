@@ -49,6 +49,8 @@
 .app-shell .action-bar { bottom: var(--shell-nav-space); }
 .app-shell .page-header-actions { max-width: 100%; }
 .app-shell .page-header-actions .ant-btn { max-width: 100%; min-height: var(--target-touch); height: auto; white-space: normal; }
+html[data-focus-mode='keyboard'] .app-shell .page-header-actions .ant-btn:focus-visible::before { left: var(--space-1); }
+html[data-focus-mode='keyboard'] .app-shell .page-header-actions .ant-btn-primary:focus-visible::before { background: var(--color-on-action); }
 .app-shell .kapi-page .stat-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--shell-stat-min)), 1fr)); }
 .bottom-nav {
   position: fixed;
@@ -95,7 +97,11 @@
 }
 html[data-focus-mode='keyboard'] .bottom-nav :focus-visible::before,
 html[data-focus-mode='keyboard'] .product-nav :focus-visible::before { left: var(--space-1); }
+html[data-focus-mode='keyboard'] :is(.topbar, .product-nav, .bottom-nav, .drawer-nav) a:focus-visible { text-decoration: none; }
 html[data-focus-mode='keyboard'] .topbar :focus-visible::before { background: var(--color-hero-action); }
+.app-shell .product-nav a { padding-inline: var(--space-3); transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+.app-shell .product-nav a[aria-current='page'] { background: var(--color-selected-bg); }
+.app-shell .product-nav a[aria-current='page']::after { content: none; }
 .shell-drawer .ant-drawer-header {
   padding-top: max(var(--space-4), var(--shell-safe-top));
   padding-left: max(var(--space-4), var(--shell-safe-left));
@@ -125,6 +131,8 @@ html[data-focus-mode='keyboard'] .cmdk-input:has(input:focus-visible)::before {
   left: var(--space-1);
   width: 3px;
   background: var(--focus-marker);
+  visibility: visible;
+  pointer-events: none;
 }
 @media (max-width: 767px), (max-height: 500px) {
   .cmdk-root .cmdk-modal {
