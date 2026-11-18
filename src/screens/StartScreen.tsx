@@ -1,4 +1,4 @@
-import { useState, type KeyboardEvent } from 'react'
+import { useId, useState, type KeyboardEvent } from 'react'
 import { Button, Card, Grid, Steps } from 'antd'
 import { ArrowRight, CheckCircle, Handshake, Lightbulb, Warning } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
@@ -8,6 +8,7 @@ import { PageHeader } from '@/components/PageHeader'
 import { STAGES } from '@/data/stages'
 import type { Entry } from '@/data/types'
 import '@/styles/screens-pano.css'
+import '@/styles/mobil-pano.css'
 
 const OPTIONS: { value: Entry; title: string; text: string; to: string; Icon: typeof Lightbulb }[] = [
   { value: 'yeni', title: 'Yeni bir fikrim var', text: "Karar 1'den başlayın. Önce işinizi yedi soruyla anlatın.", to: '/karar/1/adim/00', Icon: Lightbulb },
@@ -24,6 +25,7 @@ export function StartScreen() {
   const update = usePlanStore((s) => s.update)
   const setLocation = usePlanStore((s) => s.setLocation)
   const [picked, setPicked] = useState<Entry | undefined>(plan?.entry)
+  const choiceId = useId()
   const bp = Grid.useBreakpoint()
   if (!plan) return null
   const selected = OPTIONS.find((o) => o.value === picked)
@@ -53,7 +55,7 @@ export function StartScreen() {
   }
 
   return (
-    <div className="page">
+    <div className="page mobil-start">
       <PageHeader
         title="Bugün nereden başlayacaksınız?"
         documentTitle="Giriş"
@@ -78,44 +80,53 @@ export function StartScreen() {
         />
       </Card>
 
-      <div className="entry-grid" role="radiogroup" aria-label="Başlangıç yolu">
-        {OPTIONS.map((o, i) => {
-          const isSelected = picked === o.value
-          return (
-            <Card
-              key={o.value}
-              hoverable
-              className={`pano-card entry-card${isSelected ? ' is-selected' : ''}`}
-              role="radio"
-              aria-checked={isSelected}
-              tabIndex={isSelected || (!picked && i === 0) ? 0 : -1}
-              data-value={o.value}
-              onClick={() => setPicked(o.value)}
-              onKeyDown={(e) => onKey(e, i)}
-            >
-              <div className="entry-head">
-                <span className="entry-icon" aria-hidden>
-                  <o.Icon size={24} />
-                </span>
-                <span className="entry-check" aria-hidden>
-                  {isSelected ? <CheckCircle size={20} weight="fill" /> : null}
-                </span>
-              </div>
-              <h3>{o.title}</h3>
-              <p>{o.text}</p>
-            </Card>
-          )
-        })}
-      </div>
+      <section className="section mobil-start-options" aria-labelledby={`${choiceId}-title`}>
+        <div className="section-head">
+          <h2 id={`${choiceId}-title`}>Başlangıç yolunu seçin</h2>
+          <p id={`${choiceId}-help`}>Bir yol seçin. Ardından “Devam et” düğmesine basın.</p>
+        </div>
+        <div className="entry-grid" role="radiogroup" aria-label="Başlangıç yolu" aria-describedby={`${choiceId}-help`}>
+          {OPTIONS.map((o, i) => {
+            const isSelected = picked === o.value
+            const optionId = `${choiceId}-${o.value}`
+            return (
+              <Card
+                key={o.value}
+                hoverable
+                className={`pano-card entry-card${isSelected ? ' is-selected' : ''}`}
+                role="radio"
+                aria-checked={isSelected}
+                aria-labelledby={`${optionId}-title`}
+                aria-describedby={`${optionId}-description`}
+                tabIndex={isSelected || (!picked && i === 0) ? 0 : -1}
+                data-value={o.value}
+                onClick={() => setPicked(o.value)}
+                onKeyDown={(e) => onKey(e, i)}
+              >
+                <div className="entry-head">
+                  <span className="entry-icon" aria-hidden>
+                    <o.Icon size={24} />
+                  </span>
+                  <span className="entry-check" aria-hidden>
+                    {isSelected ? <CheckCircle size={20} weight="fill" /> : null}
+                  </span>
+                </div>
+                <h3 id={`${optionId}-title`}>{o.title}</h3>
+                <p id={`${optionId}-description`}>{o.text}</p>
+              </Card>
+            )
+          })}
+        </div>
 
-      <div className="action-row">
-        <Button type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" disabled={!selected} onClick={go}>
-          Devam et
-        </Button>
-      </div>
+        <div className="action-row mobil-start-actions">
+          <Button className="mobil-start-continue" type="primary" icon={<ArrowRight size={16} />} iconPlacement="end" disabled={!selected} onClick={go}>
+            Devam et
+          </Button>
+        </div>
+      </section>
 
       <Callout tone="ipucu" title="Beş soruyu tek sayfada cevaplayın">
-        <ol style={{ margin: 0, paddingLeft: 20 }}>
+        <ol className="mobil-start-questions">
           <li>Vereceğiniz kararı tek cümleyle yazın.</li>
           <li>Yanlış kararın en ağır sonucunu yazın.</li>
           <li>Kararı değiştirecek bir gözlem seçin.</li>
