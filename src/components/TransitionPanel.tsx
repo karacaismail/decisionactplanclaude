@@ -236,7 +236,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
             Strateje devir raporunu okudum.
           </Checkbox>
           {/* Yeni sekmede açılır. Aynı sekmede açılırsa yarım doldurulan karar formu silinir. */}
-          <a href="#/devir" target="_blank" rel="noopener noreferrer">Raporu yeni sekmede aç</a>
+          <a className="kapi-action-link" tabIndex={0} href="#/devir" target="_blank" rel="noopener noreferrer">Raporu yeni sekmede aç</a>
         </div>
       </Form.Item>
 
@@ -246,7 +246,7 @@ export function TransitionPanel({ plan, evaluation, secondReader, onSecondReader
             <ul id={id('engel')} className="gecis-errors" aria-live="polite">
               {errors.map((e) => <li key={e}>{e}</li>)}
             </ul>
-            {openReviews > 0 ? <Link to="/karar/5/kapi">İkinci görüşü Kapı 5 ekranında kaydedin.</Link> : null}
+            {openReviews > 0 ? <Link className="kapi-action-link" tabIndex={0} to="/karar/5/kapi">İkinci görüşü Kapı 5 ekranında kaydedin.</Link> : null}
           </Callout>
         </Form.Item>
       ) : null}

@@ -15,7 +15,54 @@ async function openScore(page: Page) {
 }
 
 async function noPageOverflow(page: Page) {
-  expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(1)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1)
+}
+
+for (const { route, heading, destinations } of [
+  { route: '/karar/1', heading: 'Bu işi araştırmaya değer mi?', destinations: ['/karar/1/adim/00', '/karar/1/kapi', '/yontemler'] },
+  { route: '/karar/6', heading: 'İlk teslim gerçekten işe yarıyor mu?', destinations: ['/gecis', '/karar/6/kapi', '/yontemler'] },
+  { route: '/karar/5/kapi', heading: 'Kapı 5. Para, risk ve yol adayları hazır mı?', destinations: ['/karar/5/adim/16', '/karar/5/adim/17', '/karar/5/adim/18'] },
+  { route: '/gecis', heading: 'Stratejik planlamaya hazır mısınız?', destinations: ['/devir', '/karar/2/adim/07', '/karar/5/adim/17', '/karar/1/adim/04'] },
+  { route: '/strateji', heading: 'Hangi yolu, hangi gerekçeyle seçiyorsunuz? Neyden vazgeçiyorsunuz?', destinations: ['/gecis', '/devir'] },
+]) {
+  test(`M03 ${route} bağlantıları 44 piksel alan sunar`, async ({ page }, testInfo) => {
+    await openDemo(page)
+    await page.goto(`/#${route}`)
+    const screen = page.locator('.mobil-kapi-page')
+    await expect(screen).toBeVisible()
+    await expect(page).toHaveURL(new RegExp(`#${route}$`))
+    await expect(screen.getByRole('heading', { level: 1, name: heading, exact: true })).toBeVisible()
+    // Kapalı dayanakların bağlantıları da açıldıktan sonra denetlenir.
+    for (const summary of await screen.locator('.gecis-criterion-more > summary').all()) {
+      await summary.click()
+      await expect(summary.locator('..')).toHaveAttribute('open', '')
+      await expect(summary.locator('..').getByRole('link')).toBeVisible()
+    }
+    for (const destination of destinations) await expect(screen.locator(`a[href="#${destination}"]`).first()).toBeVisible()
+    const links = screen.locator('a[href]:visible')
+    expect(await links.count()).toBeGreaterThan(0)
+    const measurements = []
+    for (const link of await links.all()) {
+      await link.scrollIntoViewIfNeeded()
+      const measured = await link.evaluate((el) => {
+        const box = el.getBoundingClientRect()
+        return { text: el.textContent, href: el.getAttribute('href'), width: box.width, height: box.height }
+      })
+      measurements.push(measured)
+      expect.soft(measured.width, `${measured.text}: genişlik`).toBeGreaterThanOrEqual(44)
+      expect.soft(measured.height, `${measured.text}: yükseklik`).toBeGreaterThanOrEqual(44)
+      // Kutu büyüse bile komşu kontrolün altında kalan alan kabul edilmez.
+      const reachable = await link.evaluate((el) => {
+        const box = el.getBoundingClientRect()
+        const points = [[box.left + 2, box.top + box.height / 2], [box.right - 2, box.top + box.height / 2], [box.left + box.width / 2, box.top + 2], [box.left + box.width / 2, box.bottom - 2]]
+        return points.every(([x, y]) => el.contains(document.elementFromPoint(x, y)))
+      })
+      expect.soft(reachable, `${measured.text}: dört kenardan erişim`).toBe(true)
+    }
+    await testInfo.attach('M03-baglanti-olculeri', { body: JSON.stringify(measurements, null, 2), contentType: 'application/json' })
+    await testInfo.attach('M03-ekran', { body: await screen.screenshot({ path: testInfo.outputPath('M03-ekran.png') }), contentType: 'image/png' })
+    await noPageOverflow(page)
+  })
 }
 
 async function marker(locator: Locator) {
@@ -24,6 +71,139 @@ async function marker(locator: Locator) {
     return { display: style.display, content: style.content, width: parseFloat(style.width), height: parseFloat(style.height), color: style.backgroundColor }
   })
 }
+
+test('M03 geniş ekranda sabit panel bağlantısı üst menünün altında kalmaz', async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1920, height: 1080 })
+  await openDemo(page)
+  await page.goto('/#/strateji')
+  const link = page.getByRole('link', { name: 'Geçiş kapısını aç', exact: true })
+  await expect(link).toBeVisible()
+  await page.evaluate(() => window.scrollTo(0, 600))
+  const scrolledBounds = await link.evaluate((el) => ({ top: el.getBoundingClientRect().top, menuBottom: document.querySelector('.product-nav')!.getBoundingClientRect().bottom }))
+  expect(scrolledBounds.top).toBeGreaterThanOrEqual(scrolledBounds.menuBottom)
+  await link.focus()
+  await page.keyboard.press('Shift+Tab')
+  await page.keyboard.press('Tab')
+  await expect(link).toBeFocused()
+  const bounds = await link.evaluate((el) => ({ top: el.getBoundingClientRect().top, menuBottom: document.querySelector('.product-nav')!.getBoundingClientRect().bottom }))
+  expect(bounds.top).toBeGreaterThanOrEqual(bounds.menuBottom)
+  expect(await link.evaluate((el) => {
+    const r = el.getBoundingClientRect()
+    return [[r.left + 2, r.top + r.height / 2], [r.right - 2, r.top + r.height / 2], [r.left + r.width / 2, r.top + 2], [r.left + r.width / 2, r.bottom - 2]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)))
+  })).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('M03-sabit-panel.png') })
+  await noPageOverflow(page)
+})
+
+test('M03 karar tablosunda yalnız iç kutu kayar ve bağlantı kenarları açık kalır', async ({ page }) => {
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page)
+  await page.goto('/#/karar/1')
+  const wrapper = page.locator('.karar-table')
+  await expect(wrapper).toHaveCSS('overflow-x', 'visible')
+  await expect(wrapper).toHaveCSS('overflow-y', 'visible')
+  const content = wrapper.locator('.ant-table-content')
+  expect(await content.evaluate((el) => el.scrollWidth > el.clientWidth)).toBe(true)
+  for (const link of await wrapper.locator('a[href]').all()) {
+    await link.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' }))
+    expect(await link.evaluate((el) => {
+      const r = el.getBoundingClientRect()
+      return [[r.left + 2, r.top + r.height / 2], [r.right - 2, r.top + r.height / 2], [r.left + r.width / 2, r.top + 2], [r.left + r.width / 2, r.bottom - 2]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)))
+    })).toBe(true)
+  }
+  expect(await content.evaluate((el) => el.scrollLeft)).toBeGreaterThan(0)
+  await noPageOverflow(page)
+})
+
+test('M03 uzun karar panelinin bağlantısı Tab sonrasında üst şeridin altında kalmaz', async ({ page }) => {
+  await page.setViewportSize({ width: 1920, height: 1080 })
+  await openDemo(page)
+  await page.goto('/#/karar/1')
+  await page.evaluate(() => document.fonts.ready)
+  const target = page.getByRole('link', { name: 'Kapıyı aç', exact: true })
+  for (const link of await page.locator('.karar-table a[href]').all()) {
+    await link.scrollIntoViewIfNeeded()
+    await link.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' }))
+  }
+  await target.scrollIntoViewIfNeeded()
+  await page.locator('.karar-table').getByRole('link', { name: 'Aç', exact: true }).last().focus()
+  for (let index = 0; index < 8; index++) {
+    await page.keyboard.press('Tab')
+    if (await target.evaluate((el) => el === document.activeElement)) break
+  }
+  await expect(target).toBeFocused()
+  expect(await target.evaluate((el) => {
+    const r = el.getBoundingClientRect()
+    const menuBottom = document.querySelector('.product-nav')!.getBoundingClientRect().bottom
+    return r.top >= menuBottom && [[r.left + 2, r.top + r.height / 2], [r.right - 2, r.top + r.height / 2], [r.left + r.width / 2, r.top + 2], [r.left + r.width / 2, r.bottom - 2]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)))
+  })).toBe(true)
+  await noPageOverflow(page)
+})
+
+test('M03 dayanak tablosu ikinci kaydırma çubuğuyla bağlantıları örtmez', async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 })
+  await openDemo(page)
+  await page.goto('/#/gecis')
+  await page.evaluate(() => document.fonts.ready)
+  for (const summary of await page.locator('.gecis-criterion-more > summary').all()) {
+    await summary.click()
+    await expect(summary.locator('..')).toHaveAttribute('open', '')
+  }
+  for (const wrapper of await page.locator('.mobil-kapi-page .table-scroll').all()) {
+    await expect(wrapper).toHaveCSS('overflow-x', 'visible')
+    await expect(wrapper).toHaveCSS('overflow-y', 'visible')
+  }
+  for (const link of await page.locator('.mobil-kapi-page .table-scroll a[href]:visible').all()) {
+    await link.evaluate((el) => el.scrollIntoView({ block: 'center', inline: 'center', behavior: 'instant' }))
+    expect(await link.evaluate((el) => {
+      const r = el.getBoundingClientRect()
+      return r.width >= 44 && r.height >= 44 && [[r.left + 2, r.top + r.height / 2], [r.right - 2, r.top + r.height / 2], [r.left + r.width / 2, r.top + 2], [r.left + r.width / 2, r.bottom - 2]].every(([x, y]) => el.contains(document.elementFromPoint(x, y)))
+    })).toBe(true)
+  }
+  await noPageOverflow(page)
+})
+
+test('M03 kapı bağlantısı tek odak işareti taşır ve kenarından açılır', async ({ page }, testInfo) => {
+  await openDemo(page)
+  await page.goto('/#/karar/1')
+  const link = page.getByRole('link', { name: 'Kapıyı aç', exact: true })
+  await link.focus()
+  await page.keyboard.press('Shift+Tab')
+  await page.keyboard.press('Tab')
+  await expect(link).toBeFocused()
+  await expect(link).toHaveCSS('text-decoration-line', 'underline')
+  await expect(link).toHaveCSS('text-decoration-thickness', '2px')
+  expect((await marker(link)).display).toBe('none')
+  await expect(link).toHaveCSS('outline-style', 'none')
+  await expect(link).toHaveCSS('box-shadow', 'none')
+  await link.scrollIntoViewIfNeeded()
+  await testInfo.attach('M03-baglanti-odagi', { body: await page.screenshot({ path: testInfo.outputPath('M03-baglanti-odagi.png') }), contentType: 'image/png' })
+  await page.keyboard.press('Enter')
+  await expect(page).toHaveURL(/#\/karar\/1\/kapi$/)
+  await page.goBack()
+  await expect(link).toBeVisible()
+  await link.scrollIntoViewIfNeeded()
+  const box = (await link.boundingBox())!
+  const x = box.x + box.width / 2
+  const y = box.y + box.height - 2
+  if (testInfo.project.use.hasTouch) await page.touchscreen.tap(x, y)
+  else await page.mouse.click(x, y)
+  await expect(page).toHaveURL(/#\/karar\/1\/kapi$/)
+  await page.goBack()
+  await page.emulateMedia({ forcedColors: 'active' })
+  if (await page.evaluate(() => matchMedia('(forced-colors: active)').matches)) {
+    await link.focus()
+    await page.keyboard.press('Shift+Tab')
+    await page.keyboard.press('Tab')
+    await expect(link).toBeFocused()
+    await expect(link).toHaveCSS('outline-style', 'solid')
+    await expect(link).toHaveCSS('outline-width', '2px')
+    await expect(link).toHaveCSS('text-decoration-line', 'none')
+    expect((await marker(link)).display).toBe('none')
+    await link.scrollIntoViewIfNeeded()
+    await page.screenshot({ path: testInfo.outputPath('M03-zorunlu-renk-odagi.png') })
+  }
+})
 
 test('puan tablosu kendi içinde kayar ve yıldızlar 44 piksel dokunma alanı sunar', async ({ page }) => {
   await openDemo(page)

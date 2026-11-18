@@ -96,7 +96,7 @@ export function ExecutionScreen() {
       ) : null}
       {reopened ? (
         <Callout tone="uyari" title="Strateji yeniden açıldı">
-          Karar sahibi seçimi yeniden açtı. Uygulama eski seçimle sürer. <Link to="/strateji">Strateji oluşturmayı açın ve strateji belgesini yeniden tamamlayın.</Link>
+          Karar sahibi seçimi yeniden açtı. Uygulama eski seçimle sürer. <Link className="kapi-action-link" tabIndex={0} to="/strateji">Strateji oluşturmayı açın ve strateji belgesini yeniden tamamlayın.</Link>
         </Callout>
       ) : null}
 

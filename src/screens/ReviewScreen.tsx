@@ -133,7 +133,7 @@ export function ReviewScreen() {
       ) : null}
     </span>
   )
-  const stepLink = (s?: StepDef) => (s ? <Link to={`/karar/${s.decision}/adim/${s.id}`}>{stepHeading(s.id)}</Link> : <span className="helper">Adım yok</span>)
+  const stepLink = (s?: StepDef) => (s ? <Link className="kapi-action-link" tabIndex={0} to={`/karar/${s.decision}/adim/${s.id}`}>{stepHeading(s.id)}</Link> : <span className="helper">Adım yok</span>)
 
   const criteriaRows: CriterionRow[] = d.gate.criteria
     .map((c) => ({ key: c.id, c, value: evaluation.criteria[c.id], step: basisStep(c, d.n) }))

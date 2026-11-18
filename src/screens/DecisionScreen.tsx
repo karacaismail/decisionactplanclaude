@@ -102,11 +102,11 @@ export function DecisionScreen() {
 
       {lockedByTransition ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında kararı kaydedin. <Link to="/gecis">Geçiş kapısını açın.</Link>
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce geçiş kapısında kararı kaydedin. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını açın.</Link>
         </Callout>
       ) : lockedByStrategy ? (
         <Callout tone="uyari" title="Bu karar kilitli">
-          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce strateji oluşturmayı bitirin. <Link to="/strateji">Strateji oluşturmayı açın.</Link>
+          {reason} Bu kararı inceleyebilirsiniz. Adımları doldurmak için önce strateji oluşturmayı bitirin. <Link className="kapi-action-link" tabIndex={0} to="/strateji">Strateji oluşturmayı açın.</Link>
         </Callout>
       ) : locked ? (
         <Callout tone="uyari" title="Bu karar kilitli">
@@ -121,7 +121,7 @@ export function DecisionScreen() {
 
       {transitionNext ? (
         <Callout tone="bilgi" title="Kapı 5 geçildi">
-          Sıradaki iş geçiş kapısıdır. <Link to="/gecis">Geçiş kapısını açın.</Link>
+          Sıradaki iş geçiş kapısıdır. <Link className="kapi-action-link" tabIndex={0} to="/gecis">Geçiş kapısını açın.</Link>
         </Callout>
       ) : null}
 
@@ -202,7 +202,7 @@ export function DecisionScreen() {
         </div>
 
         <aside className="karar-aside" aria-label="Kapı önizleme">
-          <Card title="Kapı önizleme" extra={<Link to={`/karar/${d.n}/kapi`}>Kapıyı aç</Link>}>
+          <Card title="Kapı önizleme" extra={<Link className="kapi-action-link" tabIndex={0} to={`/karar/${d.n}/kapi`}>Kapıyı aç</Link>}>
             <div className="karar-ring">
               <Progress type="circle" percent={gatePercent} size={120} strokeColor="var(--color-status-ok)" format={() => `${evaluation.metCount} / ${evaluation.total}`} aria-label={`${evaluation.metCount} / ${evaluation.total} ölçüt karşılandı`} />
               <p className="karar-ring-note">
@@ -240,7 +240,7 @@ export function DecisionScreen() {
               ))}
             </div>
             <div className="karar-aside-foot">
-              <Link to="/yontemler" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+              <Link className="kapi-action-link" tabIndex={0} to="/yontemler" style={{ gap: 6 }}>
                 <BookOpen size={16} aria-hidden /> Karar Kitabı
               </Link>
               {last ? <DecisionBadge outcome={effectiveOutcome(last)} size="sm" /> : null}
