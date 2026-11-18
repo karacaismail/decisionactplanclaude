@@ -92,7 +92,7 @@ test('Ana yol: plan, gezinme, menü ve arama birlikte çalışır', async ({ pag
   await activate(page.locator('.topbar-context').getByRole('link', { name: `${planName}. Planlara git`, exact: true }))
   await expect(page).toHaveURL(/#\/$/)
   await expect(page.getByRole('heading', { name: 'Planlar', exact: true })).toBeVisible()
-  await expect(page.getByRole('button', { name: planName, exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: `Aç: ${planName}`, exact: true })).toBeVisible()
   const bounds = await page.evaluate(() => ({ width: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }))
   expect(bounds.scroll).toBeLessThanOrEqual(bounds.width)
   await page.screenshot({ path: info.outputPath('ana-yol.png'), scale: 'css' })
