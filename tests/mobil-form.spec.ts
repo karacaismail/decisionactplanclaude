@@ -529,8 +529,19 @@ test('draft and focused field survive rotation while step actions stay reachable
   expect((await savedPlan(page)).steps['01'].values.coreReason).toBe('Hızlı geçişte korunacak taslak.')
   await page.evaluate(() => { location.hash = '#/karar/1/adim/01' })
   await expect(input).toHaveValue('Hızlı geçişte korunacak taslak.')
-  await page.getByRole('button', { name: 'Daha fazla', exact: true }).tap()
-  await page.getByRole('menuitem', { name: 'Bu adımı atla' }).tap()
+  // Adım değişince sayfa yavaş makinede bir süre daha kayabilir. Menü kayma sırasında açılırsa kapanır.
+  // GitHub koşusunun izinde bu görüldü. Önce kaydırma konumunun sabitlenmesi beklenir.
+  await expect.poll(async () => {
+    const first = await page.evaluate(() => scrollY)
+    await page.waitForTimeout(150)
+    return (await page.evaluate(() => scrollY)) === first
+  }, { message: 'Adım değişiminden sonra sayfa kaymayı bırakmalı.' }).toBe(true)
+  const skip = page.getByRole('menuitem', { name: 'Bu adımı atla' })
+  await expect(async () => {
+    if (!(await skip.isVisible())) await page.getByRole('button', { name: 'Daha fazla', exact: true }).tap()
+    await expect(skip).toBeVisible({ timeout: 1000 })
+  }).toPass({ timeout: 10_000 })
+  await skip.tap()
   const reason = page.locator('#atlama-nedeni')
   await expect(reason).toHaveAttribute('inputmode', 'text')
   await expect(reason).toHaveAttribute('enterkeyhint', 'enter')
