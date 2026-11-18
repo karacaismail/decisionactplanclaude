@@ -351,13 +351,32 @@ for (const intent of ['hover', 'touch'] as const) {
     expect(network.errors).toEqual([])
   })
 
-  test(`${intent}: rapor bağlantısı önceden yüklenmez, açılınca rapor yüklenir`, async ({ page, network }) => {
+  test(`${intent}: çalışma ekranı rapor kodu olmadan önceden yüklenir`, async ({ page, network }) => {
+    await createPlan(page)
+    await page.evaluate(() => { window.location.hash = '/temel' })
+    await expect(page.getByRole('heading', { name: 'Strateji öncesi 20 temel taşı' })).toBeVisible()
+    const link = page.locator('main a[href*="/adim/"]').first()
+    expectNoRequest(network, 'WorkScreen')
+    if (intent === 'hover') await link.hover()
+    else await touchIntent(link)
+    await expectLoaded(network, 'WorkScreen')
+    expectNoRequest(network, 'reports')
+    await link.click()
+    await expect(page.locator('h1')).toContainText('Adım')
+    expect(requested(network, 'WorkScreen')).toHaveLength(1)
+    expectNoRequest(network, 'reports')
+    expect(network.errors).toEqual([])
+  })
+
+  test(`${intent}: rapor ekranı önceden yüklenir, rapor yalnız açılınca yüklenir`, async ({ page, network }, testInfo) => {
     await createPlan(page)
     const reportLink = await menuLink(page, 'Çıktılar')
     expectNoRequest(network, 'OutputsScreen')
     expectNoRequest(network, 'reports')
     if (intent === 'hover') await reportLink.hover()
     else await touchIntent(reportLink)
+    await expectLoaded(network, 'OutputsScreen')
+    expectNoRequest(network, 'reports')
 
     const reportRoutes = [
       { path: '/devir', screen: 'HandoffScreen' },
@@ -370,6 +389,8 @@ for (const intent of ['hover', 'touch'] as const) {
       expectNoRequest(network, screen)
       if (intent === 'hover') await link.hover()
       else await touchIntent(link)
+      await expectLoaded(network, screen)
+      expectNoRequest(network, 'reports')
     }
 
     // İzinli isteğin bitmesi, niyet dinleyicisinin çalıştığı gözlem sınırıdır.
@@ -377,8 +398,8 @@ for (const intent of ['hover', 'touch'] as const) {
     if (intent === 'hover') await methodsLink.hover()
     else await touchIntent(methodsLink)
     await expectLoaded(network, 'MethodsScreen')
-    expectNoRequest(network, 'OutputsScreen')
-    for (const { screen } of reportRoutes) expectNoRequest(network, screen)
+    expect(requested(network, 'OutputsScreen')).toHaveLength(1)
+    for (const { screen } of reportRoutes) expect(requested(network, screen)).toHaveLength(1)
     expectNoRequest(network, 'reports')
     await expect(page.getByRole('heading', { name: 'Bugün nereden başlayacaksınız?' })).toBeVisible()
 
@@ -386,10 +407,94 @@ for (const intent of ['hover', 'touch'] as const) {
     await expect(page.getByRole('heading', { name: 'Yönetici raporu', exact: true })).toBeVisible()
     await expectLoaded(network, 'OutputsScreen')
     await expectLoaded(network, 'reports')
+    await captureState(page, testInfo, 'report-opened')
     expectNoRequest(network, 'charts')
     expect(network.errors).toEqual([])
   })
 }
+
+
+test('rapor göstermeyen çalışma adımı rapor kodunu yüklemez', async ({ page, network }) => {
+  await createPlan(page)
+  await page.evaluate(() => { window.location.hash = '/karar/0/adim/00' })
+  await expect(page.locator('h1')).toContainText('Adım 00.')
+  await expectLoaded(network, 'WorkScreen')
+  expectNoRequest(network, 'reports')
+  expectNoRequest(network, 'charts')
+  expect(network.errors).toEqual([])
+})
+
+/** Geçiş kaydı, mevcut strateji testlerindeki kabul edilmiş plan durumudur. */
+async function unlockStrategy(page: Page) {
+  await page.evaluate(() => {
+    const key = 'decisionactplan-v1'
+    const raw = JSON.parse(localStorage.getItem(key) ?? '{}')
+    const plan = raw.state.plans[raw.state.currentId]
+    plan.transitions = [{
+      id: 'teslim-gecis', outcome: 'hazir', suggested: 'hazir', reason: 'Dayanaklar incelendi.',
+      decidedBy: 'Kurucu', decidedAt: new Date().toISOString(), reviewed: true,
+      mandatoryMet: 9, mandatoryTotal: 9, supportingMet: 5, supportingTotal: 7,
+      level: 5, revision: plan.revision,
+    }]
+    localStorage.setItem(key, JSON.stringify(raw))
+  })
+  await page.reload()
+  await expect(page.getByRole('heading', { name: 'Bugün nereden başlayacaksınız?' })).toBeVisible()
+}
+
+test('dayanak özeti kapalıyken rapor indirilmez, açılınca yüklenir', async ({ page, network }, testInfo) => {
+  await createPlan(page)
+  await unlockStrategy(page)
+  await page.evaluate(() => { window.location.hash = '/karar/9/adim/S21' })
+  await expect(page.locator('h1')).toContainText('2.1')
+  const summary = page.getByRole('button', { name: 'Dayanak özeti' })
+  await expect(summary).toHaveAttribute('aria-expanded', 'false')
+  expectNoRequest(network, 'reports')
+  await summary.click()
+  await expect(summary).toHaveAttribute('aria-expanded', 'true')
+  await expectLoaded(network, 'reports')
+  await expect(page.locator('.foundation-summary')).toBeVisible()
+  await captureState(page, testInfo, 'foundation-summary-opened')
+  expect(network.errors).toEqual([])
+})
+
+test('yol karşılaştırması gereken adım raporu yükler', async ({ page, network }, testInfo) => {
+  await createPlan(page)
+  await unlockStrategy(page)
+  expectNoRequest(network, 'reports')
+  await page.evaluate(() => { window.location.hash = '/karar/9/adim/S22' })
+  await expect(page.locator('h1')).toContainText('2.2')
+  await expectLoaded(network, 'reports')
+  await expect(page.locator('.path-compare-empty')).toBeVisible()
+  await captureState(page, testInfo, 'work-paths-opened')
+  expect(network.errors).toEqual([])
+})
+
+test('rapor yükleme hatasından sonra yeniden açma kayıtlı planı korur', async ({ page, network }, testInfo) => {
+  await createPlan(page)
+  let failureEnabled = true
+  let attempts = 0
+  let blockedAttempts = 0
+  await page.route((url) => matches('reports', url.href), async (route) => {
+    attempts += 1
+    if (failureEnabled) {
+      blockedAttempts += 1
+      await route.abort('failed')
+    } else await route.continue()
+  })
+  await page.evaluate(() => { window.location.hash = '/ciktilar' })
+  await expect(page.getByRole('alert')).toBeVisible()
+  await expect(page.getByRole('link', { name: 'Girişimci Aksiyon Planı, panoya git' })).toBeVisible()
+  expect(blockedAttempts).toBeGreaterThan(0)
+  await captureState(page, testInfo, 'report-error')
+  failureEnabled = false
+  await page.getByRole('button', { name: 'Sayfayı yeniden yükle' }).click()
+  await expect(page.getByRole('heading', { name: 'Yönetici raporu', exact: true })).toBeVisible()
+  await expectLoaded(network, 'reports')
+  expect(attempts).toBeGreaterThan(blockedAttempts)
+  await page.evaluate(() => { window.location.hash = '/' })
+  await expect(page.getByRole('button', { name: 'Ağ denetimi planı', exact: true })).toBeVisible()
+})
 
 test('ekran geçişi yalnız ziyaret edilen ekranları yükler', async ({ page, network }) => {
   await createPlan(page)

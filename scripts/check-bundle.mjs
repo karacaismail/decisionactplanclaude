@@ -141,6 +141,13 @@ export function inspectBundle(manifest, readAsset, budgets = BUDGETS) {
       }
     }
   }
+  // Ekran koduna yönelik kullanıcı niyeti, rapor üretme isteği değildir.
+  for (const key of SCREENS) {
+    for (const file of files(closure([key]))) {
+      if (reportFiles.has(file)) errors.push(`REPORT_PREFETCH: ${key} raporu erken yüklüyor: ${file}`)
+    }
+  }
+
   const jsFiles = [...sizes.keys()].filter((file) => /\.[cm]?js$/.test(file))
   for (const file of jsFiles) measure(file, 'fileJs', [file])
   measure('initialJs', 'initialJs', jsFiles.filter((file) => initialFiles.has(file)))
@@ -227,7 +234,7 @@ async function selfTest() {
     }
     for (const key of SCREENS) manifest[key] = { file: `assets/${key.split('/').at(-1)}.js`, src: key, isDynamicEntry: true, imports: ['_shared.js'] }
     manifest['src/screens/InsightsScreen.tsx'].dynamicImports = ['_echarts.js']
-    manifest['src/screens/OutputsScreen.tsx'].imports.push('_report-build.js')
+    manifest['src/screens/OutputsScreen.tsx'].dynamicImports = ['_report-build.js']
     const assets = new Map(Object.values(manifest).map((chunk) => [chunk.file, Buffer.from('export default 1')]))
     assets.set('assets/index.css', Buffer.from('body { color: black }'))
     assets.set('assets/font.woff2', Buffer.from('font'))
@@ -253,6 +260,13 @@ async function selfTest() {
     ['dolaylı rapor yüklemesi', () => { const f = fixture(); f.manifest['_shared.js'].imports = ['_report-build.js']; assert.match(inspect(f).errors.join('\n'), /EAGER/) }],
     ['Planlar grafik yüklememeli', () => { const f = fixture(); f.manifest['src/screens/PlansScreen.tsx'].imports.push('_echarts.js'); assert.match(inspect(f).errors.join('\n'), /EAGER/) }],
     ['Planlar rapor yüklememeli', () => { const f = fixture(); f.manifest['src/screens/PlansScreen.tsx'].imports.push('_report-build.js'); assert.match(inspect(f).errors.join('\n'), /EAGER/) }],
+    ...['Outputs', 'Handoff', 'Transition', 'Strategy', 'Work'].map((screen) => [
+      `${screen} ön yüklemesi rapor üretme kodunu indirmemeli`, () => {
+        const f = fixture()
+        f.manifest[`src/screens/${screen}Screen.tsx`].imports.push('_report-build.js')
+        assert.match(inspect(f).errors.join('\n'), /REPORT_PREFETCH/)
+      },
+    ]),
     ['başlangıç ölçümü Planlar parçasını kapsar', () => {
       const f = fixture()
       const expected = ['assets/index.js', 'assets/shared.js', 'assets/PlansScreen.tsx.js'].reduce((sum, file) => sum + f.assets.get(file).length, 0)
