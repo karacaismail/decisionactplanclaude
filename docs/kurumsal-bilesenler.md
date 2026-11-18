@@ -18,21 +18,21 @@ Kullanıcı kararı, 13 Kasım 2026: "Bileşen çeşitliliği yok, yerleşim kö
 ### Planlar (`/`)
 - Üst: `PageHeader` + "Yeni plan" (primary) + "Daha fazla" `Dropdown`.
 - Özet satırı: 3 `Statistic` kartı (plan sayısı, açık karar sayısı, son değişiklik).
-- Plan listesi `Table`: ad (bağlantı), ilerleme (`Progress` çubuğu, 8 kapı), durum `Tag`, son değişiklik, sürüm, eylemler (`Dropdown`). Sıralama ve arama (`Input.Search`). Telefonda `List` kartları.
+- Plan listesi `Table`: ad (bağlantı), ilerleme (`Progress` çubuğu, 8 kontrol), durum `Tag`, son değişiklik, sürüm, eylemler (`Dropdown`). Sıralama ve arama (`Input.Search`). Telefonda `List` kartları.
 - Örnek plan satırı `Badge` "Örnek".
 
 ### Plan özeti (`/ozet`)
-- Satır 1: hero (açık karar, halka, tek primary) + sağda 2 kart: "Pist" (`Progress` çizgi + `Statistic`) ve "Deneme hakkı" (`Progress` daire).
+- Satır 1: hero (açık karar, halka, tek primary) + sağda 2 kart: "Kasa süresi" (`Progress` çizgi + `Statistic`) ve "Deneme hakkı" (`Progress` daire).
 - Satır 2: 4 KPI kartı (`StatTile` ikonlu); her birinde kısa trend cümlesi.
 - Satır 3: "Karar rotası" `Steps` (dikey, `progressDot`, durum: finish / process / wait) + "Nakit akışı" ECharts çizgi (adım 16 ödeme günleri) + "Son kararlar" `Timeline` (`DecisionBadge`).
 - Satır 4: `Tabs`: "Açık işler" (`Table`: iş, sorumlu, tarih, durum), "Son kanıtlar" (`Table`), "Değişiklik kaydı" (`List`).
 - Sınır satırı `Descriptions` (3 sütun) ve kısa yol `Switch`.
 
 ### Karar ekranı (`/karar/:n`)
-- `PageHeader` + `Progress` çubuğu (adımların tamamı) + tek primary "Kapı N'e git".
+- `PageHeader` + `Progress` çubuğu (adımların tamamı) + tek primary "Kontrol N'e git".
 - "Bu kararda ne var?" `Descriptions` (Soru, Kim yapar, Süre, Çıktı).
 - Adımlar `Steps` (yatay, telefonda dikey) + altında `Table`: adım, gereklilik `Tag`, durum `Tag`, son güncelleme, "Aç" bağlantısı.
-- Sağ sütun `Card` "Kapı önizleme": ölçüt sayısı `Progress` daire, `List` ölçütler (ikon + metin), "Günlük Hayattan" `Collapse`.
+- Sağ sütun `Card` "Kontrol önizleme": ölçüt sayısı `Progress` daire, `List` ölçütler (ikon + metin), "Günlük Hayattan" `Collapse`.
 
 ### Adım ekranı (`/karar/:n/adim/:id`)
 - `Form` `layout="vertical"`: `Form.Item` etiket, `tooltip` (yardım), `extra` (ipucu). Alanlar: `Input` prefix/addon, `InputNumber` `addonAfter` birim, `DatePicker`, `Select` `showSearch`, `Radio.Button` grup, `Rate`, `Slider` (puan 1-5), `Switch`.
@@ -40,8 +40,8 @@ Kullanıcı kararı, 13 Kasım 2026: "Bileşen çeşitliliği yok, yerleşim kö
 - Tekrarlı tablo `Table` `size="middle"` düzenlenebilir hücreler, satır ekle `Button` `dashed`.
 - Alt şerit `.action-bar` (≤3 düğme).
 
-### Kapı ekranı (`/karar/:n/kapi`)
-- Üst özet: 4 `Statistic` (karşılanan ölçüt, ölçülmeyen, deneme hakkı, pist) + `Progress` daire (ölçüt yüzdesi).
+### Kontrol ekranı (`/karar/:n/kapi`)
+- Üst özet: 4 `Statistic` (karşılanan ölçüt, ölçülmeyen, deneme hakkı, kasa süresi) + `Progress` daire (ölçüt yüzdesi).
 - "Ölçütler" `Table`: ikon, ölçüt, durum `Tag`, dayanak adım bağlantısı, `Tooltip` ipucu.
 - "Koşula göre sonuç" `Table` süzgeçli (sonuca göre) ve `Badge`.
 - "Kararı kaydedin" `Card` içinde `Steps` (1 Sonucu seçin, 2 Gerekçeyi yazın, 3 Kaydedin) + seçenekler `Radio` kart listesi + `Form`. Kayıt sonrası `Result` "Karar kaydedildi" ve sonraki adım bağlantısı.

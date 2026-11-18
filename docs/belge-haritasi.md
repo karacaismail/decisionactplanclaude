@@ -41,12 +41,13 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 
 | Belge | Ne anlatır? | Durum |
 |---|---|---|
-| [Süreç haritası](surec-haritasi.md) | Üç ana küme, adımlar, kapılar ve kurallar | Tek kaynak |
+| [Süreç haritası](surec-haritasi.md) | Üç ana küme, adımlar, kontroller ve kurallar | Tek kaynak |
 | [Alan sözleşmesi](alan-sozlesmesi.md) | Her adımdaki alanların anlamı | Güncel |
+| [Terim sözlüğü](terim-sozlugu.md) | Ekranda görünen terimler. Eski ve yeni adlar | Tek kaynak |
 | [Girişimci Aksiyon Planı v5 Final, Claude](act_plan_v5_final-claude.md) | Planın son metin sürümü | Tarihsel |
 | [Girişimci Aksiyon Planı v5, Codex](act_plan_v5_final-codex.md) | Codex'in plan sürümü | Tarihsel |
 | [Gerçek deneme föyü](gercek-deneme-foyu.md) | Üç gerçek denemenin nasıl yapılacağı | Güncel |
-| [Strateje devir planı](strateje-devir-uygulama-plani.md) | Hazırlığın çıktısı olan devir raporu | Tarihsel |
+| [Strateje devir planı](strateje-devir-uygulama-plani.md) | Hazırlığın çıktısı olan teslim raporu. Eski adı devir raporudur. | Tarihsel |
 | [Strateji öncesi boşluk ve eylem planı](stratejik-planlama-oncesi-bosluk-ve-eylem-plani.md) | Hazırlıktaki boşluklar | Tarihsel |
 | [Ön yüz uygulama planı](uygulama-plani-on-yuz.md) | Stratejiye geçişin ilk planı | Tarihsel |
 | [Araştırma analizi ve ekleme raporu](arastirma-analizi-ve-strateji-oncesi-ekleme-raporu.md) | Beş araştırma metninden eklenenler | Güncel |
