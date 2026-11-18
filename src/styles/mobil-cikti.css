@@ -1,0 +1,152 @@
+/* İş 7 kapsamı. Ortak boyutlar ve durumlar proje tokenlarından gelir. */
+:root {
+  --cikti-focus-thickness: 2px;
+  --cikti-focus-offset: 0.2em;
+  --cikti-body-size: 1rem;
+  --cikti-heading-size: 1.25rem;
+  --cikti-line-height: 1.5;
+  --cikti-heading-line-height: 1.3;
+  --cikti-weight-strong: 600;
+  --cikti-panel-padding: var(--space-4);
+  --cikti-section-gap: var(--space-6);
+  --cikti-control-gap: var(--space-2);
+}
+
+.devir-page .devir-toc { position: static; }
+.devir-toc nav { display: grid; grid-template-columns: minmax(0, 1fr); }
+.devir-toc nav a {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  padding-block: var(--space-2);
+  color: var(--color-text-secondary);
+  line-height: var(--cikti-line-height);
+  text-decoration: none;
+  transition: color var(--motion-small) var(--motion-ease);
+}
+.devir-toc nav a:hover { color: var(--color-action-primary); }
+.devir-page .devir-section .ant-collapse-header {
+  min-height: var(--target-touch);
+  padding: var(--cikti-panel-padding);
+  align-items: center;
+}
+.devir-page .devir-card-title {
+  font-size: var(--cikti-heading-size);
+  font-weight: var(--cikti-weight-strong);
+  line-height: var(--cikti-heading-line-height);
+  word-break: normal;
+  overflow-wrap: normal;
+}
+.devir-page .devir-section .ant-collapse-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--cikti-section-gap);
+  min-width: 0;
+  padding: 0 var(--cikti-panel-padding) var(--cikti-panel-padding);
+}
+.devir-page .devir-filter .ant-segmented-item-label,
+.page-foundation .temel-filter .ant-segmented-item-label {
+  display: flex;
+  align-items: center;
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  line-height: var(--cikti-line-height);
+}
+.page-foundation .temel-filter .ant-segmented-group { flex-wrap: wrap; }
+.devir-page .devir-coverage .devir-step-link { min-height: var(--target-touch); white-space: normal; }
+
+/* Aynı form ağacı korunur. Ekran dönüşünde alanlar yeniden kurulmaz. */
+.page-assumptions .assumption-board > [hidden] { display: none; }
+.page-assumptions .assumption-filter { justify-self: start; max-width: 100%; }
+.page-assumptions .assumption-filter .ant-segmented-group { flex-wrap: wrap; }
+.page-assumptions .assumption-filter .ant-segmented-item-label { min-height: var(--target-touch); display: flex; align-items: center; }
+@media (min-width: 768px) {
+  .page-assumptions .assumption-filter { display: none; }
+}
+
+.page-outputs .export-actions .ant-btn,
+.page-outputs .report-toolbar .ant-btn,
+.devir-page .devir-actions .ant-btn {
+  min-width: var(--target-touch);
+  min-height: var(--target-touch);
+  height: auto;
+  white-space: normal;
+}
+.page-outputs .report-tabs.ant-tabs .ant-tabs-tab { font-size: var(--cikti-body-size); }
+.page-outputs .report-collapse .ant-collapse-body { padding: 0 0 var(--space-4); }
+.page-outputs .report-side .ant-btn-link { min-height: var(--target-touch); }
+.page-outputs .report .ant-table-cell { word-break: normal; overflow-wrap: normal; }
+@media (max-width: 599px) {
+  .page-outputs .report { gap: var(--space-4); }
+  .page-outputs .report-head { gap: var(--space-2); }
+  .page-outputs .report-layout,
+  .page-outputs .report-side { gap: var(--space-4); }
+  .page-outputs .report-card > .ant-card-body { gap: var(--space-2); }
+  .page-outputs .report-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding-block: var(--space-2); min-height: var(--target-touch); }
+  .page-outputs .report-side .ant-card-body { gap: var(--space-3); padding-block: var(--space-3); }
+}
+
+/* Devralma sorusu, cevabı ve sonucu telefonda birlikte görünür. */
+.page-devralma .devralma-checks { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--space-6); }
+.page-devralma .devralma-checks > li { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+.page-devralma .devralma-check-question { margin: 0; font: inherit; font-weight: var(--cikti-weight-strong); }
+.page-devralma .devralma-result { display: grid; gap: var(--space-2); justify-items: start; }
+.page-devralma .devralma-result a { display: inline-flex; align-items: center; min-height: var(--target-touch); }
+.page-devralma .ant-switch { min-height: var(--target-touch); min-width: var(--target-touch); justify-self: start; }
+.page-devralma .ant-switch:not(.ant-switch-checked) { background: var(--color-text-secondary); }
+.page-devralma .ant-switch:not(.ant-switch-checked):not(:disabled):hover { background: var(--color-text-primary); }
+.page-devralma .ant-switch.ant-switch-checked,
+.page-devralma .ant-switch.ant-switch-checked:not(:disabled):hover { background: var(--color-status-ok); }
+.page-devralma .ant-switch .ant-switch-inner-checked,
+.page-devralma .ant-switch .ant-switch-inner-unchecked { color: var(--color-surface-work); }
+.page-devralma .ant-switch .ant-switch-handle::before { background: var(--color-surface-work); }
+.page-devralma .ant-card-head-wrapper { flex-wrap: wrap; gap: var(--space-2); padding-block: var(--space-3); }
+.page-devralma .ant-card-head-title { flex-basis: 60%; overflow: visible; text-overflow: clip; }
+.page-devralma .devralma-form { display: grid; gap: var(--space-6); }
+
+@media (min-width: 1200px) and (min-height: 600px) {
+  .devir-page .devir-toc { position: sticky; top: var(--space-12); grid-column: 2; grid-row: 1; }
+  .devir-page .devir-main { grid-column: 1; grid-row: 1; }
+}
+@media (min-width: 1200px) and (max-height: 599px) {
+  .devir-page .devir-layout { grid-template-columns: minmax(0, 1fr); }
+}
+
+.devir-toc-toggle .ant-collapse-header { min-height: var(--target-touch); align-items: center; }
+
+/* Sayfa numarası da okunabilir bir form alanıdır. */
+.page-methods .method-pagination input {
+  font: inherit;
+  font-size: var(--cikti-body-size);
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+}
+.page-methods .method-pagination .ant-pagination-prev,
+.page-methods .method-pagination .ant-pagination-next,
+.page-methods .method-pagination .ant-pagination-item,
+.page-methods .method-pagination .ant-pagination-simple-pager {
+  min-height: var(--target-touch);
+  min-width: var(--target-touch);
+  line-height: var(--target-touch);
+}
+.page-devralma .ant-switch,
+.page-devralma .ant-switch *,
+.page-devralma .ant-switch *::before {
+  transition-timing-function: var(--motion-ease);
+  transition-duration: var(--motion-small);
+}
+
+/* Gizli radio alanının odağı, görünen etiketinde tek alt çizgiyle gösterilir. */
+html[data-focus-mode='keyboard'] :is(.page-assumptions, .page-foundation, .devir-page) .ant-segmented-item-input:focus-visible {
+  position: absolute;
+}
+html[data-focus-mode='keyboard'] :is(.page-assumptions, .page-foundation, .devir-page) .ant-segmented-item-input:focus-visible + .ant-segmented-item-label {
+  text-decoration: underline;
+  text-decoration-thickness: var(--cikti-focus-thickness);
+  text-underline-offset: var(--cikti-focus-offset);
+}

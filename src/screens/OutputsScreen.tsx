@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useState } from 'react'
 import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
 import { Link, useSearchParams } from 'react-router'
@@ -12,6 +12,7 @@ import { Callout } from '@/components/Callout'
 import '@/styles/screens-rapor.css'
 import '@/styles/screens-strateji.css'
 import '@/styles/screens-devir.css'
+import '@/styles/mobil-cikti.css'
 import '@/styles/print.css'
 
 /** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje devir raporunun özetidir. */
@@ -131,6 +132,8 @@ export function OutputsScreen() {
   const [kind, setKind] = useState<Kind>(HANDOFF_PARAMS.includes(params.get('belge') ?? '') ? 'temel' : 'yonetici')
   const [versionId, setVersionId] = useState<string>(CURRENT)
   const [pinLabel, setPinLabel] = useState('')
+  const [expandedSections, setExpandedSections] = useState<Record<string, string[]>>({})
+  const documentKey = `${kind}-${versionId}`
 
   const revisions = plan?.revisions ?? []
   const versionIndex = revisions.findIndex((r) => r.id === versionId)
@@ -150,6 +153,14 @@ export function OutputsScreen() {
     const base = buildHandoffReport(viewed)
     return revision ? { ...base, meta: [...base.meta, `Sürüm kaydı: ${formatDate(revision.createdAt)}`] } : base
   }, [viewed, kind, revision])
+
+  useLayoutEffect(() => {
+    if (!report || bp.md === undefined) return
+    setExpandedSections((current) => current[documentKey] !== undefined ? current : {
+      ...current,
+      [documentKey]: bp.md ? report.sections.map((section) => section.title) : [report.sections[0]?.title ?? ''],
+    })
+  }, [bp.md, documentKey, report])
 
   if (!plan) return null
   const hasDoc = kind === 'temel' ? Boolean(handoff) : Boolean(report)
@@ -219,9 +230,16 @@ export function OutputsScreen() {
   ]
 
   const anchorItems = report ? report.sections.map((s) => ({ key: sectionId(s.title), href: `#${sectionId(s.title)}`, title: s.title })) : []
+  const activeSections = expandedSections[documentKey] ?? []
+  const openSection = (title: string) => {
+    setExpandedSections((current) => ({ ...current, [documentKey]: Array.from(new Set([...activeSections, title])) }))
+    const heading = document.getElementById(sectionId(title))
+    heading?.closest<HTMLElement>('.ant-collapse-header')?.focus({ preventScroll: true })
+    heading?.scrollIntoView({ behavior: 'auto', block: 'start' })
+  }
 
   return (
-    <div className="page page-rapor">
+    <div className="page page-rapor page-outputs">
       <div className="no-print">
         <PageHeader kicker="Çıktılar" title="Çıktılar" description="Üç belge aynı veri sürümünden üretilir. Eksik bilgi uydurulmaz. Eksik yere “Bilinmiyor” yazılır." />
       </div>
@@ -246,7 +264,7 @@ export function OutputsScreen() {
             <>
               {wide ? (
                 <nav className="report-anchor no-print" aria-label="İçindekiler">
-                  <Anchor direction="horizontal" affix={false} targetOffset={80} items={anchorItems} onClick={(e) => e.preventDefault()} />
+                  <Anchor direction="horizontal" affix={false} targetOffset={80} items={anchorItems} onClick={(e, link) => { e.preventDefault(); openSection(String(link.title)) }} />
                 </nav>
               ) : null}
               <article className="report">
@@ -258,27 +276,19 @@ export function OutputsScreen() {
                     {isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : `Sürüm kaydı: ${formatDate(revision!.createdAt)}. Bu sürüm donduruldu. Sonraki değişiklikler bu raporu etkilemez.`}
                   </p>
                 </header>
-                {wide ? (
-                  report.sections.map((s) => (
-                    <section key={s.title} id={sectionId(s.title)} className="report-section">
-                      <h3>{s.title}</h3>
-                      <SectionBody s={s} />
-                    </section>
-                  ))
-                ) : (
-                  <Collapse
-                    key={`${kind}-${versionId}`}
-                    className="report-collapse"
-                    ghost
-                    defaultActiveKey={[report.sections[0]?.title ?? '']}
-                    items={report.sections.map((s) => ({
-                      key: s.title,
-                      label: <h3 id={sectionId(s.title)} className="report-collapse-title">{s.title}</h3>,
-                      forceRender: true,
-                      children: <div className="report-section"><SectionBody s={s} /></div>,
-                    }))}
-                  />
-                )}
+                <Collapse
+                  key={documentKey}
+                  className="report-collapse"
+                  ghost
+                  activeKey={activeSections}
+                  onChange={(keys) => setExpandedSections((current) => ({ ...current, [documentKey]: Array.isArray(keys) ? keys : [keys] }))}
+                  items={report.sections.map((s) => ({
+                    key: s.title,
+                    label: <h3 id={sectionId(s.title)} className="report-collapse-title">{s.title}</h3>,
+                    forceRender: true,
+                    children: <div className="report-section"><SectionBody s={s} /></div>,
+                  }))}
+                />
               </article>
             </>
           )}

@@ -1,5 +1,5 @@
 import { useId, useState } from 'react'
-import { Button, Card, Empty, Grid, Input, Rate, Select, Statistic, Tabs, Tag, App as AntApp } from 'antd'
+import { Button, Card, Empty, Grid, Input, Rate, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
 import { Link, useNavigate } from 'react-router'
 import { CheckCircle, HourglassMedium, PencilSimple, XCircle } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -8,6 +8,7 @@ import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import '@/styles/screens-kapi.css'
 import '@/styles/screens-temel.css'
+import '@/styles/mobil-cikti.css'
 
 /** Adım 10'daki varsayım satırı. Boş durum "Denenmedi" sayılır. */
 type Row = Record<string, unknown> & { _id: string }
@@ -60,7 +61,7 @@ export function AssumptionsScreen() {
     if (next === statusOf(r)) return
     patchRow(r._id, { status: next })
     setTab(next)
-    message.success(`Varsayım “${COLUMNS.find((c) => c.value === next)?.label}” ${narrow ? 'sekmesine' : 'sütununa'} taşındı.`)
+    message.success(`Varsayım “${COLUMNS.find((c) => c.value === next)?.label}” ${narrow ? 'grubuna' : 'sütununa'} taşındı.`)
   }
 
   const scoreLine = (label: string, value: unknown) => {
@@ -124,33 +125,45 @@ export function AssumptionsScreen() {
     return items.length === 0 ? <span className="kanban-empty">{col.empty}</span> : <div className="assumption-list">{items.map(card)}</div>
   }
 
-  /* Dar ekranda üç sekme yan yana sığmalıdır. Sayılar üstteki sayı kartlarında durur. */
-  const board = narrow ? (
-    <Tabs
-      className="k-tabs assumption-board"
-      activeKey={tab}
-      onChange={(k) => setTab(k as Status)}
-      items={COLUMNS.map((c) => ({ key: c.value, label: c.label, children: list(c.value) }))}
-    />
-  ) : (
-    <div className="kanban assumption-board" role="group" aria-label="Varsayım panosu">
-      {COLUMNS.map((c) => (
-        <section key={c.value} className="kanban-col" aria-labelledby={`${uid}-sutun-${c.value}`}>
-          <div className="kanban-head">
-            <h2 id={`${uid}-sutun-${c.value}`} className="kanban-title">
-              <c.Icon className={`stat-ico ${c.tone}`.trim()} size={18} weight="fill" aria-hidden />
-              {c.label}
-            </h2>
-            <span className="kanban-count">{of(c.value).length} varsayım</span>
-          </div>
-          {list(c.value)}
-        </section>
-      ))}
-    </div>
+  /* Aynı alanlar korunur. Dar ekranda seçilen durum grubu gösterilir. */
+  const board = (
+    <>
+      <Segmented<Status>
+        className="assumption-filter"
+        aria-label="Varsayımları duruma göre göster"
+        tabIndex={-1}
+        onKeyDownCapture={(event) => {
+          const offset = ['ArrowRight', 'ArrowDown'].includes(event.key) ? 1 : ['ArrowLeft', 'ArrowUp'].includes(event.key) ? -1 : 0
+          if (!offset) return
+          // Seçimi Segmented yapar. Yerel radio hareketi WebKit odağını gizlemesin.
+          event.preventDefault()
+          const radios = [...event.currentTarget.querySelectorAll<HTMLInputElement>('input[type="radio"]')]
+          const index = radios.indexOf(event.target as HTMLInputElement)
+          if (index >= 0) radios[(index + offset + radios.length) % radios.length]?.focus()
+        }}
+        value={tab}
+        onChange={setTab}
+        options={COLUMNS.map((c) => ({ value: c.value, label: c.label }))}
+      />
+      <div className="kanban assumption-board" role="group" aria-label="Varsayım panosu">
+        {COLUMNS.map((c) => (
+          <section key={c.value} className="kanban-col" hidden={narrow && tab !== c.value} onFocusCapture={() => setTab(c.value)} aria-labelledby={`${uid}-sutun-${c.value}`}>
+            <div className="kanban-head">
+              <h2 id={`${uid}-sutun-${c.value}`} className="kanban-title">
+                <c.Icon className={`stat-ico ${c.tone}`.trim()} size={18} weight="fill" aria-hidden />
+                {c.label}
+              </h2>
+              <span className="kanban-count">{of(c.value).length} varsayım</span>
+            </div>
+            {list(c.value)}
+          </section>
+        ))}
+      </div>
+    </>
   )
 
   return (
-    <div className="page">
+    <div className="page page-assumptions">
       <PageHeader
         kicker="Varsayım panosu"
         title="Varsayımlar"

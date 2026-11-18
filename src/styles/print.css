@@ -134,14 +134,16 @@
   }
 
   /* Telefon akordeonu basılırken bütün bölümler açık görünür. Ok gizlenir. */
-  .report-collapse .ant-collapse-content-hidden,
-  .report-collapse .ant-collapse-content {
+  .report-collapse .ant-collapse-panel,
+  .devir-section .ant-collapse-panel {
     display: block !important;
     height: auto !important;
     opacity: 1 !important;
+    overflow: visible !important;
   }
 
-  .report-collapse .ant-collapse-expand-icon {
+  .report-collapse .ant-collapse-expand-icon,
+  .devir-section .ant-collapse-expand-icon {
     display: none !important;
   }
 
@@ -151,8 +153,19 @@
 
   .report table {
     width: 100% !important;
+    min-width: 0 !important;
+    table-layout: auto !important;
     border-collapse: collapse;
   }
+
+  .report col { width: auto !important; min-width: 0 !important; }
+  .report .ant-table-cell { white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+
+  .devir-page .devir-main { container-type: normal; }
+  .devir-page .devir-section .ant-collapse-header { padding: 0 !important; break-after: avoid; }
+  .devir-page .devir-section .ant-collapse-body { display: block !important; padding: 6px 0 !important; }
+  .devir-page .devir-section .ant-collapse-body > * { margin-bottom: 8px; }
+  .devir-page .devir-card { margin-bottom: 12px; }
 
   .report .ant-table-cell {
     color: #000 !important;
@@ -306,6 +319,16 @@
     padding-bottom: 4px !important;
   }
 
+  .devir-page .devir-facts .ant-descriptions-row,
+  .devir-page .devir-facts .ant-descriptions-item-container {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .devir-page .devir-six { display: block; }
+  .devir-page .devir-six > li { break-inside: avoid; margin-bottom: 8px; }
+  .devir-page #devir-alti-soru .helper { break-after: avoid; }
+
   /* Tablolar: kaydırma ve sabit sütun kalkar. Genişlik kağıda uyar, satır ortadan bölünmez. */
   .devir-page .ant-table-wrapper,
   .devir-page .ant-table,
@@ -380,15 +403,14 @@
     page-break-inside: avoid;
   }
 
-  /* Kapsam: 14 satır iki sütuna akar. İlerleme çizgisi basılmaz; sayım yazısı kalır. */
+  /* Kapsam tek sütunda basılır. Böylece son boş sayfa oluşmaz. Sayım yazısı kalır. */
   .devir-page .devir-progress .ant-progress {
     display: none !important;
   }
 
   .devir-page .devir-coverage {
     display: block !important;
-    column-count: 2;
-    column-gap: 20px;
+    column-count: 1;
   }
 
   .devir-page .devir-coverage > li {
