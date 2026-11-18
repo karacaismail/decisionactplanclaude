@@ -9,6 +9,7 @@ import { STRATEGY_N } from '@/data/decisions'
 import { STEPS } from '@/data/registry'
 import { EXECUTION_DECISIONS } from '@/data/stages'
 import { LIMITS_STEP } from '@/engine/changes'
+import { ROW_ID_FIELDS } from '@/engine/rowIds'
 import { uid } from '@/engine/format'
 import { decisionLocked } from '@/engine/gate'
 import type { CommandResult, PlanCommands } from '@/platform/planCommands'
@@ -54,6 +55,13 @@ export const useDraftStore = create<DraftState>()(
   }),
 )
 
+/* Öteki sekme taslak eklerse bu sekme listeyi yeniden okur. Böylece iki sekme birbirinin taslağını silmez. */
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (event) => {
+    if (event.key === DRAFTS_KEY) void useDraftStore.persist.rehydrate()
+  })
+}
+
 const fail = (error: string): CommandResult => ({ ok: false, error })
 const isRecord = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v)
 
@@ -81,6 +89,12 @@ export const corePlanCommands: PlanCommands = {
       copy = JSON.parse(json) as Record<string, unknown>
     } catch {
       return fail('Taslak kaydedilebilir bir değer değil.')
+    }
+    /* Tekrarlı satır kimliksiz gelirse kimlik alır. Modül bu kimliği taslaktan okur. Kayıttan sonra kimlik değişmez. */
+    for (const key of ROW_ID_FIELDS[step] ?? []) {
+      const rows = copy[key]
+      if (!Array.isArray(rows)) continue
+      for (const row of rows) if (isRecord(row) && (typeof row._id !== 'string' || !row._id)) row._id = uid('satir')
     }
     return add({ id: uid('taslak'), kind: 'adim', planId, step, patch: copy, createdAt: new Date().toISOString() })
   },

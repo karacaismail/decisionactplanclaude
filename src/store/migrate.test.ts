@@ -113,3 +113,46 @@ describe('sürüm 3 taşıması', () => {
     expect(migratePlan(p).steps).toEqual({})
   })
 })
+
+describe('sürüm 4 taşıması', () => {
+  /* Sürüm 3 kaydında strateji tamam, ama kullanıcı kazanma hedefini sonradan sildi. */
+  function v3Plan() {
+    const p = emptyPlan('p', 'Plan')
+    p.revision = 9
+    p.steps['19'] = { values: { chosenPath: 'Yol A', choiceReason: 'Kanıt', givenUp: 'Öğle', winningAim: '', playField: 'Saha' }, status: 'tamam', updatedAt: 'a' }
+    p.steps['20'] = { values: { qualityCheck: ['a', 'b', 'c', 'd', 'e'] }, status: 'tamam', updatedAt: 'b' }
+    p.steps['U32'] = { values: { now: [{ action: 'İş', owner: 'Ali', dueDate: '2026-12-01' }] }, status: 'tamam', updatedAt: 'c' }
+    p.decisions.push({ id: 'k', gate: 6, scope: '', criteria: [], suggested: 'ilerle', chosen: 'ilerle', reason: '', retriesLeft: 1, decidedBy: 'Ali', decidedAt: '', revision: 9, stale: false })
+    return p
+  }
+
+  it('sürüm 3 kaydında yalnız satır kimliği yazılır', async () => {
+    const { migratePersisted } = await import('./planStore')
+    const { decisionLocked } = await import('@/engine/gate')
+    const before = v3Plan()
+    const state = { plans: { p: v3Plan() } }
+    migratePersisted(state, 3)
+    const after = state.plans.p
+    expect(Object.fromEntries(Object.entries(after.steps).map(([k, v]) => [k, [v.status, v.updatedAt]]))).toEqual(Object.fromEntries(Object.entries(before.steps).map(([k, v]) => [k, [v.status, v.updatedAt]])))
+    expect(after.revision).toBe(9)
+    expect(after.legacyStrategy).toBeUndefined()
+    expect(after.decisions[0].stale).toBe(false)
+    expect(decisionLocked(after, 6)).toBe(decisionLocked(before, 6))
+    expect((after.steps['U32'].values.now as { _id?: string }[])[0]._id).toBeTruthy()
+  })
+
+  it('sürüm 2 kaydında bütün taşımalar çalışır', async () => {
+    const { migratePersisted } = await import('./planStore')
+    const p = emptyPlan('p', 'Plan')
+    p.steps['19'] = { values: { chosenPath: 'Yol A', now: [{ action: 'A' }] }, status: 'taslak', updatedAt: '' }
+    const state = { plans: { p } }
+    migratePersisted(state, 2)
+    expect((p.steps['U32'].values.now as { _id?: string }[])[0]._id).toBe('r-u32-now-0')
+  })
+
+  it('boş ya da bozuk kayıtta hata vermez', async () => {
+    const { migratePersisted } = await import('./planStore')
+    expect(migratePersisted(undefined, 3)).toBeUndefined()
+    expect(migratePersisted({}, 3)).toEqual({})
+  })
+})

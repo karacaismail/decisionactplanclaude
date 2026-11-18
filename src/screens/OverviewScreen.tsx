@@ -4,7 +4,7 @@ import '@/styles/desen/pano-ortak.css'
 import '@/styles/desen/form.css'
 import '@/styles/ekran/OverviewScreen.css'
 import { useEffect, useMemo, useState } from 'react'
-import { Button, Card, Collapse, Descriptions, Empty, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
+import { App as AntApp, Button, Card, Collapse, Descriptions, Empty, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, CheckSquare, DownloadSimple, Flag, Notebook, Path } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
@@ -78,6 +78,7 @@ export function OverviewScreen() {
   const update = usePlanStore((s) => s.update)
   const backups = usePlanStore((s) => s.backups)
   const markBackup = usePlanStore((s) => s.markBackup)
+  const { message } = AntApp.useApp()
   const themePref = usePlanStore((s) => s.theme)
   const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
@@ -108,16 +109,11 @@ export function OverviewScreen() {
   const backup = backupState(plan, lastBackupAt)
   /* Yedek modül verisini de taşır. Modül verisi yoksa düz plan dosyası yazılır. */
   const takeBackup = () => {
-    /* Modül verisi okunamazsa yedek yine alınır. Plan dosyası modül verisi olmadan iner. */
-    void exportPlanFile(plan)
-      .catch((error: unknown) => {
-        console.error(error)
-        return plan
-      })
-      .then((data) => {
-        downloadJson(`${safeFileName(plan.name)}.json`, data)
-        markBackup(plan.id)
-      })
+    /* Dışa aktarma başarısızsa yedek alınmış sayılmaz. Hata ekranda görünür. */
+    exportPlanFile(plan).then((data) => {
+      downloadJson(`${safeFileName(plan.name)}.json`, data)
+      markBackup(plan.id)
+    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Yedek alınamadı. Plan dışa aktarılamadı.'))
   }
   const { level, strategyDone, strategyTotal } = position
   const foundationPassed = FOUNDATION_DECISIONS.filter((n) => gatePassed(plan, n)).length

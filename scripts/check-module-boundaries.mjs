@@ -12,6 +12,10 @@
  * 3. Çekirdek modülü içe aktarmaz. Modül klasörünü yalnız src/platform/modules.ts tarar.
  * 4. Sözleşme katmanı yalnız @/data/types ve saf seçicileri içe aktarır. npm paketi kullanmaz.
  * 5. Altyapı çekirdeği ve modülü içe aktarmaz. Sözleşme tiplerini yalnız "import type" ile alır.
+ * 6. Modül ortak bileşen üzerinden de plan deposuna, kabuğa ya da çekirdek ekranlara ulaşamaz.
+ *    Kapı içe aktarma zincirini izler. Örneğin plan deposuna yazan bir bileşen modülde kullanılamaz.
+ * 7. Modül altyapının çekirdeğe ayrılmış parçalarını kullanmaz. Örneğin yaşam döngüsü ve kayıt işlevleri.
+ * 8. Modülde dinamik içe aktarmanın yolu sabit metin olur. Böylece kapı yolu okuyabilir.
  */
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join, posix, relative, resolve } from 'node:path'
@@ -25,6 +29,12 @@ export const CHART_PACKAGES = ['echarts', 'zrender', 'echarts-for-react']
 const MODULE_SHARED = ['src/contracts', 'src/platform', 'src/components', 'src/theme', 'src/styles']
 const MANIFEST_FORBIDDEN = ['react', 'react-dom', 'antd', '@phosphor-icons/react']
 const GLOB_OWNER = 'src/platform/modules.ts'
+/** Modülün dolaylı olarak da ulaşamayacağı çekirdek klasörleri. */
+export const CORE_WRITERS = ['src/store', 'src/app', 'src/screens']
+/** Altyapının yalnız çekirdeğe ayrılmış dosyaları. */
+export const CORE_ONLY_PLATFORM = ['src/platform/lifecycle', 'src/platform/modules', 'src/platform/manifest']
+/** Altyapının yalnız çekirdeğe ayrılmış işlevleri. */
+export const CORE_ONLY_NAMES = ['registerPlanCommands', 'registerPlanSource', 'setDefaultKvStore', 'getDefaultKvStore']
 
 const isTest = (file) => /\.(test|spec)\.[cm]?[jt]sx?$/.test(file)
 const stripExt = (path) => path.replace(/\.(d\.ts|tsx?|jsx?|mjs|cjs)$/, '').replace(/\/index$/, '')
@@ -39,13 +49,17 @@ export function importsOf(source, file) {
     if (ts.isImportDeclaration(node) && ts.isStringLiteral(node.moduleSpecifier)) {
       const clause = node.importClause
       const typeOnly = Boolean(clause && (clause.isTypeOnly || (!clause.name && clause.namedBindings && ts.isNamedImports(clause.namedBindings) && clause.namedBindings.elements.length > 0 && clause.namedBindings.elements.every((e) => e.isTypeOnly))))
-      found.push({ spec: node.moduleSpecifier.text, kind: 'static', typeOnly })
+      const names = clause?.namedBindings && ts.isNamedImports(clause.namedBindings) ? clause.namedBindings.elements.map((e) => (e.propertyName ?? e.name).text) : []
+      found.push({ spec: node.moduleSpecifier.text, kind: 'static', typeOnly, names })
     } else if (ts.isExportDeclaration(node) && node.moduleSpecifier && ts.isStringLiteral(node.moduleSpecifier)) {
-      found.push({ spec: node.moduleSpecifier.text, kind: 'static', typeOnly: node.isTypeOnly })
+      const names = node.exportClause && ts.isNamedExports(node.exportClause) ? node.exportClause.elements.map((e) => (e.propertyName ?? e.name).text) : []
+      found.push({ spec: node.moduleSpecifier.text, kind: 'static', typeOnly: node.isTypeOnly, names })
     } else if (ts.isCallExpression(node)) {
       const [arg] = node.arguments
       if (node.expression.kind === ts.SyntaxKind.ImportKeyword && arg && ts.isStringLiteralLike(arg)) {
         found.push({ spec: arg.text, kind: 'dynamic', typeOnly: false })
+      } else if (node.expression.kind === ts.SyntaxKind.ImportKeyword) {
+        found.push({ spec: arg ? arg.getText(sf) : '', kind: 'dynamic', typeOnly: false, nonLiteral: true })
       } else if (ts.isPropertyAccessExpression(node.expression) && node.expression.name.text === 'glob' && node.expression.expression.getText(sf) === 'import.meta') {
         const patterns = arg && ts.isArrayLiteralExpression(arg) ? arg.elements : arg ? [arg] : []
         for (const p of patterns) if (ts.isStringLiteralLike(p)) found.push({ spec: p.text, kind: 'glob', typeOnly: false })
@@ -73,16 +87,68 @@ function layerOf(file) {
   return { layer: 'cekirdek' }
 }
 
+/** Uzantısız yolu gerçek dosyaya çevirir. Bulamazsa undefined döner. */
+function resolveFile(path, files) {
+  for (const candidate of [path, `${path}.ts`, `${path}.tsx`, `${path}.js`, `${path}.mjs`, `${path}/index.ts`, `${path}/index.tsx`]) {
+    if (files.has(candidate)) return candidate
+  }
+  return undefined
+}
+
+/**
+ * Modül dışındaki bir dosyadan başlayıp içe aktarma zincirini izler.
+ * Zincir çekirdeğin yazan klasörüne ulaşırsa ulaşılan dosyayı döndürür.
+ */
+function reachesCoreWriter(start, files, graph, cache) {
+  if (cache.has(start)) return cache.get(start)
+  cache.set(start, undefined)
+  const pending = [start]
+  const seen = new Set([start])
+  let hit
+  while (pending.length && !hit) {
+    const file = pending.pop()
+    if (CORE_WRITERS.some((dir) => under(stripExt(file), dir))) {
+      hit = file
+      break
+    }
+    for (const next of graph(file)) {
+      if (!seen.has(next) && !under(next, 'src/modules')) {
+        seen.add(next)
+        pending.push(next)
+      }
+    }
+  }
+  cache.set(start, hit)
+  return hit
+}
+
 /** files: dosya yolu → içerik. Yollar proje köküne göre ve "/" ayraçlıdır. */
 export function checkModuleBoundaries(files) {
   const errors = []
   const sources = [...files.keys()].filter((p) => /^src\/.*\.(tsx?|jsx?|mjs)$/.test(p) && !isTest(p))
+  const parsed = new Map()
+  const importsCached = (file) => {
+    if (!parsed.has(file)) parsed.set(file, files.has(file) ? importsOf(files.get(file), file) : [])
+    return parsed.get(file)
+  }
+  /* Değer taşıyan içe aktarmaların hedef dosyaları. Tip içe aktarması kod taşımaz. */
+  const graph = (file) => importsCached(file)
+    .filter((imp) => !imp.typeOnly && imp.kind !== 'glob' && !imp.nonLiteral)
+    .map((imp) => target(imp.spec, file))
+    .filter(Boolean)
+    .map((path) => resolveFile(path, files))
+    .filter(Boolean)
+  const reachCache = new Map()
   for (const file of sources) {
     const { layer, module } = layerOf(file)
     const isManifest = layer === 'modul' && file === `src/modules/${module}/manifest.ts`
-    for (const imp of importsOf(files.get(file), file)) {
-      const path = target(imp.spec, file)
+    for (const imp of importsCached(file)) {
+      const path = imp.nonLiteral ? null : target(imp.spec, file)
       const say = (rule) => errors.push(`${file}: "${imp.spec}" içe aktarılamaz. ${rule}`)
+      if (imp.nonLiteral) {
+        if (layer === 'modul') say('Dinamik içe aktarmanın yolu sabit metin olmalı.')
+        continue
+      }
       if (imp.kind === 'glob') {
         const touchesModules = path ? under(path, 'src/modules') || path.startsWith('src/modules') : false
         if (touchesModules && file !== GLOB_OWNER) say(`Modül klasörünü yalnız ${GLOB_OWNER} glob ile tarar.`)
@@ -97,6 +163,13 @@ export function checkModuleBoundaries(files) {
         }
         const own = under(path, `src/modules/${module}`)
         if (!own && !MODULE_SHARED.some((dir) => under(path, dir))) say('Modül yalnız kendini, @/contracts, @/platform, @/components ve @/theme katmanını kullanır.')
+        else if (CORE_ONLY_PLATFORM.includes(path)) say('Bu altyapı dosyası yalnız çekirdeğe ayrılmıştır.')
+        else if (under(path, 'src/platform') && (imp.names ?? []).some((n) => CORE_ONLY_NAMES.includes(n))) say(`Şu işlevler yalnız çekirdeğe ayrılmıştır: ${CORE_ONLY_NAMES.join(', ')}.`)
+        else if (!own && !imp.typeOnly) {
+          const resolved = resolveFile(path, files)
+          const reached = resolved && reachesCoreWriter(resolved, files, graph, reachCache)
+          if (reached) say(`Bu dosya zincirle ${reached} dosyasına ulaşıyor. Modül plan deposuna dolaylı yoldan da ulaşamaz.`)
+        }
         if (isManifest && imp.kind === 'static' && !imp.typeOnly && !under(path, 'src/platform')) say('Modül bildirimi bu dosyayı yalnız dinamik içe aktarmayla ya da "import type" ile alır.')
         continue
       }

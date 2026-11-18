@@ -82,4 +82,37 @@ describe('modül sınır kapısı', () => {
   it('test dosyalarını denetlemez', () => {
     expect(check({ ...valid, 'src/modules/proje/model.test.ts': "import { usePlanStore } from '@/store/planStore'" })).toEqual([])
   })
+
+  it('ortak bileşen üzerinden plan deposuna ulaşan modülü bulur', () => {
+    const errors = check({
+      ...valid,
+      'src/store/planStore.ts': 'export const usePlanStore = 1',
+      'src/components/TransitionPanel.tsx': "import { usePlanStore } from '@/store/planStore'",
+      'src/components/Ara.tsx': "export { TransitionPanel } from './TransitionPanel'",
+      'src/modules/proje/model.ts': "import { TransitionPanel } from '@/components/Ara'",
+    })
+    expect(errors.join('\n')).toMatch(/proje\/model\.ts.*@\/components\/Ara.*zincirle.*src\/store\/planStore\.ts/)
+  })
+
+  it('yalnız tip alan zinciri ve saf bileşeni kabul eder', () => {
+    const errors = check({
+      ...valid,
+      'src/store/planStore.ts': 'export type X = 1',
+      'src/components/Saf.tsx': "import type { X } from '@/store/planStore'\nexport const Saf = 1",
+      'src/modules/proje/model.ts': "import { Saf } from '@/components/Saf'",
+    })
+    expect(errors).toEqual([])
+  })
+
+  it('çekirdeğe ayrılmış altyapı dosyasını ve işlevini bulur', () => {
+    const errors = check({ ...valid, 'src/modules/proje/model.ts': "import { notifyPlanDeleted } from '@/platform/lifecycle'\nimport { registerPlanSource } from '@/platform/planSource'\nimport { setDefaultKvStore as s } from '@/platform/kv'" })
+    expect(errors.join('\n')).toMatch(/model\.ts.*@\/platform\/lifecycle.*çekirdeğe/)
+    expect(errors.join('\n')).toMatch(/model\.ts.*@\/platform\/planSource.*çekirdeğe/)
+    expect(errors.join('\n')).toMatch(/model\.ts.*@\/platform\/kv.*çekirdeğe/)
+  })
+
+  it('modülde sabit olmayan dinamik içe aktarmayı bulur', () => {
+    const errors = check({ ...valid, 'src/modules/proje/model.ts': "const name = 'x'\nconst a = () => import(`@/store/${name}`)" })
+    expect(errors.join('\n')).toMatch(/model\.ts.*sabit metin/)
+  })
 })

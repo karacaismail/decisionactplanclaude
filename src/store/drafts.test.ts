@@ -13,6 +13,7 @@ import { createMemoryKvStore, moduleStore, setDefaultKvStore } from '@/platform/
 import { readRollup, writeRollup } from '@/platform/rollups'
 import { lifecycleSettled } from '@/platform/lifecycle'
 import { selectExecutionTasks, selectPlanSummary } from '@/contracts'
+import { stampRowIds } from '@/engine/rowIds'
 
 function open(plan: PlanDoc): string {
   return usePlanStore.getState().importPlan(plan)
@@ -78,22 +79,31 @@ describe('plan komutları', () => {
     expect(draftsOf(id)[0]).toMatchObject({ kind: 'kanit', text: 'Müşteri görüşmesinde fiyat soruldu.' })
   })
 
-  it('kişi taslağı kaydedince adım değişir ve taslak kalkar', () => {
+  it('kişi taslağı kaydedince adım değişir, eskime kuralı çalışır ve taslak kalkar', () => {
     const id = open(buildShoeDemoPlan())
     const evidenceBefore = current().evidence.length
-    const step = planCommands.proposeStepDraft(id, 'U32', { later: [{ action: 'İkinci şube' }] })
+    const step = planCommands.proposeStepDraft(id, '05', { currentSolutionNote: 'Fişleri elle sayıyor.' })
     const ev = planCommands.appendEvidenceDraft(id, 'Satış kaydı')
     if (!step.ok || !ev.ok) throw new Error('taslak açılmadı')
-    const locked = decisionLocked(current(), 6)
-    const stepError = acceptDraft(step.draftId)
-    if (locked) expect(stepError).toMatch(/kilitli/)
-    else {
-      expect(stepError).toBeNull()
-      expect((current().steps['U32'].values.later as { action: string }[])[0].action).toBe('İkinci şube')
-    }
+    const gate2 = () => current().decisions.filter((d) => d.gate >= 2).map((d) => d.stale)
+    expect(acceptDraft(step.draftId)).toBeNull()
+    expect(current().steps['05'].values.currentSolutionNote).toBe('Fişleri elle sayıyor.')
+    /* Kayıt adım ekranıyla aynı yoldan geçer. Sonraki kontrollerin kararları eskir. */
+    expect(gate2().every((stale) => stale)).toBe(true)
     expect(acceptDraft(ev.draftId)).toBeNull()
     expect(current().evidence.length).toBe(evidenceBefore + 1)
-    expect(draftsOf(id).map((d) => d.id)).toEqual(locked ? [step.draftId] : [])
+    expect(draftsOf(id)).toEqual([])
+  })
+
+  it('kilitli bölüme taslak kaydedilmez ve taslak bekler', () => {
+    const id = open(buildShoeDemoPlan())
+    expect(decisionLocked(current(), 6)).toBe(true)
+    const r = planCommands.proposeStepDraft(id, 'U32', { later: [{ action: 'İkinci şube' }] })
+    if (!r.ok) throw new Error(r.error)
+    const before = JSON.stringify(current())
+    expect(acceptDraft(r.draftId)).toMatch(/kilitli/)
+    expect(JSON.stringify(current())).toBe(before)
+    expect(draftsOf(id).map((d) => d.id)).toEqual([r.draftId])
   })
 
   it('başka plan açıkken taslak kaydedilmez, silinebilir', () => {
@@ -135,5 +145,20 @@ describe('modül verisi kontrolleri değiştirmez', () => {
     expect(await moduleStore('proje').keys(`${id}/`)).toEqual([])
     expect(readRollup('proje', id)).toBeUndefined()
     expect(draftsOf(id)).toHaveLength(0)
+  })
+})
+
+describe('taslak satır kimliği', () => {
+  it('kimliksiz tekrarlı satır taslakta kimlik alır ve kayıttan sonra korunur', () => {
+    const id = open(buildShoeDemoPlan())
+    const r = planCommands.proposeStepDraft(id, 'U32', { later: [{ action: 'İkinci şube' }] })
+    if (!r.ok) throw new Error(r.error)
+    const draft = draftsOf(id)[0]
+    const rowId = draft.kind === 'adim' ? (draft.patch.later as { _id: string }[])[0]._id : ''
+    expect(rowId).toMatch(/^satir-/)
+    /* Satır kimliği kayıtta korunur. Kimlik taşıma da var olan kimliği değiştirmez. */
+    const p = structuredClone(current())
+    p.steps['U32'] = { status: 'taslak', updatedAt: '', values: { ...p.steps['U32']?.values, ...(draft.kind === 'adim' ? draft.patch : {}) } }
+    expect(selectExecutionTasks(stampRowIds(p)).find((t) => t.action === 'İkinci şube')?.rowId).toBe(rowId)
   })
 })

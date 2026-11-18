@@ -99,9 +99,10 @@ export function createIndexedDbKvStore(factory: IDBFactory, name = DB_NAME): KvS
       t.onerror = () => reject(t.error ?? new Error('Modül deposuna yazılamadı.'))
       t.onabort = () => reject(t.error ?? new Error('Modül deposuna yazma yarıda kaldı.'))
     })
+    /* İstek hata verirse işlem de hata verir. Bu ikinci hata yutulur. İlk hata çağırana gider. */
+    done.catch(() => undefined)
     const result = await request(run(t.objectStore(STORE)))
     if (mode === 'readwrite') await done
-    else done.catch(() => undefined)
     return result
   }
   const range = (prefix: string) => (prefix ? IDBKeyRange.bound(prefix, prefix + HIGH) : undefined)
@@ -123,8 +124,15 @@ export function createIndexedDbKvStore(factory: IDBFactory, name = DB_NAME): KvS
     },
     async deletePrefix(prefix) {
       if (!prefix) throw new Error('Toplu silme için önek gerekir.')
-      const count = await tx('readonly', (s) => s.count(range(prefix)))
-      await tx('readwrite', (s) => s.delete(range(prefix)!))
+      /* Sayma ve silme aynı işlemdedir. Arada yazılan kayıt sayımın dışında kalmaz. */
+      let count = 0
+      await tx('readwrite', (s) => {
+        const counting = s.count(range(prefix))
+        counting.onsuccess = () => {
+          count = counting.result
+        }
+        return s.delete(range(prefix)!)
+      })
       return count
     },
   }

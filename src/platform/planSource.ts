@@ -16,10 +16,11 @@ export function registerPlanSource(next: PlanSource): void {
   source = next
 }
 
-/** Açık planı okur. Plan değişince ekran yeniden çizilir. */
+/* Kanca her çizimde aynı işlevleri alır. Böylece React aboneliği yeniden kurmaz. */
+const subscribe = (listener: () => void) => source.subscribe(listener)
+const getSnapshot = () => source.getCurrentPlan()
+
+/** Açık planı okur. Plan değişince ekran yeniden çizilir. Dönen nesne canlı plandır. Değiştirilmez. */
 export function useCurrentPlanView(): ReadonlyPlan | undefined {
-  return useSyncExternalStore(
-    (listener) => source.subscribe(listener),
-    () => source.getCurrentPlan(),
-  )
+  return useSyncExternalStore(subscribe, getSnapshot)
 }

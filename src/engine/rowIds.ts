@@ -27,23 +27,34 @@ export function rowIdOf(row: unknown, step: string, key: string, index: number):
   return typeof id === 'string' && id ? id : fallbackRowId(step, key, index)
 }
 
-/** Kimliği eksik satırlara kimlik yazar. Planı yerinde değiştirir ve döndürür. İki kez çalışınca sonuç değişmez. */
+/**
+ * Kimliği eksik satırlara kimlik yazar. Planı yerinde değiştirir ve döndürür. İki kez çalışınca sonuç değişmez.
+ * Kimlik plan içinde tektir. Eski sürüm her listede "satir-0" gibi aynı kimliği yazmış olabilir.
+ * Aynı kimlik ikinci kez görülürse sonraki satır yeni kimlik alır. İlk satır kimliğini korur.
+ */
 export function stampRowIds(plan: PlanDoc): PlanDoc {
+  const lists: { step: string; key: string; rows: unknown[] }[] = []
   for (const [step, keys] of Object.entries(ROW_ID_FIELDS)) {
     const values = plan.steps?.[step]?.values
     if (!values) continue
-    for (const key of keys) {
-      const rows = values[key]
-      if (!Array.isArray(rows)) continue
-      const used = new Set(rows.map((r) => (isRow(r) && typeof r._id === 'string' ? r._id : '')).filter(Boolean))
-      rows.forEach((row, index) => {
-        if (!isRow(row) || (typeof row._id === 'string' && row._id)) return
-        let id = fallbackRowId(step, key, index)
-        for (let n = 2; used.has(id); n++) id = `${fallbackRowId(step, key, index)}-${n}`
-        used.add(id)
-        row._id = id
-      })
-    }
+    for (const key of keys) if (Array.isArray(values[key])) lists.push({ step, key, rows: values[key] as unknown[] })
+  }
+  const hasId = (r: unknown): r is Row & { _id: string } => isRow(r) && typeof r._id === 'string' && r._id !== ''
+  const existing = new Set(lists.flatMap((l) => l.rows.filter(hasId).map((r) => r._id)))
+  const seen = new Set<string>()
+  for (const { step, key, rows } of lists) {
+    rows.forEach((row, index) => {
+      if (!isRow(row)) return
+      if (hasId(row) && !seen.has(row._id)) {
+        seen.add(row._id)
+        return
+      }
+      const base = fallbackRowId(step, key, index)
+      let id = base
+      for (let n = 2; seen.has(id) || existing.has(id); n++) id = `${base}-${n}`
+      seen.add(id)
+      row._id = id
+    })
   }
   return plan
 }

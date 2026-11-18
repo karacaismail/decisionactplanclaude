@@ -98,3 +98,18 @@ describe('okuyucular satır kimliğini verir', () => {
     expect(tasksOf(raw).map((t) => t.id)).toEqual(tasksOf(stamped).map((t) => t.id))
   })
 })
+
+describe('eski sürümün tekrarlanan kimlikleri', () => {
+  it('aynı kimliği taşıyan satırlar plan içinde tek kimlik alır, ilk satır korunur', () => {
+    const p = emptyPlan('p', 'Plan')
+    p.steps['U32'] = { values: { now: [{ _id: 'satir-0', action: 'A' }], next: [{ _id: 'satir-0', action: 'B' }], later: [{ _id: 'satir-0', action: 'C' }] }, status: 'tamam', updatedAt: 'x' }
+    p.steps['U33'] = { values: { resources: [{ _id: 'satir-0', item: 'D' }] }, status: 'taslak', updatedAt: 'y' }
+    stampRowIds(p)
+    const ids = [...allRows(p)].map((r) => r._id)
+    expect(ids[0]).toBe('satir-0')
+    expect(new Set(ids).size).toBe(ids.length)
+    const once = JSON.stringify(p)
+    expect(JSON.stringify(stampRowIds(p))).toBe(once)
+    expect([p.steps['U32'].status, p.steps['U32'].updatedAt]).toEqual(['tamam', 'x'])
+  })
+})

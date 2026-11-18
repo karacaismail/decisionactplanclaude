@@ -6,7 +6,7 @@
  */
 import type { PlanDoc } from '@/data/types'
 import { MAX_IMPORT_BYTES, validatePlanDoc } from '@/data/validate'
-import { collectModuleSlices, restoreModuleSlices } from '@/platform/lifecycle'
+import { collectModuleSlices, notifyPlanDeleted, restoreModuleSlices } from '@/platform/lifecycle'
 import { usePlanStore } from './planStore'
 
 export const BUNDLE_KIND = 'decisionactplan-bundle'
@@ -53,9 +53,21 @@ export function buildExportFile(plan: PlanDoc, modules: Record<string, unknown>)
   return { kind: BUNDLE_KIND, bundleVersion: BUNDLE_VERSION, plan, modules }
 }
 
-/** Planı ve modül verisini dışa aktarılacak biçimde toplar. */
+/**
+ * Paket içe alma sınırına sığıyor mu? Sığmayan paket geri yüklenemez. Bu yüzden yazılmaz.
+ * Düz plan dosyası eskisi gibi denetimsiz iner. Bu davranış çekirdeğindir ve değişmedi.
+ */
+export function assertImportable(file: PlanDoc | PlanBundle): void {
+  if (!('kind' in file) || file.kind !== BUNDLE_KIND) return
+  if (bytes(JSON.stringify(file.plan)) > MAX_IMPORT_BYTES) throw new Error('Plan 8 MB sınırını aşıyor. Bu paket geri yüklenemez.')
+  if (bytes(JSON.stringify(file)) > MAX_BUNDLE_BYTES) throw new Error('Plan ve modül verisi 32 MB sınırını aşıyor. Bu paket geri yüklenemez.')
+}
+
+/** Planı ve modül verisini dışa aktarılacak biçimde toplar. Sınırı aşan dosyada Türkçe hata fırlatır. */
 export async function exportPlanFile(plan: PlanDoc): Promise<PlanDoc | PlanBundle> {
-  return buildExportFile(plan, await collectModuleSlices(plan.id))
+  const file = buildExportFile(plan, await collectModuleSlices(plan.id))
+  assertImportable(file)
+  return file
 }
 
 /**
@@ -64,7 +76,10 @@ export async function exportPlanFile(plan: PlanDoc): Promise<PlanDoc | PlanBundl
  */
 export async function importPlanFile(text: string, byteLength?: number): Promise<{ planId: string; warnings: string[] }> {
   const { plan, modules } = parseImportFile(text, byteLength)
+  /* Örnek plan kimliğini korur ve eskisinin yerine geçer. Eski örneğin modül verisi de silinir. */
+  const replaced = Boolean(usePlanStore.getState().plans[plan.id]) && Boolean(plan.example)
   const planId = usePlanStore.getState().importPlan(plan)
+  const cleanup = replaced ? await notifyPlanDeleted(planId) : []
   const warnings = await restoreModuleSlices(modules, { [plan.id]: planId })
-  return { planId, warnings }
+  return { planId, warnings: [...cleanup, ...warnings] }
 }

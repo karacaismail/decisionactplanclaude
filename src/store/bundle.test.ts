@@ -95,3 +95,28 @@ describe('paketi içe alma', () => {
     expect(rows[0]._id).toBeTruthy()
   })
 })
+
+describe('dışa aktarma sınırı', () => {
+  it('geri yüklenemeyecek büyük paketi yazmaz, düz planı eskisi gibi yazar', async () => {
+    const { assertImportable } = await import('./bundle')
+    const big = plain()
+    big.profile.description = 'x'.repeat(MAX_IMPORT_BYTES)
+    expect(() => assertImportable(big)).not.toThrow()
+    expect(() => assertImportable({ kind: BUNDLE_KIND, bundleVersion: 1, plan: big, modules: { proje: {} } })).toThrow(/8 MB/)
+    expect(() => assertImportable({ kind: BUNDLE_KIND, bundleVersion: 1, plan: plain(), modules: { proje: 'x'.repeat(MAX_BUNDLE_BYTES) } })).toThrow(/32 MB/)
+  })
+})
+
+describe('örnek planı yeniden içe alma', () => {
+  it('eski örneğin modül verisi silinir, yeni dilim yazılır', async () => {
+    const kv = createMemoryKvStore()
+    setDefaultKvStore(kv)
+    const example = buildDemoPlan()
+    usePlanStore.getState().importPlan(structuredClone(example))
+    await kv.set(`proje/${example.id}/eski`, 1)
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['yeni', 2]] } } }
+    const { planId } = await importPlanFile(JSON.stringify(bundle))
+    expect(planId).toBe(example.id)
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/yeni`])
+  })
+})

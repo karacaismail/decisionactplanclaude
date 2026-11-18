@@ -231,11 +231,7 @@ export const usePlanStore = create<PlanState>()(
       name: STORAGE_KEY,
       storage,
       version: 4,
-      migrate: (persisted) => {
-        const st = persisted as { plans?: Record<string, PlanDoc> }
-        for (const plan of Object.values(st?.plans ?? {})) migratePlan(plan)
-        return st as unknown as PlanState
-      },
+      migrate: (persisted, version) => migratePersisted(persisted, version) as unknown as PlanState,
       partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme, backups: s.backups }) as unknown as PlanState,
       /* Okuma ya da taşıma hata verirse hata görünür olur ve kayıt korunur. Hata sessizce yutulmaz. */
       onRehydrateStorage: () => (_state, error) => {
@@ -313,6 +309,19 @@ export function migratePlanSteps(plan: PlanDoc): PlanDoc {
   if (oldFormat && from.status === 'tamam' && !['winningAim', 'playField'].every((k) => filledValue(from.values[k]))) from.status = 'taslak'
   if (oldFormat && dossier?.status === 'tamam' && !filledValue(dossier.values.approvedBy)) dossier.status = 'taslak'
   return plan
+}
+
+/**
+ * Depodaki eski kaydı taşır. Yalnız kaydın sürümünden sonraki taşımalar çalışır.
+ * Sürüm 3 kaydı yalnız satır kimliği alır. Böylece adım durumu ve strateji kilidi değişmez.
+ */
+export function migratePersisted(persisted: unknown, version: number): unknown {
+  const st = persisted as { plans?: Record<string, PlanDoc> } | undefined
+  for (const plan of Object.values(st?.plans ?? {})) {
+    if (version < 3) migratePlan(plan)
+    else stampRowIds(plan)
+  }
+  return st
 }
 
 /**
