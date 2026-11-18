@@ -1,28 +1,15 @@
-import { Component, lazy, Suspense, useEffect, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
 import Button from 'antd/es/button'
 import Card from 'antd/es/card'
 import Segmented from 'antd/es/segmented'
 import { TableIcon } from '@phosphor-icons/react/dist/csr/Table'
 import { ChartBar } from '@phosphor-icons/react/dist/csr/ChartBar'
+import { scrollRegionWithKeyboard } from '@/components/keyboardScroll'
 import '@/styles/mobil-pano.css'
 
 const LazyChart = lazy(() => import('./EChart'))
 
 type View = 'grafik' | 'tablo'
-
-/** Oklar yalnız tablo alanı odaktayken yatay kaydırır. Alt kontrollerin tuşları korunur. */
-function scrollTableWithKeyboard(event: KeyboardEvent<HTMLDivElement>) {
-  if (event.target !== event.currentTarget || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
-  if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
-  const element = event.currentTarget
-  const maximum = element.scrollWidth - element.clientWidth
-  if (maximum <= 0) return
-  const direction = event.key === 'ArrowRight' ? 1 : -1
-  const next = Math.max(0, Math.min(maximum, element.scrollLeft + direction * element.clientWidth / 2))
-  if (next === element.scrollLeft) return
-  event.preventDefault()
-  element.scrollLeft = next
-}
 
 function intersectsVisibleArea(element: HTMLElement) {
   if (!element.isConnected) return false
@@ -221,7 +208,7 @@ export function ChartFrame({ title, summary, option, table, height = 240, frame 
         role="region"
         aria-label={`${title} verileri`}
         tabIndex={view === 'tablo' ? 0 : undefined}
-        onKeyDown={scrollTableWithKeyboard}
+        onKeyDown={scrollRegionWithKeyboard}
       >
         <table className="chart-data-table">
           <caption className="sr-only">{title} verileri</caption>
