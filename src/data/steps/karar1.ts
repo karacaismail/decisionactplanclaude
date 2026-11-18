@@ -36,7 +36,7 @@ export const KARAR1: StepDef[] = [
             { value: 'yuksek', label: 'Yüksek', help: 'Sağlık, finans, gıda, eğitim ve enerji yüksektir. İzinler satıştan önce gerekir.' },
           ] },
           { key: 'team', type: 'segmented', label: 'Kaç kişisiniz?', required: true, options: [{ value: 'tekKurucu', label: 'Tek kurucu' }, { value: 'ekip', label: 'Ekip' }] },
-          { key: 'teamSize', type: 'number', label: 'Kaç kişi?', min: 2, max: 50, when: { field: { key: 'team', equals: 'ekip' } } },
+          { key: 'teamSize', type: 'number', label: 'Kaç kişi?', min: 2, max: 10000, when: { field: { key: 'team', equals: 'ekip' } } },
           { key: 'funding', type: 'segmented', label: 'Para nereden gelecek?', required: true, options: [
             { value: 'kendi', label: 'Kendi param' },
             { value: 'dis', label: 'Dış para', help: 'Yatırımcı, hibe veya kredi. Kurumun yazılı koşulunu isteyin.' },

@@ -12,7 +12,7 @@ async function openDemo(page: Page) {
   await page.goto('/')
   /* Yük altında ilk tıklama kaçabilir. Yardımcı, adres değişene kadar yeniden dener. */
   await expect(async () => {
-    if (!/#\/ozet/.test(page.url())) await page.getByText('Örnek planı aç').first().click({ timeout: 2000 })
+    if (!/#\/ozet/.test(page.url())) await page.getByText('Kafe örneğini aç').first().click({ timeout: 2000 })
     await expect(page).toHaveURL(/#\/ozet/, { timeout: 2000 })
   }).toPass()
 }
@@ -296,7 +296,8 @@ test('okunamayan kayıt boş durumla ezilmez, yeni plan açılmaz, ham kayıt in
   await expect(alert).toBeVisible()
   await page.goto('/#/')
   await expect(page.getByRole('button', { name: 'Yeni plan' })).toBeDisabled()
-  await expect(page.locator('main').getByRole('button', { name: 'Örnek planı aç' })).toBeDisabled()
+  await expect(page.locator('main').getByRole('button', { name: 'Ayakkabı örneğini aç' })).toBeDisabled()
+  await expect(page.locator('main').getByRole('button', { name: 'Kafe örneğini aç' })).toBeDisabled()
   const download = page.waitForEvent('download')
   await alert.getByRole('button', { name: 'Ham kaydı indir' }).click()
   expect((await download).suggestedFilename()).toBe('okunamayan-kayit.txt')

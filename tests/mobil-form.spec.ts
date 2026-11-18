@@ -29,7 +29,7 @@ export async function activate(_page: Page, target: Locator, touch: boolean) {
 export async function openDemo(page: Page, touch: boolean) {
   await page.goto('/')
   await ready(page)
-  await activate(page, page.getByRole('button', { name: 'Örnek planı aç', exact: true }).first(), touch)
+  await activate(page, page.getByRole('button', { name: 'Kafe örneğini aç', exact: true }).first(), touch)
   await page.waitForURL(/#\/ozet$/)
   await ready(page)
 }

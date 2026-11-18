@@ -76,7 +76,7 @@ Yalnız test dosyası ve bu rapor değiştirildi. Uygulama kodu ve paket dosyala
 
 Testlerin beklediği davranışlar şunlardır:
 
-1. Tab, “Örnek planı aç” düğmesine ulaşır. Shift+Tab önceki kontrole döner. Sonraki Tab aynı düğmeye döner. Enter örnek planın panosunu açar.
+1. Tab, “Kafe örneğini aç” düğmesine ulaşır. Shift+Tab önceki kontrole döner. Sonraki Tab aynı düğmeye döner. Enter örnek planın panosunu açar.
 2. Space, “Ara” düğmesinden arama penceresini açar. Aşağı ve yukarı oklar sonuç seçimini taşır. Odak arama alanında kalır. Escape pencereyi kapatır. Odak görünür işaretiyle “Ara” düğmesine döner. Space aramayı yeniden açar. Test “Karar Kitabı” yazar. Enter ilgili ekranı açar.
 
 Testler bütün gezinme adımlarında `page.keyboard` kullanır. Testler `focus()` çağrısıyla hedefe atlamaz. Uygulamanın kendi otomatik odak davranışı ayrıca denetlenir.

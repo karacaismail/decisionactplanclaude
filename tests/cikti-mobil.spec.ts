@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 async function openDemo(page: Page, route: string) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
+  await page.getByText('Kafe örneğini aç').first().click()
   await expect(page).toHaveURL(/#\/ozet/)
   await page.goto(`/#/${route}`)
   await expect(page.locator('main h1')).toBeVisible()

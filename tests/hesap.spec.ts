@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç').first().click()
+  await page.getByText('Kafe örneğini aç').first().click()
   await expect(page).toHaveURL(/#\/(ozet|gecis)/)
 }
 async function noOverflow(page: Page, label: string) {

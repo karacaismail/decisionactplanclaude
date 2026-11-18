@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test'
 
 async function openDemo(page: Page) {
   await page.goto('/')
-  await page.getByText('Örnek planı aç', { exact: true }).first().click()
+  await page.getByText('Kafe örneğini aç', { exact: true }).first().click()
   await expect(page).toHaveURL(/#\/ozet/)
   await expect(page.locator('.mobil-overview')).toBeVisible()
 }

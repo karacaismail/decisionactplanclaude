@@ -48,7 +48,7 @@ test('Tab ve Shift+Tab ile örnek plana ulaşılır, Enter planı açar', async 
       await page.keyboard.press(otherKey)
       await expect(root, `${otherKey} klavye odak modunu açmamalı.`).not.toHaveAttribute('data-focus-mode', 'keyboard')
     }
-    const demo = page.getByRole('button', { name: 'Örnek planı aç', exact: true }).first()
+    const demo = page.getByRole('button', { name: 'Kafe örneğini aç', exact: true }).first()
     await tabTo(page, demo, key, info, audit)
     await expect(demo).toBeFocused()
     await page.keyboard.press(tabKey(browserName, true))

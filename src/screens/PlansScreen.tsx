@@ -11,6 +11,7 @@ import { usePlanStore } from '@/store/planStore'
 import { formatDate } from '@/engine/format'
 import { downloadJson, safeFileName } from '@/engine/sync'
 import { buildDemoPlan } from '@/data/demo'
+import { buildShoeDemoPlan } from '@/data/demoAyakkabi'
 import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
@@ -18,6 +19,11 @@ import { planPosition, type PlanPosition } from '@/engine/position'
 /** Kanıt düzeyinin en üst basamağı. Beş temel kontrol geçilince 5 olur. */
 const MAX_LEVEL = 5
 const PAGE_SIZE = 10
+/** İki örnek plan. İlki birincil örnektir ve önce gösterilir. */
+const EXAMPLES = [
+  { key: 'ornek-ayakkabi', label: 'Ayakkabı örneğini aç', build: buildShoeDemoPlan },
+  { key: 'ornek-kafe', label: 'Kafe örneğini aç', build: buildDemoPlan },
+] as const
 const SORT_OPTIONS = [
   { value: 'updated-desc', label: 'Son değişiklik: yeniden eskiye' },
   { value: 'updated-asc', label: 'Son değişiklik: eskiden yeniye' },
@@ -101,6 +107,7 @@ export function PlansScreen() {
   /* Beş temel kontrolü geçen plan hazırlık kontrolüne ulaşmıştır. */
   const reachedCount = rows.filter((r) => r.position.stage !== 'temel').length
   const latest = rows[0]?.plan.updatedAt
+  const exampleCount = rows.filter((r) => r.plan.example).length
 
   /* Yeni ekran en üstten açılır. Liste aşağı kaydırılmış olsa da kaydırma sıfırlanır. */
   const goTop = (to: string) => {
@@ -121,9 +128,9 @@ export function PlansScreen() {
     goTop('/baslangic')
   }
 
-  const openDemo = () => {
+  const openDemo = (build: () => PlanDoc) => {
     try {
-      importPlan(buildDemoPlan())
+      importPlan(build())
       goTop('/ozet')
     } catch (err) {
       message.error(err instanceof Error ? err.message : 'Örnek plan açılamadı.')
@@ -157,19 +164,22 @@ export function PlansScreen() {
   const moreMenu = {
     items: [
       { key: 'import', label: 'JSON içe al', icon: <UploadSimple size={16} /> },
-      { key: 'demo', label: 'Örnek planı aç', icon: <Sparkle size={16} /> },
+      ...EXAMPLES.map((e) => ({ key: e.key, label: e.label, icon: <Sparkle size={16} /> })),
     ],
     onClick: ({ key }: { key: string }) => {
       if (key === 'import') fileInput.current?.click()
-      if (key === 'demo') openDemo()
+      const example = EXAMPLES.find((e) => e.key === key)
+      if (example) openDemo(example.build)
     },
   }
 
   const emptyActions = (
     <span className="empty-actions">
-      <Button icon={<Sparkle size={16} />} onClick={openDemo} disabled={loadFailed}>
-        Örnek planı aç
-      </Button>
+      {EXAMPLES.map((e) => (
+        <Button key={e.key} icon={<Sparkle size={16} />} onClick={() => openDemo(e.build)} disabled={loadFailed}>
+          {e.label}
+        </Button>
+      ))}
       <Button type="text" icon={<UploadSimple size={16} />} onClick={() => fileInput.current?.click()} disabled={loadFailed}>
         JSON içe al
       </Button>
@@ -200,7 +210,7 @@ export function PlansScreen() {
       <div className="stat-row">
         <Card className="pano-card">
           <Statistic title="Plan" value={rows.length} suffix="plan" />
-          <p className="helper">{rows.length === 0 ? 'Henüz plan yok.' : rows.filter((r) => r.plan.example).length > 0 ? 'Biri örnek plan.' : 'Hepsi sizin planınız.'}</p>
+          <p className="helper">{rows.length === 0 ? 'Henüz plan yok.' : exampleCount === 0 ? 'Hepsi sizin planınız.' : exampleCount === 1 ? 'Biri örnek plan.' : `${exampleCount} tanesi örnek plan.`}</p>
         </Card>
         <Card className="pano-card">
           <Statistic title="Hazırlık kontrolüne ulaşan plan" value={reachedCount} suffix="plan" />
@@ -230,7 +240,7 @@ export function PlansScreen() {
           />
         </div>
         {rows.length === 0 ? (
-          <Empty description="Henüz plan yok. Yeni bir plan açın. Ya da örnek planla ekranları tanıyın.">{emptyActions}</Empty>
+          <Empty description="Henüz plan yok. Yeni bir plan açın. Ya da bir örnek planla ekranları tanıyın. Ayakkabı örneği gerçek bir şirkete dayanır. Kafe örneği yeni bir fikirdir.">{emptyActions}</Empty>
         ) : filtered.length === 0 ? (
           <Empty description={`"${query}" adında plan bulunamadı.`}>
             <Button type="text" onClick={() => { setQuery(''); setPage(1) }}>
