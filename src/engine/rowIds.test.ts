@@ -113,3 +113,34 @@ describe('eski sürümün tekrarlanan kimlikleri', () => {
     expect([p.steps['U32'].status, p.steps['U32'].updatedAt]).toEqual(['tamam', 'x'])
   })
 })
+
+describe('hedef takibi iş bağları', () => {
+  function okrPlan(): PlanDoc {
+    const p = emptyPlan('p', 'Plan')
+    p.steps['S25'] = { values: { moves: [{ _id: 'satir-0', move: 'Hamle' }] }, status: 'tamam', updatedAt: '' }
+    p.steps['U32'] = { values: { now: [{ _id: 'satir-0', action: 'Kimlikli iş' }, { action: 'Kimliksiz iş' }], next: [{ action: 'Sonra' }] }, status: 'tamam', updatedAt: '' }
+    p.okr = { enabled: true, changedAt: '', periods: [{ id: 'd1', startsAt: '2026-10-01', endsAt: '2026-12-31', objectives: [], taskLinks: { 'satir-0': 'g1', 'satir-1': 'g2' } }] }
+    return p
+  }
+
+  it('kimliksiz işin bağı yeni kimliğe taşınır, kimlikli işin bağı aynı kalır', () => {
+    const p = stampRowIds(okrPlan())
+    const now = p.steps['U32'].values.now as { _id: string }[]
+    expect(now[0]._id).toBe('satir-0')
+    expect(now[1]._id).toBe('r-u32-now-1')
+    expect(p.okr!.periods[0].taskLinks).toEqual({ 'satir-0': 'g1', 'r-u32-now-1': 'g2' })
+    /* Aynı kimliği taşıyan hamle yeni kimlik alır. İşin kimliği korunur. */
+    expect((p.steps['S25'].values.moves as { _id: string }[])[0]._id).not.toBe('satir-0')
+  })
+
+  it('iki kez çalışınca bağlar değişmez', () => {
+    const p = stampRowIds(okrPlan())
+    const once = JSON.stringify(p)
+    expect(JSON.stringify(stampRowIds(p))).toBe(once)
+  })
+
+  it('hedef takibi yoksa plana okr alanı eklenmez', () => {
+    const p = legacyPlan()
+    expect('okr' in stampRowIds(p)).toBe(false)
+  })
+})

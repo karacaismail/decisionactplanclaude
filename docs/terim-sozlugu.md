@@ -29,6 +29,24 @@ Yeni terimler görünen bütün metinlerde kullanılır:
 
 Ekleri elle yazın. Sözcüğü körü körüne değiştirmeyin. Örneğin "kapıyı geçti" sözü "kontrolü geçti" olur. "Geçiş kapısına git" sözü de "Hazırlık kontrolüne git" olur.
 
+## Hedef takibi terimleri
+
+Kullanıcı bu terimleri 19 Kasım 2026 Perşembe günü onayladı. Hedef takibi isteğe bağlı bir katmandır. Kurallar [OKR araştırma raporundadır](okr-arastirma-raporu.md).
+
+| Terim | Anlamı | Örnek |
+|---|---|---|
+| Hedef takibi | Her 3 ayda hedef koyup her hafta sayı yazma yöntemi | "Hedef takibini aç" |
+| Hedef | Ulaşmak istediğiniz durum | "Aylık kartla düzenli müşteri kazanmak." |
+| Gösterge | Hedefe ne kadar yaklaştığınızı gösteren sayı | "Ödenen aylık kart sayısı" |
+| Başlangıç değeri | Göstergenin bugünkü sayısı | "Başlangıç değeri: 7" |
+| Varılacak sayı | Dönem sonunda ulaşmak istediğiniz sayı | "Varılacak sayı: 30" |
+| İş | Göstergeyi yükseltmek için yapılan çalışma | "Tezgâhı kur" |
+| Haftalık durum | Her hafta göstergenin yeni sayısını yazmak | "Haftalık durumu kaydet" |
+| Kesin hedef | Tam ulaşılması beklenen hedef | "Kesin hedefte tam ulaşmak beklenir." |
+| Zorlu hedef | Bilerek yüksek konan hedef | "Zorlu hedefte yüzde 70 iyi bir sonuçtur." |
+
+İngilizce "OKR" adı ekranda yalnız bir yerde geçer. Bu yer, "Hedef takibi" kartının açıklamasıdır. "Anahtar sonuç" terimi kullanılmaz. Onun yerine "Gösterge" yazılır.
+
 ## Değişmeyen terimler
 
 Kullanıcı şu terimleri olduğu gibi bıraktı:

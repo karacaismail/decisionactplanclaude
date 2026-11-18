@@ -87,6 +87,44 @@ test.describe('ekran katmanı', () => {
   })
 })
 
+test.describe('hedef takibi', () => {
+  test('anahtar kapalıyken panelin kodu ve CSS dosyası inmez, açılınca iner', async ({ page }) => {
+    const net = track(page)
+    await page.goto('/')
+    await page.getByText('Kafe örneğini aç', { exact: true }).first().click()
+    await expect(page).toHaveURL(/#\/ozet/)
+    /* Strateji uygulamayı açmak için hazırlık kararı ve strateji belgesi yazılır. */
+    await page.evaluate(() => {
+      const key = 'decisionactplan-v1'
+      const raw = JSON.parse(localStorage.getItem(key) ?? '{}')
+      const plan = raw.state.plans[raw.state.currentId]
+      const done = (values: Record<string, unknown>) => ({ values, status: 'tamam', updatedAt: new Date().toISOString() })
+      plan.transitions = [{ id: 'g', outcome: 'hazir', suggested: 'hazir', reason: 'Dayanaklar incelendi.', decidedBy: 'Kurucu', decidedAt: new Date().toISOString(), reviewed: true, mandatoryMet: 9, mandatoryTotal: 9, supportingMet: 5, supportingTotal: 7, level: 3, revision: plan.revision }]
+      plan.steps['S21'] = done({ diagnosis: 'Öğleden sonra dükkân boş.', diagnosisWhy: 'Satış sabah geliyor.' })
+      plan.steps['S22'] = done({ options: [{ name: 'Durakta satış' }, { name: 'Öğle menüsü' }] })
+      plan.steps['S23'] = done({ tests: [{ option: 'Durakta satış', mustBeTrue: 'Yolcu durur.', weakest: 'Yolcu beklemez.' }, { option: 'Öğle menüsü', mustBeTrue: 'Çalışan çıkar.', weakest: 'Fiyat yüksek.' }] })
+      plan.steps['19'] = done({ chosenPath: 'Durakta satış', choiceReason: 'Kanıt burada.', winningAim: 'İlk tercih olmak.', playField: 'Durak çevresi.', givenUp: 'Öğle satışı' })
+      plan.steps['S25'] = done({ moves: [{ move: 'Durağa tezgâh kur', capability: 'Hızlı servis' }] })
+      plan.steps['20'] = done({ dossier1: 'a', dossier2: 'a', dossier3: 'a', dossier4: 'a', dossier5: 'a', dossier6: 'a', dossier7: 'a', dossier8: 'a', dossier9: 'a', dossier11: 'a', counterView: 'a', qualityCheck: ['1', '2', '3', '4', '5'], approvedBy: 'Kurucu' })
+      localStorage.setItem(key, JSON.stringify(raw))
+    })
+    /* Yalnız adresin # kısmı değişirse sayfa yeniden yüklenmez. Kayıt ancak yeniden yüklemeyle okunur. */
+    await page.goto('/#/uygulama')
+    await page.reload()
+    const toggle = page.getByRole('switch', { name: 'Hedef takibini aç' })
+    await expect(toggle).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    const panelCode = () => net.seen.some((path) => path.endsWith('/src/components/HedefTakibi.tsx') || /\/assets\/HedefTakibi-[^/]+\.js$/.test(path))
+    expect(panelCode(), 'kapalıyken panel kodu inmemeli').toBe(false)
+    expect(net.requested('src/styles/bilesen/HedefTakibi.css'), 'kapalıyken panel CSS dosyası inmemeli').toBe(false)
+    await toggle.click()
+    await expect(page.getByRole('region', { name: 'Hedef takibi kayıtları' })).toBeVisible()
+    await page.waitForLoadState('networkidle')
+    expect(panelCode(), 'açılınca panel kodu inmeli').toBe(true)
+    expect(net.requested('src/styles/bilesen/HedefTakibi.css'), 'açılınca panel CSS dosyası inmeli').toBe(true)
+  })
+})
+
 test.describe('komut paleti', () => {
   test('palet ilk açılışta inmez, Ara düğmesiyle iner ve açılır', async ({ page }) => {
     const net = track(page)

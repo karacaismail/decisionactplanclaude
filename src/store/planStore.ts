@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
-import { emptyPlan, TRANSITION_LABEL, type Decision, type Evidence, type PlanDoc, type Profile, type StepValues, type Task, type Limits, type TransitionRecord } from '@/data/types'
+import { emptyPlan, TRANSITION_LABEL, type Decision, type Evidence, type OkrState, type PlanDoc, type Profile, type StepValues, type Task, type Limits, type TransitionRecord } from '@/data/types'
 import { parsePlanImport, prepareImportedPlan, validatePlanDoc } from '@/data/validate'
 import { uid } from '@/engine/format'
 import { applyLimits, applyProfile, applySkip, applyStepValues, gateOfStep, markStale, markStaleAfterGate, reviewChange as reviewChangeIn } from '@/engine/changes'
@@ -8,6 +8,7 @@ import { createGuardedStorage, STORAGE_KEY, type SaveResult } from '@/engine/syn
 import { applyStrategyReview, reviewBlocked, validateReview, type ReviewDraft } from '@/engine/renewal'
 import { CHOICE_STEP, DIAGNOSIS_STEP, DOSSIER_STEP, GOALS_STEP, goalIssues, TASKS_STEP, taskIssues } from '@/engine/strategy'
 import { RENEWAL_LABEL } from '@/data/types'
+import { okrOf, sanitizeOkr, setOkrEnabled as setOkrEnabledIn } from '@/engine/okr'
 import { stampRowIds } from '@/engine/rowIds'
 import { notifyPlanDeleted } from '@/platform/lifecycle'
 
@@ -57,6 +58,10 @@ interface PlanState {
   addTask: (t: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>) => string
   updateTask: (id: string, patch: Partial<Task>) => void
   snapshot: (label: string) => void
+  /** Hedef takibi anahtarı. Karar sürümü almaz, kararları eskitmez. Kayıtlar silinmez. */
+  setOkrEnabled: (on: boolean) => void
+  /** Hedef takibi kaydını değiştirir. Kayıt yoksa ya da anahtar kapalıysa hiçbir şey yazılmaz. */
+  updateOkr: (fn: (okr: OkrState, plan: PlanDoc) => unknown) => void
 }
 
 function touch(p: PlanDoc) {
@@ -226,6 +231,15 @@ export const usePlanStore = create<PlanState>()(
         get().update((p) => {
           p.revisions.push({ id: uid('surum'), label, createdAt: new Date().toISOString(), snapshot: JSON.stringify({ ...p, revisions: [] }) })
         }),
+      /* Hedef takibi hiçbir kontrolün okuduğu alana yazmaz. Bu yüzden markStale çağrılmaz ve sürüm artmaz. */
+      setOkrEnabled: (on) => get().update((p) => setOkrEnabledIn(p, on)),
+      updateOkr: (fn) =>
+        get().update((p) => {
+          const okr = okrOf(p)
+          if (!okr?.enabled) return false
+          p.okr = okr
+          return fn(okr, p)
+        }),
     }),
     {
       name: STORAGE_KEY,
@@ -313,13 +327,13 @@ export function migratePlanSteps(plan: PlanDoc): PlanDoc {
 
 /**
  * Depodaki eski kaydı taşır. Yalnız kaydın sürümünden sonraki taşımalar çalışır.
- * Sürüm 3 kaydı yalnız satır kimliği alır. Böylece adım durumu ve strateji kilidi değişmez.
+ * Sürüm 3 kaydı yalnız satır kimliği alır. Hedef takibi kaydı da denetlenir. Böylece adım durumu ve strateji kilidi değişmez.
  */
 export function migratePersisted(persisted: unknown, version: number): unknown {
   const st = persisted as { plans?: Record<string, PlanDoc> } | undefined
   for (const plan of Object.values(st?.plans ?? {})) {
     if (version < 3) migratePlan(plan)
-    else stampRowIds(plan)
+    else stampRowIds(migrateOkr(plan))
   }
   return st
 }
@@ -329,7 +343,20 @@ export function migratePersisted(persisted: unknown, version: number): unknown {
  * Sürüm 4 taşıması tekrarlı satırlara kalıcı kimlik yazar. Ayrıntı: src/engine/rowIds.ts
  */
 export function migratePlan(plan: PlanDoc): PlanDoc {
-  return stampRowIds(migratePlanSteps(migrateChoiceFields(plan)))
+  /* Satır kimliği en son yazılır. Hedef takibinin iş bağları da yeni kimliğe taşınır. */
+  return stampRowIds(migrateOkr(migratePlanSteps(migrateChoiceFields(plan))))
+}
+
+/**
+ * Hedef takibi kaydını denetler. Kayıt yoksa plana dokunmaz, böylece eski plan bayt bayt aynı kalır.
+ * Bozuk kayıt atılır. Plan reddedilmez. Şema sürümü değişmez.
+ */
+export function migrateOkr(plan: PlanDoc): PlanDoc {
+  if (!('okr' in plan)) return plan
+  const okr = sanitizeOkr(plan.okr)
+  if (okr) plan.okr = okr
+  else delete plan.okr
+  return plan
 }
 
 export function useCurrentPlan(): PlanDoc | undefined {

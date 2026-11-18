@@ -65,3 +65,13 @@
 .card-heading { margin: 0; font: inherit; color: inherit; }
 
 .card-heading:focus { outline: 0; }
+
+.okr-toggle { display: flex; align-items: center; gap: var(--space-3); min-height: var(--hit-area-min); }
+
+.okr-toggle .ant-switch { flex-shrink: 0; }
+
+.okr-toggle label { flex: 1 1 0; min-width: 0; font-size: 16px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); cursor: pointer; }
+
+.okr-switch-help { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: var(--space-4) 0; }
+
+.okr-switch-help p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
