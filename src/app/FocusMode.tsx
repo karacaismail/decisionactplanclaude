@@ -12,6 +12,8 @@ function moveRadio(e: KeyboardEvent) {
   const radio = e.target
   if (!step || e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
   if (!(radio instanceof HTMLInputElement) || radio.type !== 'radio') return
+  // Segmented kendi ok tuşu davranışını yönetir. Bu bileşene karışılmaz.
+  if (radio.closest('.ant-segmented')) return
   const group = radio.name
     ? [...document.querySelectorAll<HTMLInputElement>('input[type="radio"]')].filter((r) => r.name === radio.name && r.form === radio.form)
     : [...(radio.closest('[role="radiogroup"]')?.querySelectorAll<HTMLInputElement>('input[type="radio"]') ?? [])]
