@@ -1,0 +1,10 @@
+/* Proje işinin durum düğmesi ve açılan listesi. Seçiciler "pj-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.pj-durum-secici { min-inline-size: 11rem; max-inline-size: 100%; align-items: center; }
+
+/* Ortak kural kutuyu 44 piksel yapar. Yazı kutunun ortasında durur. */
+.pj-durum-secici.ant-select .ant-select-content { display: flex; align-items: center; font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-primary); }
+
+.pj-durum-popup.ant-select-dropdown { padding: var(--padding-popup); }
+
+.pj-durum-popup .ant-select-item-option { min-block-size: var(--target-touch); align-items: center; font-size: var(--font-body); }
