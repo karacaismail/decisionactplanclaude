@@ -22,6 +22,8 @@ import { LoadingState } from '@/components/LoadingState'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
 import { SubStageList } from '@/components/SubStageList'
+import { DraftReview } from '@/components/DraftReview'
+import { ProjectsSummaryCard } from '@/components/ProjectsSummaryCard'
 const HOLDS: ChoiceHolds[] = ['evet', 'kismen', 'hayir']
 const DECISION_HELP: Record<RenewalDecision, string> = {
   surdur: 'Seçim doğru. Aynı yolla devam edersiniz.',
@@ -120,6 +122,8 @@ export function ExecutionScreen() {
           <SubStageList plan={plan} items={cluster.subStages} locked={locked} />
         </Card>
 
+        <ProjectsSummaryCard planId={plan.id} />
+
         {locked ? null : (
           <Card className="okr-switch-card" title={<h2 className="card-heading">Hedef takibi</h2>}>
             <div className="okr-toggle">
@@ -172,6 +176,7 @@ export function ExecutionScreen() {
             </div>
           </dl>
           {choice ? <p className="strateji-scope">Bugünkü seçim: {choice.path}</p> : null}
+          <DraftReview planId={plan.id} kind="kanit" />
 
           {locked ? (
             <p className="strateji-empty">Gözden geçirme kaydı, strateji belgesi onaylanınca açılır.</p>

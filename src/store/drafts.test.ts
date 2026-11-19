@@ -79,6 +79,36 @@ describe('plan komutları', () => {
     expect(draftsOf(id)[0]).toMatchObject({ kind: 'kanit', text: 'Müşteri görüşmesinde fiyat soruldu.' })
   })
 
+  it('aynı kanıt metni iki kez taslak olmaz, kaydedilen kanıt yeniden önerilmez', () => {
+    const id = open(buildShoeDemoPlan())
+    const first = planCommands.appendEvidenceDraft(id, 'Projede 2 görev bitti.')
+    expect(first.ok).toBe(true)
+    const again = planCommands.appendEvidenceDraft(id, '  Projede 2 görev bitti.  ')
+    expect(again.ok).toBe(false)
+    if (!again.ok) expect(again.error).toMatch(/zaten bekliyor/)
+    expect(draftsOf(id)).toHaveLength(1)
+    /* Başka plandaki aynı metin engellenmez. */
+    const other = open({ ...buildShoeDemoPlan(), id: 'baska-plan', example: false } as PlanDoc)
+    expect(planCommands.appendEvidenceDraft(other, 'Projede 2 görev bitti.').ok).toBe(true)
+    usePlanStore.getState().selectPlan(id)
+    if (!first.ok) throw new Error('taslak açılmadı')
+    expect(acceptDraft(first.draftId)).toBeNull()
+    const afterAccept = planCommands.appendEvidenceDraft(id, 'Projede 2 görev bitti.')
+    expect(afterAccept.ok).toBe(false)
+    if (!afterAccept.ok) expect(afterAccept.error).toMatch(/kanıt defterinde/)
+    expect(planCommands.appendEvidenceDraft(id, 'Projede 3 görev bitti.').ok).toBe(true)
+  })
+
+  it('kanıt taslağı kaydedilince kontroller, hazırlık ve sürüm numarası aynı kalır', () => {
+    const id = open(buildShoeDemoPlan())
+    const before = gateSnapshot(current())
+    const r = planCommands.appendEvidenceDraft(id, 'Projede 1 görev bitti.')
+    if (!r.ok) throw new Error(r.error)
+    expect(acceptDraft(r.draftId)).toBeNull()
+    expect(current().evidence.at(-1)).toMatchObject({ title: 'Projede 1 görev bitti.' })
+    expect(gateSnapshot(current())).toBe(before)
+  })
+
   it('kişi taslağı kaydedince adım değişir, eskime kuralı çalışır ve taslak kalkar', () => {
     const id = open(buildShoeDemoPlan())
     const evidenceBefore = current().evidence.length

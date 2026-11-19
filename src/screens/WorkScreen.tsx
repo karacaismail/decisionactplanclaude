@@ -21,6 +21,7 @@ import { stepApplies } from '@/engine/conditions'
 import { FormRenderer, requiredKeys, sectionStats, type SectionStat } from '@/components/FormRenderer'
 import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
+import { DraftReview } from '@/components/DraftReview'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
 import { LoadingState } from '@/components/LoadingState'
@@ -274,6 +275,7 @@ export function WorkScreen() {
               </span>
             </Callout>
           ) : null}
+          <DraftReview planId={plan.id} kind="adim" step={step.id} />
           {step.id === PATHS_STEP ? (
             <Callout tone="ipucu" title="Bu adımda seçim yok">
               Bu adımda yol seçmeyin. Stratej bu adaylardan birini önerir. Karar sahibi seçer.

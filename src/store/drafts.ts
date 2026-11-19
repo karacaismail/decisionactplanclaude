@@ -103,6 +103,9 @@ export const corePlanCommands: PlanCommands = {
     const clean = typeof text === 'string' ? text.trim() : ''
     if (!clean) return fail('Kanıt metni boş olamaz.')
     if (clean.length > MAX_EVIDENCE_TEXT) return fail(`Kanıt metni en çok ${MAX_EVIDENCE_TEXT} karakter olabilir.`)
+    /* Aynı metin iki kez önerilmez. Böylece kanıt defterine aynı kayıt iki kez girmez. */
+    if (draftsOf(planId).some((d) => d.kind === 'kanit' && d.text === clean)) return fail('Bu kanıt taslağı zaten bekliyor.')
+    if (usePlanStore.getState().plans[planId].evidence.some((e) => e.title === clean)) return fail('Bu kanıt zaten kanıt defterinde. Yeni taslak hazırlanmadı.')
     return add({ id: uid('taslak'), kind: 'kanit', planId, text: clean, createdAt: new Date().toISOString() })
   },
 }

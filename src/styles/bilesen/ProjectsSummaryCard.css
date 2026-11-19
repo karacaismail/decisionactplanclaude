@@ -1,0 +1,11 @@
+/* Projelerin kısa özet kartı. Mimari: docs/css-mimarisi.md */
+
+.projects-summary-heading { margin: 0; font: inherit; color: inherit; }
+
+.projects-summary-list { display: grid; gap: var(--space-1); margin: 0 0 var(--space-3); padding: 0; list-style: none; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); }
+
+.projects-summary-late { display: inline-flex; align-items: center; gap: var(--gap-icon); font-weight: var(--weight-strong); color: var(--color-status-harm); }
+
+.projects-summary-note { margin: 0 0 var(--space-2); font-size: var(--font-helper); line-height: var(--line-body); color: var(--color-text-secondary); }
+
+.projects-summary-link { display: inline-flex; align-items: center; min-block-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

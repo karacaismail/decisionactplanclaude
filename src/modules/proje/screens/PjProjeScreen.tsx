@@ -2,9 +2,10 @@ import '@/styles/ekran/PjProjeScreen.css'
 import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { App as AntApp, Button, Input, Popconfirm, Segmented } from 'antd'
 import type { InputRef } from 'antd'
-import { ArrowLeft, PencilSimple, Plus, Trash } from '@phosphor-icons/react'
-import { useNavigate, useParams, useSearchParams } from 'react-router'
+import { ArrowLeft, ClipboardText, PencilSimple, Plus, Trash } from '@phosphor-icons/react'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router'
 import { selectExecutionTasks, selectStrategyMoves, type ReadonlyPlan } from '@/contracts'
+import { planCommands } from '@/platform/planCommands'
 import { useCurrentPlanView } from '@/platform/planSource'
 import { scrollRegionWithKeyboard } from '@/components/keyboardScroll'
 import { EmptyState } from '@/components/EmptyState'
@@ -13,6 +14,7 @@ import { PjBosEkran } from '../components/PjBosEkran'
 import { PjGecikti, PjIsKarti } from '../components/PjIsKarti'
 import { isOzeti, type ProjeDegisikligi } from '../domain/islemler'
 import { DURUM_ADI, IS_DURUMLARI, SINIR, type Is, type IsDurumu, type Proje } from '../domain/model'
+import { kanitMetni } from '../domain/kanit'
 import { bugunIso, tarihYaz } from '../domain/tarih'
 import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
@@ -78,6 +80,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
   const [duyuru, setDuyuru] = useState('')
   const [mesgul, setMesgul] = useState<string | null>(null)
   const [duzenle, setDuzenle] = useState(false)
+  const [kanitDurumu, setKanitDurumu] = useState<{ ok: boolean; metin: string } | null>(null)
   /* Durumu değişen iş. Panoda kart başka sütuna geçer ve odak kaybolur. Odak bu işe geri döner. */
   const [odakIs, setOdakIs] = useState<string | null>(null)
   const girdi = useRef<InputRef>(null)
@@ -144,6 +147,15 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Proje silinemedi.')
     }
+  }
+
+  /*
+   * Plan değişmez. Komut yalnız taslak saklar. Taslağı bir kişi 3.5 bölümünde inceler ve kaydeder.
+   * Aynı metin ikinci kez taslak olmaz. Çekirdek bu durumda hata metni döndürür.
+   */
+  const kanit = () => {
+    const sonuc = planCommands.appendEvidenceDraft(proje.planId, kanitMetni(proje, isler, bugun))
+    setKanitDurumu(sonuc.ok ? { ok: true, metin: 'Kanıt taslağı hazırlandı. Plan değişmedi.' } : { ok: false, metin: sonuc.error })
   }
 
   const kart = (is: Is) => (
@@ -236,6 +248,18 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
             })}
           </div>
         )}
+      </section>
+
+      <section className="pj-proje-ayar" aria-labelledby="pj-kanit-baslik">
+        <h2 id="pj-kanit-baslik" className="pj-proje-baslik">Sınama için kanıt</h2>
+        <p className="pj-proje-yardim">Projenin sonucu stratejiyi sınamaya yarar. Uygulama sonucu kısa bir metne çevirir. Metin taslak olarak saklanır. Taslağı bir kişi inceler ve kaydeder.</p>
+        <div className="pj-proje-ayar-dugmeler">
+          <Button icon={<ClipboardText size={18} aria-hidden />} onClick={kanit}>Kanıt taslağı hazırla</Button>
+        </div>
+        <p className="pj-proje-kanit-durum" role="status" aria-live="polite">
+          {kanitDurumu ? <span>{kanitDurumu.metin} </span> : null}
+          {kanitDurumu ? <Link to="/uygulama#yenileme">3.5 bölümünü açın.</Link> : null}
+        </p>
       </section>
 
       <section className="pj-proje-ayar" aria-labelledby="pj-ayar-baslik">

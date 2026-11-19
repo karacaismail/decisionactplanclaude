@@ -30,6 +30,10 @@
 
 .pj-proje-form .pj-proje-etiket { margin-block-start: var(--space-2); }
 
+.pj-proje-kanit-durum { margin: 0; min-block-size: 1lh; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); }
+
+.pj-proje-kanit-durum a { display: inline-flex; align-items: center; min-block-size: var(--target-touch); font-weight: var(--weight-strong); color: var(--color-text-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
 .pj-proje-duyuru { margin: 0; min-block-size: 1lh; font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .pj-proje-hata { margin: 0; font-size: var(--font-body); color: var(--color-status-harm); }
