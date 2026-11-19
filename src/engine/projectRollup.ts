@@ -66,7 +66,9 @@ export interface RowBadge {
 }
 
 /** Satır etiketinin metinleri. Her cümle tek bir bilgi verir. */
-export function rowBadge(c: ProjectRowCounts | undefined): RowBadge {
+export function rowBadge(c: ProjectRowCounts | undefined, opts: { truncated?: boolean } = {}): RowBadge {
+  /* Kesik özette satır eksik olabilir. Bu yüzden "Proje aç" denmez. */
+  if (!c && opts.truncated) return { link: 'Projeleri gör' }
   if (!c || c.projects === 0) return { link: 'Proje aç' }
   const where = c.projects === 1 ? 'Projede' : `${c.projects} projede`
   const summary = c.open > 0 ? `${where} ${c.open} görev açık.` : c.done > 0 ? `${where} ${c.done} görev bitti.` : `${where} henüz görev yok.`
@@ -87,4 +89,17 @@ export function projectCardLines(r: ProjectRollup): ProjectCardLines {
   const lines: ProjectCardLines = { projects: `${r.projects} proje var.`, open: `${r.open} görev açık.`, done: `${r.done} görev bitti.` }
   if (r.overdue > 0) lines.overdue = `${r.overdue} görev gecikti.`
   return lines
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/** Yerel takvimde bugünün günü. "YYYY-AA-GG". */
+export function todayIso(d = new Date()): string {
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`
+}
+
+/** "2026-11-19" gününü yerel takvimde ISO zamana çevirir. Böylece gün kaymaz. */
+export function localIso(day: string): string | undefined {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day)
+  return m ? new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])).toISOString() : undefined
 }

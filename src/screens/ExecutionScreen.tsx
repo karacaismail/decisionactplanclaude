@@ -18,6 +18,7 @@ import { REVIEW_REASON_MIN, strategyReopened, type ReviewDraft } from '@/engine/
 import { choiceOf } from '@/engine/strategy'
 import { formatDate } from '@/engine/format'
 import { okrEnabled } from '@/engine/okr'
+import { planPosition } from '@/engine/position'
 import { LoadingState } from '@/components/LoadingState'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
@@ -122,7 +123,7 @@ export function ExecutionScreen() {
           <SubStageList plan={plan} items={cluster.subStages} locked={locked} />
         </Card>
 
-        <ProjectsSummaryCard planId={plan.id} />
+        <ProjectsSummaryCard planId={plan.id} approved={planPosition(plan).strategyComplete} />
 
         {locked ? null : (
           <Card className="okr-switch-card" title={<h2 className="card-heading">Hedef takibi</h2>}>
@@ -176,7 +177,7 @@ export function ExecutionScreen() {
             </div>
           </dl>
           {choice ? <p className="strateji-scope">Bugünkü seçim: {choice.path}</p> : null}
-          <DraftReview planId={plan.id} kind="kanit" />
+          <DraftReview planId={plan.id} kind="kanit" onEmpty={() => renewalHead.current?.focus()} />
 
           {locked ? (
             <p className="strateji-empty">Gözden geçirme kaydı, strateji belgesi onaylanınca açılır.</p>

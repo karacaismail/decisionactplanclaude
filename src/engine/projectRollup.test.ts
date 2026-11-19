@@ -60,6 +60,10 @@ describe('satır etiketi', () => {
   it('projesi olmayan satıra yalnız açma bağlantısı verir', () => {
     expect(rowBadge(undefined)).toEqual({ link: 'Proje aç' })
   })
+
+  it('özet kesikse eksik satıra proje açma bağlantısı vermez', () => {
+    expect(rowBadge(undefined, { truncated: true })).toEqual({ link: 'Projeleri gör' })
+  })
 })
 
 describe('Projeler kartı', () => {

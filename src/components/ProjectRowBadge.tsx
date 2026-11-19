@@ -5,7 +5,8 @@ import { Link } from 'react-router'
 import type { PlanDoc } from '@/data/types'
 import { MOVES_STEP, movesOf, TASKS_STEP, tasksOf } from '@/engine/strategy'
 import { planPosition } from '@/engine/position'
-import { parseProjectRollup, PROJECT_MODULE_ID, rowBadge, rowCounts, type ProjectRowCounts } from '@/engine/projectRollup'
+import { formatDate } from '@/engine/format'
+import { localIso, parseProjectRollup, PROJECT_MODULE_ID, rowBadge, rowCounts, todayIso, type ProjectRowCounts } from '@/engine/projectRollup'
 import { moduleById } from '@/platform/modules'
 import { useRollup } from '@/platform/useRollup'
 
@@ -14,8 +15,16 @@ import { useRollup } from '@/platform/useRollup'
  * Sayılar proje modülünün özetinden gelir. Geciken görev metin ve ikonla görünür.
  * Bağlantı Projeler ekranını açar. Ekran bu satırı seçili getirir.
  */
-export function ProjectRowBadge({ to, label, counts }: { to: string; label: string; counts?: ProjectRowCounts }) {
-  const b = rowBadge(counts)
+export function ProjectRowBadge({ to, label, counts, truncated, staleDate }: {
+  /** Projeler ekranının adresi. Strateji onaylı değilse yoktur. O zaman bağlantı görünmez. */
+  to?: string
+  label: string
+  counts?: ProjectRowCounts
+  truncated?: boolean
+  /** Özet bugün hesaplanmadıysa hesap günü. Gecikme sayısı o güne göredir. */
+  staleDate?: string
+}) {
+  const b = rowBadge(counts, { truncated })
   return (
     <div className="project-row-badge">
       {b.summary ? <p className="project-row-badge-text">{b.summary}</p> : null}
@@ -25,7 +34,8 @@ export function ProjectRowBadge({ to, label, counts }: { to: string; label: stri
           <span>{b.overdue}</span>
         </p>
       ) : null}
-      <Link className="project-row-badge-link" to={to} aria-label={`${b.link}: ${label}`}>{b.link}</Link>
+      {b.summary && staleDate ? <p className="project-row-badge-text">Sayılar {staleDate} hesaplandı.</p> : null}
+      {to ? <Link className="project-row-badge-link" to={to} aria-label={`${b.link}: ${label}`}>{b.link}</Link> : null}
     </div>
   )
 }
@@ -47,12 +57,14 @@ export function useProjectRowFooter(stepId: string, plan: PlanDoc): (fieldKey: s
   if (!field || !base) return () => undefined
   const approved = planPosition(plan).strategyComplete
   const labels = new Map<string, string>(stepId === MOVES_STEP ? movesOf(plan).map((m) => [m.id, m.move]) : tasksOf(plan, 'now').map((t) => [t.id, t.action]))
+  const staleDate = rollup && rollup.date !== todayIso() ? formatDate(localIso(rollup.date)) : undefined
   const footer: RowFooter = (row) => {
     const label = labels.get(row._id)
     if (!label) return null
     const counts = rowCounts(rollup, row._id)
-    if (!counts && !approved) return null
-    return <ProjectRowBadge to={`${base}?satir=${encodeURIComponent(row._id)}`} label={label} counts={counts} />
+    /* Strateji onaylı değilken Projeler ekranı proje göstermez. Bu yüzden bağlantı da yoktur. */
+    if (!approved) return counts ? <ProjectRowBadge label={label} counts={counts} staleDate={staleDate} /> : null
+    return <ProjectRowBadge to={`${base}?satir=${encodeURIComponent(row._id)}`} label={label} counts={counts} truncated={rollup?.truncated} staleDate={staleDate} />
   }
   return (key) => (key === field ? footer : undefined)
 }

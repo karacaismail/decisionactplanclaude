@@ -118,16 +118,40 @@ describe('örnek planı yeniden içe alma', () => {
     expect(replacesExistingExample(plain())).toBe(false)
   })
 
-  it('eski örneğin modül verisi sessizce silinmez, dosyadaki dilim eklenir', async () => {
+  it('var olan örneğin modül verisi korunur, dosyadaki dilim üzerine yazılmaz', async () => {
     const kv = createMemoryKvStore()
     setDefaultKvStore(kv)
     const example = buildDemoPlan()
     usePlanStore.getState().importPlan(structuredClone(example))
-    await kv.set(`proje/${example.id}/eski`, 1)
-    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/yeni', projeKaydi('yeni', example.id)]] } } }
-    const { planId } = await importPlanFile(JSON.stringify(bundle))
+    /* Şimdiki kayıt dosyadakinden yenidir. Dosyada ayrıca şimdi olmayan bir kayıt vardır. */
+    await kv.set(`proje/${example.id}/proje/ortak`, { ...projeKaydi('ortak', example.id), ad: 'Yeni ad' })
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/ortak', projeKaydi('ortak', example.id)], ['proje/silinmis', projeKaydi('silinmis', example.id)]] } } }
+    const { planId, warnings } = await importPlanFile(JSON.stringify(bundle))
     expect(planId).toBe(example.id)
-    expect((await kv.keys(`proje/${planId}/`)).sort()).toEqual([`proje/${planId}/eski`, `proje/${planId}/proje/yeni`])
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/ortak`])
+    expect(await kv.get(`proje/${planId}/proje/ortak`)).toMatchObject({ ad: 'Yeni ad' })
+    expect(warnings.join(' ')).toMatch(/Dosyadaki proje ve destek verisi alınmadı/)
+  })
+
+  it('örnek silinmişse dosyadaki dilim yazılır', async () => {
+    const kv = createMemoryKvStore()
+    setDefaultKvStore(kv)
+    const example = buildDemoPlan()
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/a', projeKaydi('a', example.id)]] } } }
+    const { planId } = await importPlanFile(JSON.stringify(bundle))
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/a`])
+  })
+
+  it('bekleyen silme bitmeden içe alma yazmaz', async () => {
+    const kv = createMemoryKvStore()
+    setDefaultKvStore(kv)
+    const example = buildDemoPlan()
+    usePlanStore.getState().importPlan(structuredClone(example))
+    await kv.set(`proje/${example.id}/proje/eski`, projeKaydi('eski', example.id))
+    usePlanStore.getState().deletePlan(example.id)
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/a', projeKaydi('a', example.id)]] } } }
+    const { planId } = await importPlanFile(JSON.stringify(bundle))
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/a`])
   })
 
   it('çözülmüş dosya da aynı yoldan alınır', async () => {

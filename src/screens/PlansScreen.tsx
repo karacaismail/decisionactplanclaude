@@ -9,6 +9,7 @@ import { Plus, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSqu
 import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
 import { exportPlanFile, importParsedFile, parseImportFile, replacesExistingExample } from '@/store/bundle'
+import { lifecycleSettled } from '@/platform/lifecycle'
 import { formatDate } from '@/engine/format'
 import { downloadJson, safeFileName } from '@/engine/sync'
 import { buildDemoPlan } from '@/data/demo'
@@ -132,7 +133,7 @@ export function PlansScreen() {
    * Örnek zaten varsa yeni örnek eskisinin yerine geçer. Bu yüzden önce kişiye sorulur.
    * Menüdeki örnek ve dosyadan gelen örnek aynı soruyu sorar. İkisi de modül verisini silmez.
    */
-  const confirmExampleReplace = (name: string) => new Promise<boolean>((resolve) => {
+  const confirmExampleReplace = (name: string, fileHasModules = false) => new Promise<boolean>((resolve) => {
     modal.confirm({
       title: 'Örnek plan yeniden açılsın mı?',
       content: (
@@ -140,6 +141,7 @@ export function PlansScreen() {
           <p>“{name}” planı zaten var. Yeni örnek eski örneğin yerine geçer.</p>
           <p>Örnek planda yaptığınız değişiklikler silinir.</p>
           <p>Bu örneğe bağlı projeler ve destek başvuruları silinmez.</p>
+          {fileHasModules ? <p>Dosyadaki proje ve destek verisi alınmaz. Örneğin şimdiki verisi korunur.</p> : null}
         </>
       ),
       okText: 'Örneği yeniden aç',
@@ -153,6 +155,8 @@ export function PlansScreen() {
     try {
       const plan = build()
       if (replacesExistingExample(plan) && !(await confirmExampleReplace(plan.name))) return
+      /* Silinen örneğin temizliği bitmeden yeni örnek yazılmaz. Yoksa temizlik yeni veriyi silebilir. */
+      await lifecycleSettled()
       importPlan(plan)
       goTop('/ozet')
     } catch (err) {
@@ -181,7 +185,7 @@ export function PlansScreen() {
     file.text()
       .then(async (t) => {
         const parsed = parseImportFile(t, file.size)
-        if (replacesExistingExample(parsed.plan) && !(await confirmExampleReplace(parsed.plan.name))) return
+        if (replacesExistingExample(parsed.plan) && !(await confirmExampleReplace(parsed.plan.name, Object.keys(parsed.modules).length > 0))) return
         const { warnings } = await importParsedFile(parsed)
         message.success('Plan içe alındı.')
         for (const w of warnings) message.warning(w)

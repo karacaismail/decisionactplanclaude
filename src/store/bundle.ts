@@ -6,7 +6,7 @@
  */
 import type { PlanDoc } from '@/data/types'
 import { MAX_IMPORT_BYTES, validatePlanDoc } from '@/data/validate'
-import { collectModuleSlices, restoreModuleSlices } from '@/platform/lifecycle'
+import { collectModuleSlices, lifecycleSettled, restoreModuleSlices } from '@/platform/lifecycle'
 import { usePlanStore } from './planStore'
 
 export const BUNDLE_KIND = 'decisionactplan-bundle'
@@ -78,15 +78,23 @@ export function replacesExistingExample(plan: PlanDoc): boolean {
   return Boolean(plan.example) && Boolean(usePlanStore.getState().plans[plan.id])
 }
 
+/** Var olan örnek yeniden alınınca dosyadaki modül verisi alınmaz. Kişi bu uyarıyı görür. */
+export const EXAMPLE_MODULES_KEPT = 'Dosyadaki proje ve destek verisi alınmadı. Örneğin şimdiki verisi korundu.'
+
 /**
  * Çözülmüş dosyayı içe alır. Plan kopya olarak eklenir ve yeni kimlik alır.
- * Örnek plan kimliğini korur ve eskisinin yerine geçer. Eski örneğin modül verisi silinmez.
- * Böylece örneğe bağlı projeler ve destek başvuruları kaybolmaz. Dosyadaki dilim bu verinin yanına yazılır.
+ * Örnek plan kimliğini korur ve eskisinin yerine geçer. Bu durumda modül verisine dokunulmaz.
+ * Örneğin şimdiki projeleri ve destek başvuruları olduğu gibi kalır. Dosyadaki modül verisi alınmaz.
+ * Böylece eski dosya yeni kayıtların üzerine yazılmaz. Silinmiş kayıtlar da geri gelmez.
+ * Önce bekleyen silme işleri biter. Böylece silinen planın temizliği yeni veriyi silmez.
  * Modül hatası planı geri almaz. Hata uyarı listesinde döner.
  */
 export async function importParsedFile({ plan, modules }: { plan: PlanDoc; modules: Record<string, unknown> }): Promise<{ planId: string; warnings: string[] }> {
+  await lifecycleSettled()
+  const keepModules = replacesExistingExample(plan)
   const planId = usePlanStore.getState().importPlan(plan)
-  const warnings = await restoreModuleSlices(modules, { [plan.id]: planId })
+  const warnings = await restoreModuleSlices(keepModules ? {} : modules, { [plan.id]: planId })
+  if (keepModules && Object.keys(modules).length) warnings.unshift(EXAMPLE_MODULES_KEPT)
   return { planId, warnings }
 }
 

@@ -1,10 +1,11 @@
 import '@/styles/bilesen/DraftReview.css'
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
 import { App as AntApp, Button, Popconfirm } from 'antd'
 import { FloppyDisk, Trash } from '@phosphor-icons/react'
 import { STEPS } from '@/data/registry'
 import { formatDate } from '@/engine/format'
 import { acceptDraft, discardDraft, useDraftStore, type Draft } from '@/store/drafts'
+import { usePlanStore } from '@/store/planStore'
 
 const PREVIEW = 160
 
@@ -16,9 +17,25 @@ function preview(value: unknown): string {
   return 'Değer var'
 }
 
-function stepFields(draft: Extract<Draft, { kind: 'adim' }>): { label: string; value: string }[] {
+/**
+ * Taslaktaki alanlar. Liste alanında şimdiki satır sayısı da görünür.
+ * Kayıt listenin yerine geçer. Kişi bunu kaydetmeden önce bilir.
+ */
+function stepFields(draft: Extract<Draft, { kind: 'adim' }>, current: Record<string, unknown>): { key: string; label: string; value: string; replaces?: string }[] {
   const fields = new Map((STEPS[draft.step]?.sections ?? []).flatMap((s) => s.fields.map((f) => [f.key, f.label] as const)))
-  return Object.entries(draft.patch).map(([key, value]) => ({ label: fields.get(key) || key, value: preview(value) }))
+  return Object.entries(draft.patch).map(([key, value]) => {
+    const now = current[key]
+    const replaces = Array.isArray(value) ? `Şimdi ${Array.isArray(now) ? now.length : 0} satır var. Kayıt bu satırların yerine geçer.` : undefined
+    return { key, label: fields.get(key) || key, value: Array.isArray(value) ? `Taslakta ${value.length} satır var.` : preview(value), replaces }
+  })
+}
+
+/** Liste boşalınca odak ekranın ana başlığına gider. Böylece odak kaybolmaz. */
+function focusHeading() {
+  const heading = document.querySelector<HTMLElement>('main h1')
+  if (!heading) return
+  if (!heading.hasAttribute('tabindex')) heading.setAttribute('tabindex', '-1')
+  heading.focus()
 }
 
 /**
@@ -27,16 +44,41 @@ function stepFields(draft: Extract<Draft, { kind: 'adim' }>): { label: string; v
  * Kayıt adım ekranıyla aynı kurala uyar. Kilitli bölüme yazılmaz.
  * Dolu düğme kullanılmaz. Ekranın tek dolu düğmesi ekranın kendi işine kalır.
  */
-export function DraftReview({ planId, kind, step }: { planId: string; kind: Draft['kind']; step?: string }) {
+export function DraftReview({ planId, kind, step, locked = false, onEmpty = focusHeading }: {
+  planId: string
+  kind: Draft['kind']
+  step?: string
+  /** Bölüm kilitliyse "Kaydet" kapalıdır. Nedeni yazılıdır. */
+  locked?: boolean
+  /** Son taslak gidince odağı alacak yer. */
+  onEmpty?: () => void
+}) {
   const { message } = AntApp.useApp()
+  const list = useRef<HTMLUListElement>(null)
+  const values = usePlanStore((s) => (step ? s.plans[planId]?.steps[step]?.values : undefined))
   const all = useDraftStore((s) => s.drafts)
   const drafts = useMemo(() => all.filter((d) => d.planId === planId && d.kind === kind && (kind !== 'adim' || (d.kind === 'adim' && d.step === step))), [all, planId, kind, step])
   if (!drafts.length) return null
 
-  const save = (d: Draft) => {
+  /* Taslak gidince odak sonraki taslağa geçer. Taslak kalmadıysa odak başka yere gider. */
+  const moveFocus = (index: number) => {
+    requestAnimationFrame(() => {
+      const items = list.current?.querySelectorAll<HTMLElement>('.draft-review-item')
+      const next = items?.[index] ?? items?.[index - 1]
+      const button = next?.querySelector<HTMLElement>('button:not([disabled])')
+      if (button) button.focus()
+      else onEmpty()
+    })
+  }
+
+  const save = (d: Draft, index: number) => {
     const error = acceptDraft(d.id)
-    if (error) message.error(error)
-    else message.success(d.kind === 'kanit' ? 'Kanıt kaydedildi. Kanıt defterine eklendi.' : 'Taslak bu adıma yazıldı.')
+    if (error) {
+      message.error(error)
+      return
+    }
+    message.success(d.kind === 'kanit' ? 'Kanıt kaydedildi. Kanıt defterine eklendi.' : 'Taslak bu adıma yazıldı.')
+    moveFocus(index)
   }
   const headingId = `taslak-${kind}${step ? `-${step}` : ''}`
 
@@ -48,7 +90,8 @@ export function DraftReview({ planId, kind, step }: { planId: string; kind: Draf
           ? 'Bu taslak plana henüz yazılmadı. Metni okuyun. Doğruysa “Kaydet” düğmesine basın. Kanıt, kanıt defterine eklenir.'
           : 'Bu taslak plana henüz yazılmadı. Değerleri okuyun. Doğruysa “Kaydet” düğmesine basın. Değerler bu adıma yazılır.'}
       </p>
-      <ul className="draft-review-list">
+      {locked ? <p className="draft-review-help">Bu adım kilitli. Kilit açılınca taslağı kaydedebilirsiniz.</p> : null}
+      <ul className="draft-review-list" ref={list}>
         {drafts.map((d, i) => (
           <li key={d.id} className="draft-review-item">
             <p className="draft-review-date">Hazırlanma: {formatDate(d.createdAt)}.</p>
@@ -56,16 +99,17 @@ export function DraftReview({ planId, kind, step }: { planId: string; kind: Draf
               <p className="draft-review-text">{d.text}</p>
             ) : (
               <dl className="draft-review-fields">
-                {stepFields(d).map((f) => (
-                  <div key={f.label}>
+                {stepFields(d, values ?? {}).map((f) => (
+                  <div key={f.key}>
                     <dt>{f.label}</dt>
                     <dd>{f.value}</dd>
+                    {f.replaces ? <dd>{f.replaces}</dd> : null}
                   </div>
                 ))}
               </dl>
             )}
             <div className="draft-review-actions" role="group" aria-label={`${i + 1}. taslak için işlemler`}>
-              <Button icon={<FloppyDisk size={18} aria-hidden />} onClick={() => save(d)}>Kaydet</Button>
+              <Button icon={<FloppyDisk size={18} aria-hidden />} disabled={locked} onClick={() => save(d, i)}>Kaydet</Button>
               <Popconfirm
                 title="Taslak silinsin mi?"
                 description="Taslak plana yazılmadan silinir. Bu işlem geri alınamaz."
@@ -75,6 +119,7 @@ export function DraftReview({ planId, kind, step }: { planId: string; kind: Draf
                 onConfirm={() => {
                   discardDraft(d.id)
                   message.success('Taslak silindi. Plan değişmedi.')
+                  moveFocus(i)
                 }}
               >
                 <Button danger icon={<Trash size={18} aria-hidden />}>Sil</Button>
