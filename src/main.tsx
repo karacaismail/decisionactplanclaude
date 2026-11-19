@@ -6,24 +6,17 @@ import trTR from 'antd/locale/tr_TR'
 import { HashRouter } from 'react-router'
 import { buildTheme } from './theme/antdTheme'
 import { palette } from './theme/tokens'
-import { usePlanStore } from './store/planStore'
 /* Çekirdek modül altyapısına ekranlar çizilmeden bağlanır. */
 import './store/platformBridge'
 import { FocusMode } from './app/FocusMode'
 import { SyncGuard } from './app/SyncGuard'
 import { AppRoutes, preloadRoute } from './app/routes'
 import { loadInputStyles } from './app/girisStilleri'
-import { usePrintMode } from './app/printMode'
+import { useResolvedTheme } from './app/printMode'
 
 function Root() {
-  const mode = usePlanStore((s) => s.theme)
   /* Kâğıda her zaman açık tema basılır. */
-  const printing = usePrintMode()
-  const resolved = useMemo<'light' | 'dark'>(() => {
-    if (printing) return 'light'
-    if (mode !== 'system') return mode
-    return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  }, [mode, printing])
+  const resolved = useResolvedTheme()
   const themeConfig = useMemo(() => buildTheme(resolved), [resolved])
   // Yazdırmadan önce eşzamanlı çalışır. Böylece kâğıt düzeni açık temayla kurulur.
   useLayoutEffect(() => {

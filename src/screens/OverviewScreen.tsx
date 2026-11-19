@@ -27,7 +27,7 @@ import { ChartFrame } from '@/charts/ChartFrame'
 import { cashDays, cashFlowOption, cashFlowTable } from '@/charts/overview'
 import { formatDate, formatMoney } from '@/engine/format'
 import { palette } from '@/theme/tokens'
-import { resolveMode } from '@/theme/antdTheme'
+import { useResolvedTheme } from '@/app/printMode'
 import { OUTCOME_LABEL, TRANSITION_LABEL, type Evidence, type PlanDoc, type Task } from '@/data/types'
 import type { StepDef } from '@/data/schema'
 const two = (n: number) => String(n).padStart(2, '0')
@@ -79,10 +79,9 @@ export function OverviewScreen() {
   const backups = usePlanStore((s) => s.backups)
   const markBackup = usePlanStore((s) => s.markBackup)
   const { message } = AntApp.useApp()
-  const themePref = usePlanStore((s) => s.theme)
   const { token } = theme.useToken()
   const bp = Grid.useBreakpoint()
-  const mode = resolveMode(themePref)
+  const mode = useResolvedTheme()
   const p = palette(mode)
   const position = plan ? planPosition(plan) : undefined
   const currentStage = position?.stage

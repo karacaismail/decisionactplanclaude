@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test'
  * Her ekran yazdırılırken üst şerit, alt menü, çekmece ve sabit eylem şeridi gizlenir.
  * Koyu tema seçili olsa da kâğıda açık tema basılır.
  */
-const SCREENS = ['/#/ozet', '/#/karar/5', '/#/karar/1/adim/00', '/#/ciktilar']
+const SCREENS = ['/#/ozet', '/#/karar/5', '/#/karar/1/adim/00', '/#/gostergeler', '/#/ciktilar']
 
 async function openDemo(page: Page) {
   await page.goto('/')
@@ -91,4 +91,57 @@ test('ana metin kâğıt zemininde en az 7:1 karşıtlık taşır', async ({ pag
   })
   expect(ratios.length).toBeGreaterThan(0)
   for (const r of ratios) expect(r).toBeGreaterThanOrEqual(7)
+})
+
+test.describe('gerçek yazdırma yolu', () => {
+  test.use({ colorScheme: 'dark' })
+
+  test('beforeprint olayı temayı aynı görevde açar, afterprint geri getirir', async ({ page }) => {
+    await openDemo(page)
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark')
+    // Yazdır düğmesi ve Ctrl+P bu olayı gönderir. Tarayıcı düzeni olaydan hemen sonra kurar.
+    const during = await page.evaluate(() => {
+      window.dispatchEvent(new Event('beforeprint'))
+      const root = document.documentElement
+      return { theme: root.getAttribute('data-theme'), text: getComputedStyle(root).getPropertyValue('--color-text-primary').trim(), antd: getComputedStyle(document.querySelector('main')!).color }
+    })
+    expect(during.theme).toBe('light')
+    expect(during.text.toUpperCase()).toBe('#0F1729')
+    expect(during.antd).toBe('rgb(15, 23, 41)')
+    const after = await page.evaluate(() => {
+      window.dispatchEvent(new Event('afterprint'))
+      return document.documentElement.getAttribute('data-theme')
+    })
+    expect(after).toBe('dark')
+  })
+
+  test('grafik eksen yazısı kâğıtta koyu tema rengiyle basılmaz', async ({ page }) => {
+    await openDemo(page)
+    await page.goto('/#/gostergeler')
+    await expect(page.locator('main h1').first()).toBeVisible()
+    await expect(page.locator('.loading-state')).toHaveCount(0)
+    const canvas = page.locator('main canvas').first()
+    await canvas.waitFor({ state: 'visible', timeout: 5000 }).catch(() => undefined)
+    test.skip(!(await canvas.isVisible()), 'Bu genişlikte ilk ekranda grafik çizilmiyor')
+    /** Koyu temanın ikincil yazı rengine (#AEB7CC) yakın piksel sayısı. Eksen ve açıklama yazısı bu rengi kullanır. */
+    const darkAxisPixels = () => page.evaluate(async () => {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
+      let count = 0
+      for (const canvas of document.querySelectorAll<HTMLCanvasElement>('main canvas')) {
+        const ctx = canvas.getContext('2d')
+        if (!ctx || !canvas.width || !canvas.height) continue
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i + 3] > 200 && Math.abs(data[i] - 0xAE) < 6 && Math.abs(data[i + 1] - 0xB7) < 6 && Math.abs(data[i + 2] - 0xCC) < 6) count += 1
+        }
+      }
+      return count
+    })
+    // Ölçüm doğru rengi arıyor mu? Ekranda koyu tema eksen yazısı görünür.
+    expect(await darkAxisPixels()).toBeGreaterThan(0)
+    await page.evaluate(() => window.dispatchEvent(new Event('beforeprint')))
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light')
+    expect(await darkAxisPixels()).toBe(0)
+    await page.evaluate(() => window.dispatchEvent(new Event('afterprint')))
+  })
 })

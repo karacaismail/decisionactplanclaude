@@ -1,5 +1,8 @@
 import { useSyncExternalStore } from 'react'
 import { flushSync } from 'react-dom'
+import { usePlanStore } from '@/store/planStore'
+import { resolveMode } from '@/theme/antdTheme'
+import type { ThemeMode } from '@/theme/tokens'
 
 /**
  * Yazdırma sırasında uygulama açık temaya geçer. Kâğıda koyu zemin ve açık yazı basılmaz.
@@ -40,4 +43,14 @@ function onChange(event: MediaQueryListEvent) { set(event.matches) }
 /** Sayfa yazdırılıyorsa true döner. */
 export function usePrintMode(): boolean {
   return useSyncExternalStore(subscribe, () => printing, () => false)
+}
+
+/**
+ * Ekranda kullanılan tema. Kullanıcı seçimini, sistem temasını ve yazdırmayı birlikte değerlendirir.
+ * Yazdırma sırasında her zaman açık tema döner. Tema okuyan her bileşen bu kancayı kullanır.
+ */
+export function useResolvedTheme(): ThemeMode {
+  const pref = usePlanStore((s) => s.theme)
+  const printing = usePrintMode()
+  return printing ? 'light' : resolveMode(pref)
 }
