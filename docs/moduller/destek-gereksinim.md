@@ -146,6 +146,45 @@ Program kartının bölümleri şunlardır:
 6. Destek profili yazılınca hiçbir karar eskimez.
 7. Akış 320 piksel genişlikte yana kaydırmadan biter.
 
+## İlk sürümde yapılanlar
+
+Bu bölümü Claude 19 Kasım 2026 Perşembe günü yazdı.
+
+### Katalog
+
+- Katalogda 46 program var. Veri `src/modules/destek/data/programlar.ts` dosyasındadır.
+- Her sayı kaynağı ve son kontrol tarihiyle birlikte durur.
+- Kaynağı olmayan tutar "bilinmiyor" olarak durur.
+- Katalog ilk açılışta inmez. Ekran açılınca ayrı bir parça olarak iner.
+- `programlar.test.ts` dosyası kataloğu denetler. Kaynaksız sayı, tanınmayan değer ve bozuk tarih bu denetimden geçmez.
+
+Önceki çalışmadan bazı bilgiler alınmadı:
+
+- yapılacaklar listesi,
+- tek bir işletmeye göre yazılmış özet, puan ve not,
+- yalnız bir işletmeye verilmiş yanıta dayanan koşul.
+
+### Eşleşme
+
+Uygulama 14 programda bazı koşulları denetler. Örneğin işletmenin yaşını ve çalışan sayısını denetler.
+
+Uygulama bir programın bütün koşullarını denetleyemezse "Uygun" demez. Denetlenmeyen koşul bilinmeyen bilgi sayılır. Bu yüzden ilk sürümde "Uygun" grubu boş kalır. Sorulan koşulları tutan program "Belki" grubunda ayrı bir başlıkta görünür.
+
+KOSGEB Küresel Rekabetçilik için kurumun sayfası 19 Kasım 2026 Perşembe günü okundu. Sayfaya göre dört yoldan biri yeterlidir. İki yol ihracat artışı ister. Öteki iki yol ihracat istemez. Bu yüzden 1 yaşında, 3 kişilik kafe bu programda "Belki" sonucunu alır. Ekran tutmayan koşulu yazar. Kabul ölçütlerindeki 4. madde bu bilgiyle çelişir. Karar ürün sahibine bırakıldı.
+
+### Veri
+
+- Destek profili plan dosyasına yazılmaz. Profil modül deposunda durur.
+- Plan açık değilse profil plana bağlı olmayan ayrı bir yerde durur.
+- Başvurular plana bağlıdır. Başvuru eklemek için bir plan açık olmalıdır.
+- Her başvuru değişikliğinden sonra plan özeti yeniden yazılır. Özet, başvuruları durumlarına göre sayar.
+
+### Sonraki sürüme kalanlar
+
+- Kişinin kendi bulduğu programı eklemesi henüz yok.
+- Destekli ve desteksiz yolun karşılaştırması henüz yok.
+- Bütçe ekranındaki destek satırı henüz yok. Satır plan özetini okuyacak.
+
 ## Doğrulanmayan bilgiler
 
 Şu bilgiler 19 Kasım 2026 araştırmasında resmî kaynakta okunamadı:
