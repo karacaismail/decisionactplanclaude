@@ -208,6 +208,16 @@ describe('modül CSS dosyaları', () => {
     .filter((name) => /^(Pj|Dt)[A-Z].*\.css$/.test(name)).map((name) => [`${layer}/${name}`, readFileSync(new URL(`${layer}/${name}`, dir), 'utf8')] as const))
   const paletteVars = new Set(Object.keys(cssVariables('light')))
 
+  it('eylem dolgusu yazı rengi olarak kullanılmaz', () => {
+    // Yazı --color-action-text kullanır. --color-action-primary yalnız dolgudur.
+    for (const layer of ['temel', 'kabuk', 'bilesen', 'ekran', 'desen', 'giris', 'yazdirma']) {
+      for (const name of readdirSync(new URL(`${layer}/`, dir)).filter((n) => n.endsWith('.css'))) {
+        const text = readFileSync(new URL(`${layer}/${name}`, dir), 'utf8')
+        expect(text, `${layer}/${name}`).not.toMatch(/(^|[;{\s])color:\s*var\(--color-action-primary\)/)
+      }
+    }
+  })
+
   it('modül CSS dosyası bulunur', () => {
     expect(files.length).toBeGreaterThan(0)
   })

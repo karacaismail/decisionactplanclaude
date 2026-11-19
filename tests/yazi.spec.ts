@@ -36,7 +36,7 @@ function readTexts(page: Page): Promise<Text[]> {
       if (!r.width || !r.height || s.visibility === 'hidden' || s.display === 'none' || Number(s.opacity) === 0) continue
       if (r.width <= 1 && r.height <= 1) continue
       // 28 ile 36 piksel arası yalnız başlık ve özet sayısı içindir.
-      const title = !!el.closest('h1, h2, .ant-statistic-content, .calc-value, .kpi-value')
+      const title = !!el.closest('h1, h2, .ant-statistic-content, .calc-value, .kpi-value, .devir-question')
       out.push({ sample: own.slice(0, 40), size: parseFloat(s.fontSize), tag: el.tagName.toLowerCase(), cls: String(el.className).split(' ').slice(0, 2).join('.'), title })
     }
     return out

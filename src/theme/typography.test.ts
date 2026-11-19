@@ -20,6 +20,8 @@ describe('yazı ölçeği', () => {
   it('ölçek yalnız izinli basamakları taşır', () => {
     expect([font.helper, font.body, font.subsection, font.section, font.h2, font.h1Min, font.h1Max, font.stat]).toEqual([14, 16, 18, 20, 24, 28, 36, 36])
     expect(font.h1).toBe(`clamp(${font.h1Min}px, 2.4vw + 20px, ${font.h1Max}px)`)
+    // Devir raporunun karar sorusu 28 ile 32 piksel arasında kalır.
+    expect(font.lead).toBe('clamp(28px, 1.2vw + 16px, 32px)')
   })
 
   it.each([
@@ -30,6 +32,7 @@ describe('yazı ölçeği', () => {
     ['--font-h2', () => `${font.h2}px`],
     ['--font-page-title', () => font.h1],
     ['--font-stat-value', () => `${font.stat}px`],
+    ['--font-lead', () => font.lead],
     ['--font-family', () => font.family],
   ])('temel.css içindeki %s tokens.ts ile aynı', (name, expected) => {
     expect(rootValue(name)).toBe(expected())

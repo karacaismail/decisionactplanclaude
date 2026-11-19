@@ -154,7 +154,7 @@
   .report-tabs-wrap.ant-tabs .ant-tabs-ink-bar, .report-tabs-wrap.ant-tabs .ant-tabs-nav-operations { display: none !important; }
 }
 
-.devir-question { margin: 0; max-width: 30ch; font-size: var(--font-page-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
+.devir-question { margin: 0; max-width: 30ch; font-size: var(--font-lead); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
 
 .devir-toc-title { font-size: var(--font-helper); color: var(--color-text-secondary); }
 

@@ -17,7 +17,7 @@
 
 .stat-ico.is-ok { color: var(--color-status-ok); }
 
-.devir-question { margin: 0; max-width: 30ch; font-size: var(--font-page-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
+.devir-question { margin: 0; max-width: 30ch; font-size: var(--font-lead); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
 
 .devir-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; min-width: 0; }
 

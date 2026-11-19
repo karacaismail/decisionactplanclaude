@@ -2,7 +2,7 @@
 
 .dt-terimler { min-inline-size: 0; }
 
-.dt-terimler summary { display: flex; align-items: center; min-block-size: var(--target-touch); inline-size: fit-content; min-inline-size: var(--target-touch); cursor: pointer; font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-primary); }
+.dt-terimler summary { display: flex; align-items: center; min-block-size: var(--target-touch); inline-size: fit-content; min-inline-size: var(--target-touch); cursor: pointer; font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); }
 
 .dt-terimler dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); margin: var(--space-2) 0 0; }
 

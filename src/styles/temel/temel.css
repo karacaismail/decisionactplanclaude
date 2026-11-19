@@ -317,6 +317,7 @@ html[data-focus-mode='keyboard'] .ant-drawer:not(.ant-drawer-inline):not(.ant-dr
   --font-helper: 14px;
   --font-page-title: clamp(28px, 2.4vw + 20px, 36px);
   --font-h2: 24px;
+  --font-lead: clamp(28px, 1.2vw + 16px, 32px);
   --font-page-description: 18px;
   --font-section-title: 20px;
   --font-subsection-title: 18px;

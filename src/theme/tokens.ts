@@ -178,6 +178,8 @@ export const font = {
   /** Sayfa başlığı dar ekranda 28, geniş ekranda 36 pikseldir. */
   h1: 'clamp(28px, 2.4vw + 20px, 36px)',
   stat: 36,
+  /** Devir raporundaki karar sorusu. Sayfa başlığından küçük, ikinci düzeyden büyüktür. */
+  lead: 'clamp(28px, 1.2vw + 16px, 32px)',
 } as const
 
 /** Paleti CSS değişkenlerine çevirir. global.css yalnız bu değişkenleri okur. */
