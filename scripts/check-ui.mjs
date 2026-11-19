@@ -15,8 +15,10 @@
  *  (e) Davranış `isMobile` bayrağı veya userAgent ile seçilmez.
  *  (f) Gizlenen eylem yalnız hover ile açılmaz. Klavye ve dokunma yolu gerekir.
  *  (g) Kontrolün açık boyutları ve Button small kullanımı 44px alanı korur.
- *  (h) Yedeksiz her var(--x) kullanımının bir tanımı vardır. Tanım bir CSS dosyasında,
- *      tokens.ts paletinde ya da TypeScript içinde yazılan '--x' adında durur.
+ *  (h) Yedeksiz her var(--x) kullanımının bir tanımı vardır. TypeScript tanımı her yerde
+ *      geçerlidir: tokens.ts paleti, nesne anahtarı ya da setProperty('--x'). getPropertyValue
+ *      okumadır, tanım sayılmaz. CSS tanımı yalnız dosyanın birlikte yüklendiği CSS'te geçerlidir.
+ *      Dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -682,29 +684,60 @@ const PALETTE_BLOCK = /export\s+const\s+(?:light|dark)\s*=\s*\{([\s\S]*?)\}\s*as
 /* Yedeği olmayan var(--x) kullanımı. Yedekli kullanım bilinçli bir seçimdir. */
 const VAR_WITHOUT_FALLBACK = /var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/g
 
-/**
- * (h) Tanımsız CSS değişkeni. files: { file, source } listesi.
- * Tanımlar bütün dosyalardan toplanır, sonra her kullanım denetlenir.
- */
-export function checkCustomProperties(files) {
-  const defined = new Set()
-  for (const { file, source } of files) {
-    if (file.endsWith('.css')) {
-      for (const m of stripComments(source).matchAll(CUSTOM_PROPERTY_DECL)) defined.add(m[1])
-    } else {
-      for (const m of source.matchAll(CUSTOM_PROPERTY_NAME)) defined.add(m[2])
-      for (const block of source.matchAll(PALETTE_BLOCK)) {
-        for (const key of block[1].matchAll(/^\s*([a-zA-Z0-9]+)\s*:/gm)) {
-          defined.add(`--color-${key[1].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)
-        }
-      }
+/** TypeScript yorumlarını boşlukla değiştirir. Satır numaraları ve dizeler korunur. */
+function stripTsComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' ')).replace(/(^|[^:'"`\\])\/\/[^\n]*/g, (m, pre) => pre + ' '.repeat(m.length - pre.length))
+}
+
+/* Değeri okuyan ya da silen çağrı tanım değildir. Örneğin getPropertyValue('--x'). */
+const PROPERTY_READ = /(?:getPropertyValue|removeProperty)\(\s*$/
+
+/** Bir dosyanın tanımladığı CSS değişkeni adlarını döndürür. */
+function definitionsOf(file, source) {
+  const names = new Set()
+  if (file.endsWith('.css')) {
+    for (const m of stripComments(source).matchAll(CUSTOM_PROPERTY_DECL)) names.add(m[1])
+    return names
+  }
+  const text = stripTsComments(source)
+  for (const m of text.matchAll(CUSTOM_PROPERTY_NAME)) {
+    if (!PROPERTY_READ.test(text.slice(Math.max(0, m.index - 40), m.index))) names.add(m[2])
+  }
+  for (const block of text.matchAll(PALETTE_BLOCK)) {
+    for (const key of block[1].matchAll(/^\s*([a-zA-Z0-9]+)\s*:/gm)) {
+      names.add(`--color-${key[1].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)
     }
   }
+  return names
+}
+
+/**
+ * (h) Tanımsız CSS değişkeni. files: { file, source } listesi.
+ * TypeScript tanımları çalışma anında html öğesine yazılır. Bu yüzden her dosyada geçerlidir.
+ * CSS tanımları yalnız birlikte yüklenen dosyalarda geçerlidir.
+ * options.contextsFor(file), dosyanın yüklendiği her ekranın CSS listesini verir.
+ * Değişken bu listelerin hepsinde tanımlı olmalıdır. Verilmezse bütün CSS tek liste sayılır.
+ */
+export function checkCustomProperties(files, options = {}) {
+  const runtime = new Set()
+  const cssDefs = new Map()
+  for (const { file, source } of files) {
+    const names = definitionsOf(file, source)
+    if (file.endsWith('.css')) cssDefs.set(file, names)
+    else for (const name of names) runtime.add(name)
+  }
+  const allCss = [...cssDefs.keys()]
   const problems = []
   for (const { file, source } of files) {
-    const text = file.endsWith('.css') ? stripComments(source) : source
+    const contexts = (options.contextsFor ? options.contextsFor(file) : [allCss]).map((list) => {
+      const names = new Set()
+      for (const css of list) for (const name of cssDefs.get(css) ?? []) names.add(name)
+      return names
+    })
+    const defined = (name) => runtime.has(name) || (contexts.length > 0 && contexts.every((names) => names.has(name)))
+    const text = file.endsWith('.css') ? stripComments(source) : stripTsComments(source)
     for (const m of text.matchAll(VAR_WITHOUT_FALLBACK)) {
-      if (!defined.has(m[1])) problems.push(`${file}:${lineOf(text, m.index)} ${m[1]} tanımsız CSS değişkeni. Tokenı tanımlayın ya da var içinde yedek değer verin.`)
+      if (!defined(m[1])) problems.push(`${file}:${lineOf(text, m.index)} ${m[1]} tanımsız CSS değişkeni. Tokenı tanımlayın ya da var içinde yedek değer verin.`)
     }
   }
   return problems
@@ -771,7 +804,29 @@ export function checkProject(root) {
     const context = cssContext(cssFiles.flatMap((path) => ruleCache.get(path) ?? []), controlClasses, false)
     problems.push(...(file.endsWith('.css') ? checkCss(body, rel, context) : checkTsx(body, rel, context)))
   }
-  problems.push(...checkCustomProperties([...sources].map(([file, source]) => ({ file: relative(root, file).split('\\').join('/'), source }))))
+  const relOf = (file) => relative(root, file).split('\\').join('/')
+  // Kök dosyayı başka kaynak statik olarak içe aktarmaz. Örneğin main.tsx ve geç yüklenen ekranlar köktür.
+  const imported = new Set()
+  for (const [file] of sources) for (const specifier of imports.get(file) ?? []) {
+    const dependency = resolveImport(file, specifier)
+    if (dependency) imported.add(dependency)
+  }
+  const closureOf = (entry) => {
+    const seen = new Set()
+    const visit = (file) => {
+      if (!sources.has(file) || seen.has(file)) return
+      seen.add(file)
+      for (const specifier of imports.get(file) ?? []) { const dependency = resolveImport(file, specifier); if (dependency) visit(dependency) }
+    }
+    visit(entry)
+    return seen
+  }
+  const roots = [...sources.keys()].filter((file) => !imported.has(file)).map((root) => ({ closure: closureOf(root), css: [...new Set([...globalCss, ...loadedCss(root)])].map(relOf) }))
+  const contextsFor = new Map([...sources.keys()].map((file) => {
+    const owners = roots.filter((root) => root.closure.has(file)).map((root) => root.css)
+    return [relOf(file), owners.length ? owners : [[...new Set([...globalCss, ...loadedCss(file)])].map(relOf)]]
+  }))
+  problems.push(...checkCustomProperties([...sources].map(([file, source]) => ({ file: relOf(file), source })), { contextsFor: (file) => contextsFor.get(file) ?? [] }))
   return problems
 }
 

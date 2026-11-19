@@ -467,6 +467,58 @@ describe('(h) tanımsız CSS değişkeni', () => {
     expect(run({ 'src/a.tsx': 'const v = <Progress strokeColor="var(--color-yok)" />' }).join('\n')).toContain('--color-yok')
   })
 
+  describe('dosyaya göre tanım kümesi', () => {
+    const scratch = join(process.cwd(), '.pane/scratch')
+    const roots: string[] = []
+    afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }) })
+    function project(files: Record<string, string>) {
+      mkdirSync(scratch, { recursive: true })
+      const root = mkdtempSync(join(scratch, 'var-gate-test-'))
+      roots.push(root)
+      for (const [file, source] of Object.entries(files)) {
+        mkdirSync(join(root, file, '..'), { recursive: true })
+        writeFileSync(join(root, file), source)
+      }
+      return (checkProject(root) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
+    }
+
+    it('birlikte yüklenmeyen CSS dosyasındaki tanımı kabul etmez', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\nimport "./Ekran"',
+        'src/temel.css': ':root { --space-2: 8px; }',
+        'src/Ekran.tsx': 'import "./ekran.css"\nexport const x = 1',
+        'src/ekran.css': '.e { padding: var(--space-2); margin: var(--yalniz-oteki); }',
+        'src/Oteki.tsx': 'import "./oteki.css"\nexport const y = 1',
+        'src/oteki.css': '.o { --yalniz-oteki: 4px; padding: var(--yalniz-oteki); }',
+      })
+      expect(problems).toEqual([expect.stringMatching(/^src\/ekran\.css:1 --yalniz-oteki/)])
+    })
+
+    it('getPropertyValue ile okunan adı tanım saymaz', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\nconst v = getComputedStyle(document.body).getPropertyValue(\'--okunan\')',
+        'src/temel.css': '.x { color: var(--okunan); }',
+      })
+      expect(problems.join('\n')).toContain('--okunan')
+    })
+
+    it('setProperty ve nesne anahtarı tanım sayılır', () => {
+      expect(project({
+        'src/main.tsx': 'import "./temel.css"\ndocument.body.style.setProperty(\'--yazilan\', \'1px\')\nconst s = { \'--anahtar\': \'2px\' }',
+        'src/temel.css': '.x { margin: var(--yazilan); padding: var(--anahtar); }',
+      })).toEqual([])
+    })
+
+    it('TypeScript yorumundaki adı tanım saymaz', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\n// eski ad: \'--yorumda\'\n/* \'--blokta\' */\nexport {}',
+        'src/temel.css': '.x { margin: var(--yorumda); padding: var(--blokta); }',
+      })
+      expect(problems.join('\n')).toContain('--yorumda')
+      expect(problems.join('\n')).toContain('--blokta')
+    })
+  })
+
   it('gerçek projede tanımsız değişken kalmaz', () => {
     const problems = (checkProject(process.cwd()) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
     expect(problems).toEqual([])
