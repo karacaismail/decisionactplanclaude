@@ -89,7 +89,11 @@
 .score-matrix .ant-rate-star-second { transform: scale(1);
   transition: transform var(--motion-micro) var(--motion-ease), color var(--motion-micro) var(--motion-ease); }
 
-.score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:hover .ant-rate-star-second, html[data-focus-mode='keyboard'] .score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:focus-visible .ant-rate-star-second { transform: scale(var(--kapi-star-hover-scale)); }
+html[data-focus-mode='keyboard'] .score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:focus-visible .ant-rate-star-second { transform: scale(var(--kapi-star-hover-scale)); }
+
+@media (hover: hover) and (pointer: fine) {
+  .score-matrix .ant-rate:not(.ant-rate-disabled) .ant-rate-star > [role='radio']:hover .ant-rate-star-second { transform: scale(var(--kapi-star-hover-scale)); }
+}
 
 .score-matrix .score-lock label { display: flex; align-items: center; min-height: var(--target-touch); }
 

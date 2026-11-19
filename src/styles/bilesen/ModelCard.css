@@ -81,7 +81,10 @@
 
 .page-rapor .method-card.ant-card { display: flex; flex-direction: column; transition: box-shadow var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
 
-.page-rapor .method-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+/* Kalkış yalnız farede çalışır. Dokunmatik ekranda dokunduktan sonra takılı kalmaz. */
+@media (hover: hover) and (pointer: fine) {
+  .page-rapor .method-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+}
 
 .page-rapor .method-card.ant-card > .ant-card-head { min-height: 0; padding: 16px 20px 0; border-bottom: 0; }
 

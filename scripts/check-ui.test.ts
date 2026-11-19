@@ -562,3 +562,26 @@ describe('(i) yazı ölçeği', () => {
     expect(RAW_FONT_SIZE_BASELINE).toBeLessThanOrEqual(52)
   }, 30_000)
 })
+
+describe('(j) dokunmada takılan hover kalkışı', () => {
+  it('hover sorgusu dışında transform değiştiren hover kuralını yakalar', () => {
+    expect(checkCss('.kart:hover { transform: translateY(-1px); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:1 .*hover.*transform/)
+  })
+  it('birleşik seçicide yalnız hover dalı da yakalanır', () => {
+    expect(checkCss('.a:hover .b, html[data-focus-mode="keyboard"] .a:focus-visible .b { transform: scale(1.1); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+  })
+  it('fare sorgusundaki ve fare katmanındaki kalkışı kabul eder', () => {
+    expect(checkCss('@media (hover: hover) and (pointer: fine) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css')).toEqual([])
+    expect(checkCss('@media (any-pointer: fine) and (any-hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/giris/fare.css')).toEqual([])
+    expect(checkCss('.kart:hover { transform: none; }', 'src/styles/ekran/A.css')).toEqual([])
+  })
+})
+
+describe('(k) iki yönlü geçiş', () => {
+  it('geçişi yalnız durum seçicisinde tanımlayan kuralı yakalar', () => {
+    expect(checkCss('.kart { opacity: 1; }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş.*temel seçici/)
+  })
+  it('temel seçicide geçiş varsa kabul eder', () => {
+    expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
+  })
+})

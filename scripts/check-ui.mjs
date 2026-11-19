@@ -21,6 +21,8 @@
  *      Dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
  *  (i) Yazı boyutu ölçekten gelir: 14, 16, 18, 20, 24 ve 36 piksel, başlık için var(--font-page-title).
  *      Ölçek dışı ham boyut hatadır. temel/ dışındaki ham boyut sayısı RAW_FONT_SIZE_BASELINE değerini aşamaz.
+ *  (j) hover ile transform değişimi yalnız (hover: hover) sorgusunda ya da giris/fare.css içinde durur.
+ *  (k) Durum seçicisindeki geçişin temel seçicide de geçişi olur. Böylece hareket iki yönde çalışır.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -181,6 +183,23 @@ export function checkCss(source, file, context) {
     if (sideBorder && radius) {
       report(sideBorder.line, `Tek kenar çizgisi (${sideBorder.prop}) ile köşe yuvarlatma (satır ${radius.line}) aynı blokta. Kavisli vurgu kenarı yasak.`)
     }
+    // (j) Hover kalkışı dokunmatik ekranda dokunduktan sonra takılı kalır. Yalnız fare sorgusunda durur.
+    const hoverMedia = rule.atrules.some((a) => /\(\s*(?:any-)?hover\s*:\s*hover\s*\)/i.test(a))
+    if (!hoverMedia && splitList(rule.selector).some((b) => /:hover\b/.test(b))) {
+      const lift = rule.decls.find((d) => /^(transform|translate|scale|rotate)$/.test(d.prop) && !isZeroOrNone(d.value))
+      if (lift) report(lift.line, `hover ile ${lift.prop} değişiyor. Kalkışı @media (hover: hover) and (pointer: fine) içine ya da giris/fare.css dosyasına taşıyın.`)
+    }
+  }
+  // (k) Geçiş temel seçicide durur. Yalnız durum seçicisindeki geçiş tek yönde çalışır.
+  for (const rule of parseCss(source)) {
+    const transition = rule.decls.find((d) => /^transition(-property)?$/.test(d.prop) && !isZeroOrNone(d.value))
+    if (!transition || rule.atrules.some((a) => /prefers-reduced-motion/i.test(a))) continue
+    for (const branch of splitList(rule.selector)) {
+      if (!STATE_SELECTOR.test(branch)) continue
+      const base = branch.replace(STATE_SELECTOR_ALL, '').replace(/\s+/g, ' ').trim()
+      const hasBase = parseCss(source).some((r) => splitList(r.selector).some((b) => b.replace(/\s+/g, ' ').trim() === base) && r.decls.some((d) => /^transition(-property)?$/.test(d.prop)))
+      if (!hasBase) report(transition.line, `"${branch}" geçişi yalnız durum seçicisinde. Geçişi temel seçiciye (${base}) yazın. Böylece hareket iki yönde çalışır.`)
+    }
   }
   const rules = parseCss(source)
   const scope = context ?? cssContext(rules)
@@ -274,6 +293,9 @@ const CONTROL_TAGS = new Set(['button', 'a', 'input', 'select', 'textarea', 'sum
 const CONTROL_CLASSES = new Set(['button', 'btn', 'action', 'control', 'trigger', 'ant-btn', 'ant-input', 'ant-input-number', 'ant-select-selector', 'ant-picker', 'ant-switch', 'ant-menu-item', 'ant-radio-wrapper', 'ant-checkbox-wrapper', 'ant-segmented-item-label', 'ant-tabs-tab-btn', 'ant-collapse-header'])
 const CONTROL_ROLES = new Set(['button', 'link', 'checkbox', 'radio', 'switch', 'tab', 'menuitem', 'option', 'combobox', 'slider', 'spinbutton', 'textbox'])
 const STATES = /:(?:hover|focus-visible|focus-within|focus)\b/g
+/* Açılma ve üzerine gelme durumları. Geçiş bu durumların temel seçicisinde tanımlanır. */
+const STATE_SELECTOR = /:(?:hover|focus-visible|focus-within|active)\b|\[aria-expanded=['"]?true['"]?\]|\[open\]/
+const STATE_SELECTOR_ALL = new RegExp(STATE_SELECTOR.source, 'g')
 
 /** Virgülleri parantez ve tırnak dışında ayırır. */
 function splitList(value) {

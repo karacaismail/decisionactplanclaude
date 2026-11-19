@@ -30,9 +30,12 @@
   .entry-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-.entry-card.ant-card { cursor: pointer; transition: box-shadow var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
+.entry-card.ant-card { cursor: pointer; transition: box-shadow var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 
-.entry-card.ant-card:hover { box-shadow: var(--shadow-float) !important; transform: translateY(-1px); }
+/* Başlangıç kartı kalkmaz. Fare üzerine gelince yalnız gölge büyür. */
+@media (hover: hover) and (pointer: fine) {
+  .entry-card.ant-card:hover { box-shadow: var(--shadow-float) !important; }
+}
 
 .entry-card.ant-card.is-selected { background: var(--color-selected-bg); box-shadow: var(--shadow-float) !important; }
 
@@ -57,10 +60,6 @@
 .purpose-steps.ant-steps .ant-steps-item-icon { font-size: var(--font-helper); font-weight: 600; }
 
 .purpose-steps.ant-steps .ant-steps-item-title { font-size: var(--font-body); }
-
-.mobil-start .entry-card.ant-card { transform: none; }
-
-.mobil-start .entry-card.ant-card:hover { transform: none; }
 
 .mobil-start-questions { margin: 0; padding-inline-start: var(--space-6); display: grid; gap: var(--space-2); }
 
