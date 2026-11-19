@@ -320,7 +320,12 @@ Renk tek başına anlam taşımaz. Her grafikte şu üç yol vardır:
 
 - Kısa bir özet cümlesi,
 - Ekran okuyucunun her zaman bulduğu veri tablosu,
-- Başlığı ve özeti okuyan ekran okuyucu açıklaması.
+- Grafiğin kısa adı.
+
+Ekran okuyucu grafiğin adını duyar. Ad yalnız grafiğin başlığıdır.
+Özet görünür bir paragrafta durur. Grafik bu paragrafa `aria-describedby` ile bağlanır.
+Böylece özet bir kez okunur. Önceden özet hem grafiğin adında hem paragrafta okunuyordu.
+Grafik seçeneği kendi uzun açıklamasını yazsa da ad değişmez. `src/charts/readable.ts` adı her zaman başlık yapar.
 
 Bazı grafikler dar ekranda da yazıyla okunur.
 Huni her basamağın adını ve sayısını yazar.
@@ -338,6 +343,75 @@ Bu ayar adım ekranlarındaki grafiklere de uygulanır. Ayar şunları yapar:
 
 Yazdırırken grafik açık temanın renkleriyle çizilir.
 ECharts grafik dosyası ilk açılışta inmez. Grafik ekrana girince iner.
+
+## Boş, yükleme ve hata durumları
+
+Bu bölüm ekranın boş kaldığı, yüklendiği ve hata verdiği anları anlatır.
+
+### Boş durum
+
+Boş durum, gösterilecek kayıt olmadığında görünen alandır. Örneğin henüz kanıt yoksa Kanıtlar ekranı boş durum gösterir.
+Bütün ekranlar ortak `EmptyState` bileşenini kullanır. Bileşen `src/components/EmptyState.tsx` dosyasındadır.
+
+Her boş durum üç parça taşır:
+
+1. Başlık. Başlık en çok 6 kelimedir. Örneğin "Henüz kanıt yok".
+2. Açıklama. Açıklama neden boş olduğunu söyler. Her cümle en çok 15 kelimedir. Açıklama en çok 3 cümledir.
+3. Tek eylem. Eylem bir düğme ya da bağlantıdır. Örneğin "Kanıt ekle".
+
+Bazı boş durumların eylemi yoktur. Örneğin eylemin düğmesi hemen üstte durabilir.
+Bu durumda geliştirici `actionless` alanına nedeni yazar. Bu neden ekranda görünmez.
+Örneğin Çıktılar ekranında "Markdown indir" düğmesi aynı kartta durur. Bu yüzden boş durum ikinci düğme göstermez.
+
+Boş durumdaki düğme dolu ana düğme değildir. Ekranda tek dolu ana düğme olur.
+Eylemin alanı en az 44 × 44 pikseldir. Bağlantı da bu alanı kullanır.
+Başlık düzeyi bulunduğu bölüme göre seçilir. Örneğin kart başlığı `h3` ise boş durum başlığı `h4` olur.
+
+Ant Design `Empty` bileşeni ve hazır resimleri kullanılmaz. Arayüz kapısının (l) kuralı bunu denetler.
+`src/components/EmptyState.test.tsx` testi her kullanımı tarar. Testte başlık, açıklama ve eylem kuralları denetlenir.
+
+Küçük liste içindeki kısa boş satır bu kuralın dışındadır. Örneğin pano sütunundaki "Bu sütunda iş yok." satırı kalır.
+
+### Yükleme durumu
+
+Ekran ya da panel yüklenirken `LoadingState` görünür.
+Bileşen görünür bir metin yazar. Örneğin "Sayfa yükleniyor." yazar.
+Bu metin `role="status"` alanındadır. Ekran okuyucu aynı metni duyar.
+Metnin altında sayfanın iskeleti durur. İskelet, gelecek içeriğin yerini tutar. Böylece sayfa az kayar.
+İlerleme yüzdesi gösterilmez. Uygulama gerçek yüzdeyi bilmez.
+
+Yükleme 10 saniyeyi geçerse iskelet kalkar. Yerine şu metin ve "Yeniden dene" düğmesi çıkar:
+"Yükleme uzun sürdü. Bağlantınızı kontrol edin. Sonra yeniden deneyin."
+
+Kullanıcı hareketi azaltırsa iskeletin parıltısı durur.
+`temel.css` sonsuz döngülü canlandırmaları bir kez çalıştırır.
+
+### Hata durumu
+
+Hata metni üç şeyi söyler:
+
+1. Ne oldu? Örneğin "Plan kaydedilemedi."
+2. Veri güvende mi? Örneğin "Son değişiklikleriniz bu sekmede duruyor."
+3. Şimdi ne yapılır? Örneğin "Önce kopyanızı indirin."
+
+Bu kural tarayıcı kaydını, modül deposunu ve dosya içe almayı kapsar.
+`src/platform/hataMetni.test.ts` testi bu metinleri tarar.
+Tarayıcının kendi hata metni İngilizce olabilir. Bu durumda `hataMetni` işlevi Türkçe yedek metni gösterir.
+
+Bir ekran açılamazsa menü kapanmaz. Ekranın yerinde şu metin görünür:
+"Bu ekran yüklenirken bir sorun çıktı. Planlarınız güvende. Kayıtlı veri değişmedi."
+Altında iki eylem vardır: "Sayfayı yeniden yükle" düğmesi ve dönüş bağlantısı.
+Plan açıksa bağlantı "Panoya dön" yazar. Plan yoksa "Planlara dön" yazar.
+
+### Ekran metni
+
+Ekran metni kısa ve yalın cümlelerle yazılır. Özne başta, yüklem sonda durur.
+Düğme adı bir eylemdir. Örneğin "Kanıt ekle" ve "Aramayı temizle".
+Terimler [terim sözlüğünden](terim-sozlugu.md) gelir. Örneğin Temel sorular ekranında "taş" yerine "soru" yazılır.
+Tarih gün, ay adı, yıl ve gün adıyla yazılır. Örneğin "19 Kasım 2026 Perşembe günü".
+
+Görünen metinde noktalı virgül ve uzun çizgi kullanılmaz. Her fikir ayrı cümle olur.
+`src/data/noktalama.test.ts` testi kaynak metinleri ve JSON değerlerini tarar. Yorumlara ve kod metnine bakmaz.
 
 ## Yazdırma
 

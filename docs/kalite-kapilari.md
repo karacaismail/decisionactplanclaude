@@ -24,7 +24,7 @@ Firefox kullanıcı kararıyla çalıştırılmaz.
 
 `scripts/check-ui.mjs` dosyası `src` altındaki CSS, TypeScript ve TSX dosyalarını tarar.
 TSX, React bileşenlerinin yazıldığı dosya biçimidir.
-Denetim on bir kuralı uygular.
+Denetim on iki kuralı uygular.
 
 1. **Yazı boyutu.** Okunabilir yazı en az 14 piksel olmalıdır.
    Denetim sabit CSS değerlerini ve satır içi yazı boyutlarını bulur.
@@ -64,6 +64,9 @@ Denetim on bir kuralı uygular.
     Bu kural yalnız `@media (hover: hover) and (pointer: fine)` içinde ya da `giris/fare.css` dosyasında durur.
 11. **İki yönlü geçiş.** Durum seçicisindeki geçiş temel seçicide de bulunur.
     Örneğin `.kart:hover` geçiş tanımlıyorsa `.kart` da geçiş tanımlar. Böylece açılış ve kapanış aynı hareketi kullanır.
+12. **Ant Design boş görünümü.** Ekranlar Ant Design `Empty` bileşenini içe aktarmaz.
+    Boş durum ortak `EmptyState` bileşeniyle yazılır. Kural yalnız `src/components/EmptyState.tsx` dosyasına izin verir.
+    Ayrıntı [tasarım sistemindedir](tasarim-sistemi.md).
 
 İkon, rozet ve dekoratif SVG ölçüsü etkileşim alanı sayılmaz.
 SVG, vektör çizim biçimidir. Örneğin 16 piksellik ikon, 44 piksellik düğmenin içinde bulunabilir.
