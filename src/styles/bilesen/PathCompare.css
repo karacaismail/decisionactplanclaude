@@ -1,8 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -48,25 +46,25 @@
 
 .path-compare-scroll .ant-table-cell { word-break: normal; overflow-wrap: normal; white-space: normal; vertical-align: top; text-align: start; }
 
-.path-compare-scroll .ant-table-thead > tr > th { font-size: 16px !important; line-height: 1.35; }
+.path-compare-scroll .ant-table-thead > tr > th { font-size: var(--font-body) !important; line-height: 1.35; }
 
 .path-compare-scroll .ant-table-tbody > tr > td, .path-compare-scroll .ant-table-tbody > tr > th { padding-top: 10px !important; padding-bottom: 10px !important; border-bottom: 1px solid var(--color-border) !important; }
 
 .path-compare-scroll .ant-table-tbody > tr:last-child > td, .path-compare-scroll .ant-table-tbody > tr:last-child > th { border-bottom: 0 !important; }
 
-.path-compare-scroll .ant-table-cell.path-measure { position: sticky; left: 0; z-index: 2; background: var(--color-surface-work) !important; box-shadow: inset -1px 0 0 var(--color-border); font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); }
+.path-compare-scroll .ant-table-cell.path-measure { position: sticky; left: 0; z-index: 2; background: var(--color-surface-work) !important; box-shadow: inset -1px 0 0 var(--color-border); font-size: var(--font-helper); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); }
 
-.path-compare-scroll .ant-table-thead > tr > th.path-measure { background: var(--color-surface-context) !important; font-size: 14px !important; }
+.path-compare-scroll .ant-table-thead > tr > th.path-measure { background: var(--color-surface-context) !important; font-size: var(--font-helper) !important; }
 
-.path-cell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); min-width: 0; overflow-wrap: break-word; }
+.path-cell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); min-width: 0; overflow-wrap: break-word; }
 
 .path-cell-empty { color: var(--color-text-secondary); }
 
 .path-compare-empty.ant-empty { margin: 8px 0; }
 
-.path-compare-empty .ant-empty-description { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.path-compare-empty .ant-empty-description { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
-.path-compare-empty .ant-empty-footer a { font-size: 16px; text-decoration: underline; text-underline-offset: 2px; }
+.path-compare-empty .ant-empty-footer a { font-size: var(--font-body); text-decoration: underline; text-underline-offset: 2px; }
 
 html[data-focus-mode='keyboard'] .path-compare-scroll:focus-visible::before { display: none; }
 

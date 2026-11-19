@@ -30,6 +30,21 @@ describe('CSS mimari kapısı', () => {
     expect(check(valid)).toEqual([])
   })
 
+  it('yazdırma kuralını yalnız yazdırma katmanında ve temel koruyucuda kabul eder', () => {
+    expect(check({ ...valid, 'src/styles/temel/temel.css': ':root { --a: 1px; }\n@media print { .topbar { display: none; } }' })).toEqual([])
+    const errors = check({ ...valid, 'src/styles/ekran/WorkScreen.css': '.work-page { margin: 0; }\n@media print { .work-page { margin: 1px; } }' })
+    expect(errors.join('\n')).toMatch(/ekran\/WorkScreen\.css.*@media print.*yazdirma/)
+  })
+
+  it('aynı dosyada birebir yinelenen kuralı bulur', () => {
+    const errors = check({ ...valid, 'src/styles/kabuk/kabuk.css': '.dot.is-ok { background: green; }\n.topbar { color: red; }\n.dot.is-ok { background: green; }' })
+    expect(errors).toEqual([expect.stringMatching(/kabuk\.css: "\.dot\.is-ok" kuralı 1\. ve 3\. satırda aynı\. 1\. satırdaki önceki kopyayı silin/)])
+  })
+
+  it('farklı sorgudaki aynı kuralı yineleme saymaz', () => {
+    expect(check({ ...valid, 'src/styles/kabuk/kabuk.css': '.a { gap: 4px; }\n@media (min-width: 600px) { .a { gap: 4px; } }' })).toEqual([])
+  })
+
   it('altı klasörün dışındaki CSS dosyasını bulur', () => {
     const errors = check({ ...valid, 'src/styles/global.css': '.a {}', 'src/main.tsx': valid['src/main.tsx'] + "\nimport './styles/global.css'" })
     expect(errors.join('\n')).toMatch(/src\/styles\/global\.css.*izinli klasör/)

@@ -12,7 +12,7 @@
 
 .step-body { display: block; min-width: 0; }
 
-.step-title { display: block; font-size: 16px; font-weight: 600; line-height: 1.25; overflow-wrap: break-word; padding: 3px 0 2px; }
+.step-title { display: block; font-size: var(--font-body); font-weight: 600; line-height: 1.25; overflow-wrap: break-word; padding: 3px 0 2px; }
 
 @media (max-width: 599px) {
   .step-row { gap: 8px; }
@@ -20,9 +20,9 @@
 
 .choice-mark { display: inline-flex; align-items: center; justify-content: center; width: 20px; height: 24px; color: var(--color-text-secondary); }
 
-.yol-steps.ant-steps .ant-steps-item-icon { font-size: 14px; font-weight: 600; }
+.yol-steps.ant-steps .ant-steps-item-icon { font-size: var(--font-helper); font-weight: 600; }
 
-.yol-steps.ant-steps .ant-steps-item-subtitle { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); }
+.yol-steps.ant-steps .ant-steps-item-subtitle { font-size: var(--font-helper); font-weight: 400; color: var(--color-text-secondary); }
 
 .yol-steps.ant-steps.ant-steps-vertical .ant-steps-item { min-height: 44px; padding-bottom: 0; }
 
@@ -30,7 +30,7 @@
 
 .cell-wrap { white-space: normal; }
 
-.ant-btn.ant-btn-link.plan-name { padding: 0; height: auto; min-height: 0; font-size: 16px; font-weight: 600; white-space: normal; text-align: left; line-height: 1.4; color: var(--color-text-primary); }
+.ant-btn.ant-btn-link.plan-name { padding: 0; height: auto; min-height: 0; font-size: var(--font-body); font-weight: 600; white-space: normal; text-align: left; line-height: 1.4; color: var(--color-text-primary); }
 
 .ant-btn.ant-btn-link.plan-name:hover { color: var(--color-action-text); text-decoration: underline; text-underline-offset: 2px; }
 

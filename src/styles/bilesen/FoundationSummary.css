@@ -8,13 +8,13 @@
 
 .foundation-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; align-content: start; min-width: 0; }
 
-.foundation-question { margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.foundation-question { margin: 0; font-size: var(--font-body); line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.foundation-lines { margin: 0; padding: 0 0 0 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.foundation-lines { margin: 0; padding: 0 0 0 20px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }
 
-.foundation-source, .foundation-more { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.foundation-source, .foundation-more { margin: 0; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
 
 .report-foundation .foundation-summary { gap: 24px; }
 

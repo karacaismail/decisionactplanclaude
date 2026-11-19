@@ -4,7 +4,7 @@
 
 .strateji-tags .ant-tag { margin: 0; }
 
-.path-cell-label { font-size: 14px; line-height: 1.4; font-weight: 600; color: var(--color-text-secondary); }
+.path-cell-label { font-size: var(--font-helper); line-height: 1.4; font-weight: 600; color: var(--color-text-secondary); }
 
 .report-foundation .foundation-heading { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
 

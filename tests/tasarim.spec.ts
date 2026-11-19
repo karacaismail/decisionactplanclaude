@@ -28,7 +28,9 @@ test('ölçüt 1: h1 28px ve 600, kicker 14px büyük harf', async ({ page }) =>
     const h1 = page.locator('h1').first()
     await expect(h1).toBeVisible()
     const cs = await h1.evaluate((el) => { const s = getComputedStyle(el); return { size: s.fontSize, weight: s.fontWeight } })
-    expect(px(cs.size), url).toBeGreaterThanOrEqual(30)
+    // UX turu 3: sayfa başlığı ölçeği 28 ile 36 piksel arasındadır.
+    expect(px(cs.size), url).toBeGreaterThanOrEqual(28)
+    expect(px(cs.size), url).toBeLessThanOrEqual(36)
     expect(Number(cs.weight), url).toBe(600)
   }
   const kicker = page.locator('.page-kicker').first()

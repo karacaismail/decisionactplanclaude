@@ -13,15 +13,15 @@
 export const light = {
   surfacePage: '#ECEEF4',
   surfaceWork: '#FFFFFF',
-  surfaceContext: '#EDEFF5',
-  surfaceSunken: '#E3E6F0',
+  surfaceContext: '#E3E6EF',
+  surfaceSunken: '#D9DDE8',
   textPrimary: '#0F1729',
   textSecondary: '#4A5468',
   actionPrimary: '#2F5BEA',
   actionHover: '#2448C4',
   actionText: '#2448C4',
   brandAccent: '#2F5BEA',
-  statusOk: '#0B7A56',
+  statusOk: '#0A6E4D',
   statusHold: '#9A5300',
   statusHarm: '#C0271D',
   statusInfo: '#2448C4',
@@ -107,7 +107,8 @@ export function palette(mode: ThemeMode): Palette {
 /**
  * Yükselti. card kartı zeminden ayırır. float açılan katmanı ayırır.
  * bar, ekranın altına sabitlenen şeridi yukarı doğru ayırır.
- * Koyu temada kart gölgesi yoktur. Ayrımı yüzey tonu kurar.
+ * Koyu temada gölge görünmez. Kartı yüzey tonu ve 1 piksellik kenar tokenı ayırır.
+ * Bu çizgi dört kenarı da sarar. Tek kenarlı renkli vurgu değildir.
  */
 export const elevation = {
   light: {
@@ -116,11 +117,14 @@ export const elevation = {
     bar: '0 -1px 0 rgba(15, 23, 41, 0.08), 0 -4px 12px rgba(15, 23, 41, 0.08)',
   },
   dark: {
-    card: 'none',
+    card: `0 0 0 1px ${dark.border}`,
     float: `0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px ${dark.border}`,
     bar: `0 -1px 0 ${dark.border}, 0 -4px 12px rgba(0, 0, 0, 0.4)`,
   },
 } as const
+
+/** Grafiklerde kategori rengi olarak kullanılan palet anahtarları. Sıra korunur. */
+export const chartSeries = ['toneNavy', 'toneTeal', 'tonePurple', 'toneOrange', 'statusInfo', 'statusHold', 'textSecondary'] as const satisfies readonly (keyof typeof light)[]
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {
@@ -157,16 +161,25 @@ export type Density = keyof typeof density
 
 /** Kenar boşluğu yoğunluktan bağımsızdır. */
 export const gutter = { page: 16, precision: 20 } as const
+/**
+ * Yazı ölçeği. Her başlık düzeyinin tek kaynağı budur. temel.css aynı değerleri taşır.
+ * Okunabilir hiçbir yazı 14 pikselin altına inmez. Gövde 16 pikseldir.
+ */
 export const font = {
   family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
-  body: 16,
   helper: 14,
-  h3: 20,
+  body: 16,
+  subsection: 18,
+  section: 20,
   h2: 24,
-  h1: 32,
-  display: 40,
-  report: 40,
+  h1Min: 28,
+  h1Max: 36,
+  /** Sayfa başlığı dar ekranda 28, geniş ekranda 36 pikseldir. */
+  h1: 'clamp(28px, 2.4vw + 20px, 36px)',
+  stat: 36,
+  /** Devir raporundaki karar sorusu. Sayfa başlığından küçük, ikinci düzeyden büyüktür. */
+  lead: 'clamp(28px, 1.2vw + 16px, 32px)',
 } as const
 
 /** Paleti CSS değişkenlerine çevirir. global.css yalnız bu değişkenleri okur. */

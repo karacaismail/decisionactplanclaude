@@ -1,15 +1,7 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
 @media print {
-  .no-print { display: none !important; }
-}
-
-@media print {
   .print-only { display: block; }
-}
-
-@media print {
-  body { background: #fff; }
 }
 
 @media print {
@@ -22,10 +14,10 @@
 }
 
 @media print {
-  html, body { background: #fff !important;
-    color: #000 !important;
-    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    font-size: 16px;
+  html, body { background: var(--color-surface-work) !important;
+    color: var(--color-text-primary) !important;
+    font-family: var(--font-family);
+    font-size: var(--font-body);
     line-height: 1.5; }
 }
 
@@ -40,7 +32,7 @@
 }
 
 @media print {
-  .ant-layout, .ant-layout-content, .shell-content { background: #fff !important;
+  .ant-layout, .ant-layout-content, .shell-content { background: var(--color-surface-work) !important;
     padding: 0 !important;
     margin: 0 !important;
     max-width: none !important;
@@ -61,7 +53,7 @@
   .report-card, .report-card.ant-card, .report-card > .ant-card-body { border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    background: #fff !important;
+    background: var(--color-surface-work) !important;
     padding: 0 !important;
     display: block !important; }
 }
@@ -73,13 +65,13 @@
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    background: #fff !important;
-    color: #000 !important;
+    background: var(--color-surface-work) !important;
+    color: var(--color-text-primary) !important;
     gap: 20px !important; }
 }
 
 @media print {
-  .report h2, .report h3, .report p, .report .ant-typography, .report .ant-descriptions-item-label, .report .ant-descriptions-item-content, .report .note-body, .report .note-title { color: #000 !important; }
+  .report h2, .report h3, .report p, .report .ant-typography, .report .ant-descriptions-item-label, .report .ant-descriptions-item-content, .report .note-body, .report .note-title { color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -89,7 +81,7 @@
 }
 
 @media print {
-  .report h2.report-title { font-size: 28px !important; }
+  .report h2.report-title { font-size: var(--font-page-title) !important; }
 }
 
 @media print {
@@ -126,7 +118,7 @@
 }
 
 @media print {
-  .report-collapse .report-collapse-title { color: #000 !important; }
+  .report-collapse .report-collapse-title { color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -165,15 +157,15 @@
 }
 
 @media print {
-  .report .ant-table-cell { color: #000 !important;
-    font-size: 14px !important;
+  .report .ant-table-cell { color: var(--color-text-primary) !important;
+    font-size: var(--font-helper) !important;
     padding: 6px 8px !important;
-    border-bottom: 1px solid #999 !important;
+    border-bottom: 1px solid var(--color-border-strong) !important;
     background: transparent !important; }
 }
 
 @media print {
-  .report .note { border-left-color: #000 !important; }
+  .report .note { border-left-color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -184,9 +176,9 @@
 @media print {
   .devir-page { page: devir;
     display: block !important;
-    font-size: 14px;
+    font-size: var(--font-helper);
     line-height: 1.4;
-    color: #000 !important; }
+    color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -200,34 +192,34 @@
 @media print {
   .devir-page .page-header h1 { font-size: 24px !important;
     line-height: 1.2 !important;
-    color: #000 !important; }
+    color: var(--color-text-primary) !important; }
 }
 
 @media print {
-  .devir-page .page-kicker, .devir-page .page-header-text p { font-size: 14px !important;
+  .devir-page .page-kicker, .devir-page .page-header-text p { font-size: var(--font-helper) !important;
     margin: 0 !important;
-    color: #000 !important; }
+    color: var(--color-text-primary) !important; }
 }
 
 @media print {
   .devir-page .note { margin: 0 0 8px;
     padding: 2px 0 2px 12px !important;
     background: transparent !important;
-    border-left-color: #000 !important; }
+    border-left-color: var(--color-text-primary) !important; }
 }
 
 @media print {
   .devir-page .devir-card.ant-card { border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    background: #fff !important;
+    background: var(--color-surface-work) !important;
     margin: 0 0 12px; }
 }
 
 @media print {
   .devir-page .devir-card > .ant-card-head { min-height: 0 !important;
     padding: 0 !important;
-    border-bottom: 1px solid #000 !important;
+    border-bottom: 1px solid var(--color-text-primary) !important;
     background: transparent !important;
     break-after: avoid;
     page-break-after: avoid; }
@@ -235,7 +227,7 @@
 
 @media print {
   .devir-page .devir-card .ant-card-head-title { padding: 0 0 2px !important;
-    font-size: 17px !important;
+    font-size: var(--font-subsection-title) !important;
     line-height: 1.3 !important; }
 }
 
@@ -249,21 +241,21 @@
 }
 
 @media print {
-  .devir-page h2, .devir-page h3, .devir-page .devir-record-title { color: #000 !important;
+  .devir-page h2, .devir-page h3, .devir-page .devir-record-title { color: var(--color-text-primary) !important;
     break-after: avoid;
     page-break-after: avoid;
     break-inside: avoid; }
 }
 
 @media print {
-  .devir-page .devir-sub { font-size: 15px !important; }
+  .devir-page .devir-sub { font-size: var(--font-helper) !important; }
 }
 
 @media print {
   .devir-page .devir-question { max-width: none;
-    font-size: 22px !important;
+    font-size: var(--font-section-title) !important;
     line-height: 1.2 !important;
-    color: #000 !important; }
+    color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -271,9 +263,9 @@
 }
 
 @media print {
-  .devir-page p, .devir-page li, .devir-page dt, .devir-page dd, .devir-page .helper, .devir-page .devir-line, .devir-page .devir-source, .devir-page .devir-none, .devir-page .devir-meta, .devir-page .devir-claim-text, .devir-page .devir-record-title, .devir-page .devir-coverage-count, .devir-page .note-title, .devir-page .note-body, .devir-page .ant-descriptions-item-label, .devir-page .ant-descriptions-item-content { font-size: 14px !important;
+  .devir-page p, .devir-page li, .devir-page dt, .devir-page dd, .devir-page .helper, .devir-page .devir-line, .devir-page .devir-source, .devir-page .devir-none, .devir-page .devir-meta, .devir-page .devir-claim-text, .devir-page .devir-record-title, .devir-page .devir-coverage-count, .devir-page .note-title, .devir-page .note-body, .devir-page .ant-descriptions-item-label, .devir-page .ant-descriptions-item-content { font-size: var(--font-helper) !important;
     line-height: 1.4 !important;
-    color: #000 !important; }
+    color: var(--color-text-primary) !important; }
 }
 
 @media print {
@@ -332,11 +324,11 @@
   .devir-page .devir-table .ant-table-thead > tr > th, .devir-page .devir-table .ant-table-tbody > tr:not(.ant-table-measure-row) > td, .devir-page .devir-table .ant-table-tbody > tr:not(.ant-table-measure-row) > th, .devir-page .ant-table-cell, .devir-page .ant-table-cell-fix { position: static !important;
     height: auto !important;
     padding: 3px 6px !important;
-    font-size: 14px !important;
+    font-size: var(--font-helper) !important;
     line-height: 1.35 !important;
-    color: #000 !important;
+    color: var(--color-text-primary) !important;
     background: transparent !important;
-    border-bottom: 1px solid #999 !important;
+    border-bottom: 1px solid var(--color-border-strong) !important;
     box-shadow: none !important; }
 }
 
@@ -348,16 +340,16 @@
   .devir-page .ant-tag { height: auto !important;
     padding: 0 4px !important;
     line-height: 1.3 !important;
-    color: #000 !important;
+    color: var(--color-text-primary) !important;
     background: transparent !important;
-    border: 1px solid #666 !important;
+    border: 1px solid var(--color-border-input) !important;
     border-radius: 0 !important; }
 }
 
 @media print {
   .devir-page .devir-records > li, .devir-page .devir-claims > li, .devir-page .devir-path { padding: 4px 0 !important;
     gap: 2px !important;
-    border-bottom: 1px solid #999 !important;
+    border-bottom: 1px solid var(--color-border-strong) !important;
     break-inside: avoid;
     page-break-inside: avoid; }
 }
@@ -379,10 +371,15 @@
 }
 
 @media print {
-  .devir-page .criterion-icon { color: #000 !important; }
+  .devir-page .criterion-icon { color: var(--color-text-primary) !important; }
 }
 
 @media print {
   a, a:visited { color: inherit !important;
     text-decoration: none !important; }
+}
+
+/* Kâğıtta bağlantıya tıklanamaz. Dış bağlantının adresi metnin yanına yazılır. */
+@media print {
+  .report a[href^="http"]::after { content: " (" attr(href) ")"; font-size: var(--font-helper); overflow-wrap: anywhere; }
 }

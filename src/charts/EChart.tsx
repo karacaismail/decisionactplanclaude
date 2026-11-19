@@ -6,6 +6,7 @@ import { BarChart, LineChart, PieChart, RadarChart, GaugeChart, FunnelChart, Sca
 import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, TimelineComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
 import { font, motion } from '@/theme/tokens'
+import { usePrintMode } from '@/app/printMode'
 
 echarts.use([BarChart, LineChart, PieChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, TimelineComponent, CanvasRenderer])
 
@@ -39,6 +40,8 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
   const ref = useRef<HTMLDivElement>(null)
   const [failure, setFailure] = useState<{ error: unknown } | null>(null)
   const { token } = theme.useToken()
+  /* Yazdırırken grafik ilk karede tam çizilir. Giriş hareketi kâğıda yarım basılmaz. */
+  const printing = usePrintMode()
   useEffect(() => {
     if (!ref.current) return
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -70,7 +73,7 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
 
     const updateMotion = () => {
       if (disposed || chart.isDisposed()) return
-      chart.setOption(motionQuery.matches ? reduceOptionMotion(resolved) : resolved, true)
+      chart.setOption(motionQuery.matches || printing ? reduceOptionMotion(resolved) : resolved, true)
     }
 
     function handleFailure(error: unknown) {
@@ -104,7 +107,7 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
       cleanup()
       throw error
     }
-  }, [option, token])
+  }, [option, token, printing])
   if (failure) throw failure.error
   return <div ref={ref} role="img" aria-label={ariaLabel} style={{ width: '100%', height }} />
 }

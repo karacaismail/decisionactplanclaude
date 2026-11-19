@@ -4,6 +4,7 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
 :root { --motion-ease: cubic-bezier(0.65, 0, 0.35, 1);
+  --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   --motion-micro: 120ms;
   --motion-small: 160ms;
   --motion-panel: 220ms;
@@ -26,7 +27,7 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
-body { margin: 0; min-width: 320px; font-size: 16px; line-height: 1.5; font-weight: 400; letter-spacing: -0.006em; }
+body { margin: 0; min-width: 320px; font-family: var(--font-family); font-size: var(--font-body); line-height: 1.5; font-weight: 400; }
 
 :lang(tr) { -webkit-locale: 'tr'; }
 
@@ -50,15 +51,11 @@ html[data-focus-mode='keyboard'] :focus-visible::before { content: '';
 html[data-focus-mode='keyboard'] a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; }
 
 @media (forced-colors: active) {
-  html[data-focus-mode='keyboard'] :focus-visible { outline: 2px solid CanvasText !important; }
-}
-
-@media (forced-colors: active) {
   html[data-focus-mode='keyboard'] :focus-visible::before { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
 .ant-btn:focus-visible, .ant-input:focus, .ant-input-focused, .ant-select-focused .ant-select-selector, .ant-input-number-focused, .ant-picker-focused, .ant-segmented-item-input:focus + .ant-segmented-item-label, .ant-radio-input:focus-visible + .ant-radio-inner, .ant-checkbox-input:focus-visible + .ant-checkbox-inner, .ant-switch:focus-visible, .ant-slider:focus-visible, .ant-rate:focus-visible, .ant-tabs-tab-btn:focus-visible, .ant-menu-item:focus-visible, .ant-collapse-header:focus-visible, .ant-card:focus-visible { outline: none !important;
@@ -129,7 +126,7 @@ textarea.ant-input { resize: none; }
 
 .shell-status { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-h1.page-title { margin: 0; color: var(--color-text-primary); overflow-wrap: break-word; }
+h1.page-title { margin: 0; color: var(--color-text-primary); overflow-wrap: break-word; font-size: var(--font-page-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; }
 
 .panel { padding: 20px; min-width: 0; }
 
@@ -229,8 +226,6 @@ h1.page-title { margin: 0; color: var(--color-text-primary); overflow-wrap: brea
 
 .ant-drawer .ant-drawer-header, .ant-drawer .ant-drawer-body { background: var(--color-surface-work) !important; }
 
-h1.page-title { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; font-weight: 600; letter-spacing: -0.045em; }
-
 /* Odaklanan kart gölgesini bırakır. Odak yalnız soldaki tek çizgiyle gösterilir, gölge halka gibi görünmez. */
 html:root :is(.ant-card, .surface-card, .panel, .meta-stack):focus-visible { box-shadow: none !important; }
 
@@ -241,7 +236,7 @@ html:root :is(.ant-card, .surface-card, .panel, .meta-stack):focus-visible { box
 
 .ant-card .ant-card-head { border-bottom: 1px solid var(--color-border); min-height: 56px; padding: 0 24px; }
 
-.ant-card .ant-card-head-title { font-size: 19px; font-weight: 600; letter-spacing: -0.03em; }
+.ant-card .ant-card-head-title { font-size: var(--font-section-title); font-weight: 600; letter-spacing: -0.02em; }
 
 .ant-card .ant-card-body { padding: 24px; }
 
@@ -292,7 +287,7 @@ html:root :is(.ant-card, .surface-card, .panel, .meta-stack):focus-visible { box
 
 .ant-statistic .ant-statistic-content { letter-spacing: -0.03em; font-weight: 600; }
 
-.ant-statistic .ant-statistic-title { font-size: 15px; color: var(--color-text-secondary); }
+.ant-statistic .ant-statistic-title { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .ant-steps .ant-steps-item-title { letter-spacing: -0.01em; }
 
@@ -320,10 +315,12 @@ html[data-focus-mode='keyboard'] .ant-drawer:not(.ant-drawer-inline):not(.ant-dr
   --gutter-calendar: 2px;
   --font-body: 16px;
   --font-helper: 14px;
-  --font-page-title: clamp(30px, 3.2vw, 44px);
-  --font-page-description: 17px;
-  --font-section-title: 22px;
-  --font-subsection-title: 17px;
+  --font-page-title: clamp(28px, 2.4vw + 20px, 36px);
+  --font-h2: 24px;
+  --font-lead: clamp(28px, 1.2vw + 16px, 32px);
+  --font-page-description: 18px;
+  --font-section-title: 20px;
+  --font-subsection-title: 18px;
   --font-stat-value: 36px;
   --icon-small: 14px;
   --icon-inline: 16px;
@@ -524,3 +521,16 @@ html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, 
 }
 
 @keyframes form-section-reveal {from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; }}
+
+/* Yazdırma koruyucusu: her ekranda gezinme ve sabit şeritler kâğıda basılmaz. Ayrıntı: docs/css-mimarisi.md */
+@media print {
+  .topbar, .bottom-nav, .product-nav, .journey-rail, .action-bar, .sync-alert, .ant-drawer, .no-print { display: none !important; }
+  body { background: var(--color-surface-work) !important; }
+  /* Tarayıcı kâğıtta zemin rengini basmaz. Koyu giriş bloğunun yazısı koyu metin rengine döner. */
+  :root { --shadow-card: none !important; --shadow-float: none !important; --shadow-bar: none !important;
+    --color-hero-surface: var(--color-surface-work) !important; --color-hero-surface-alt: var(--color-surface-work) !important;
+    --color-hero-text: var(--color-text-primary) !important; --color-hero-muted: var(--color-text-secondary) !important; --color-hero-line: var(--color-border) !important; }
+  .tag, .ant-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* Tema yazdırmadan hemen önce açılır. Renk geçişi yarıda kalıp kâğıda basılmaz. */
+  *, ::before, ::after { transition: none !important; }
+}

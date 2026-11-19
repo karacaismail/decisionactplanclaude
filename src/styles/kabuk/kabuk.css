@@ -6,7 +6,7 @@
 
 .brand-text { display: grid; min-width: 0; }
 
-.brand-text strong { font-size: 15px; line-height: 1.2; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.brand-text strong { font-size: var(--font-body); line-height: 1.2; font-weight: 600; color: var(--color-text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 .shell-menu.ant-menu { border: 0 !important; background: transparent !important; }
 
@@ -84,7 +84,7 @@
 
 .product-nav::-webkit-scrollbar { display: none; }
 
-.product-nav a { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 2px; white-space: nowrap; font-size: 15px; font-weight: 400; color: var(--color-text-secondary); text-decoration: none; transition: color var(--motion-small) var(--motion-ease); }
+.product-nav a { position: relative; display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 2px; white-space: nowrap; font-size: var(--font-body); font-weight: 400; color: var(--color-text-secondary); text-decoration: none; transition: color var(--motion-small) var(--motion-ease); }
 
 .product-nav a:hover { color: var(--color-text-primary); }
 
@@ -104,7 +104,7 @@
 
 .journey-rail-sub { font-size: 14px; color: var(--color-text-secondary); margin: 0 0 12px; }
 
-.shell-menu.ant-menu { padding: 0; font-size: 15px; }
+.shell-menu.ant-menu { padding: 0; font-size: var(--font-body); }
 
 .shell-menu .ant-menu-item { height: 42px !important; line-height: 42px !important; border-radius: var(--radius-control); padding-inline: 12px !important; margin: 2px 0 !important; color: var(--color-text-primary) !important; }
 
@@ -117,8 +117,6 @@
 .shell-menu .ant-menu-item-selected .ant-menu-item-icon { color: var(--color-action-text); }
 
 .shell-menu .ant-menu-item-group-title { font-size: 14px; text-transform: none; letter-spacing: 0; color: var(--color-text-secondary); padding: 14px 12px 4px; font-weight: 400; }
-
-.status-dot.is-passed { background: var(--color-status-ok); }
 
 .ant-drawer .brand-text strong { color: var(--color-text-primary); }
 

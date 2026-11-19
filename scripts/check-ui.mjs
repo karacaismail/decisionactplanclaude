@@ -15,8 +15,16 @@
  *  (e) Davranış `isMobile` bayrağı veya userAgent ile seçilmez.
  *  (f) Gizlenen eylem yalnız hover ile açılmaz. Klavye ve dokunma yolu gerekir.
  *  (g) Kontrolün açık boyutları ve Button small kullanımı 44px alanı korur.
- *  (h) Yedeksiz her var(--x) kullanımının bir tanımı vardır. Tanım bir CSS dosyasında,
- *      tokens.ts paletinde ya da TypeScript içinde yazılan '--x' adında durur.
+ *  (h) Yedeksiz her var(--x) kullanımının bir tanımı vardır. TypeScript tanımı her yerde
+ *      geçerlidir: tokens.ts paleti, nesne anahtarı ya da setProperty('--x'). getPropertyValue
+ *      okumadır, tanım sayılmaz. CSS tanımı yalnız dosyanın birlikte yüklendiği CSS'te geçerlidir.
+ *      Dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
+ *  (i) Yazı boyutu ölçekten gelir: 14, 16, 18, 20, 24 ve 36 piksel, başlık için var(--font-page-title).
+ *      Ölçek dışı px ve rem boyutu hatadır. temel/ dışındaki ham boyut sayısı RAW_FONT_SIZE_BASELINE
+ *      değerine eşit olmalıdır. Sayı azalınca taban da düşürülür.
+ *  (j) hover ile transform değişimi yalnız @media (hover: hover) and (pointer: fine) içinde
+ *      ya da giris/fare.css dosyasının kendi any-hover sorgusunda durur.
+ *  (k) Durum seçicisindeki geçişin temel seçicide de geçişi olur. Böylece hareket iki yönde çalışır.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -177,6 +185,31 @@ export function checkCss(source, file, context) {
     if (sideBorder && radius) {
       report(sideBorder.line, `Tek kenar çizgisi (${sideBorder.prop}) ile köşe yuvarlatma (satır ${radius.line}) aynı blokta. Kavisli vurgu kenarı yasak.`)
     }
+    // (j) Hover kalkışı dokunmatik ekranda dokunduktan sonra takılı kalır. Yalnız fare sorgusunda durur.
+    // Birincil giriş fare olmalı. any-hover dokunmatik dizüstünde de doğrudur. Olumsuz sorgu sayılmaz.
+    const fineMedia = (a) => !/\bnot\b/i.test(a) && /\(\s*hover\s*:\s*hover\s*\)/i.test(a) && /\(\s*pointer\s*:\s*fine\s*\)/i.test(a)
+    const mouseLayer = file.endsWith('src/styles/giris/fare.css') && rule.atrules.some((a) => /any-hover\s*:\s*hover/i.test(a))
+    const hoverMedia = mouseLayer || rule.atrules.some(fineMedia)
+    if (!hoverMedia && splitList(rule.selector).some((b) => /:hover\b/.test(b))) {
+      const lift = rule.decls.find((d) => /^(transform|translate|scale|rotate)$/.test(d.prop) && !isZeroOrNone(d.value))
+      if (lift) report(lift.line, `hover ile ${lift.prop} değişiyor. Kalkışı @media (hover: hover) and (pointer: fine) içine ya da giris/fare.css dosyasına taşıyın.`)
+    }
+  }
+  // (k) Geçiş temel seçicide durur. Yalnız durum seçicisindeki geçiş tek yönde çalışır.
+  const parsed = parseCss(source)
+  const motionDecl = (d) => /^transition(-property)?$/.test(d.prop) && !isZeroOrNone(d.value)
+  const baseRules = parsed.filter((r) => !r.atrules.some((a) => /prefers-reduced-motion/i.test(a)) && r.decls.some(motionDecl))
+    .flatMap((r) => splitList(r.selector).map((b) => b.replace(/\s+/g, ' ').trim()))
+  for (const rule of parsed) {
+    const transition = rule.decls.find((d) => /^transition(-property)?$/.test(d.prop) && !isZeroOrNone(d.value))
+    if (!transition || rule.atrules.some((a) => /prefers-reduced-motion/i.test(a))) continue
+    for (const branch of splitList(rule.selector)) {
+      if (!STATE_SELECTOR.test(branch)) continue
+      // :is(:hover, :focus-visible) gibi durum listesi bütünüyle silinir.
+      const base = branch.replace(/:(?:is|where)\(\s*(?::[\w-]+(?:\([^()]*\))?\s*,?\s*)+\)/g, (m) => (STATE_SELECTOR.test(m) ? '' : m))
+        .replace(STATE_SELECTOR_ALL, '').replace(/\s+/g, ' ').trim()
+      if (!baseRules.includes(base)) report(transition.line, `"${branch}" geçişi yalnız durum seçicisinde. Geçişi temel seçiciye (${base}) yazın. Böylece hareket iki yönde çalışır.`)
+    }
   }
   const rules = parseCss(source)
   const scope = context ?? cssContext(rules)
@@ -270,6 +303,9 @@ const CONTROL_TAGS = new Set(['button', 'a', 'input', 'select', 'textarea', 'sum
 const CONTROL_CLASSES = new Set(['button', 'btn', 'action', 'control', 'trigger', 'ant-btn', 'ant-input', 'ant-input-number', 'ant-select-selector', 'ant-picker', 'ant-switch', 'ant-menu-item', 'ant-radio-wrapper', 'ant-checkbox-wrapper', 'ant-segmented-item-label', 'ant-tabs-tab-btn', 'ant-collapse-header'])
 const CONTROL_ROLES = new Set(['button', 'link', 'checkbox', 'radio', 'switch', 'tab', 'menuitem', 'option', 'combobox', 'slider', 'spinbutton', 'textbox'])
 const STATES = /:(?:hover|focus-visible|focus-within|focus)\b/g
+/* Açılma ve üzerine gelme durumları. Geçiş bu durumların temel seçicisinde tanımlanır. */
+const STATE_SELECTOR = /:(?:hover|focus-visible|focus-within|active)\b|\[aria-expanded=['"]?true['"]?\]|\[open\]/
+const STATE_SELECTOR_ALL = new RegExp(STATE_SELECTOR.source, 'g')
 
 /** Virgülleri parantez ve tırnak dışında ayırır. */
 function splitList(value) {
@@ -682,31 +718,103 @@ const PALETTE_BLOCK = /export\s+const\s+(?:light|dark)\s*=\s*\{([\s\S]*?)\}\s*as
 /* Yedeği olmayan var(--x) kullanımı. Yedekli kullanım bilinçli bir seçimdir. */
 const VAR_WITHOUT_FALLBACK = /var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/g
 
+/** TypeScript yorumlarını boşlukla değiştirir. Satır numaraları ve dizeler korunur. */
+function stripTsComments(source) {
+  return source.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, ' ')).replace(/(^|[^:'"`\\])\/\/[^\n]*/g, (m, pre) => pre + ' '.repeat(m.length - pre.length))
+}
+
+/* Değeri okuyan ya da silen çağrı tanım değildir. Örneğin getPropertyValue('--x'). */
+const PROPERTY_READ = /(?:getPropertyValue|removeProperty)\(\s*$/
+
+/** Bir dosyanın tanımladığı CSS değişkeni adlarını döndürür. */
+function definitionsOf(file, source) {
+  const names = new Set()
+  if (file.endsWith('.css')) {
+    for (const m of stripComments(source).matchAll(CUSTOM_PROPERTY_DECL)) names.add(m[1])
+    return names
+  }
+  const text = stripTsComments(source)
+  for (const m of text.matchAll(CUSTOM_PROPERTY_NAME)) {
+    if (!PROPERTY_READ.test(text.slice(Math.max(0, m.index - 40), m.index))) names.add(m[2])
+  }
+  for (const block of text.matchAll(PALETTE_BLOCK)) {
+    for (const key of block[1].matchAll(/^\s*([a-zA-Z0-9]+)\s*:/gm)) {
+      names.add(`--color-${key[1].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)
+    }
+  }
+  return names
+}
+
 /**
  * (h) Tanımsız CSS değişkeni. files: { file, source } listesi.
- * Tanımlar bütün dosyalardan toplanır, sonra her kullanım denetlenir.
+ * TypeScript tanımları çalışma anında html öğesine yazılır. Bu yüzden her dosyada geçerlidir.
+ * CSS tanımları yalnız birlikte yüklenen dosyalarda geçerlidir.
+ * options.contextsFor(file), dosyanın yüklendiği her ekranın CSS listesini verir.
+ * Değişken bu listelerin hepsinde tanımlı olmalıdır. Verilmezse bütün CSS tek liste sayılır.
  */
-export function checkCustomProperties(files) {
-  const defined = new Set()
+export function checkCustomProperties(files, options = {}) {
+  const runtime = new Set()
+  const cssDefs = new Map()
   for (const { file, source } of files) {
-    if (file.endsWith('.css')) {
-      for (const m of stripComments(source).matchAll(CUSTOM_PROPERTY_DECL)) defined.add(m[1])
-    } else {
-      for (const m of source.matchAll(CUSTOM_PROPERTY_NAME)) defined.add(m[2])
-      for (const block of source.matchAll(PALETTE_BLOCK)) {
-        for (const key of block[1].matchAll(/^\s*([a-zA-Z0-9]+)\s*:/gm)) {
-          defined.add(`--color-${key[1].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)
-        }
-      }
-    }
+    const names = definitionsOf(file, source)
+    if (file.endsWith('.css')) cssDefs.set(file, names)
+    else for (const name of names) runtime.add(name)
   }
+  const allCss = [...cssDefs.keys()]
   const problems = []
   for (const { file, source } of files) {
-    const text = file.endsWith('.css') ? stripComments(source) : source
+    const contexts = (options.contextsFor ? options.contextsFor(file) : [allCss]).map((list) => {
+      const names = new Set()
+      for (const css of list) for (const name of cssDefs.get(css) ?? []) names.add(name)
+      return names
+    })
+    const defined = (name) => runtime.has(name) || (contexts.length > 0 && contexts.every((names) => names.has(name)))
+    const text = file.endsWith('.css') ? stripComments(source) : stripTsComments(source)
     for (const m of text.matchAll(VAR_WITHOUT_FALLBACK)) {
-      if (!defined.has(m[1])) problems.push(`${file}:${lineOf(text, m.index)} ${m[1]} tanımsız CSS değişkeni. Tokenı tanımlayın ya da var içinde yedek değer verin.`)
+      if (!defined(m[1])) problems.push(`${file}:${lineOf(text, m.index)} ${m[1]} tanımsız CSS değişkeni. Tokenı tanımlayın ya da var içinde yedek değer verin.`)
     }
   }
+  return problems
+}
+
+/** Yazı ölçeğinin piksel basamakları. Sayfa başlığı clamp ile 28 pikselden 36 piksele büyür. */
+export const FONT_SCALE_PX = [14, 16, 18, 20, 24, 36]
+/**
+ * temel/ dışındaki ham yazı boyutu sayısı. Değer scripts/check-ui-baseline.json dosyasındadır.
+ * Bu sayı yalnız azalabilir. Yeni kural ham değer yerine var(--font-*) tokenı kullanır.
+ * Dosyası olmayan proje için taban denetimi yapılmaz. Örneğin test projeleri böyledir.
+ */
+function readBaseline(root) {
+  try { return JSON.parse(readFileSync(join(root, 'scripts/check-ui-baseline.json'), 'utf8')).rawFontSize } catch { return undefined }
+}
+function moduleRoot() {
+  try { return fileURLToPath(new URL('../', import.meta.url)) } catch { return process.cwd() }
+}
+export const RAW_FONT_SIZE_BASELINE = readBaseline(moduleRoot())
+
+/**
+ * (i) Yazı ölçeği. Ölçek dışı piksel boyutu her katmanda hatadır.
+ * temel/ dışındaki ham boyutlar sayılır. Sayı tabanı aşarsa hata verilir.
+ */
+export function checkFontScale(files, baseline) {
+  const problems = []
+  let raw = 0
+  for (const { file, source } of files) {
+    if (!file.endsWith('.css')) continue
+    const base = file.includes('/styles/temel/')
+    for (const rule of parseCss(source)) for (const d of rule.decls) {
+      if (d.prop !== 'font-size') continue
+      const size = /^(-?\d*\.?\d+)(px|rem)$/.exec(d.value.trim())
+      const px = size ? Number(size[1]) * (size[2] === 'rem' ? 16 : 1) : null
+      if (px !== null && !FONT_SCALE_PX.includes(px)) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ölçek dışında. Ölçek: ${FONT_SCALE_PX.join(', ')} px. var(--font-*) kullanın.`)
+      if (!base && /^(clamp|min|max)\(/.test(d.value.trim())) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ayrı bir ölçek kuruyor. Başlık için var(--font-page-title) kullanın.`)
+      else if (!base && /\d(px|rem|em)\b/.test(d.value)) raw += 1
+    }
+  }
+  if (baseline === undefined) return problems
+  if (raw > baseline) problems.push(`src/styles: ${raw} ham yazı boyutu var, taban ${baseline}. Yeni kuralda var(--font-*) tokenı kullanın.`)
+  // Sayı yalnız azalır. Kazanılan iyileşme tabana yazılır, yoksa yeni ham boyut aynı yere geri gelebilir.
+  if (raw < baseline) problems.push(`src/styles: ${raw} ham yazı boyutu var, taban ${baseline}. RAW_FONT_SIZE_BASELINE değerini ${raw} olarak düşürün.`)
   return problems
 }
 
@@ -715,7 +823,7 @@ function walk(dir) {
   for (const name of readdirSync(dir)) {
     const full = join(dir, name)
     if (statSync(full).isDirectory()) out.push(...walk(full))
-    else if (/\.(css|ts|tsx)$/.test(name) && !/\.test\.tsx?$/.test(name) && !name.endsWith('.d.ts')) out.push(full)
+    else if (/\.(css|ts|tsx)$/.test(name) && !/\.(test|spec)\.tsx?$/.test(name) && !name.endsWith('.d.ts')) out.push(full)
   }
   return out
 }
@@ -771,7 +879,31 @@ export function checkProject(root) {
     const context = cssContext(cssFiles.flatMap((path) => ruleCache.get(path) ?? []), controlClasses, false)
     problems.push(...(file.endsWith('.css') ? checkCss(body, rel, context) : checkTsx(body, rel, context)))
   }
-  problems.push(...checkCustomProperties([...sources].map(([file, source]) => ({ file: relative(root, file).split('\\').join('/'), source }))))
+  const relOf = (file) => relative(root, file).split('\\').join('/')
+  // Kök dosyayı başka kaynak statik olarak içe aktarmaz. Örneğin main.tsx ve geç yüklenen ekranlar köktür.
+  const imported = new Set()
+  for (const [file] of sources) for (const specifier of imports.get(file) ?? []) {
+    const dependency = resolveImport(file, specifier)
+    if (dependency) imported.add(dependency)
+  }
+  const closureOf = (entry) => {
+    const seen = new Set()
+    const visit = (file) => {
+      if (!sources.has(file) || seen.has(file)) return
+      seen.add(file)
+      for (const specifier of imports.get(file) ?? []) { const dependency = resolveImport(file, specifier); if (dependency) visit(dependency) }
+    }
+    visit(entry)
+    return seen
+  }
+  const roots = [...sources.keys()].filter((file) => !imported.has(file)).map((root) => ({ closure: closureOf(root), css: [...new Set([...globalCss, ...loadedCss(root)])].map(relOf) }))
+  const contextsFor = new Map([...sources.keys()].map((file) => {
+    const owners = roots.filter((root) => root.closure.has(file)).map((root) => root.css)
+    return [relOf(file), owners.length ? owners : [[...new Set([...globalCss, ...loadedCss(file)])].map(relOf)]]
+  }))
+  const list = [...sources].map(([file, source]) => ({ file: relOf(file), source }))
+  problems.push(...checkCustomProperties(list, { contextsFor: (file) => contextsFor.get(file) ?? [] }))
+  problems.push(...checkFontScale(list, readBaseline(root)))
   return problems
 }
 

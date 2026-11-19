@@ -17,15 +17,21 @@ import { gzipSync } from 'node:zlib'
 // Bütün CSS dosyaları 250.485 ham, 58.735 gzip bayttır. Pay yaklaşık %10'dur. Kullanıcı bu toplamı hiçbir zaman birlikte indirmez.
 // Bölünmüş dosyalar ayrı sıkıştırılır. Bu yüzden toplam gzip boyutu tek dosyadan büyüktür.
 // İlk açılış CSS'i 55.165 ham, 11.725 gzip bayttır. Asıl koruma ilk açılış sınırıdır. Bu sınır değişmedi.
+// 19 Kasım 2026, UX turu 3: Gövdeye Outfit yazı ailesi ve yazı ölçeği tokenları eklendi.
+// İlk açılış CSS'i 11.985 bayttan 12.057 bayta çıktı. Sahip CSS sınırını yükseltmeye önceden izin verdi.
+// Sınır 12.100 bayt oldu. Üst sınır 13.000 bayttır.
+// UX turu 10: Her ekran için yazdırma koruyucusu temel.css içine eklendi. İlk açılış CSS'i 12.194 bayt oldu.
+// Koruyucu ayrı dosyaya bölünmedi. media="print" bağlantısı da dosyayı indirir. Yazdırma anında geç yükleme ise güvenilir değildir.
+// Sınır 12.300 bayt oldu.
 // Bunlar ağ aktarımı veya genel web standardı değildir. Yeni bağımlılık gerekçelendirilmelidir.
 // 19 Kasım 2026: Proje ve destek modülleri kendi ekran CSS'lerini getirdi. Bu CSS yalnız o ekran açılınca iner.
 // Bütün CSS dosyaları 278.998 ham, 66.886 gzip bayt oldu. Toplam sınır yaklaşık %11 payla yükseldi.
-// İlk açılış CSS sınırı değişmedi.
+// Modül CSS'i ilk açılış CSS sınırını değiştirmedi. O sınırı yukarıdaki UX turları 12.300 bayta çıkardı.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
   totalJs: { raw: 3_500_000, gzip: 1_100_000 },
-  initialCss: { raw: 65_000, gzip: 12_000 },
+  initialCss: { raw: 65_000, gzip: 12_300 },
   css: { raw: 310_000, gzip: 74_000 },
 }
 

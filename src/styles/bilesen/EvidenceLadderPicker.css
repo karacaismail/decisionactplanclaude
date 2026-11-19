@@ -1,8 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -56,7 +54,7 @@
 .mobil-ladder .ladder-steps .ant-segmented-thumb-motion-appear-active { opacity: 1;
   transition: transform var(--motion-panel) var(--motion-ease), width var(--motion-panel) var(--motion-ease), height var(--motion-panel) var(--motion-ease), opacity var(--motion-panel) var(--motion-ease); }
 
-.ladder-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+.ladder-tag.ant-tag { margin: 0; font-size: var(--font-helper); line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
 .ladder-picker { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; justify-items: start; }
 
@@ -70,14 +68,14 @@
 
 .ladder-item { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: start; width: 100%; }
 
-.ladder-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-work); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; box-shadow: 0 1px 2px var(--color-shadow); }
+.ladder-num { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-work); color: var(--color-text-secondary); font-size: var(--font-helper); font-weight: 600; box-shadow: 0 1px 2px var(--color-shadow); }
 
 .ant-segmented-item-selected .ladder-num { background: var(--color-action-primary); color: var(--color-on-action, var(--color-surface-work)); box-shadow: none; }
 
 .ladder-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
 
-.ladder-title { font-size: 16px; color: var(--color-text-primary); }
+.ladder-title { font-size: var(--font-body); color: var(--color-text-primary); }
 
 .ant-segmented-item-selected .ladder-title { font-weight: 600; }
 
-.ladder-hint { font-size: 14px; color: var(--color-text-secondary); }
+.ladder-hint { font-size: var(--font-helper); color: var(--color-text-secondary); }

@@ -1,27 +1,25 @@
 import '@/styles/temel/temel.css'
-import { StrictMode, useEffect, useMemo } from 'react'
+import { StrictMode, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App as AntApp, ConfigProvider } from 'antd'
 import trTR from 'antd/locale/tr_TR'
 import { HashRouter } from 'react-router'
 import { buildTheme } from './theme/antdTheme'
 import { palette } from './theme/tokens'
-import { usePlanStore } from './store/planStore'
 /* Çekirdek modül altyapısına ekranlar çizilmeden bağlanır. */
 import './store/platformBridge'
 import { FocusMode } from './app/FocusMode'
 import { SyncGuard } from './app/SyncGuard'
 import { AppRoutes, preloadRoute } from './app/routes'
 import { loadInputStyles } from './app/girisStilleri'
+import { useResolvedTheme } from './app/printMode'
 
 function Root() {
-  const mode = usePlanStore((s) => s.theme)
-  const resolved = useMemo<'light' | 'dark'>(() => {
-    if (mode !== 'system') return mode
-    return typeof window !== 'undefined' && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
-  }, [mode])
+  /* Kâğıda her zaman açık tema basılır. */
+  const resolved = useResolvedTheme()
   const themeConfig = useMemo(() => buildTheme(resolved), [resolved])
-  useEffect(() => {
+  // Yazdırmadan önce eşzamanlı çalışır. Böylece kâğıt düzeni açık temayla kurulur.
+  useLayoutEffect(() => {
     document.documentElement.setAttribute('data-theme', resolved)
     document.documentElement.style.colorScheme = resolved
     document.body.style.background = palette(resolved).surfacePage

@@ -1,18 +1,18 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
-.karar-desc .ant-descriptions-item-label { font-weight: 600; color: var(--color-text-primary); font-size: 14px; }
+.karar-desc .ant-descriptions-item-label { font-weight: 600; color: var(--color-text-primary); font-size: var(--font-helper); }
 
-.karar-desc .ant-descriptions-item-content { font-size: 16px; color: var(--color-text-primary); line-height: 1.5; overflow-wrap: break-word; }
+.karar-desc .ant-descriptions-item-content { font-size: var(--font-body); color: var(--color-text-primary); line-height: 1.5; overflow-wrap: break-word; }
 
 .karar-desc .ant-descriptions-row > th, .karar-desc .ant-descriptions-row > td { padding-bottom: 12px !important; }
 
 .karar-step-count { font-variant-numeric: tabular-nums; }
 
-.devralma-table .ant-table-cell { font-size: 16px; vertical-align: top; }
+.devralma-table .ant-table-cell { font-size: var(--font-body); vertical-align: top; }
 
 .devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
 
@@ -54,9 +54,9 @@
 
 .strateji-outcome { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
 
-.strateji-outcome .ant-tag { margin: 0; font-size: 14px; }
+.strateji-outcome .ant-tag { margin: 0; font-size: var(--font-helper); }
 
-.strateji-empty { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.strateji-empty { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
 .strateji-result.ant-result { padding: 8px 0; }
 
@@ -64,7 +64,7 @@
 
 .strateji-result .ant-result-title { font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
 
-.strateji-result .ant-result-subtitle { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.strateji-result .ant-result-subtitle { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
 .strateji-result .ant-result-extra { margin-top: 16px; }
 
@@ -74,19 +74,19 @@
   .strateji-question { font-size: 24px; line-height: 1.3; }
 }
 
-.strateji-scope { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.strateji-scope { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.strateji-firstday { margin: 0; padding: 0 0 0 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
+.strateji-firstday { margin: 0; padding: 0 0 0 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
 
 .strateji-firstday > li { min-width: 0; padding-left: 4px; overflow-wrap: break-word; }
 
 .strateji-firstday > li::marker { font-weight: 600; font-variant-numeric: tabular-nums; }
 
-.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
+.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--font-body); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
 
 .criteria-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
 
-.criteria-list > li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.criteria-list > li { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; align-items: start; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); }
 
 .criteria-list .is-met { color: var(--color-status-ok); }
 

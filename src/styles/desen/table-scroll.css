@@ -8,11 +8,11 @@
 
 .table-scroll .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
 
-.table-scroll .ant-table-row-cell { font-size: 16px; }
+.table-scroll .ant-table-row-cell { font-size: var(--font-body); }
 
 .table-scroll .ant-table-filter-trigger, .table-scroll .ant-table-column-sorter { color: var(--color-text-secondary); }
 
-.table-scroll .ant-pagination { font-size: 14px; }
+.table-scroll .ant-pagination { font-size: var(--font-helper); }
 
 .table-scroll .ant-table-cell.is-sticky-col { position: sticky; left: 0; z-index: 2; background: var(--color-surface-work) !important; box-shadow: inset -1px 0 0 var(--color-border); }
 

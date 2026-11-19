@@ -1,7 +1,5 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .cell-input, .cell-input.ant-select .ant-select-selector, .cell-input.ant-input, .cell-input.ant-input-number { box-shadow: none !important; border-color: transparent !important; }
 
 .tabular { font-variant-numeric: tabular-nums; }
@@ -9,9 +7,9 @@
 .chip { min-width: var(--hit-area-min) !important;
   min-height: var(--hit-area-min) !important; }
 
-.rate-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+.rate-tag.ant-tag { margin: 0; font-size: var(--font-helper); line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
-.field-extra { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
+.field-extra { font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); margin-top: 6px; }
 
 .field-extra { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
 
@@ -19,7 +17,7 @@
 
 .unit-suffix { font-size: var(--form-text-helper); color: var(--color-text-secondary); white-space: normal; overflow-wrap: break-word; }
 
-.tooltip-list { margin: 0; padding: 0 0 0 16px; display: grid; gap: 4px; font-size: 14px; line-height: 1.45; }
+.tooltip-list { margin: 0; padding: 0 0 0 16px; display: grid; gap: 4px; font-size: var(--font-helper); line-height: 1.45; }
 
 .tooltip-list strong { font-weight: 600; }
 
@@ -41,17 +39,17 @@
 
 .plain-list.ant-checkbox-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; }
 
-.plain-list .ant-checkbox-wrapper { min-height: 44px; align-items: center; font-size: 16px; margin: 0; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
+.plain-list .ant-checkbox-wrapper { min-height: 44px; align-items: center; font-size: var(--font-body); margin: 0; padding: 4px 0; border-bottom: 1px solid var(--color-border); }
 
 .plain-list .ant-checkbox-wrapper:last-child { border-bottom: 0; }
 
 .toggle-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
 
-.toggle-text { font-size: 16px; color: var(--color-text-primary); }
+.toggle-text { font-size: var(--font-body); color: var(--color-text-primary); }
 
 .rate-field { display: flex; align-items: center; gap: var(--space-3); min-height: var(--target-touch); flex-wrap: wrap; }
 
-.rate-field .ant-rate { display: flex; flex-wrap: wrap; font-size: 26px; line-height: 1; }
+.rate-field .ant-rate { display: flex; flex-wrap: wrap; --rate-star-size: 26px; font-size: var(--rate-star-size); line-height: 1; }
 
 .rate-field .ant-rate .ant-rate-star { margin-inline-end: 0; }
 

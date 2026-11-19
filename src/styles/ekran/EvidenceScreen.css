@@ -1,8 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .two-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 
@@ -78,7 +76,7 @@
   .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-.stat-note { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
+.stat-note { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
 
 .k-form .two-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0 16px; min-width: 0; }
 
@@ -92,9 +90,9 @@
 
 .drawer-stack { display: grid; grid-template-columns: minmax(0, 1fr); gap: 20px; min-width: 0; }
 
-.drawer-stack .ant-descriptions-item-label { font-size: 14px; color: var(--color-text-secondary); }
+.drawer-stack .ant-descriptions-item-label { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
-.drawer-stack .ant-descriptions-item-content { font-size: 16px; color: var(--color-text-primary); overflow-wrap: break-word; }
+.drawer-stack .ant-descriptions-item-content { font-size: var(--font-body); color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 8px; min-width: 0; }
 

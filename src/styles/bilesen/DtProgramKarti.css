@@ -6,7 +6,7 @@
 
 .dt-program-karti .dt-program-karti-kurum { font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
 
-.dt-program-karti .dt-program-karti-ad { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; font-weight: var(--weight-strong); color: var(--color-action-primary); overflow-wrap: break-word; }
+.dt-program-karti .dt-program-karti-ad { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; font-weight: var(--weight-strong); color: var(--color-action-text); overflow-wrap: break-word; }
 
 .dt-program-karti .dt-program-karti-ozet { font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); }
 

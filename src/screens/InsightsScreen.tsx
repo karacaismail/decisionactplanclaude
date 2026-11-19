@@ -6,13 +6,13 @@ import { useMemo } from 'react'
 import { Link } from 'react-router'
 import { Card, Empty, Progress, Statistic } from 'antd'
 import { ArrowRight } from '@phosphor-icons/react'
-import { useCurrentPlan, usePlanStore } from '@/store/planStore'
+import { useCurrentPlan } from '@/store/planStore'
 import { ChartFrame } from '@/charts/ChartFrame'
 import { buildInsights, statCards, type Insight, type InsightPalette } from '@/charts/insights'
 import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
-import { resolveMode } from '@/theme/antdTheme'
-import { font, palette as paletteOf } from '@/theme/tokens'
+import { useResolvedTheme } from '@/app/printMode'
+import { chartSeries, font, palette as paletteOf } from '@/theme/tokens'
 /**
  * Göstergeler. Üstte dört istatistik kartı, altında grafik ızgarası.
  * Masaüstünde iki sütun, telefonda tek sütun. Her gösterge kendi kartındadır.
@@ -20,8 +20,7 @@ import { font, palette as paletteOf } from '@/theme/tokens'
  */
 export function InsightsScreen() {
   const plan = useCurrentPlan()
-  const themePref = usePlanStore((s) => s.theme)
-  const mode = resolveMode(themePref)
+  const mode = useResolvedTheme()
   const isDark = mode === 'dark'
   const colors = useMemo<InsightPalette>(() => {
     const p = paletteOf(mode)
@@ -38,7 +37,7 @@ export function InsightsScreen() {
       grid: p.border,
       onInk: p.surfaceWork,
       ramp: [p.toneNavy, p.toneTeal, p.tonePurple, p.textSecondary],
-      series: [p.toneNavy, p.toneTeal, p.tonePurple, p.toneOrange, p.statusInfo, p.statusHold, p.textSecondary],
+      series: chartSeries.map((key) => p[key]),
       outcome: (o) => outcomeColor(o, isDark),
     }
   }, [mode, isDark])

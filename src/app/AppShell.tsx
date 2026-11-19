@@ -14,7 +14,9 @@ import { planPosition } from '@/engine/position'
 import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPaletteButton, CommandPaletteHost } from '@/components/CommandPaletteButton'
 import { cssVariables } from '@/theme/tokens'
-import { resolveMode } from '@/theme/antdTheme'
+import { BrandMark } from '@/components/BrandMark'
+import { syncThemeColor } from './themeColor'
+import { useResolvedTheme } from './printMode'
 import { MODULE_NAV, type RegisteredNav } from '@/platform/modules'
 import type { ModuleIcon } from '@/platform/types'
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
@@ -35,10 +37,13 @@ export function decisionIcon(name: string): typeof Briefcase {
 
 /** Tokenları CSS değişkeni olarak köke yazar. global.css yalnız bunları okur. */
 function useThemeVariables(pref: 'light' | 'dark' | 'system') {
+  // Yazdırma sırasında açık temanın tokenları yazılır.
+  const mode = useResolvedTheme()
   useLayoutEffect(() => {
     const root = document.documentElement
-    for (const [k, v] of Object.entries(cssVariables(resolveMode(pref)))) root.style.setProperty(k, v)
-  }, [pref])
+    for (const [k, v] of Object.entries(cssVariables(mode))) root.style.setProperty(k, v)
+    syncThemeColor(pref)
+  }, [pref, mode])
 }
 
 /** CSS bir gezinmeyi gizlerse odağı görünür eşine taşır. Yerleşimi değiştirmez. */
@@ -253,7 +258,7 @@ export function AppShell() {
   const brand = (
     <Link to={plan ? '/ozet' : '/'} className="brand" aria-label="Girişimci Aksiyon Planı, panoya git">
       <span className="brand-mark" aria-hidden>
-        <Compass size={18} weight="fill" />
+        <BrandMark />
       </span>
       <span className="brand-text">
         <strong>Aksiyon Planı</strong>

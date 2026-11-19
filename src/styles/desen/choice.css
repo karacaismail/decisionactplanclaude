@@ -10,7 +10,7 @@
 
 .choice.is-selected .choice-mark { color: var(--color-action-text); }
 
-.choice.ant-radio-wrapper { margin: 0; padding: 8px 12px; font-size: 16px; }
+.choice.ant-radio-wrapper { margin: 0; padding: 8px 12px; font-size: var(--font-body); }
 
 .choice.ant-radio-wrapper::after { display: none; }
 

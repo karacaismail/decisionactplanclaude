@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { join } from 'node:path'
 import { control, density, gutter } from '../src/theme/tokens'
 // @ts-expect-error .mjs dosyasının tür bildirimi yok; çalışma zamanında ESM olarak yüklenir.
-import { checkCss, checkCustomProperties, checkProject, checkTsx, parseCss } from './check-ui.mjs'
+import { checkCss, checkCustomProperties, checkFontScale, checkProject, checkTsx, FONT_SCALE_PX, parseCss, RAW_FONT_SIZE_BASELINE } from './check-ui.mjs'
 
 const css = (s: string) => checkCss(s, 'a.css') as string[]
 const tsx = (s: string) => checkTsx(s, 'a.tsx') as string[]
@@ -467,8 +467,146 @@ describe('(h) tanımsız CSS değişkeni', () => {
     expect(run({ 'src/a.tsx': 'const v = <Progress strokeColor="var(--color-yok)" />' }).join('\n')).toContain('--color-yok')
   })
 
+  describe('dosyaya göre tanım kümesi', () => {
+    const scratch = join(process.cwd(), '.pane/scratch')
+    const roots: string[] = []
+    afterEach(() => { for (const root of roots.splice(0)) rmSync(root, { recursive: true, force: true }) })
+    function project(files: Record<string, string>) {
+      mkdirSync(scratch, { recursive: true })
+      const root = mkdtempSync(join(scratch, 'var-gate-test-'))
+      roots.push(root)
+      for (const [file, source] of Object.entries(files)) {
+        mkdirSync(join(root, file, '..'), { recursive: true })
+        writeFileSync(join(root, file), source)
+      }
+      return (checkProject(root) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
+    }
+
+    it('birlikte yüklenmeyen CSS dosyasındaki tanımı kabul etmez', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\nimport "./Ekran"',
+        'src/temel.css': ':root { --space-2: 8px; }',
+        'src/Ekran.tsx': 'import "./ekran.css"\nexport const x = 1',
+        'src/ekran.css': '.e { padding: var(--space-2); margin: var(--yalniz-oteki); }',
+        'src/Oteki.tsx': 'import "./oteki.css"\nexport const y = 1',
+        'src/oteki.css': '.o { --yalniz-oteki: 4px; padding: var(--yalniz-oteki); }',
+      })
+      expect(problems).toEqual([expect.stringMatching(/^src\/ekran\.css:1 --yalniz-oteki/)])
+    })
+
+    it('getPropertyValue ile okunan adı tanım saymaz', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\nconst v = getComputedStyle(document.body).getPropertyValue(\'--okunan\')',
+        'src/temel.css': '.x { color: var(--okunan); }',
+      })
+      expect(problems.join('\n')).toContain('--okunan')
+    })
+
+    it('setProperty ve nesne anahtarı tanım sayılır', () => {
+      expect(project({
+        'src/main.tsx': 'import "./temel.css"\ndocument.body.style.setProperty(\'--yazilan\', \'1px\')\nconst s = { \'--anahtar\': \'2px\' }',
+        'src/temel.css': '.x { margin: var(--yazilan); padding: var(--anahtar); }',
+      })).toEqual([])
+    })
+
+    it('TypeScript yorumundaki adı tanım saymaz', () => {
+      const problems = project({
+        'src/main.tsx': 'import "./temel.css"\n// eski ad: \'--yorumda\'\n/* \'--blokta\' */\nexport {}',
+        'src/temel.css': '.x { margin: var(--yorumda); padding: var(--blokta); }',
+      })
+      expect(problems.join('\n')).toContain('--yorumda')
+      expect(problems.join('\n')).toContain('--blokta')
+    })
+  })
+
   it('gerçek projede tanımsız değişken kalmaz', () => {
     const problems = (checkProject(process.cwd()) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
     expect(problems).toEqual([])
   }, 30_000)
+})
+
+describe('(i) yazı ölçeği', () => {
+  const run = (files: Record<string, string>, baseline?: number) => checkFontScale(Object.entries(files).map(([file, source]) => ({ file, source })), baseline) as string[]
+
+  it('ölçek basamakları 14, 16, 18, 20, 24 ve 36 pikseldir', () => {
+    expect(FONT_SCALE_PX).toEqual([14, 16, 18, 20, 24, 36])
+  })
+
+  it('ölçek dışı ham boyutu her katmanda yakalar', () => {
+    const problems = run({ 'src/styles/ekran/A.css': '.a { font-size: 15px; }', 'src/styles/temel/temel.css': 'body { font-size: 17px; }' })
+    expect(problems).toEqual([
+      expect.stringMatching(/^src\/styles\/ekran\/A\.css:1 .*15px.*ölçek/),
+      expect.stringMatching(/^src\/styles\/temel\/temel\.css:1 .*17px.*ölçek/),
+    ])
+  })
+
+  it('temel dışında yeni clamp başlık boyutu tanımlanmaz', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: clamp(30px, 3.2vw, 44px); }' }).join('\n')).toMatch(/A\.css:1 .*clamp.*--font-page-title/)
+    expect(run({ 'src/styles/temel/temel.css': ':root { --font-page-title: clamp(28px, 2.4vw + 20px, 36px); }' })).toEqual([])
+  })
+
+  it('rem ile yazılan ölçek dışı boyutu da yakalar', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: 0.9375rem; }' }).join('\n')).toMatch(/A\.css:1 .*0\.9375rem.*ölçek/)
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: 1.25rem; }' })).toEqual([])
+  })
+
+  it('ham boyut sayısı tabanın altına inerse taban da düşürülmeli', () => {
+    const files = { 'src/styles/ekran/A.css': '.a { font-size: 16px; }' }
+    expect(run(files, 3).join('\n')).toMatch(/1 ham yazı boyutu.*taban 3.*düşürün/)
+    expect(run(files, 1)).toEqual([])
+  })
+
+  it('token kullanan ve ölçekteki boyutu kabul eder', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: var(--font-body); } .b { font-size: 16px; } .c { font-size: inherit; }' })).toEqual([])
+  })
+
+  it('temel dışındaki ham boyut sayısı taban değeri aşamaz', () => {
+    const files = { 'src/styles/ekran/A.css': '.a { font-size: 16px; } .b { font-size: 14px; } .c { font-size: 1.25rem; }', 'src/styles/temel/temel.css': 'body { font-size: 16px; }' }
+    expect(run(files, 3)).toEqual([])
+    expect(run(files, 2).join('\n')).toMatch(/3 ham yazı boyutu.*taban 2/)
+  })
+
+  it('gerçek projede ölçek dışı boyut yoktur ve ham boyut sayısı tabanı aşmaz', () => {
+    const problems = (checkProject(process.cwd()) as string[]).filter((p) => /ölçek|ham yazı boyutu/.test(p))
+    expect(problems).toEqual([])
+    // Tur 3 başında temel dışında 444 ham boyut vardı.
+    expect(RAW_FONT_SIZE_BASELINE).toBeLessThanOrEqual(52)
+  }, 30_000)
+})
+
+describe('(j) dokunmada takılan hover kalkışı', () => {
+  it('hover sorgusu dışında transform değiştiren hover kuralını yakalar', () => {
+    expect(checkCss('.kart:hover { transform: translateY(-1px); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:1 .*hover.*transform/)
+  })
+  it('birleşik seçicide yalnız hover dalı da yakalanır', () => {
+    expect(checkCss('.a:hover .b, html[data-focus-mode="keyboard"] .a:focus-visible .b { transform: scale(1.1); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+  })
+  it('yalnız any-hover ya da olumsuz sorgu yetmez, birincil fare gerekir', () => {
+    expect(checkCss('@media (any-hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+    expect(checkCss('@media not all and (hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+  })
+
+  it('fare sorgusundaki ve fare katmanındaki kalkışı kabul eder', () => {
+    expect(checkCss('@media (hover: hover) and (pointer: fine) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css')).toEqual([])
+    expect(checkCss('@media (any-pointer: fine) and (any-hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/giris/fare.css')).toEqual([])
+    expect(checkCss('.kart:hover { transform: none; }', 'src/styles/ekran/A.css')).toEqual([])
+  })
+})
+
+describe('(k) iki yönlü geçiş', () => {
+  it('geçişi yalnız durum seçicisinde tanımlayan kuralı yakalar', () => {
+    expect(checkCss('.kart { opacity: 1; }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş.*temel seçici/)
+  })
+  it('temel seçicideki transition: none ve azaltılmış hareket bloğu geçiş sayılmaz', () => {
+    expect(checkCss('.kart { transition: none; }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş/)
+    expect(checkCss('@media (prefers-reduced-motion: reduce) { .kart { transition: opacity var(--motion-small) var(--motion-ease); } }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş/)
+  })
+
+  it(':is içinde durum listesi yanlış temel seçici üretmez', () => {
+    expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:is(:hover, :focus-visible) { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
+  })
+
+  it('temel seçicide geçiş varsa kabul eder', () => {
+    expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
+  })
 })
