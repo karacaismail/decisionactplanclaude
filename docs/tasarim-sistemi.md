@@ -31,8 +31,67 @@ Açık ve koyu temaların renkleri ayrı tanımlanır.
 Bileşenler `--color-*` değişkenlerini kullanır.
 Seçili durum, hata ve devre dışı durum kendi renklerini korur.
 
+### Karşıtlık kuralı
+
+Karşıtlık, yazı ile zemin arasındaki parlaklık farkıdır.
+Yazı ile zemin arasında en az 4,5:1 karşıtlık olur.
+Kontrol kenarı ve odak işareti zemine karşı en az 3:1 olur.
+Bu iki kural, iki temada da `src/theme/contrast.test.ts` ile denetlenir.
+
+Eylem rengi iki ayrı tokena bölünür:
+
+| Token | CSS değişkeni | Görevi |
+|---|---|---|
+| `actionPrimary` | `--color-action-primary` | Dolu düğmenin zemini ve ilerleme dolgusu |
+| `actionText` | `--color-action-text` | Bağlantı, seçili menü ve eylem rengindeki yazı |
+| `onAction` | `--color-on-action` | Dolu düğmenin üstündeki yazı |
+
+Eylem rengiyle yazı yazacaksanız `--color-action-text` kullanın.
+`--color-action-primary` yazı rengi olarak kullanılmaz.
+Örneğin koyu temada seçili menü yazısı açık mavi olur.
+Odak işareti de `--color-action-text` rengini kullanır.
+
+### Kenar tokenları
+
+| Token | CSS değişkeni | Görevi |
+|---|---|---|
+| `border` | `--color-border` | Süs çizgisi, tablo satır çizgisi ve kapalı alan kenarı |
+| `borderStrong` | `--color-border-strong` | Ayırıcı, etiket kenarı ve kaydırma çubuğu |
+| `borderInput` | `--color-border-input` | Yazı alanı, seçim kutusu, tarih alanı ve onay kutusu kenarı |
+
+Giriş kontrolünün kenarı her zaman `--color-border-input` olur.
+Bu renk zemine karşı en az 3:1 karşıtlık verir.
+Ant Design kontrolleri bu rengi `antdTheme.ts` içinden alır.
+
+Giriş kontrolünün durumları şunlardır:
+
+- Dinlenme durumunda kenar `--color-border-input` olur.
+- Fare üzerine gelince kenar `--color-text-secondary` olur.
+- Klavye odağında kenar değişmez. Odak, alanın solundaki tek çizgiyle gösterilir.
+- Hatalı alanda kenar `--color-status-harm` olur. Hata metni `aria-describedby` ile alana bağlanır.
+- Kapalı alanda kenar `--color-border` olur. Zemin `--color-surface-context` olur.
+
+### Yükselti
+
+Yükselti, bir yüzeyin zeminden ne kadar ayrı göründüğüdür.
+Kart zeminden kenarlıkla değil gölge ve yüzey tonuyla ayrılır.
+
+| CSS değişkeni | Görevi |
+|---|---|
+| `--shadow-card` | Kart, panel ve özet kutusu |
+| `--shadow-float` | Açılan pencere, komut paneli ve açılır liste |
+| `--shadow-bar` | Ekranın altındaki sabit menü |
+
+Gölge değerleri `tokens.ts` içindeki `elevation` nesnesinde durur.
+`temel.css` aynı değerleri ilk açılış için taşır. Birim testi iki kaynağın eşitliğini korur.
+Koyu temada kart gölgesi yoktur. Kartı zeminden yüzey tonu ayırır.
+
+Açık temada sayfa zemini `#ECEEF4` rengidir. Kart zemini beyazdır.
+İki yüzeyin açıklık farkı en az 5 birimdir. Açıklık farkı CIE L* ölçeğiyle ölçülür.
+
 Ayrım için önce boşluk, hizalama ve yüzey tonu kullanılır.
 Kenarlık yalnız işlevi varsa eklenir.
+Örneğin giriş alanı, tablo çizgisi ve seçili durum kenarlık kullanır.
 Yuvarlak köşeli kutuya tek kenarlı renkli vurgu çizgisi eklenmez.
 `Callout` düz çizgi kullanır. Çizgiye değen köşeler düz kalır.
 

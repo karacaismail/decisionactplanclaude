@@ -24,7 +24,7 @@ Firefox kullanıcı kararıyla çalıştırılmaz.
 
 `scripts/check-ui.mjs` dosyası `src` altındaki CSS, TypeScript ve TSX dosyalarını tarar.
 TSX, React bileşenlerinin yazıldığı dosya biçimidir.
-Denetim yedi kuralı uygular.
+Denetim sekiz kuralı uygular.
 
 1. **Yazı boyutu.** Okunabilir yazı en az 14 piksel olmalıdır.
    Denetim sabit CSS değerlerini ve satır içi yazı boyutlarını bulur.
@@ -47,6 +47,11 @@ Denetim yedi kuralı uygular.
    Denetim bilinen genişlik, yükseklik ve alt sınırları inceler.
    Mantıksal boyut adlarını ve satır içi ölçüleri de inceler.
    Küçük Ant Design düğmesinde iki boyutun güvencesini arar.
+8. **Tanımsız CSS değişkeni.** Her `var(--ad)` kullanımının bir tanımı olmalıdır.
+   Tanım bir CSS dosyasında ya da `tokens.ts` paletinde bulunur.
+   TypeScript içinde yazılan `'--ad'` dizesi de tanım sayılır.
+   Yedek değer verilen kullanım bilinçli seçimdir. Örneğin `var(--ad, red)` denetlenmez.
+   Örneğin tanımsız `--shadow-card` ya da yanlış yazılmış `--motion-*` adı hata verir.
 
 İkon, rozet ve dekoratif SVG ölçüsü etkileşim alanı sayılmaz.
 SVG, vektör çizim biçimidir. Örneğin 16 piksellik ikon, 44 piksellik düğmenin içinde bulunabilir.
