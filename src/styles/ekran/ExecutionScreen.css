@@ -1,14 +1,14 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
-.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+.field-label { display: block; font-size: var(--font-helper); font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
 .karar-step-count { font-variant-numeric: tabular-nums; }
 
-.devralma-table .ant-table-cell { font-size: 16px; vertical-align: top; }
+.devralma-table .ant-table-cell { font-size: var(--font-body); vertical-align: top; }
 
 .devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
 
@@ -24,27 +24,27 @@
   .strateji-main { grid-column: 1; grid-row: 1; }
 }
 
-.strateji-empty { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.strateji-empty { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
-.strateji-scope { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.strateji-scope { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .substage-title { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .renewal-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; max-width: 72ch; }
 
-.renewal-form .field-label { display: block; margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.renewal-form .field-label { display: block; margin: 0 0 6px; font-size: var(--font-body); font-weight: 600; color: var(--color-text-primary); }
 
 .renewal-form .ant-radio-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
 
-.renewal-form .ant-radio-wrapper { min-height: 44px; align-items: center; font-size: 16px; white-space: normal; }
+.renewal-form .ant-radio-wrapper { min-height: 44px; align-items: center; font-size: var(--font-body); white-space: normal; }
 
-.renewal-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: 4px; font-size: 16px; line-height: 1.5; }
+.renewal-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: 4px; font-size: var(--font-body); line-height: 1.5; }
 
 .renewal-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
 
-.renewal-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.renewal-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.renewal-item .ant-tag { margin: 0; font-size: 14px; }
+.renewal-item .ant-tag { margin: 0; font-size: var(--font-helper); }
 
 .renewal-item-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
 
@@ -52,15 +52,15 @@
 
 .question-pair > div { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; }
 
-.question-pair dt { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+.question-pair dt { font-size: var(--font-helper); font-weight: 600; color: var(--color-text-secondary); }
 
-.question-pair dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.question-pair dd { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); }
 
 .decision-links { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; }
 
-.decision-links a { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 44px; font-size: 16px; }
+.decision-links a { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px 12px; min-height: 44px; font-size: var(--font-body); }
 
-.decision-links .ant-tag { margin: 0; font-size: 14px; }
+.decision-links .ant-tag { margin: 0; font-size: var(--font-helper); }
 
 .card-heading { margin: 0; font: inherit; color: inherit; }
 
@@ -70,8 +70,8 @@
 
 .okr-toggle .ant-switch { flex-shrink: 0; }
 
-.okr-toggle label { flex: 1 1 0; min-width: 0; font-size: 16px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); cursor: pointer; }
+.okr-toggle label { flex: 1 1 0; min-width: 0; font-size: var(--font-body); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); cursor: pointer; }
 
 .okr-switch-help { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: var(--space-4) 0; }
 
-.okr-switch-help p { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.okr-switch-help p { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }

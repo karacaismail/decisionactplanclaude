@@ -9,19 +9,19 @@
 
 .okr-title { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.okr-subtitle { margin: 0; font-size: 16px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.okr-subtitle { margin: 0; font-size: var(--font-body); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.okr-text { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.okr-text { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .okr-strong { font-weight: 600; }
 
-.okr-help { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
+.okr-help { margin: 0; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); overflow-wrap: break-word; }
 
 .okr-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
 
 .okr-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); min-width: 0; }
 
-.okr-label { display: block; font-size: 16px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.okr-label { display: block; font-size: var(--font-body); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .okr-label-lg { font-size: 18px; }
 
@@ -45,7 +45,7 @@
 
 .okr-radio .ant-radio-group { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
 
-.okr-radio .ant-radio-wrapper { min-height: var(--hit-area-min); align-items: center; font-size: 16px; white-space: normal; }
+.okr-radio .ant-radio-wrapper { min-height: var(--hit-area-min); align-items: center; font-size: var(--font-body); white-space: normal; }
 
 .okr-suggestion { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); align-items: center; min-width: 0; }
 
@@ -62,14 +62,14 @@
 }
 
 /* Uyarı yalnız renkle anlatılmaz. Simge ve tam cümle birlikte durur. */
-.okr-warn { margin: 0; display: flex; align-items: flex-start; gap: var(--space-2); font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.okr-warn { margin: 0; display: flex; align-items: flex-start; gap: var(--space-2); font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .okr-warn .mt-icon-inline { margin-top: 4px; color: var(--color-status-hold); }
 
-.okr-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: var(--space-1); font-size: 16px; line-height: 1.5; }
+.okr-errors { margin: 0; padding: 0 0 0 20px; display: grid; gap: var(--space-1); font-size: var(--font-body); line-height: 1.5; }
 
 .okr-results { gap: var(--space-2); }
 
 .okr-past { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); min-width: 0; }
 
-.okr-indicator .ant-tag { margin: 0; font-size: 14px; white-space: normal; }
+.okr-indicator .ant-tag { margin: 0; font-size: var(--font-helper); white-space: normal; }

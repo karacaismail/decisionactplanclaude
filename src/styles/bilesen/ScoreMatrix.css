@@ -1,10 +1,10 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .toggle-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
-.toggle-row label { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
+.toggle-row label { font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -20,7 +20,7 @@
 
 .row .helper { flex: 0 0 auto; }
 
-.total-cell.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+.total-cell.ant-tag { margin: 0; font-size: var(--font-helper); line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
 .score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-start, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-start, .score-matrix .ant-table-tbody > tr > td.ant-table-cell-fix-end, .score-matrix .ant-table-thead > tr > th.ant-table-cell-fix-end { background: var(--color-surface-work) !important; }
 
@@ -61,7 +61,7 @@
 
 .score-lock { padding: 10px 12px; background: var(--color-surface-context); border-radius: var(--radius-control); }
 
-.score-lock label { font-size: 14px; line-height: 1.5; color: var(--color-text-primary); }
+.score-lock label { font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-primary); }
 
 .score-lock .ant-switch { flex-shrink: 0; }
 

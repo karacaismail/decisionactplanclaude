@@ -1,10 +1,10 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; min-width: 0; }
 
-.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+.field-label { display: block; font-size: var(--font-helper); font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -12,7 +12,7 @@
 
 .filter-field .field-label { margin-bottom: 0; }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: var(--font-body); color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
@@ -34,7 +34,7 @@
 
 .report-tabs.ant-tabs .ant-tabs-nav::before { border-bottom: 0; }
 
-.report-tabs.ant-tabs .ant-tabs-tab { padding: var(--space-2) 0; font-size: 16px; }
+.report-tabs.ant-tabs .ant-tabs-tab { padding: var(--space-2) 0; font-size: var(--font-body); }
 
 .report-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 24px; }
 
@@ -43,7 +43,7 @@
 }
 
 @media (max-width: 479px) {
-  .report-tabs.ant-tabs .ant-tabs-tab { font-size: 14px; padding: var(--space-1) 0; }
+  .report-tabs.ant-tabs .ant-tabs-tab { font-size: var(--font-helper); padding: var(--space-1) 0; }
 }
 
 @media (max-width: 479px) {
@@ -62,7 +62,7 @@
 
 .report-anchor .ant-anchor-link { padding-block: 10px; }
 
-.report-anchor .ant-anchor-link-title { font-size: 14px; color: var(--color-text-secondary); white-space: nowrap; }
+.report-anchor .ant-anchor-link-title { font-size: var(--font-helper); color: var(--color-text-secondary); white-space: nowrap; }
 
 .report-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-text); }
 
@@ -70,7 +70,7 @@
 
 .report-head { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; }
 
-.report h2.report-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text-primary); overflow-wrap: break-word; }
+.report h2.report-title { margin: 0; font-size: var(--font-page-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .report .report-state { margin: 0; }
 
@@ -78,7 +78,7 @@
 
 .report-section h3 { margin: 0; font-size: 20px; line-height: 1.3; font-weight: 600; color: var(--color-text-primary); }
 
-.report .report-line.ant-typography { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.report .report-line.ant-typography { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .report .ant-table-wrapper { overflow-x: auto; max-width: 100%; }
 
@@ -90,9 +90,9 @@
 
 .report-facts.ant-descriptions .ant-descriptions-item-container { align-items: baseline; }
 
-.report-facts.ant-descriptions .ant-descriptions-item-label { font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); flex: 0 1 auto; min-width: 0; white-space: normal; }
+.report-facts.ant-descriptions .ant-descriptions-item-label { font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); flex: 0 1 auto; min-width: 0; white-space: normal; }
 
-.report-facts.ant-descriptions .ant-descriptions-item-content { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); flex: 1 1 55%; min-width: 0; overflow-wrap: normal; word-break: normal; }
+.report-facts.ant-descriptions .ant-descriptions-item-content { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); flex: 1 1 55%; min-width: 0; overflow-wrap: normal; word-break: normal; }
 
 .report-facts.ant-descriptions .ant-descriptions-row > th, .report-facts.ant-descriptions .ant-descriptions-row > td { padding-bottom: 8px; }
 
@@ -116,17 +116,17 @@
 
 .version-timeline.ant-timeline { margin-top: 4px; }
 
-.version-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; justify-items: start; font-size: 16px; color: var(--color-text-primary); }
+.version-item { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; justify-items: start; font-size: var(--font-body); color: var(--color-text-primary); }
 
 .version-item strong { font-weight: 600; }
 
-.version-item .ant-btn-link { padding: 0; height: auto; font-size: 14px; font-weight: 400; text-decoration: underline; text-underline-offset: 2px; }
+.version-item .ant-btn-link { padding: 0; height: auto; font-size: var(--font-helper); font-weight: 400; text-decoration: underline; text-underline-offset: 2px; }
 
 .export-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; }
 
 .published-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
 
-.published-list li { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--color-border); font-size: 16px; color: var(--color-text-primary); }
+.published-list li { display: flex; flex-wrap: wrap; gap: 4px 12px; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--color-border); font-size: var(--font-body); color: var(--color-text-primary); }
 
 .published-list li:last-child { border-bottom: 0; }
 
@@ -154,17 +154,17 @@
   .report-tabs-wrap.ant-tabs .ant-tabs-ink-bar, .report-tabs-wrap.ant-tabs .ant-tabs-nav-operations { display: none !important; }
 }
 
-.devir-question { margin: 0; max-width: 30ch; font-size: clamp(28px, 1.2vw + 16px, 32px); line-height: 1.15; font-weight: 600; letter-spacing: -0.04em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
+.devir-question { margin: 0; max-width: 30ch; font-size: var(--font-page-title); line-height: 1.2; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); overflow-wrap: break-word; text-wrap: balance; }
 
-.devir-toc-title { font-size: 14px; color: var(--color-text-secondary); }
+.devir-toc-title { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .devir-score-top { font-weight: 600; }
 
 .devir-summary { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 
-.devir-summary .devir-question { font-size: 28px; }
+.devir-summary .devir-question { font-size: var(--font-h2); }
 
-.devir-summary-label { margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); }
+.devir-summary-label { margin: 0; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); }
 
 :root { --cikti-focus-thickness: 2px;
   --cikti-focus-offset: 0.2em;

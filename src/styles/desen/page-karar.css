@@ -6,7 +6,7 @@
 
 .page-karar .ant-card .ant-card-head-title { font-size: 20px; font-weight: 600; line-height: 1.3; color: var(--color-text-primary); white-space: normal; }
 
-.page-karar .ant-card .ant-card-extra { font-size: 14px; color: var(--color-text-secondary); }
+.page-karar .ant-card .ant-card-extra { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .page-karar .ant-card .ant-card-body { padding: 20px 24px 24px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 

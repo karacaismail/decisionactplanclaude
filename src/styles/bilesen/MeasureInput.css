@@ -6,6 +6,6 @@
 
 .measure { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 
-.measure-divider.ant-divider { margin: 4px 0 0; font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.measure-divider.ant-divider { margin: 4px 0 0; font-size: var(--font-body); font-weight: 600; color: var(--color-text-primary); }
 
-.measure-divider.ant-divider .ant-divider-inner-text { padding-inline-start: 0; font-size: 16px; }
+.measure-divider.ant-divider .ant-divider-inner-text { padding-inline-start: 0; font-size: var(--font-body); }

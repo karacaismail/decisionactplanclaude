@@ -161,16 +161,23 @@ export type Density = keyof typeof density
 
 /** Kenar boşluğu yoğunluktan bağımsızdır. */
 export const gutter = { page: 16, precision: 20 } as const
+/**
+ * Yazı ölçeği. Her başlık düzeyinin tek kaynağı budur. temel.css aynı değerleri taşır.
+ * Okunabilir hiçbir yazı 14 pikselin altına inmez. Gövde 16 pikseldir.
+ */
 export const font = {
   family: "'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
   mono: "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace",
-  body: 16,
   helper: 14,
-  h3: 20,
+  body: 16,
+  subsection: 18,
+  section: 20,
   h2: 24,
-  h1: 32,
-  display: 40,
-  report: 40,
+  h1Min: 28,
+  h1Max: 36,
+  /** Sayfa başlığı dar ekranda 28, geniş ekranda 36 pikseldir. */
+  h1: 'clamp(28px, 2.4vw + 20px, 36px)',
+  stat: 36,
 } as const
 
 /** Paleti CSS değişkenlerine çevirir. global.css yalnız bu değişkenleri okur. */

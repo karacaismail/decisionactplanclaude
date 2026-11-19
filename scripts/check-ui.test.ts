@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { join } from 'node:path'
 import { control, density, gutter } from '../src/theme/tokens'
 // @ts-expect-error .mjs dosyasının tür bildirimi yok; çalışma zamanında ESM olarak yüklenir.
-import { checkCss, checkCustomProperties, checkProject, checkTsx, parseCss } from './check-ui.mjs'
+import { checkCss, checkCustomProperties, checkFontScale, checkProject, checkTsx, FONT_SCALE_PX, parseCss, RAW_FONT_SIZE_BASELINE } from './check-ui.mjs'
 
 const css = (s: string) => checkCss(s, 'a.css') as string[]
 const tsx = (s: string) => checkTsx(s, 'a.tsx') as string[]
@@ -522,5 +522,43 @@ describe('(h) tanımsız CSS değişkeni', () => {
   it('gerçek projede tanımsız değişken kalmaz', () => {
     const problems = (checkProject(process.cwd()) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
     expect(problems).toEqual([])
+  }, 30_000)
+})
+
+describe('(i) yazı ölçeği', () => {
+  const run = (files: Record<string, string>, baseline = 100) => checkFontScale(Object.entries(files).map(([file, source]) => ({ file, source })), baseline) as string[]
+
+  it('ölçek basamakları 14, 16, 18, 20, 24 ve 36 pikseldir', () => {
+    expect(FONT_SCALE_PX).toEqual([14, 16, 18, 20, 24, 36])
+  })
+
+  it('ölçek dışı ham boyutu her katmanda yakalar', () => {
+    const problems = run({ 'src/styles/ekran/A.css': '.a { font-size: 15px; }', 'src/styles/temel/temel.css': 'body { font-size: 17px; }' })
+    expect(problems).toEqual([
+      expect.stringMatching(/^src\/styles\/ekran\/A\.css:1 .*15px.*ölçek/),
+      expect.stringMatching(/^src\/styles\/temel\/temel\.css:1 .*17px.*ölçek/),
+    ])
+  })
+
+  it('temel dışında yeni clamp başlık boyutu tanımlanmaz', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: clamp(30px, 3.2vw, 44px); }' }).join('\n')).toMatch(/A\.css:1 .*clamp.*--font-page-title/)
+    expect(run({ 'src/styles/temel/temel.css': ':root { --font-page-title: clamp(28px, 2.4vw + 20px, 36px); }' })).toEqual([])
+  })
+
+  it('token kullanan ve ölçekteki boyutu kabul eder', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: var(--font-body); } .b { font-size: 16px; } .c { font-size: inherit; }' })).toEqual([])
+  })
+
+  it('temel dışındaki ham boyut sayısı taban değeri aşamaz', () => {
+    const files = { 'src/styles/ekran/A.css': '.a { font-size: 16px; } .b { font-size: 14px; } .c { font-size: 1.25rem; }', 'src/styles/temel/temel.css': 'body { font-size: 16px; }' }
+    expect(run(files, 3)).toEqual([])
+    expect(run(files, 2).join('\n')).toMatch(/3 ham yazı boyutu.*taban 2/)
+  })
+
+  it('gerçek projede ölçek dışı boyut yoktur ve ham boyut sayısı tabanı aşmaz', () => {
+    const problems = (checkProject(process.cwd()) as string[]).filter((p) => /ölçek|ham yazı boyutu/.test(p))
+    expect(problems).toEqual([])
+    // Tur 3 başında temel dışında 444 ham boyut vardı.
+    expect(RAW_FONT_SIZE_BASELINE).toBeLessThanOrEqual(52)
   }, 30_000)
 })

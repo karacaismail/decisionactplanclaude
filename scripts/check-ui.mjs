@@ -19,6 +19,8 @@
  *      geçerlidir: tokens.ts paleti, nesne anahtarı ya da setProperty('--x'). getPropertyValue
  *      okumadır, tanım sayılmaz. CSS tanımı yalnız dosyanın birlikte yüklendiği CSS'te geçerlidir.
  *      Dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
+ *  (i) Yazı boyutu ölçekten gelir: 14, 16, 18, 20, 24 ve 36 piksel, başlık için var(--font-page-title).
+ *      Ölçek dışı ham boyut hatadır. temel/ dışındaki ham boyut sayısı RAW_FONT_SIZE_BASELINE değerini aşamaz.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -743,6 +745,36 @@ export function checkCustomProperties(files, options = {}) {
   return problems
 }
 
+/** Yazı ölçeğinin piksel basamakları. Sayfa başlığı clamp ile 28 pikselden 36 piksele büyür. */
+export const FONT_SCALE_PX = [14, 16, 18, 20, 24, 36]
+/**
+ * temel/ dışındaki ham yazı boyutu sayısı. Bu sayı yalnız azalabilir.
+ * Yeni kural ham değer yerine var(--font-*) tokenı kullanır. Sayı azalınca bu değeri de düşürün.
+ */
+export const RAW_FONT_SIZE_BASELINE = 52
+
+/**
+ * (i) Yazı ölçeği. Ölçek dışı piksel boyutu her katmanda hatadır.
+ * temel/ dışındaki ham boyutlar sayılır. Sayı tabanı aşarsa hata verilir.
+ */
+export function checkFontScale(files, baseline = RAW_FONT_SIZE_BASELINE) {
+  const problems = []
+  let raw = 0
+  for (const { file, source } of files) {
+    if (!file.endsWith('.css')) continue
+    const base = file.includes('/styles/temel/')
+    for (const rule of parseCss(source)) for (const d of rule.decls) {
+      if (d.prop !== 'font-size') continue
+      const px = /^(-?\d*\.?\d+)px$/.exec(d.value.trim())
+      if (px && !FONT_SCALE_PX.includes(Number(px[1]))) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ölçek dışında. Ölçek: ${FONT_SCALE_PX.join(', ')} px. var(--font-*) kullanın.`)
+      if (!base && /^(clamp|min|max)\(/.test(d.value.trim())) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ayrı bir ölçek kuruyor. Başlık için var(--font-page-title) kullanın.`)
+      else if (!base && /\d(px|rem|em)\b/.test(d.value)) raw += 1
+    }
+  }
+  if (raw > baseline) problems.push(`src/styles: ${raw} ham yazı boyutu var, taban ${baseline}. Yeni kuralda var(--font-*) tokenı kullanın.`)
+  return problems
+}
+
 function walk(dir) {
   const out = []
   for (const name of readdirSync(dir)) {
@@ -826,7 +858,9 @@ export function checkProject(root) {
     const owners = roots.filter((root) => root.closure.has(file)).map((root) => root.css)
     return [relOf(file), owners.length ? owners : [[...new Set([...globalCss, ...loadedCss(file)])].map(relOf)]]
   }))
-  problems.push(...checkCustomProperties([...sources].map(([file, source]) => ({ file: relOf(file), source })), { contextsFor: (file) => contextsFor.get(file) ?? [] }))
+  const list = [...sources].map(([file, source]) => ({ file: relOf(file), source }))
+  problems.push(...checkCustomProperties(list, { contextsFor: (file) => contextsFor.get(file) ?? [] }))
+  problems.push(...checkFontScale(list))
   return problems
 }
 

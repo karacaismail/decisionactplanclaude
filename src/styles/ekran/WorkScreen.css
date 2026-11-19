@@ -1,6 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .action-bar { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-height: 64px; margin: 0 -16px -96px; padding: 12px 16px; background: var(--color-surface-page); border-top: 1px solid var(--color-border); box-sizing: border-box; }
 
@@ -22,7 +22,7 @@
   .action-bar .ant-btn-primary { grid-column: 2 / 4; }
 }
 
-.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+.field-label { display: block; font-size: var(--font-helper); font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
 
 .work-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-width: 0; align-items: start; }
 
@@ -88,13 +88,13 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
   .work-head { gap: var(--space-2); }
 }
 
-.work-intro { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
+.work-intro { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; }
 
 @media (max-width: 599px) {
   .step-card.form-section.ant-card { padding: 0; }
 }
 
-.card-desc { margin: 0 0 16px; font-size: 14px; line-height: 1.5; color: var(--color-text-secondary); max-width: 72ch; }
+.card-desc { margin: 0 0 16px; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); max-width: 72ch; }
 
 .work-page :is(.step-field, .field) :is(.ant-input-affix-wrapper, .ant-input-number, .ant-picker, .ant-select), .work-page :is(.step-field, .field) input.ant-input:not(.ant-input-affix-wrapper input) { min-height: var(--target-touch); min-width: var(--target-touch); }
 
@@ -131,9 +131,9 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .outcome-item:last-child { border-bottom: 0; padding-bottom: 0; }
 
-.outcome-item dt { font-size: 14px; font-weight: 600; color: var(--color-text-secondary); }
+.outcome-item dt { font-size: var(--font-helper); font-weight: 600; color: var(--color-text-secondary); }
 
-.outcome-item dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); }
+.outcome-item dd { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); }
 
 .work-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; align-items: start; }
 
@@ -147,7 +147,7 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .aside-block { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
 
-.aside-label { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-secondary); }
+.aside-label { display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-helper); font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-text-secondary); }
 
 .aside-label svg { flex-shrink: 0; }
 
@@ -155,11 +155,11 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .step-progress .ant-progress { margin: 0; line-height: 1; }
 
-.step-progress .ant-progress-text { font-size: 20px; font-weight: 600; color: var(--color-text-primary); }
+.step-progress :is(.ant-progress-text, .ant-progress-indicator) { font-size: var(--font-section-title) !important; font-weight: 600; color: var(--color-text-primary); }
 
 .step-progress-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; justify-items: start; min-width: 0; }
 
-.step-progress-text strong { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+.step-progress-text strong { font-size: var(--font-body); font-weight: 600; color: var(--color-text-primary); }
 
 .step-progress-text .ant-tag { margin: 0; }
 
@@ -167,7 +167,7 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .work-aside .ant-anchor .ant-anchor-link { padding-block: 6px; }
 
-.work-aside .ant-anchor .ant-anchor-link-title { font-size: 14px; line-height: 1.4; white-space: normal; color: var(--color-text-secondary); }
+.work-aside .ant-anchor .ant-anchor-link-title { font-size: var(--font-helper); line-height: 1.4; white-space: normal; color: var(--color-text-secondary); }
 
 .work-aside .ant-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-text); font-weight: 600; }
 
@@ -185,11 +185,11 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .howto-list { margin: 0; padding-left: 0; list-style: none; display: grid; gap: 10px; counter-reset: adim; }
 
-.howto-list li { position: relative; padding-left: 36px; font-size: 14px; line-height: 1.5; color: var(--color-text-primary); counter-increment: adim; }
+.howto-list li { position: relative; padding-left: 36px; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-primary); counter-increment: adim; }
 
-.howto-list li::before { content: counter(adim); position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.howto-list li::before { content: counter(adim); position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: var(--font-helper); font-weight: 600; font-variant-numeric: tabular-nums; }
 
-.aside-collapse .howto-list li, .aside-collapse .howto-list li::before { font-size: 16px; }
+.aside-collapse .howto-list li, .aside-collapse .howto-list li::before { font-size: var(--font-body); }
 
 .aside-collapse.ant-collapse { background: var(--color-surface-work); border: 0; border-radius: var(--radius-panel); box-shadow: var(--shadow-card); overflow: hidden; }
 
@@ -197,13 +197,13 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .aside-collapse.ant-collapse > .ant-collapse-item:last-child { border-bottom: 0; border-radius: 0; }
 
-.aside-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 14px 16px; font-size: 16px; font-weight: 600; color: var(--color-text-primary); align-items: center; min-height: 48px; }
+.aside-collapse.ant-collapse > .ant-collapse-item > .ant-collapse-header { padding: 14px 16px; font-size: var(--font-body); font-weight: 600; color: var(--color-text-primary); align-items: center; min-height: 48px; }
 
 .aside-collapse.ant-collapse .ant-collapse-content { border-top: 0; background: transparent; }
 
 .aside-collapse.ant-collapse .ant-collapse-content > .ant-collapse-content-box { padding: 0 16px 16px; }
 
-.aside-collapse .step-progress-text strong { font-size: 16px; }
+.aside-collapse .step-progress-text strong { font-size: var(--font-body); }
 
 .step-actions.action-bar { position: var(--form-action-position, sticky);
   
@@ -275,10 +275,10 @@ html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visi
 
 .suggest-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; flex: 1 1 240px; min-width: 0; }
 
-.suggest-label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+.suggest-label { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: var(--font-helper); font-weight: 600; color: var(--color-text-primary); }
 
 .suggest-label .ant-tag { margin: 0; font-weight: 400; }
 
-.suggest-value { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.suggest-value { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .foundation-collapse .foundation-summary { padding-top: 4px; }

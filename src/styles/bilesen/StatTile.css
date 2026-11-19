@@ -14,13 +14,13 @@
 
 .kpi.is-link:hover .kpi-value { color: var(--color-action-text); }
 
-.kpi-label { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-secondary); }
+.kpi-label { display: flex; align-items: center; gap: 6px; font-size: var(--font-helper); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-text-secondary); }
 
 .kpi-value { display: flex; align-items: baseline; gap: 6px; font-size: 24px; line-height: 1.2; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--color-text-primary); transition: color var(--motion-small) var(--motion-ease); }
 
-.kpi-value span { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); }
+.kpi-value span { font-size: var(--font-helper); font-weight: 400; color: var(--color-text-secondary); }
 
-.kpi-note { font-size: 14px; color: var(--color-text-secondary); }
+.kpi-note { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .surface-card.is-link { cursor: pointer; }
 
@@ -62,15 +62,15 @@
 
 .kpi:first-child.is-link:hover { background: var(--color-selected-bg); }
 
-.kpi-label { grid-area: label; font-size: 15px; font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--color-text-secondary); }
+.kpi-label { grid-area: label; font-size: var(--font-helper); font-weight: 400; letter-spacing: 0; text-transform: none; color: var(--color-text-secondary); }
 
 .kpi-icon { grid-area: icon; width: 18px; height: 18px; border-radius: 0; background: transparent !important; color: var(--color-text-secondary) !important; }
 
 .kpi-value { grid-area: value; font-size: 36px; line-height: 1.05; letter-spacing: -0.04em; font-weight: 600; }
 
-.kpi-value span { font-size: 17px; letter-spacing: 0; font-family: var(--font-mono); }
+.kpi-value span { font-size: var(--font-body); letter-spacing: 0; font-family: var(--font-mono); }
 
-.kpi-note { grid-area: note; font-size: 14px; }
+.kpi-note { grid-area: note; font-size: var(--font-helper); }
 
 .kpi-value { font-variant-numeric: tabular-nums; }
 

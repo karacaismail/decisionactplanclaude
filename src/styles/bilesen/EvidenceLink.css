@@ -95,7 +95,7 @@ html[data-focus-mode='keyboard'] .ant-drawer.mt-evidence-link-drawer:focus-visib
   font-size: var(--font-helper);
   line-height: var(--line-body); }
 
-.fill-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+.fill-tag.ant-tag { margin: 0; font-size: var(--font-helper); line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
 .evidence-link { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; min-width: 0; }
 

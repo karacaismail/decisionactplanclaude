@@ -4,7 +4,7 @@
 
 .k-result .ant-result-title { font-size: 24px; font-weight: 600; }
 
-.k-result .ant-result-subtitle { font-size: 16px; color: var(--color-text-secondary); }
+.k-result .ant-result-subtitle { font-size: var(--font-body); color: var(--color-text-secondary); }
 
 .k-result .ant-result-icon svg { color: var(--color-status-ok); }
 

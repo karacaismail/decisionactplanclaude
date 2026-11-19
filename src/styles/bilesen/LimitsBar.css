@@ -1,6 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.limits-line { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14px; color: var(--color-text-secondary); }
+.limits-line { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .limits-line strong { color: var(--color-text-primary); font-weight: 600; font-variant-numeric: tabular-nums; }
 

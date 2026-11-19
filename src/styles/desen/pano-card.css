@@ -8,7 +8,7 @@
 
 .pano-card.ant-card .ant-card-head-title { font-size: 18px; font-weight: 600; line-height: 1.3; padding: 0; white-space: normal; min-width: 0; }
 
-.pano-card.ant-card .ant-card-extra { font-size: 14px; padding: 0; margin-inline-start: auto; min-width: 0; }
+.pano-card.ant-card .ant-card-extra { font-size: var(--font-helper); padding: 0; margin-inline-start: auto; min-width: 0; }
 
 .pano-card.ant-card .ant-card-extra a { color: var(--color-action-text); font-weight: 600; text-decoration: none; }
 
@@ -26,15 +26,15 @@
 
 .pano-card .ant-empty { margin: 8px 0; }
 
-.pano-card .ant-empty .ant-empty-description { font-size: 14px; color: var(--color-text-secondary); }
+.pano-card .ant-empty .ant-empty-description { font-size: var(--font-helper); color: var(--color-text-secondary); }
 
 .pano-card .ant-empty-footer a { color: var(--color-action-text); font-weight: 600; }
 
-.pano-card .ant-statistic-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2px; }
+.pano-card .ant-statistic-title { font-size: var(--font-helper); color: var(--color-text-secondary); margin-bottom: 2px; }
 
 .pano-card .ant-statistic-content { font-weight: 600; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: 1.2; }
 
-.pano-card .ant-statistic-content-suffix { font-size: 14px; font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 6px; }
+.pano-card .ant-statistic-content-suffix { font-size: var(--font-helper); font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 6px; }
 
 .pano-card .helper { margin: 0; }
 

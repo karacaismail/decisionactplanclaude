@@ -6,7 +6,7 @@
   .toolbar-search { width: 260px; }
 }
 
-.history-item .recent-reason { font-size: 16px; color: var(--color-text-primary); }
+.history-item .recent-reason { font-size: var(--font-body); color: var(--color-text-primary); }
 
 .ant-select-sm .ant-select-selection-item .ant-tag { height: 22px; line-height: 20px !important; }
 

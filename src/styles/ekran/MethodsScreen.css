@@ -1,18 +1,18 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
-.field-label { display: block; font-size: 14px; font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
+.field-label { display: block; font-size: var(--font-helper); font-weight: 600; color: var(--color-text-primary); margin-bottom: 4px; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: var(--font-body); color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
-.insight-empty-text { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.insight-empty-text { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
 .method-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; scroll-margin-top: 76px; }
 
@@ -22,7 +22,7 @@
 
 .method-tabs.ant-tabs .ant-tabs-nav { margin-bottom: 0; }
 
-.method-tabs.ant-tabs .ant-tabs-tab { padding: 10px 0; font-size: 16px; }
+.method-tabs.ant-tabs .ant-tabs-tab { padding: 10px 0; font-size: var(--font-body); }
 
 .method-tabs.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-left: 20px; }
 

@@ -1,6 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -8,7 +8,7 @@
   inline-size: var(--icon-inline);
   block-size: var(--icon-inline); }
 
-.stat-note { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
+.stat-note { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
 
 .kanban { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: start; }
 
@@ -20,11 +20,11 @@
 
 .kanban-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 0; min-width: 0; }
 
-.kanban-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.kanban-head h3 { margin: 0; font-size: var(--font-body); font-weight: 600; }
 
-.kanban-count { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+.kanban-count { font-size: var(--font-helper); color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
 
-.kanban-empty { font-size: 14px; color: var(--color-text-secondary); padding: 8px 4px 12px; }
+.kanban-empty { font-size: var(--font-helper); color: var(--color-text-secondary); padding: 8px 4px 12px; }
 
 .stat-ico { display: block; color: var(--color-text-secondary); }
 
@@ -44,7 +44,7 @@
 
 .assumption-alerts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }
 
-.assumption-board .kanban-head .kanban-title { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: 16px; font-weight: 600; }
+.assumption-board .kanban-head .kanban-title { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-size: var(--font-body); font-weight: 600; }
 
 .assumption-board.ant-tabs .ant-tabs-tab + .ant-tabs-tab { margin-inline-start: 16px; }
 
@@ -54,33 +54,33 @@
 
 .assumption-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
 
-.assumption-text { margin: 0; font-size: 16px; line-height: 1.45; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.assumption-text { margin: 0; font-size: var(--font-body); line-height: 1.45; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .assumption-scores { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 4px 12px; margin: 0; min-width: 0; }
 
-.assumption-scores dt { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); }
+.assumption-scores dt { font-size: var(--font-helper); line-height: 1.4; color: var(--color-text-secondary); }
 
-.assumption-scores dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; font-size: 14px; line-height: 1.4; color: var(--color-text-primary); font-variant-numeric: tabular-nums; min-width: 0; }
+.assumption-scores dd { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin: 0; font-size: var(--font-helper); line-height: 1.4; color: var(--color-text-primary); font-variant-numeric: tabular-nums; min-width: 0; }
 
 .assumption-stars { display: inline-flex; gap: var(--space-1); color: var(--color-brand-accent); }
 
 .assumption-facts { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin: 0; min-width: 0; }
 
-.assumption-facts dt { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); }
+.assumption-facts dt { font-size: var(--font-helper); line-height: 1.4; color: var(--color-text-secondary); }
 
-.assumption-facts dd { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.assumption-facts dd { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .assumption-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; min-width: 0; padding-top: 12px; border-top: 1px solid var(--color-border); }
 
 .assumption-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 4px; min-width: 0; }
 
-.assumption-field label { font-size: 14px; line-height: 1.5; font-weight: 600; color: var(--color-text-primary); }
+.assumption-field label { font-size: var(--font-helper); line-height: 1.5; font-weight: 600; color: var(--color-text-primary); }
 
 .assumption-field .ant-select, .assumption-field .ant-input { width: 100%; min-width: 0; }
 
-.assumption-empty .ant-empty-description { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
+.assumption-empty .ant-empty-description { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
-.assumption-empty a { font-size: 16px; font-weight: 600; }
+.assumption-empty a { font-size: var(--font-body); font-weight: 600; }
 
 :root { --cikti-focus-thickness: 2px;
   --cikti-focus-offset: 0.2em;

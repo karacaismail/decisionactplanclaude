@@ -1,10 +1,10 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .howto { display: grid; gap: 6px; }
 
-.howto ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.howto ol { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -133,16 +133,16 @@ html[data-focus-mode='keyboard'] .ant-drawer.mt-model-drawer:focus-visible::befo
 
 .howto { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-width: 0; }
 
-.howto-title { margin: 0; font-size: 17px; line-height: 1.3; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); }
+.howto-title { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; font-weight: 600; letter-spacing: -0.02em; color: var(--color-text-primary); }
 
 .howto-steps { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-width: 0; }
 
 .howto-step { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: var(--space-3); align-items: start; min-width: 0; }
 
-.howto-no { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-primary); font-size: 14px; font-weight: 600; line-height: 1; }
+.howto-no { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-primary); font-size: var(--font-helper); font-weight: 600; line-height: 1; }
 
 .howto-step-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
 
-.howto-step-title { font-size: 16px; line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
+.howto-step-title { font-size: var(--font-body); line-height: 1.4; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.howto-step-text { font-size: 16px; line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }
+.howto-step-text { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); overflow-wrap: break-word; }

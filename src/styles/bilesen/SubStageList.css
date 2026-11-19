@@ -1,6 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -26,18 +26,18 @@
 
 .substage { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 12px; align-items: start; min-width: 0; }
 
-.substage-code { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; border-radius: var(--radius-control); background: var(--color-surface-context); color: var(--color-text-primary); font-size: 14px; font-weight: 600; }
+.substage-code { display: inline-flex; align-items: center; justify-content: center; min-height: 32px; border-radius: var(--radius-control); background: var(--color-surface-context); color: var(--color-text-primary); font-size: var(--font-helper); font-weight: 600; }
 
 .substage-body { display: grid; grid-template-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
 
 .substage-head { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; min-width: 0; }
 
-.substage-head .ant-tag { margin: 0; font-size: 14px; }
+.substage-head .ant-tag { margin: 0; font-size: var(--font-helper); }
 
 .substage-title { margin: 0; font-size: 18px; line-height: 1.35; font-weight: 600; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.substage-does { margin: 0; font-size: 16px; line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; overflow-wrap: break-word; }
+.substage-does { margin: 0; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); max-width: 72ch; overflow-wrap: break-word; }
 
 .substage-body .helper { margin: 0; max-width: 72ch; }
 
-.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: 16px; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }
+.substage-link { display: inline-flex; align-items: center; min-height: 44px; font-size: var(--font-body); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; justify-self: start; }

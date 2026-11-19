@@ -2,7 +2,7 @@
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-.fill-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
+.fill-tag.ant-tag { margin: 0; font-size: var(--font-helper); line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
 .field-required { font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 4px; }
 
@@ -30,7 +30,7 @@
 
 .repeater-table .ant-select, .repeater-table .ant-input-number, .repeater-table .ant-picker { width: 100%; }
 
-.repeater-table .row-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: 14px; font-weight: 600; }
+.repeater-table .row-no { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 28px; border-radius: 50%; background: var(--color-surface-context); color: var(--color-text-secondary); font-size: var(--font-helper); font-weight: 600; }
 
 .repeater-actions { display: flex; align-items: center; gap: var(--space-1); flex-wrap: nowrap; }
 

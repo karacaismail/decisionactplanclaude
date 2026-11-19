@@ -1,6 +1,6 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
+.helper { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.5; }
 
 .helper a { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -52,9 +52,9 @@
   .stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 
-.stat-note { font-size: 14px; color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
+.stat-note { font-size: var(--font-helper); color: var(--color-text-secondary); line-height: 1.4; overflow-wrap: break-word; }
 
-.k-badge .ant-badge-count { font-size: 14px; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; box-shadow: none; font-weight: 600; }
+.k-badge .ant-badge-count { font-size: var(--font-helper); min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; box-shadow: none; font-weight: 600; }
 
 .drawer-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-width: 0; }
 
@@ -66,7 +66,7 @@
 
 .k-tabs .ant-tabs-nav { margin-bottom: 16px; }
 
-.k-tabs .ant-tabs-tab { font-size: 16px; padding: 0; }
+.k-tabs .ant-tabs-tab { font-size: var(--font-body); padding: 0; }
 
 .k-tabs .ant-tabs-tab-btn { font-weight: 400; }
 
@@ -82,17 +82,17 @@
 
 .kanban-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 0; min-width: 0; }
 
-.kanban-head h3 { margin: 0; font-size: 16px; font-weight: 600; }
+.kanban-head h3 { margin: 0; font-size: var(--font-body); font-weight: 600; }
 
-.kanban-count { font-size: 14px; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
+.kanban-count { font-size: var(--font-helper); color: var(--color-text-secondary); font-variant-numeric: tabular-nums; }
 
-.kanban-empty { font-size: 14px; color: var(--color-text-secondary); padding: 8px 4px 12px; }
+.kanban-empty { font-size: var(--font-helper); color: var(--color-text-secondary); padding: 8px 4px 12px; }
 
-.task-title { font-size: 16px; line-height: 1.45; overflow-wrap: break-word; margin: 0; }
+.task-title { font-size: var(--font-body); line-height: 1.45; overflow-wrap: break-word; margin: 0; }
 
 .task-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; min-width: 0; }
 
-.task-owner { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; color: var(--color-text-secondary); min-width: 0; }
+.task-owner { display: inline-flex; align-items: center; gap: 8px; font-size: var(--font-helper); color: var(--color-text-secondary); min-width: 0; }
 
 .task-owner .ant-avatar { flex-shrink: 0; font-weight: 600; }
 
@@ -100,4 +100,4 @@
 
 .task-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; min-width: 0; }
 
-.task-source { font-size: 14px; color: var(--color-text-secondary); }
+.task-source { font-size: var(--font-helper); color: var(--color-text-secondary); }

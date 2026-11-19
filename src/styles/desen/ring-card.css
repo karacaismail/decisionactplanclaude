@@ -14,4 +14,4 @@
 
 .ring-card .ant-progress { flex-shrink: 0; }
 
-.ring-card .ant-progress-text { font-size: 18px !important; font-weight: 600; color: var(--color-text-primary); }
+.ring-card :is(.ant-progress-text, .ant-progress-indicator) { font-size: var(--font-subsection-title) !important; font-weight: 600; color: var(--color-text-primary); }
