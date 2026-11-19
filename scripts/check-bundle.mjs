@@ -17,12 +17,15 @@ import { gzipSync } from 'node:zlib'
 // Bütün CSS dosyaları 250.485 ham, 58.735 gzip bayttır. Pay yaklaşık %10'dur. Kullanıcı bu toplamı hiçbir zaman birlikte indirmez.
 // Bölünmüş dosyalar ayrı sıkıştırılır. Bu yüzden toplam gzip boyutu tek dosyadan büyüktür.
 // İlk açılış CSS'i 55.165 ham, 11.725 gzip bayttır. Asıl koruma ilk açılış sınırıdır. Bu sınır değişmedi.
+// 19 Kasım 2026, UX turu 3: Gövdeye Outfit yazı ailesi ve yazı ölçeği tokenları eklendi.
+// İlk açılış CSS'i 11.985 bayttan 12.057 bayta çıktı. Sahip CSS sınırını yükseltmeye önceden izin verdi.
+// Sınır 12.100 bayt oldu. Üst sınır 13.000 bayttır.
 // Bunlar ağ aktarımı veya genel web standardı değildir. Yeni bağımlılık gerekçelendirilmelidir.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
   totalJs: { raw: 3_500_000, gzip: 1_100_000 },
-  initialCss: { raw: 65_000, gzip: 12_000 },
+  initialCss: { raw: 65_000, gzip: 12_100 },
   css: { raw: 275_000, gzip: 65_000 },
 }
 
