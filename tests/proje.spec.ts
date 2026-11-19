@@ -188,6 +188,13 @@ test('ana hamleden proje açılır, iş eklenir, durum klavyeyle ve dokunarak de
   await noPageOverflow(page, 'proje listesi')
   await shot(page, `${info.project.name}-proje-liste`)
 
+  /* Kanıt taslağı plana yazılmaz. Taslak ayrı anahtarda durur. */
+  await activate(page, page.getByRole('button', { name: 'Kanıt taslağı hazırla' }), hasTouch)
+  await expect(page.getByRole('status').filter({ hasText: 'Kanıt taslağı' })).toContainText('Plan değişmedi.')
+  const drafts = await page.evaluate(() => JSON.stringify(JSON.parse(localStorage.getItem('decisionactplan-drafts-v1') ?? '{}')))
+  expect(drafts).toContain(`Proje: ${HAMLE}.`)
+  expect(drafts).toContain('Projede 2 iş var. 1 iş bitti. 1 iş açık.')
+
   /* Proje ve iş verisi planı değiştirmez. Sürüm, kararlar ve eskime işaretleri aynı kalır. */
   expect(await storedPlan(page)).toBe(before)
 
