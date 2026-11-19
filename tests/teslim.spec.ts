@@ -211,7 +211,9 @@ function tabKey(browserName: string, reverse = false) {
 async function tabTo(page: Page, target: Locator, browserName: string) {
   await expect(target).toBeVisible()
   if (await target.evaluate((element) => element === document.activeElement)) return
-  for (let step = 0; step < 40; step += 1) {
+  // Sınır yalnız döngünün sonsuz sürmesini önler. Üst menü büyüdükçe adım sayısı artar.
+  // 19 Kasım 2026: "Projeler" ve "Destek ve teşvik" bağlantıları iki adım ekledi. Ölçülen adım 40'tır.
+  for (let step = 0; step < 60; step += 1) {
     await page.keyboard.press(tabKey(browserName))
     if (await target.evaluate((element) => element === document.activeElement)) return
   }
