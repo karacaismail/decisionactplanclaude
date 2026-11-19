@@ -20,8 +20,10 @@
  *      okumadır, tanım sayılmaz. CSS tanımı yalnız dosyanın birlikte yüklendiği CSS'te geçerlidir.
  *      Dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
  *  (i) Yazı boyutu ölçekten gelir: 14, 16, 18, 20, 24 ve 36 piksel, başlık için var(--font-page-title).
- *      Ölçek dışı ham boyut hatadır. temel/ dışındaki ham boyut sayısı RAW_FONT_SIZE_BASELINE değerini aşamaz.
- *  (j) hover ile transform değişimi yalnız (hover: hover) sorgusunda ya da giris/fare.css içinde durur.
+ *      Ölçek dışı px ve rem boyutu hatadır. temel/ dışındaki ham boyut sayısı RAW_FONT_SIZE_BASELINE
+ *      değerine eşit olmalıdır. Sayı azalınca taban da düşürülür.
+ *  (j) hover ile transform değişimi yalnız @media (hover: hover) and (pointer: fine) içinde
+ *      ya da giris/fare.css dosyasının kendi any-hover sorgusunda durur.
  *  (k) Durum seçicisindeki geçişin temel seçicide de geçişi olur. Böylece hareket iki yönde çalışır.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
@@ -184,21 +186,29 @@ export function checkCss(source, file, context) {
       report(sideBorder.line, `Tek kenar çizgisi (${sideBorder.prop}) ile köşe yuvarlatma (satır ${radius.line}) aynı blokta. Kavisli vurgu kenarı yasak.`)
     }
     // (j) Hover kalkışı dokunmatik ekranda dokunduktan sonra takılı kalır. Yalnız fare sorgusunda durur.
-    const hoverMedia = rule.atrules.some((a) => /\(\s*(?:any-)?hover\s*:\s*hover\s*\)/i.test(a))
+    // Birincil giriş fare olmalı. any-hover dokunmatik dizüstünde de doğrudur. Olumsuz sorgu sayılmaz.
+    const fineMedia = (a) => !/\bnot\b/i.test(a) && /\(\s*hover\s*:\s*hover\s*\)/i.test(a) && /\(\s*pointer\s*:\s*fine\s*\)/i.test(a)
+    const mouseLayer = file.endsWith('src/styles/giris/fare.css') && rule.atrules.some((a) => /any-hover\s*:\s*hover/i.test(a))
+    const hoverMedia = mouseLayer || rule.atrules.some(fineMedia)
     if (!hoverMedia && splitList(rule.selector).some((b) => /:hover\b/.test(b))) {
       const lift = rule.decls.find((d) => /^(transform|translate|scale|rotate)$/.test(d.prop) && !isZeroOrNone(d.value))
       if (lift) report(lift.line, `hover ile ${lift.prop} değişiyor. Kalkışı @media (hover: hover) and (pointer: fine) içine ya da giris/fare.css dosyasına taşıyın.`)
     }
   }
   // (k) Geçiş temel seçicide durur. Yalnız durum seçicisindeki geçiş tek yönde çalışır.
-  for (const rule of parseCss(source)) {
+  const parsed = parseCss(source)
+  const motionDecl = (d) => /^transition(-property)?$/.test(d.prop) && !isZeroOrNone(d.value)
+  const baseRules = parsed.filter((r) => !r.atrules.some((a) => /prefers-reduced-motion/i.test(a)) && r.decls.some(motionDecl))
+    .flatMap((r) => splitList(r.selector).map((b) => b.replace(/\s+/g, ' ').trim()))
+  for (const rule of parsed) {
     const transition = rule.decls.find((d) => /^transition(-property)?$/.test(d.prop) && !isZeroOrNone(d.value))
     if (!transition || rule.atrules.some((a) => /prefers-reduced-motion/i.test(a))) continue
     for (const branch of splitList(rule.selector)) {
       if (!STATE_SELECTOR.test(branch)) continue
-      const base = branch.replace(STATE_SELECTOR_ALL, '').replace(/\s+/g, ' ').trim()
-      const hasBase = parseCss(source).some((r) => splitList(r.selector).some((b) => b.replace(/\s+/g, ' ').trim() === base) && r.decls.some((d) => /^transition(-property)?$/.test(d.prop)))
-      if (!hasBase) report(transition.line, `"${branch}" geçişi yalnız durum seçicisinde. Geçişi temel seçiciye (${base}) yazın. Böylece hareket iki yönde çalışır.`)
+      // :is(:hover, :focus-visible) gibi durum listesi bütünüyle silinir.
+      const base = branch.replace(/:(?:is|where)\(\s*(?::[\w-]+(?:\([^()]*\))?\s*,?\s*)+\)/g, (m) => (STATE_SELECTOR.test(m) ? '' : m))
+        .replace(STATE_SELECTOR_ALL, '').replace(/\s+/g, ' ').trim()
+      if (!baseRules.includes(base)) report(transition.line, `"${branch}" geçişi yalnız durum seçicisinde. Geçişi temel seçiciye (${base}) yazın. Böylece hareket iki yönde çalışır.`)
     }
   }
   const rules = parseCss(source)
@@ -770,16 +780,23 @@ export function checkCustomProperties(files, options = {}) {
 /** Yazı ölçeğinin piksel basamakları. Sayfa başlığı clamp ile 28 pikselden 36 piksele büyür. */
 export const FONT_SCALE_PX = [14, 16, 18, 20, 24, 36]
 /**
- * temel/ dışındaki ham yazı boyutu sayısı. Bu sayı yalnız azalabilir.
- * Yeni kural ham değer yerine var(--font-*) tokenı kullanır. Sayı azalınca bu değeri de düşürün.
+ * temel/ dışındaki ham yazı boyutu sayısı. Değer scripts/check-ui-baseline.json dosyasındadır.
+ * Bu sayı yalnız azalabilir. Yeni kural ham değer yerine var(--font-*) tokenı kullanır.
+ * Dosyası olmayan proje için taban denetimi yapılmaz. Örneğin test projeleri böyledir.
  */
-export const RAW_FONT_SIZE_BASELINE = 52
+function readBaseline(root) {
+  try { return JSON.parse(readFileSync(join(root, 'scripts/check-ui-baseline.json'), 'utf8')).rawFontSize } catch { return undefined }
+}
+function moduleRoot() {
+  try { return fileURLToPath(new URL('../', import.meta.url)) } catch { return process.cwd() }
+}
+export const RAW_FONT_SIZE_BASELINE = readBaseline(moduleRoot())
 
 /**
  * (i) Yazı ölçeği. Ölçek dışı piksel boyutu her katmanda hatadır.
  * temel/ dışındaki ham boyutlar sayılır. Sayı tabanı aşarsa hata verilir.
  */
-export function checkFontScale(files, baseline = RAW_FONT_SIZE_BASELINE) {
+export function checkFontScale(files, baseline) {
   const problems = []
   let raw = 0
   for (const { file, source } of files) {
@@ -787,13 +804,17 @@ export function checkFontScale(files, baseline = RAW_FONT_SIZE_BASELINE) {
     const base = file.includes('/styles/temel/')
     for (const rule of parseCss(source)) for (const d of rule.decls) {
       if (d.prop !== 'font-size') continue
-      const px = /^(-?\d*\.?\d+)px$/.exec(d.value.trim())
-      if (px && !FONT_SCALE_PX.includes(Number(px[1]))) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ölçek dışında. Ölçek: ${FONT_SCALE_PX.join(', ')} px. var(--font-*) kullanın.`)
+      const size = /^(-?\d*\.?\d+)(px|rem)$/.exec(d.value.trim())
+      const px = size ? Number(size[1]) * (size[2] === 'rem' ? 16 : 1) : null
+      if (px !== null && !FONT_SCALE_PX.includes(px)) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ölçek dışında. Ölçek: ${FONT_SCALE_PX.join(', ')} px. var(--font-*) kullanın.`)
       if (!base && /^(clamp|min|max)\(/.test(d.value.trim())) problems.push(`${file}:${d.line} Yazı boyutu ${d.value} ayrı bir ölçek kuruyor. Başlık için var(--font-page-title) kullanın.`)
       else if (!base && /\d(px|rem|em)\b/.test(d.value)) raw += 1
     }
   }
+  if (baseline === undefined) return problems
   if (raw > baseline) problems.push(`src/styles: ${raw} ham yazı boyutu var, taban ${baseline}. Yeni kuralda var(--font-*) tokenı kullanın.`)
+  // Sayı yalnız azalır. Kazanılan iyileşme tabana yazılır, yoksa yeni ham boyut aynı yere geri gelebilir.
+  if (raw < baseline) problems.push(`src/styles: ${raw} ham yazı boyutu var, taban ${baseline}. RAW_FONT_SIZE_BASELINE değerini ${raw} olarak düşürün.`)
   return problems
 }
 
@@ -802,7 +823,7 @@ function walk(dir) {
   for (const name of readdirSync(dir)) {
     const full = join(dir, name)
     if (statSync(full).isDirectory()) out.push(...walk(full))
-    else if (/\.(css|ts|tsx)$/.test(name) && !/\.test\.tsx?$/.test(name) && !name.endsWith('.d.ts')) out.push(full)
+    else if (/\.(css|ts|tsx)$/.test(name) && !/\.(test|spec)\.tsx?$/.test(name) && !name.endsWith('.d.ts')) out.push(full)
   }
   return out
 }
@@ -882,7 +903,7 @@ export function checkProject(root) {
   }))
   const list = [...sources].map(([file, source]) => ({ file: relOf(file), source }))
   problems.push(...checkCustomProperties(list, { contextsFor: (file) => contextsFor.get(file) ?? [] }))
-  problems.push(...checkFontScale(list))
+  problems.push(...checkFontScale(list, readBaseline(root)))
   return problems
 }
 

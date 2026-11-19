@@ -526,7 +526,7 @@ describe('(h) tanımsız CSS değişkeni', () => {
 })
 
 describe('(i) yazı ölçeği', () => {
-  const run = (files: Record<string, string>, baseline = 100) => checkFontScale(Object.entries(files).map(([file, source]) => ({ file, source })), baseline) as string[]
+  const run = (files: Record<string, string>, baseline?: number) => checkFontScale(Object.entries(files).map(([file, source]) => ({ file, source })), baseline) as string[]
 
   it('ölçek basamakları 14, 16, 18, 20, 24 ve 36 pikseldir', () => {
     expect(FONT_SCALE_PX).toEqual([14, 16, 18, 20, 24, 36])
@@ -543,6 +543,17 @@ describe('(i) yazı ölçeği', () => {
   it('temel dışında yeni clamp başlık boyutu tanımlanmaz', () => {
     expect(run({ 'src/styles/ekran/A.css': '.a { font-size: clamp(30px, 3.2vw, 44px); }' }).join('\n')).toMatch(/A\.css:1 .*clamp.*--font-page-title/)
     expect(run({ 'src/styles/temel/temel.css': ':root { --font-page-title: clamp(28px, 2.4vw + 20px, 36px); }' })).toEqual([])
+  })
+
+  it('rem ile yazılan ölçek dışı boyutu da yakalar', () => {
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: 0.9375rem; }' }).join('\n')).toMatch(/A\.css:1 .*0\.9375rem.*ölçek/)
+    expect(run({ 'src/styles/ekran/A.css': '.a { font-size: 1.25rem; }' })).toEqual([])
+  })
+
+  it('ham boyut sayısı tabanın altına inerse taban da düşürülmeli', () => {
+    const files = { 'src/styles/ekran/A.css': '.a { font-size: 16px; }' }
+    expect(run(files, 3).join('\n')).toMatch(/1 ham yazı boyutu.*taban 3.*düşürün/)
+    expect(run(files, 1)).toEqual([])
   })
 
   it('token kullanan ve ölçekteki boyutu kabul eder', () => {
@@ -570,6 +581,11 @@ describe('(j) dokunmada takılan hover kalkışı', () => {
   it('birleşik seçicide yalnız hover dalı da yakalanır', () => {
     expect(checkCss('.a:hover .b, html[data-focus-mode="keyboard"] .a:focus-visible .b { transform: scale(1.1); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
   })
+  it('yalnız any-hover ya da olumsuz sorgu yetmez, birincil fare gerekir', () => {
+    expect(checkCss('@media (any-hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+    expect(checkCss('@media not all and (hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css').join('\n')).toMatch(/hover.*transform/)
+  })
+
   it('fare sorgusundaki ve fare katmanındaki kalkışı kabul eder', () => {
     expect(checkCss('@media (hover: hover) and (pointer: fine) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/ekran/A.css')).toEqual([])
     expect(checkCss('@media (any-pointer: fine) and (any-hover: hover) { .kart:hover { transform: translateY(-1px); } }', 'src/styles/giris/fare.css')).toEqual([])
@@ -581,6 +597,15 @@ describe('(k) iki yönlü geçiş', () => {
   it('geçişi yalnız durum seçicisinde tanımlayan kuralı yakalar', () => {
     expect(checkCss('.kart { opacity: 1; }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş.*temel seçici/)
   })
+  it('temel seçicideki transition: none ve azaltılmış hareket bloğu geçiş sayılmaz', () => {
+    expect(checkCss('.kart { transition: none; }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş/)
+    expect(checkCss('@media (prefers-reduced-motion: reduce) { .kart { transition: opacity var(--motion-small) var(--motion-ease); } }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css').join('\n')).toMatch(/A\.css:2 .*geçiş/)
+  })
+
+  it(':is içinde durum listesi yanlış temel seçici üretmez', () => {
+    expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:is(:hover, :focus-visible) { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
+  })
+
   it('temel seçicide geçiş varsa kabul eder', () => {
     expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
   })

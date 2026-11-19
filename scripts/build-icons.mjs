@@ -13,6 +13,8 @@ const root = fileURLToPath(new URL('../', import.meta.url))
 const mark = readFileSync(`${root}src/assets/brand/mark.svg`, 'utf8')
 /* Kare zemin: iOS ve maskable simge köşeyi kendisi yuvarlar. İşaret güvenli alanın içinde kalır. */
 const square = mark.replace(/ rx="[\d.]+"/, '')
+/* Maskable simgede telefon dairesel kırpar. Güvenli alan merkezden 9,6 birimdir. Çizim yüzde 80'e küçülür. */
+const maskable = square.replace(/<path /, '<path transform="translate(12 12) scale(0.8) translate(-12 -12)" ')
 
 async function render(page, svg, size) {
   await page.setViewportSize({ width: size, height: size })
@@ -45,6 +47,6 @@ writeFileSync(`${root}public/favicon.ico`, ico(await render(page, mark, 32)))
 writeFileSync(`${root}public/apple-touch-icon.png`, await render(page, square, 180))
 writeFileSync(`${root}public/icon-192.png`, await render(page, mark, 192))
 writeFileSync(`${root}public/icon-512.png`, await render(page, mark, 512))
-writeFileSync(`${root}public/icon-maskable-512.png`, await render(page, square, 512))
+writeFileSync(`${root}public/icon-maskable-512.png`, await render(page, maskable, 512))
 await browser.close()
 console.log('Simgeler public klasörüne yazıldı.')

@@ -173,7 +173,7 @@ export function checkCssArchitecture(files) {
     const seen = new Map()
     for (const rule of parseCss(files.get(css))) {
       const key = JSON.stringify([rule.atrules, rule.selector.replace(/\s+/g, ' '), rule.decls.map((d) => [d.prop, d.value, d.important])])
-      if (seen.has(key)) errors.push(`${css}: "${rule.selector.replace(/\s+/g, ' ').slice(0, 60)}" kuralı ${seen.get(key)}. ve ${rule.line}. satırda aynı. Birini silin.`)
+      if (seen.has(key)) errors.push(`${css}: "${rule.selector.replace(/\s+/g, ' ').slice(0, 60)}" kuralı ${seen.get(key)}. ve ${rule.line}. satırda aynı. ${seen.get(key)}. satırdaki önceki kopyayı silin. Sonraki kopya sıradaki etkisini korur.`)
       else seen.set(key, rule.line)
     }
   }

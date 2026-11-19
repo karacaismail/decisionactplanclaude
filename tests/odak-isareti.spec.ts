@@ -44,6 +44,8 @@ test('açılır bölüm başlığındaki odak işareti kabın içinde görünür
   expect(result.display).not.toBe('none')
   expect(result.width).toBeGreaterThanOrEqual(2)
   expect(result.background).not.toBe('rgba(0, 0, 0, 0)')
+  // Ölçüm gerçek bir kırpan kap bulmalı. Yoksa test boşa geçer.
+  expect(Number.isFinite(result.clipLeft)).toBe(true)
   // İşaret kırpan kabın içinde kalır.
   expect(result.left).toBeGreaterThanOrEqual(result.clipLeft)
   expect(result.right).toBeLessThanOrEqual(result.clipRight)

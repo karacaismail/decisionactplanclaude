@@ -21,12 +21,12 @@ async function settled(page: Page) {
   await page.evaluate(() => document.fonts.ready)
 }
 
-type Text = { sample: string; size: number; tag: string; cls: string }
+type Text = { sample: string; size: number; tag: string; cls: string; title: boolean }
 
 /** Kendi metni olan görünür öğelerin hesaplanan yazı boyutu. */
 function readTexts(page: Page): Promise<Text[]> {
   return page.evaluate(() => {
-    const out: { sample: string; size: number; tag: string; cls: string }[] = []
+    const out: { sample: string; size: number; tag: string; cls: string; title: boolean }[] = []
     for (const el of document.querySelectorAll('body *')) {
       if (el.closest('svg, script, style, noscript, [aria-hidden="true"], .sr-only, .visually-hidden, canvas')) continue
       const own = [...el.childNodes].filter((n) => n.nodeType === 3).map((n) => n.textContent!.trim()).join(' ').trim()
@@ -35,7 +35,9 @@ function readTexts(page: Page): Promise<Text[]> {
       const s = getComputedStyle(el)
       if (!r.width || !r.height || s.visibility === 'hidden' || s.display === 'none' || Number(s.opacity) === 0) continue
       if (r.width <= 1 && r.height <= 1) continue
-      out.push({ sample: own.slice(0, 40), size: parseFloat(s.fontSize), tag: el.tagName.toLowerCase(), cls: String(el.className).split(' ').slice(0, 2).join('.') })
+      // 28 ile 36 piksel arası yalnız başlık ve özet sayısı içindir.
+      const title = !!el.closest('h1, h2, .ant-statistic-content, .calc-value, .kpi-value')
+      out.push({ sample: own.slice(0, 40), size: parseFloat(s.fontSize), tag: el.tagName.toLowerCase(), cls: String(el.className).split(' ').slice(0, 2).join('.'), title })
     }
     return out
   })
@@ -48,7 +50,7 @@ test('görünen her yazı en az 14 piksel ve ölçekte', async ({ page }) => {
     await settled(page)
     const texts = await readTexts(page)
     expect(texts.length, `${url}: ölçülen yazı`).toBeGreaterThan(5)
-    const bad = texts.filter((t) => t.size < 14 || !(SCALE.includes(Math.round(t.size * 100) / 100) || (t.size >= 28 && t.size <= 36)))
+    const bad = texts.filter((t) => t.size < 14 || !(SCALE.includes(Math.round(t.size * 100) / 100) || (t.title && t.size >= 28 && t.size <= 36)))
     expect(bad.map((t) => `${url} ${t.tag}.${t.cls} "${t.sample}" ${t.size}px`)).toEqual([])
   }
 })

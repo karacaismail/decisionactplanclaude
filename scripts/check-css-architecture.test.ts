@@ -38,7 +38,7 @@ describe('CSS mimari kapısı', () => {
 
   it('aynı dosyada birebir yinelenen kuralı bulur', () => {
     const errors = check({ ...valid, 'src/styles/kabuk/kabuk.css': '.dot.is-ok { background: green; }\n.topbar { color: red; }\n.dot.is-ok { background: green; }' })
-    expect(errors).toEqual([expect.stringMatching(/kabuk\.css: "\.dot\.is-ok" kuralı 1\. ve 3\. satırda aynı/)])
+    expect(errors).toEqual([expect.stringMatching(/kabuk\.css: "\.dot\.is-ok" kuralı 1\. ve 3\. satırda aynı\. 1\. satırdaki önceki kopyayı silin/)])
   })
 
   it('farklı sorgudaki aynı kuralı yineleme saymaz', () => {
