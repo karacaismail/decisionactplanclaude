@@ -31,6 +31,8 @@ Bölme düzenli olmalı. Yeni gelen kişi bir kuralın hangi dosyada durduğunu 
 | 6 | Giriş | `src/styles/giris/` | Cihazın giriş türüne göre | Yalnız `src/app/girisStilleri.ts` |
 | 7 | Yazdırma | `src/styles/yazdirma/` | Rapor ekranı açılınca | Yalnız rapor ekranları |
 
+Temel katmanında küçük bir yazdırma koruyucusu da vardır. Ayrıntı 7. katmanın bölümündedir.
+
 ### 1. Temel katmanı
 
 Temel katmanı her ekranda gereken kuralları taşır. Örneğin tokenlar, yazı tipi, odak işareti ve 44 piksel basma alanı bu katmandadır.
@@ -89,7 +91,21 @@ Her giriş dosyasının kuralları ayrıca kendi sorgusunun içinde durur. Örne
 
 ### 7. Yazdırma katmanı
 
-Yazdırma kuralları yalnız rapor ekranlarında gerekir. Bu yüzden yalnız rapor ekranları bu dosyayı içe aktarır.
+Rapora özel yazdırma kuralları yalnız rapor ekranlarında gerekir. Bu yüzden yalnız rapor ekranları bu dosyayı içe aktarır.
+
+Her ekranın ortak yazdırma kuralları `temel/temel.css` dosyasının sonunda durur. Bu bölüme yazdırma koruyucusu denir.
+Koruyucu şu işleri yapar:
+
+1. Üst şeridi, alt menüyü, ürün menüsünü, çekmeceyi ve sabit eylem şeridini gizler.
+2. Sayfa zeminini beyaz yapar ve gölgeleri kaldırır.
+3. Koyu giriş bloğunun yazı renklerini normal metin rengine çevirir. Tarayıcı kâğıda zemin rengini basmaz.
+4. Renk geçişlerini kapatır. Böylece yarım kalan renk kâğıda basılmaz.
+
+Koruyucu ayrı dosyaya bölünmez. `media="print"` bağlantısı da dosyayı ilk açılışta indirir. Yazdırma anında geç yükleme ise yazdırmaya yetişmeyebilir.
+
+Koyu tema seçiliyse uygulama yazdırmadan önce açık temaya geçer. Bu işi `src/app/printMode.ts` dosyası yapar. Sayfa ekrana dönünce seçili tema geri gelir.
+
+`@media print` kuralı yalnız `yazdirma/` klasöründe ve temel katmanındaki koruyucuda durabilir. Mimari kapısı başka yerdeki yazdırma kuralını hata sayar.
 
 ## Modül CSS dosyaları
 
@@ -135,11 +151,14 @@ Mimari kendi kendine korunmaz. Bu yüzden üç kapı eklenir.
    - Bir bileşen başka bir bileşenin CSS dosyasını içe aktarıyor.
    - Giriş dosyasını yükleyiciden başka bir dosya içe aktarıyor.
    - Giriş dosyasında kendi sorgusunun dışında kural var.
+   - Bir dosyada aynı sorgu, seçici ve bildirimlerle birebir yinelenen kural var.
+   - `@media print` kuralı `yazdirma/` ve `temel/` dışında duruyor.
 2. İkinci kapı boyut kapısıdır. Kapının dosyası `scripts/check-bundle.mjs` dosyasıdır. Kapı iki profili ayrı ölçer:
    - Dokunma profili temel, kabuk ve dokunma katmanından oluşur.
    - Fare profili temel, kabuk ve fare katmanından oluşur.
 
-   İlk açılış sınırı değişmez. Ham sınır 65.000 bayttır. Sıkıştırılmış sınır 12.000 bayttır.
+   Ham sınır 65.000 bayttır. Sıkıştırılmış sınır 12.300 bayttır.
+   Sınır 19 Kasım 2026 Çarşamba günü 12.000 bayttan yükseldi. Gövde yazı ailesi ve yazdırma koruyucusu ilk açılışta gerekir. Sahip bu artışa önceden izin verdi.
 3. Üçüncü kapı ağ testidir. Testin dosyası `tests/css-teslim.spec.ts` dosyasıdır. Test gerçek ağ isteklerini denetler:
    - Dokunma profilinde `fare.css` istenmez.
    - Fare profilinde `dokunma.css` istenmez.

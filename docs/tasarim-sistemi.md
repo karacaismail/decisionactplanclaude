@@ -7,18 +7,34 @@ Ant Design ayarları `src/theme/antdTheme.ts` dosyasında tutulur.
 
 ## Yazı
 
-Varsayılan yazı tipi Outfit'tir. Gövde yazısı 16 pikseldir.
+Varsayılan yazı tipi Outfit'tir. Gövde bu yazı tipini `--font-family` değişkeninden alır.
+Böylece açılır pencere ve tarayıcı öğeleri de Outfit kullanır.
+Gövde yazısı 16 pikseldir. Gövdenin harf aralığı daraltılmaz.
 Hiçbir okunabilir metin 14 pikselin altına inmez.
 Yoğunluk seçimi yazıyı küçültmez. Tarayıcının kök yazı boyutu korunur.
 
+Yazı boyutları tek bir ölçekten gelir. Ölçek `tokens.ts` içindeki `font` nesnesindedir.
+`temel.css` aynı değerleri taşır. Birim testi iki kaynağın eşitliğini korur.
+Ant Design başlık boyutları da aynı ölçekten gelir.
+
 | Öğe | Boyut | Kaynak |
 |---|---|---|
-| Sayfa başlığı | 30 pikselden 44 piksele kadar | `--font-page-title` |
-| Bölüm başlığı | 22 piksel | `--font-section-title` |
-| Alt başlık | 17 piksel | `--font-subsection-title` |
+| Sayfa başlığı | 28 pikselden 36 piksele kadar | `--font-page-title` |
+| İkinci düzey başlık | 24 piksel | `--font-h2` |
+| Bölüm başlığı | 20 piksel | `--font-section-title` |
+| Alt başlık | 18 piksel | `--font-subsection-title` |
+| Sayfa açıklaması | 18 piksel | `--font-page-description` |
 | Gövde | 16 piksel | `--font-body` |
 | Yardımcı metin | 14 piksel | `--font-helper` |
 | Özet sayısı | 36 piksel | `--font-stat-value` |
+
+Sayfa başlığında satır yüksekliği en az 1,2 olur. Harf aralığı en az -0,02em olur.
+Türkçe harflerin noktaları ve şapkaları böylece birbirine değmez.
+
+Yeni kural ham piksel yerine bu değişkenleri kullanır. Örneğin `font-size: var(--font-body)` yazılır.
+Ölçek dışı boyut kullanılmaz. Örneğin 15, 17, 19 ve 22 piksel yasaktır.
+Arayüz kapısı bu kuralı denetler. Ayrıntı [kalite kapıları belgesindedir](kalite-kapilari.md).
+`tests/yazi.spec.ts` gerçek tarayıcıda hesaplanan boyutları ölçer.
 
 Mevcut daha büyük yazılar korunur. Metinler doğal kelime sınırlarından sarılır.
 Model adları ve tablo başlıkları kelime ortasından bölünmez.
@@ -84,10 +100,19 @@ Kart zeminden kenarlıkla değil gölge ve yüzey tonuyla ayrılır.
 
 Gölge değerleri `tokens.ts` içindeki `elevation` nesnesinde durur.
 `temel.css` açık temanın değerlerini ilk açılış için taşır. Birim testi iki kaynağın eşitliğini korur.
-Koyu temada kart gölgesi yoktur. Kartı zeminden yüzey tonu ayırır.
 
 Açık temada sayfa zemini `#ECEEF4` rengidir. Kart zemini beyazdır.
 İki yüzeyin açıklık farkı en az 5 birimdir. Açıklık farkı CIE L* ölçeğiyle ölçülür.
+
+Bağlam yüzeyi `--color-surface-context` değişkenidir. Açık temada rengi `#E3E6EF` olur.
+Bu yüzey fare üzerine gelme zemini, soluk etiket ve kapalı alan için kullanılır.
+Bağlam yüzeyi sayfa zemininden en az 2,5 birim ayrılır. Açık temada sayfa zemininden koyudur.
+Böylece sayfa üstündeki üzerine gelme ve kapalı alan zemini de görünür kalır.
+Çukur yüzey bağlam yüzeyinden de en az 2,5 birim ayrılır.
+
+Koyu temada kart gölgesi görünmez. Kartı yüzey tonu ve 1 piksellik kenar tokenı ayırır.
+Bu çizgi kartın dört kenarını da sarar. Tek kenarlı renkli vurgu değildir.
+Aynı tondaki iç içe kartlar da bu çizgiyle ayrılır.
 
 Ayrım için önce boşluk, hizalama ve yüzey tonu kullanılır.
 Kenarlık yalnız işlevi varsa eklenir.
@@ -188,7 +213,47 @@ Küçük ekran sayfalamasındaki sayı alanı en az 14 piksel yazı kullanır.
 Hareket, mevcut `--motion-*` değişkenlerini kullanır.
 Varsayılan eğri `cubic-bezier(.65, 0, .35, 1)` değeridir.
 Giriş ve çıkış aynı eğriyi kullanır.
-Kullanıcı hareketi azaltırsa mevcut azaltılmış hareket kuralı uygulanır.
+Geçiş temel seçiciye yazılır. Böylece açılış ve kapanış aynı hareketle çalışır.
+Örneğin `.kart:hover` kuralı geçiş tanımlıyorsa `.kart` kuralı da geçiş tanımlar.
+`temel.css` ve `tokens.ts` aynı hareket değerlerini taşır. Birim testi iki kaynağın eşitliğini korur.
+Kullanıcı hareketi azaltırsa mevcut azaltılmış hareket kuralı uygulanır. Yumuşak kaydırma da kapanır.
+
+Fare üzerine gelince kartı kaldıran hareket yalnız farede çalışır.
+Bu kural `@media (hover: hover) and (pointer: fine)` sorgusunun içinde durur.
+Dokunmatik ekranda dokunuştan sonra kart kalkık kalmaz.
+`tests/hareket.spec.ts` çekmecenin iki yönde aynı eğri ve süreyle çalıştığını ölçer.
+
+## Ürün işareti ve tarayıcı simgeleri
+
+Ürün işareti kapıya çıkan basamaklardır. Basamaklar sıralı kararları anlatır. Sağdaki çubuk kontrol kapısını anlatır.
+İşaret kütüphane ikonu değildir. Tek kaynağı `src/assets/brand/mark.svg` dosyasıdır.
+İşaret 24 birimlik ızgarada çizilir. Çizgi kalınlığı 2,5 birimdir. Böylece 16 pikselde de okunur.
+İşaret iki token rengi kullanır: `actionPrimary` zemin, `onAction` çizgidir.
+
+Tarayıcı simgelerini `scripts/build-icons.mjs` komutu üretir. Kaynak işaret değişince bu komutu çalıştırın.
+Komut şu dosyaları `public` klasörüne yazar:
+
+- `favicon.svg` ve 32 piksellik `favicon.ico`,
+- 180 piksellik `apple-touch-icon.png`,
+- 192 ve 512 piksellik simge,
+- 512 piksellik maskable simge.
+
+Maskable simgeyi telefon kendi biçimine göre kırpar. İşaret bu yüzden simgenin ortasında durur.
+
+`manifest.webmanifest` dosyası uygulamanın adını, kısa adını ve simgelerini taşır.
+Dosyadaki yollar göreli yazılır. Böylece GitHub Pages alt yolu korunur.
+Service worker, sayfayı internetsiz çalıştıran tarayıcı betiğidir. Uygulama bu betiği kullanmaz.
+Bu yüzden uygulama internetsiz çalışma sözü vermez.
+
+Tarayıcı çubuğunun rengi üst şeridin rengiyle aynıdır. `index.html` açık ve koyu tema için iki renk taşır.
+Kullanıcı temayı elle seçerse iki renk de seçilen temaya göre değişir.
+
+## Yazdırma
+
+Her ekran yazdırılabilir. Yazdırırken gezinme öğeleri ve sabit şeritler kâğıda basılmaz.
+Koyu tema seçili olsa da kâğıda açık tema basılır. Sayfa ekrana dönünce seçili tema geri gelir.
+Ayrıntı [CSS mimarisindedir](css-mimarisi.md).
+`tests/yazdirma.spec.ts` yazdırma görünümünü gerçek tarayıcıda ölçer.
 
 ## Bileşenler ve yükleme
 

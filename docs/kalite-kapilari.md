@@ -24,7 +24,7 @@ Firefox kullanıcı kararıyla çalıştırılmaz.
 
 `scripts/check-ui.mjs` dosyası `src` altındaki CSS, TypeScript ve TSX dosyalarını tarar.
 TSX, React bileşenlerinin yazıldığı dosya biçimidir.
-Denetim sekiz kuralı uygular.
+Denetim on bir kuralı uygular.
 
 1. **Yazı boyutu.** Okunabilir yazı en az 14 piksel olmalıdır.
    Denetim sabit CSS değerlerini ve satır içi yazı boyutlarını bulur.
@@ -48,10 +48,21 @@ Denetim sekiz kuralı uygular.
    Mantıksal boyut adlarını ve satır içi ölçüleri de inceler.
    Küçük Ant Design düğmesinde iki boyutun güvencesini arar.
 8. **Tanımsız CSS değişkeni.** Her `var(--ad)` kullanımının bir tanımı olmalıdır.
-   Tanım bir CSS dosyasında ya da `tokens.ts` paletinde bulunur.
-   TypeScript içinde yazılan `'--ad'` dizesi de tanım sayılır.
+   TypeScript tanımı her dosyada geçerlidir. Örneğin `tokens.ts` paleti ve `setProperty('--ad')` tanımdır.
+   `getPropertyValue('--ad')` okumadır. Bu okuma tanım sayılmaz. Yorumdaki ad da tanım sayılmaz.
+   CSS tanımı yalnız birlikte yüklenen dosyalarda geçerlidir.
+   Bir dosya birden çok ekranda yükleniyorsa tanım her ekranın CSS'inde bulunmalıdır.
    Yedek değer verilen kullanım bilinçli seçimdir. Örneğin `var(--ad, red)` denetlenmez.
    Örneğin tanımsız `--shadow-card` ya da yanlış yazılmış `--motion-*` adı hata verir.
+9. **Yazı ölçeği.** Yazı boyutu ölçekten gelir. Ölçek 14, 16, 18, 20, 24 ve 36 pikseldir.
+   Ölçek dışı piksel boyutu her katmanda hatadır. Örneğin `font-size: 15px` hata verir.
+   `temel` dışında yeni `clamp()` başlık boyutu yazılmaz. Sayfa başlığı `var(--font-page-title)` kullanır.
+   `temel` dışındaki ham boyutlar sayılır. Sayı `RAW_FONT_SIZE_BASELINE` değerini aşarsa denetim hata verir.
+   Bu sayı yalnız azalabilir. 19 Kasım 2026 Çarşamba günü sayı 444'ten 52'ye indi.
+10. **Hover kalkışı.** Fare üzerine gelince kartı kaldıran `transform` dokunmatik ekranda takılı kalır.
+    Bu kural yalnız `@media (hover: hover) and (pointer: fine)` içinde ya da `giris/fare.css` dosyasında durur.
+11. **İki yönlü geçiş.** Durum seçicisindeki geçiş temel seçicide de bulunur.
+    Örneğin `.kart:hover` geçiş tanımlıyorsa `.kart` da geçiş tanımlar. Böylece açılış ve kapanış aynı hareketi kullanır.
 
 İkon, rozet ve dekoratif SVG ölçüsü etkileşim alanı sayılmaz.
 SVG, vektör çizim biçimidir. Örneğin 16 piksellik ikon, 44 piksellik düğmenin içinde bulunabilir.
