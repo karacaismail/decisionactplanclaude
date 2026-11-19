@@ -26,7 +26,7 @@
 
 html { -webkit-text-size-adjust: 100%; }
 
-body { margin: 0; min-width: 320px; font-size: 16px; line-height: 1.5; font-weight: 400; }
+body { margin: 0; min-width: 320px; font-size: 16px; line-height: 1.5; font-weight: 400; letter-spacing: -0.006em; }
 
 :lang(tr) { -webkit-locale: 'tr'; }
 
@@ -91,7 +91,7 @@ html[data-focus-mode='keyboard'] a:focus-visible { text-decoration: underline; t
 
 .ant-table-cell { word-break: normal; overflow-wrap: normal; }
 
-.ant-table-thead > tr > th { font-size: 14px !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.04em; height: 36px; padding-top: 6px !important; padding-bottom: 6px !important; color: var(--color-text-secondary) !important; background: transparent !important; }
+.ant-table-thead > tr > th { padding-top: 6px !important; padding-bottom: 6px !important; color: var(--color-text-secondary) !important; }
 
 .ant-table-thead > tr > th::before { display: none; }
 
@@ -129,9 +129,9 @@ textarea.ant-input { resize: none; }
 
 .shell-status { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
 
-h1.page-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; letter-spacing: -0.01em; color: var(--color-text-primary); overflow-wrap: break-word; }
+h1.page-title { margin: 0; color: var(--color-text-primary); overflow-wrap: break-word; }
 
-.panel { background: var(--color-surface-work); border-radius: var(--radius-panel); padding: 20px; min-width: 0; }
+.panel { padding: 20px; min-width: 0; }
 
 @media (min-width: 720px) {
   .panel { padding: 24px; }
@@ -153,11 +153,9 @@ h1.page-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; 
 
 .route-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
 
-.route-item { appearance: none; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 100%; min-height: 44px; margin: 0; padding: 8px 0; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; background: transparent; color: var(--color-text-primary); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease); }
+.route-item { appearance: none; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 12px; width: 100%; margin: 0; padding: 8px 0; border: 0; border-radius: 0; background: transparent; color: var(--color-text-primary); font: inherit; text-align: left; cursor: pointer; transition: background-color var(--motion-small) var(--motion-ease); }
 
 .route-list li:last-child .route-item { border-bottom: 0; }
-
-.route-item:hover { background: var(--color-surface-context); }
 
 .route-item.is-locked { color: var(--color-text-secondary); }
 
@@ -207,9 +205,7 @@ h1.page-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; 
   .card-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
-.surface-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; padding: 20px; min-width: 0; background: var(--color-surface-work); border: 1px solid transparent; border-radius: var(--radius-panel); transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
-
-.surface-card.is-selected { border-color: var(--color-action-primary); background: var(--color-selected-bg); }
+.surface-card { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; padding: 20px; min-width: 0; transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 
 .surface-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
 
@@ -228,8 +224,6 @@ h1.page-title { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 600; 
   --gutter: clamp(16px, 3.4vw, 48px);
   --content-max: 1480px;
   --rail: 264px; }
-
-body { letter-spacing: -0.006em; }
 
 ::selection { background: var(--color-selected-bg); color: var(--color-text-primary); }
 
