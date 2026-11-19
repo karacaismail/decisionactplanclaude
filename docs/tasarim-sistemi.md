@@ -20,6 +20,7 @@ Ant Design başlık boyutları da aynı ölçekten gelir.
 | Öğe | Boyut | Kaynak |
 |---|---|---|
 | Sayfa başlığı | 28 pikselden 36 piksele kadar | `--font-page-title` |
+| Devir raporunun karar sorusu | 28 pikselden 32 piksele kadar | `--font-lead` |
 | İkinci düzey başlık | 24 piksel | `--font-h2` |
 | Bölüm başlığı | 20 piksel | `--font-section-title` |
 | Alt başlık | 18 piksel | `--font-subsection-title` |
@@ -62,7 +63,7 @@ Eylem rengi iki ayrı tokena bölünür:
 | `actionText` | `--color-action-text` | Bağlantı, seçili menü ve eylem rengindeki yazı |
 | `onAction` | `--color-on-action` | Dolu düğmenin üstündeki yazı |
 
-Eylem rengiyle yazı yazacaksanız `--color-action-text` kullanın.
+Eylem rengiyle yazı yazacaksanız `--color-action-text` kullanın. Bu kural modül ekranlarında da geçerlidir.
 `--color-action-primary` yazı rengi olarak kullanılmaz.
 Örneğin koyu temada seçili menü yazısı açık mavi olur.
 Odak işareti de `--color-action-text` rengini kullanır.
