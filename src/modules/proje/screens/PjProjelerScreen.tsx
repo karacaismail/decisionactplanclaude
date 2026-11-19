@@ -1,8 +1,8 @@
 import '@/styles/ekran/PjProjelerScreen.css'
-import { useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { App as AntApp, Button, Input } from 'antd'
 import { FolderPlus } from '@phosphor-icons/react'
-import { Link, useNavigate } from 'react-router'
+import { Link, useNavigate, useSearchParams } from 'react-router'
 import { isStrategyApproved, selectExecutionTasks, selectStrategyMoves, type ReadonlyPlan } from '@/contracts'
 import { useCurrentPlanView } from '@/platform/planSource'
 import { EmptyState } from '@/components/EmptyState'
@@ -50,9 +50,23 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
   const veri = useProjeVerisi(plan.id)
   const [mesgul, setMesgul] = useState<string | null>(null)
   const [yeniAd, setYeniAd] = useState('')
+  const [params] = useSearchParams()
+  /* Çekirdekteki satır etiketi bu ekranı "?satir=<kimlik>" ile açar. Ekran o satırı getirir ve düğmesine odaklanır. */
+  const secili = params.get('satir')
+  const getirilen = useRef<string | null>(null)
   const bugun = bugunIso(new Date())
   const hamleler = selectStrategyMoves(plan)
   const simdiIsleri = selectExecutionTasks(plan).filter((t) => t.horizon === 'now')
+  useEffect(() => {
+    if (!secili || veri.yukleniyor || getirilen.current === secili) return
+    const satir = document.querySelector<HTMLElement>(`[data-satir="${CSS.escape(secili)}"]`)
+    if (!satir) return
+    getirilen.current = secili
+    const azHareket = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    satir.scrollIntoView({ block: 'center', behavior: azHareket ? 'auto' : 'smooth' })
+    satir.querySelector<HTMLElement>('button')?.focus({ preventScroll: true })
+  }, [secili, veri.yukleniyor])
+  const seciliMi = (rowId: string) => secili === rowId
   const bagliSayisi = (rowId: string) => veri.projeler.filter((p) => p.moveRowId === rowId).length
   const bagMetni = (p: Proje) => {
     if (!p.moveRowId) return 'Bu proje bir ana hamleye bağlı değil.'
@@ -138,7 +152,8 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
             {hamleler.map((m) => {
               const n = bagliSayisi(m.rowId)
               return (
-                <li key={m.rowId} className="pj-projeler-kaynak">
+                <li key={m.rowId} className={`pj-projeler-kaynak${seciliMi(m.rowId) ? ' pj-projeler-kaynak-secili' : ''}`} data-satir={m.rowId}>
+                  {seciliMi(m.rowId) ? <p className="pj-projeler-secili-not">Bu satırdan geldiniz.</p> : null}
                   <p className="pj-projeler-kaynak-ad">{m.move}</p>
                   {m.serves ? <p className="pj-projeler-kart-bilgi">Amacı: {m.serves}</p> : null}
                   <p className="pj-projeler-kart-bilgi">{n ? `Bu hamleye bağlı ${n} proje var.` : 'Bu hamleye bağlı proje yok.'}</p>
@@ -161,13 +176,14 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
       {simdiIsleri.length > 0 ? (
         <section className="pj-projeler-bolum" aria-labelledby="pj-simdi">
           <h2 id="pj-simdi" className="pj-projeler-baslik">İlk 90 günün işleri</h2>
-        <p className="pj-projeler-aciklama">Bu işler strateji uygulamadaki “Şimdi” listesindedir. Büyük bir işi projeye çevirebilirsiniz.</p>
+          <p className="pj-projeler-aciklama">Bu işler strateji uygulamadaki “Şimdi” listesindedir. Büyük bir işi projeye çevirebilirsiniz.</p>
           <ul className="pj-projeler-liste">
             {simdiIsleri.map((t) => {
               const n = bagliSayisi(t.rowId)
               const bitis = t.dueDate && tarihGecerliMi(t.dueDate) && t.dueDate >= bugun ? t.dueDate : undefined
               return (
-                <li key={t.rowId} className="pj-projeler-kaynak">
+                <li key={t.rowId} className={`pj-projeler-kaynak${seciliMi(t.rowId) ? ' pj-projeler-kaynak-secili' : ''}`} data-satir={t.rowId}>
+                  {seciliMi(t.rowId) ? <p className="pj-projeler-secili-not">Bu satırdan geldiniz.</p> : null}
                   <p className="pj-projeler-kaynak-ad">{t.action}</p>
                   {t.owner || tarihGecerliMi(t.dueDate) ? (
                     <p className="pj-projeler-kart-bilgi">

@@ -16,6 +16,7 @@ import { EvidenceLadderPicker, LADDER } from './EvidenceLadderPicker'
 import { MeasureInput } from './MeasureInput'
 import { ThresholdInput, type ThresholdValue } from './ThresholdInput'
 import { RepeaterTable, type Row } from './RepeaterTable'
+import type { RowFooter } from './ProjectRowBadge'
 import { ScoreMatrix, type ScoreMatrixValue } from './ScoreMatrix'
 import { EvidenceLink } from './EvidenceLink'
 
@@ -59,7 +60,7 @@ function optionsTooltip(options: Option[]): ReactNode | null {
  * Tek form alanı. Geniş görünümde antd `Form.Item` düzenidir: etiket, bilgi balonu, giriş, altta ipucu (`extra`).
  * `compact` tablo hücresi içindir. Girişin adı ve grubun açıklaması korunur. Kart yardımını CSS gösterir.
  */
-export function FieldControl({ field, value, onChange, plan, values, compact, idPrefix }: {
+export function FieldControl({ field, value, onChange, plan, values, compact, idPrefix, rowFooter }: {
   field: Field
   value: unknown
   onChange: (v: unknown) => void
@@ -67,6 +68,8 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
   values: Record<string, unknown>
   compact?: boolean
   idPrefix: string
+  /** Tekrarlı tabloda her satırın altına salt okunur bilgi ekler. Örneğin proje etiketi. */
+  rowFooter?: RowFooter
 }) {
   if (!evalCondition(field.when, plan, undefined, values)) return null
   const id = `${idPrefix}-${field.key}`
@@ -235,7 +238,7 @@ export function FieldControl({ field, value, onChange, plan, values, compact, id
     case 'measure':
       return wrap(<MeasureInput idPrefix={id} defaultName={field.defaultName} defaultUnit={field.defaultUnit} value={value as Measure} onChange={onChange} />, { labelAs: 'span' })
     case 'repeater':
-      return wrap(<RepeaterTable idPrefix={id} plan={plan} columns={field.columns} value={value as Row[]} onChange={onChange} addLabel={field.addLabel} minRows={field.minRows} maxRows={field.maxRows} fixedFirstRow={field.fixedFirstRow} />, {
+      return wrap(<RepeaterTable idPrefix={id} plan={plan} columns={field.columns} value={value as Row[]} onChange={onChange} addLabel={field.addLabel} minRows={field.minRows} maxRows={field.maxRows} fixedFirstRow={field.fixedFirstRow} rowFooter={rowFooter} />, {
         labelAs: 'span',
         tooltip: field.maxRows ? `En çok ${field.maxRows} satır.` : undefined,
       })

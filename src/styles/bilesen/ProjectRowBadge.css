@@ -1,0 +1,9 @@
+/* Tablo satırının proje etiketi. Salt okunurdur. Mimari: docs/css-mimarisi.md */
+
+.project-row-badge { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-3); margin-block-start: var(--space-2); }
+
+.project-row-badge-text { display: inline-flex; align-items: center; gap: var(--gap-icon); margin: 0; font-size: var(--font-helper); line-height: var(--line-body); color: var(--color-text-secondary); white-space: normal; }
+
+.project-row-badge-late { font-weight: var(--weight-strong); color: var(--color-status-harm); }
+
+.project-row-badge-link { display: inline-flex; align-items: center; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-primary); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

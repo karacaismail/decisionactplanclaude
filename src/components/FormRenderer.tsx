@@ -8,6 +8,7 @@ import type { PlanDoc } from '@/data/types'
 import { evalCondition } from '@/engine/conditions'
 import { FieldControl, isFilled } from './FieldControl'
 import { CalcField } from './CalcField'
+import { useProjectRowFooter } from './ProjectRowBadge'
 
 export interface SectionStat {
   /** Kart kimliği. Sağ sütundaki bağlantı listesi (Anchor) buraya atlar. */
@@ -105,6 +106,7 @@ export function requiredKeys(step: StepDef, plan: PlanDoc, values: Record<string
  */
 export function FormRenderer({ step, plan, values, onChange, readOnly = false, revealId }: { step: StepDef; plan: PlanDoc; values: Record<string, unknown>; onChange: (key: string, v: unknown) => void; readOnly?: boolean; revealId?: { id: string; n: number } }) {
   const sectionElements = useRef(new Map<string, HTMLDivElement>())
+  const rowFooter = useProjectRowFooter(step.id, plan)
   const stats = sectionStats(step, plan, values)
   const optionalCount = stats.filter((s) => s.optional).length
   const requiredCount = stats.length - optionalCount
@@ -379,7 +381,7 @@ export function FormRenderer({ step, plan, values, onChange, readOnly = false, r
                       }
                       return (
                         <div key={f.key} className={`field-cell${f.span && f.span < 24 ? ` span-${f.span}` : ''}`}>
-                          <FieldControl field={f} value={values[f.key]} onChange={(v) => onChange(f.key, v)} plan={plan} values={values} idPrefix={`a${step.id}`} />
+                          <FieldControl field={f} value={values[f.key]} onChange={(v) => onChange(f.key, v)} plan={plan} values={values} idPrefix={`a${step.id}`} rowFooter={rowFooter(f.key)} />
                         </div>
                       )
                     })}

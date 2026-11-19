@@ -20,6 +20,10 @@
 
 .pj-projeler-kaynak { background: var(--color-surface-context); }
 
+.pj-projeler-kaynak-secili { background: var(--color-selected-bg); }
+
+.pj-projeler-secili-not { margin: 0; font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-primary); }
+
 .pj-projeler-kart-ad { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; }
 
 .pj-projeler-kart-ad a { display: flex; align-items: center; min-block-size: var(--target-touch); color: var(--color-text-primary); overflow-wrap: break-word; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

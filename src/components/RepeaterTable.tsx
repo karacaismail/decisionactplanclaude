@@ -1,4 +1,5 @@
 import '@/styles/bilesen/RepeaterTable.css'
+import type { ReactNode } from 'react'
 import { Button, Popconfirm, Table, Tag } from 'antd'
 import { Plus, Trash, ArrowUp, ArrowDown } from '@phosphor-icons/react'
 import type { Field } from '@/data/schema'
@@ -16,7 +17,7 @@ const WIDE_TYPES = new Set(['text', 'textarea', 'select', 'evidenceLink'])
  * Alanlar yeniden kurulmadığı için taslak metin ve odak korunur.
  * Geniş tablo kendi kabında kayar. Satır silme işlemi onay ister.
  */
-export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekle', minRows = 0, maxRows, fixedFirstRow, plan, idPrefix }: {
+export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekle', minRows = 0, maxRows, fixedFirstRow, plan, idPrefix, rowFooter }: {
   columns: Field[]
   value?: Row[]
   onChange: (rows: Row[]) => void
@@ -26,6 +27,8 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
   fixedFirstRow?: Record<string, unknown>
   plan: PlanDoc
   idPrefix: string
+  /** Satırın ilk hücresinin altına salt okunur bilgi ekler. Bilgi satırla birlikte taşınır. */
+  rowFooter?: (row: Row) => ReactNode
 }) {
   /* Eski kayıtlarda kimlik eksik olabilir; sıra numarasından kimlik verilir. */
   let rows: Row[] = (value ?? []).map((r, i) => (r._id ? r : { ...r, _id: `satir-${i}` }))
@@ -95,6 +98,7 @@ export function RepeaterTable({ columns, value, onChange, addLabel = 'Satır ekl
                     {c.label}{c.required ? <span className="field-required"> (zorunlu)</span> : null}
                   </span>
                   <FieldControl field={c} value={r[c.key]} onChange={(v) => setRow(i, { [c.key]: v })} plan={plan} values={r} compact idPrefix={`${idPrefix}-${r._id}`} />
+                  {ci === 0 && rowFooter && !r._fixed ? rowFooter(r) : null}
                 </div>
               )
             },
