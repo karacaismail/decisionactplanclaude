@@ -26,20 +26,7 @@
 
 .tag-row { display: inline-flex; flex-wrap: wrap; gap: 6px; }
 
-.mobil-plans .ant-btn.plan-name { display: inline-flex;
-  align-items: center;
-  min-height: var(--target-touch);
-  min-width: var(--target-touch);
-  max-width: 100%;
-  white-space: normal; }
-
-.mobil-plans :is(.plan-card, .plan-card-head) { min-width: 0; }
-
-.mobil-plans .plan-card-head { flex-wrap: wrap; }
-
 .mobil-plans .plan-card { padding: var(--pano-card-padding); background: var(--color-surface-context); border-radius: var(--radius-panel); gap: var(--pano-card-gap); }
-
-.mobil-plans .plan-name { word-break: normal; overflow-wrap: normal; }
 
 .mobil-plans-list { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-4); }
 

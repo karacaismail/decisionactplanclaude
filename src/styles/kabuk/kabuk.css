@@ -24,10 +24,6 @@
 
 .status-dot.is-current { background: var(--color-action-primary); }
 
-.breadcrumb .crumb { overflow: hidden; text-overflow: ellipsis; min-width: 0; flex: 0 1 auto; }
-
-.breadcrumb .crumb.is-current { color: var(--color-text-primary); font-weight: 600; }
-
 .shell-content { min-width: 0; box-sizing: border-box; width: 100%; }
 
 .page { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-6); min-width: 0; }
@@ -78,8 +74,6 @@
 .topbar .ant-tag { background: transparent !important; color: var(--color-hero-muted) !important; }
 
 .topbar .tag { border-color: var(--color-hero-line); color: var(--color-hero-muted); }
-
-.topbar .save-dot { box-shadow: none; }
 
 .product-nav { display: flex; align-items: stretch; gap: clamp(8px, 1.6vw, 26px); padding: 0 var(--gutter); background: var(--color-surface-work); border-bottom: 1px solid var(--color-border); overflow-x: auto; scrollbar-width: thin; position: sticky; top: 60px; z-index: 19; }
 

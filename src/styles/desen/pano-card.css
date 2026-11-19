@@ -31,7 +31,3 @@
 .pano-card .ant-statistic-content-suffix { font-size: var(--font-helper); font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 6px; }
 
 .pano-card .helper { margin: 0; }
-
-.pano-card .yol-steps.ant-steps.ant-steps-filled .ant-steps-item-finish .ant-steps-item-icon { background: var(--color-status-ok-bg); color: var(--color-status-ok); }
-
-.pano-card .yol-steps.ant-steps.ant-steps-filled .ant-steps-item-process .ant-steps-item-icon { background: var(--color-action-primary); color: var(--color-on-action); }
