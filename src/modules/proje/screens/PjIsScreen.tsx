@@ -50,7 +50,10 @@ export default function PjIsScreen() {
 function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi: string }) {
   const nav = useNavigate()
   const { message } = AntApp.useApp()
-  const [taslak, setTaslak] = useState<Required<IsDegisikligi>>({ baslik: is.baslik, durum: is.durum, sorumlu: is.sorumlu, sonTarih: is.sonTarih, not: is.not })
+  const ilk = (x: Is): Required<IsDegisikligi> => ({ baslik: x.baslik, durum: x.durum, sorumlu: x.sorumlu, sonTarih: x.sonTarih, not: x.not })
+  /* Form açılınca okunan değerler. Kayıtta yalnız değişen alanlar gider. Böylece başka sekmenin değişikliği silinmez. */
+  const [temel, setTemel] = useState(() => ilk(is))
+  const [taslak, setTaslak] = useState(() => ilk(is))
   const [kaydediliyor, setKaydediliyor] = useState(false)
   const [hata, setHata] = useState('')
   const bugun = bugunIso(new Date())
@@ -62,7 +65,10 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
     setKaydediliyor(true)
     setHata('')
     try {
-      await projeDepo.isDegistir(proje.planId, is.id, taslak)
+      const degisen = Object.fromEntries(Object.entries(taslak).filter(([k, v]) => temel[k as keyof IsDegisikligi] !== v)) as IsDegisikligi
+      const kayit = await projeDepo.isDegistir(proje.planId, is.id, degisen)
+      setTemel(ilk(kayit))
+      setTaslak(ilk(kayit))
       message.success('İş kaydedildi.')
     } catch (error) {
       setHata(error instanceof Error ? error.message : 'İş kaydedilemedi.')

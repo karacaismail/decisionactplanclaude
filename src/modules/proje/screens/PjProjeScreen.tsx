@@ -1,11 +1,10 @@
 import '@/styles/ekran/PjProjeScreen.css'
-import { useRef, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import { App as AntApp, Button, Input, Popconfirm, Segmented } from 'antd'
 import type { InputRef } from 'antd'
-import { ArrowLeft, ClipboardText, PencilSimple, Plus, Trash } from '@phosphor-icons/react'
+import { ArrowLeft, PencilSimple, Plus, Trash } from '@phosphor-icons/react'
 import { useNavigate, useParams, useSearchParams } from 'react-router'
 import { selectExecutionTasks, selectStrategyMoves, type ReadonlyPlan } from '@/contracts'
-import { planCommands } from '@/platform/planCommands'
 import { useCurrentPlanView } from '@/platform/planSource'
 import { scrollRegionWithKeyboard } from '@/components/keyboardScroll'
 import { EmptyState } from '@/components/EmptyState'
@@ -14,7 +13,6 @@ import { PjBosEkran } from '../components/PjBosEkran'
 import { PjGecikti, PjIsKarti } from '../components/PjIsKarti'
 import { isOzeti, type ProjeDegisikligi } from '../domain/islemler'
 import { DURUM_ADI, IS_DURUMLARI, SINIR, type Is, type IsDurumu, type Proje } from '../domain/model'
-import { kanitMetni } from '../domain/kanit'
 import { bugunIso, tarihYaz } from '../domain/tarih'
 import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
@@ -80,12 +78,27 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
   const [duyuru, setDuyuru] = useState('')
   const [mesgul, setMesgul] = useState<string | null>(null)
   const [duzenle, setDuzenle] = useState(false)
+  /* Durumu değişen iş. Panoda kart başka sütuna geçer ve odak kaybolur. Odak bu işe geri döner. */
+  const [odakIs, setOdakIs] = useState<string | null>(null)
   const girdi = useRef<InputRef>(null)
+  const duzenleDugmesi = useRef<HTMLButtonElement>(null)
   const bugun = bugunIso(new Date())
   const ozet = isOzeti(isler, bugun)
   const istenen = params.get('gorunum')
   const gorunum: Gorunum = istenen === 'pano' || istenen === 'liste' ? istenen : varsayilanGorunum()
   const adres = (is: Is) => `/projeler/${encodeURIComponent(proje.id)}/is/${encodeURIComponent(is.id)}`
+
+  useEffect(() => {
+    if (!odakIs) return
+    const kart = document.querySelector<HTMLElement>(`[data-is-id="${CSS.escape(odakIs)}"]`)
+    const aktif = document.activeElement
+    if (aktif && aktif !== document.body) {
+      /* Kişi başka bir öğeye geçtiyse odak geri çekilmez. */
+      if (!kart?.contains(aktif)) setOdakIs(null)
+      return
+    }
+    kart?.querySelector<HTMLElement>('[role="combobox"]')?.focus()
+  }, [isler, odakIs])
 
   const ekle = async (e: FormEvent) => {
     e.preventDefault()
@@ -109,7 +122,10 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
   }
 
   const durum = async (is: Is, d: IsDurumu) => {
+    /* Kayıt sürerken gelen ikinci seçim yok sayılır. Düğme kapanmaz. Böylece odak kaybolmaz. */
+    if (mesgul) return
     setMesgul(is.id)
+    setOdakIs(is.id)
     try {
       await projeDepo.durumDegistir(proje.planId, is.id, d)
       setDuyuru(`"${is.baslik}" işinin durumu "${DURUM_ADI[d]}" oldu.`)
@@ -130,15 +146,8 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
     }
   }
 
-  /* Plan değişmez. Komut yalnız taslak saklar. Taslağı bir kişi sınama adımında kaydeder. */
-  const kanit = () => {
-    const sonuc = planCommands.appendEvidenceDraft(proje.planId, kanitMetni(proje, isler, bugun))
-    if (sonuc.ok) setDuyuru('Kanıt taslağı hazırlandı. Plan değişmedi. Taslak ayrı yerde saklanır.')
-    else message.error(sonuc.error)
-  }
-
   const kart = (is: Is) => (
-    <PjIsKarti is={is} adres={adres(is)} bugun={bugun} mesgul={mesgul === is.id} onDurum={(d) => void durum(is, d)} />
+    <PjIsKarti is={is} adres={adres(is)} bugun={bugun} onDurum={(d) => void durum(is, d)} />
   )
 
   return (
@@ -186,11 +195,14 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
             aria-label="Görünüm"
             options={GORUNUMLER}
             value={gorunum}
-            onChange={(v) => setParams((p) => {
-              const sonraki = new URLSearchParams(p)
-              sonraki.set('gorunum', v)
-              return sonraki
-            }, { replace: true })}
+            onChange={(v) => {
+              setOdakIs(null)
+              setParams((p) => {
+                const sonraki = new URLSearchParams(p)
+                sonraki.set('gorunum', v)
+                return sonraki
+              }, { replace: true })
+            }}
           />
         </div>
         {isler.length === 0 ? (
@@ -226,18 +238,10 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
         )}
       </section>
 
-      <section className="pj-proje-ayar" aria-labelledby="pj-kanit-baslik">
-        <h2 id="pj-kanit-baslik" className="pj-proje-baslik">Sınama için kanıt</h2>
-        <p className="pj-proje-not">Projenin sonucu stratejiyi sınamaya yarar. Uygulama sonucu kısa bir metne çevirir. Metin taslak olarak saklanır. Taslağı bir kişi inceler ve kaydeder.</p>
-        <div className="pj-proje-ayar-dugmeler">
-          <Button icon={<ClipboardText size={18} aria-hidden />} onClick={kanit}>Kanıt taslağı hazırla</Button>
-        </div>
-      </section>
-
       <section className="pj-proje-ayar" aria-labelledby="pj-ayar-baslik">
         <h2 id="pj-ayar-baslik" className="pj-proje-baslik">Proje bilgileri</h2>
         <div className="pj-proje-ayar-dugmeler">
-          <Button icon={<PencilSimple size={18} aria-hidden />} aria-expanded={duzenle} aria-controls="pj-proje-form" onClick={() => setDuzenle((v) => !v)}>
+          <Button ref={duzenleDugmesi} icon={<PencilSimple size={18} aria-hidden />} aria-expanded={duzenle} aria-controls={duzenle ? 'pj-proje-form' : undefined} onClick={() => setDuzenle((v) => !v)}>
             {duzenle ? 'Düzenlemeyi kapat' : 'Proje bilgilerini düzenle'}
           </Button>
           <Popconfirm
@@ -251,7 +255,16 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
             <Button danger icon={<Trash size={18} aria-hidden />}>Projeyi sil</Button>
           </Popconfirm>
         </div>
-        {duzenle ? <ProjeFormu proje={proje} kapat={() => setDuzenle(false)} /> : null}
+        {duzenle ? (
+          <ProjeFormu
+            proje={proje}
+            kapat={() => {
+              setDuzenle(false)
+              /* Form kapanınca odak düzenleme düğmesine döner. */
+              requestAnimationFrame(() => duzenleDugmesi.current?.focus())
+            }}
+          />
+        ) : null}
       </section>
     </div>
   )

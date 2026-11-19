@@ -58,3 +58,10 @@ export const SINIR = {
 
 /** Modül verisinin biçim sürümü. Bildirimdeki sürümle aynıdır. */
 export const VERI_SURUMU = 1
+
+const KIMLIK = new RegExp(`^[\\p{L}\\p{N}][\\p{L}\\p{N}._-]{0,${SINIR.kimlik - 1}}$`, 'u')
+
+/** Kayıt ve satır kimliği güvenli mi? Harf ya da rakamla başlar. Yalnız harf, rakam, nokta, alt çizgi ve tire içerir. */
+export function kimlikGecerliMi(deger: unknown): deger is string {
+  return typeof deger === 'string' && KIMLIK.test(deger)
+}

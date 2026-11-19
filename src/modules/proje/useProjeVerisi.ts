@@ -21,16 +21,29 @@ export function useProjeVerisi(planId: string | undefined): ProjeVerisi {
   useEffect(() => {
     if (!planId) return
     let kapandi = false
-    let sayac = 0
+    let calisiyor = false
+    let kirli = false
+    /* Okumalar birleştirilir. Okuma sürerken gelen haberler tek bir yeni okuma başlatır. */
     const yukle = async () => {
-      const bu = ++sayac
+      if (calisiyor) {
+        kirli = true
+        return
+      }
+      calisiyor = true
       try {
-        const [projeler, isler] = await Promise.all([projeDepo.projeler(planId), projeDepo.isler(planId)])
-        /* Eski okuma yeni okumanın üzerine yazmaz. */
-        if (!kapandi && bu === sayac) setVeri({ planId, yukleniyor: false, projeler, isler })
-      } catch (error) {
-        console.error(error)
-        if (!kapandi && bu === sayac) setVeri({ planId, yukleniyor: false, hata: 'Projeler okunamadı. Sayfayı yeniden yükleyin.', projeler: [], isler: [] })
+        do {
+          kirli = false
+          try {
+            const [projeler, isler] = await Promise.all([projeDepo.projeler(planId), projeDepo.isler(planId)])
+            if (!kapandi) setVeri({ planId, yukleniyor: false, projeler, isler })
+          } catch (error) {
+            console.error(error)
+            /* Okunan son veri korunur. Hata yanında gösterilir. */
+            if (!kapandi) setVeri((onceki) => ({ planId, yukleniyor: false, hata: 'Projeler okunamadı. Sayfayı yeniden yükleyin.', projeler: onceki.planId === planId ? onceki.projeler : [], isler: onceki.planId === planId ? onceki.isler : [] }))
+          }
+        } while (kirli && !kapandi)
+      } finally {
+        calisiyor = false
       }
     }
     void yukle()

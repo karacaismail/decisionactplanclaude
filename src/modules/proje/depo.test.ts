@@ -79,6 +79,19 @@ describe('proje yaşam döngüsü', () => {
     expect(ozetler['plan-2']).toMatchObject({ projeSayisi: 1, acik: 1 })
   })
 
+  it('projesi silinmiş iş dışa aktarılmaz, içe alma bozulmaz', async () => {
+    const { base, depo } = kur()
+    const p = await depo.projeAc('plan-1', { ad: 'Bir' })
+    await depo.isEkle('plan-1', p.id, 'A')
+    /* Başka sekme projeyi silerken bu sekme iş eklemiş olabilir. İş projesiz kalır. */
+    await base.set('proje/plan-1/is/yetim', { id: 'yetim', projeId: 'silindi', baslik: 'Yetim', durum: 'yapilacak', sorumlu: '', sonTarih: '', not: '', sira: 1 })
+    const life = createProjeLifecycle(createPlanScopedLifecycle('proje', 1, () => base), { ozetiYenile: async () => undefined })
+    const slice = (await life.exportSlice!('plan-1')) as { entries: [string, unknown][] }
+    expect(slice.entries.map(([k]) => k).some((k) => k.endsWith('yetim'))).toBe(false)
+    await life.importSlice!(slice, { 'plan-1': 'plan-2' })
+    expect((await depo.isler('plan-2')).map((x) => x.baslik)).toEqual(['A'])
+  })
+
   it('bozuk dilimi yazmadan reddeder', async () => {
     const { base, depo } = kur()
     const life = createProjeLifecycle(createPlanScopedLifecycle('proje', 1, () => base), { ozetiYenile: async () => undefined })

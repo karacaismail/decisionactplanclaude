@@ -20,16 +20,15 @@ export function PjGecikti() {
  * Tek işin kartı. Liste ve pano aynı kartı kullanır.
  * Başlık işin ekranına götürür. Durum düğmesi durumu hemen değiştirir.
  */
-export function PjIsKarti({ is, adres, bugun, onDurum, mesgul }: {
+export function PjIsKarti({ is, adres, bugun, onDurum }: {
   is: Is
   adres: string
   bugun: string
   onDurum: (durum: IsDurumu) => void
-  mesgul?: boolean
 }) {
   const gec = gecikmisMi(is, bugun)
   return (
-    <article className="pj-is-karti">
+    <article className="pj-is-karti" data-is-id={is.id}>
       <Link className="pj-is-karti-baslik" to={adres}>{is.baslik}</Link>
       <p className="pj-is-karti-bilgi">
         <span>{is.sorumlu ? `Sorumlu: ${is.sorumlu}` : 'Sorumlu yazılmadı.'}</span>
@@ -40,7 +39,7 @@ export function PjIsKarti({ is, adres, bugun, onDurum, mesgul }: {
         ) : null}
         {gec ? <PjGecikti /> : null}
       </p>
-      <PjDurumSecici value={is.durum} onChange={onDurum} baslik={is.baslik} disabled={mesgul} />
+      <PjDurumSecici value={is.durum} onChange={onDurum} baslik={is.baslik} />
     </article>
   )
 }

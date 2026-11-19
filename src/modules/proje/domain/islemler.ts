@@ -3,7 +3,7 @@
  * Bugünün tarihi dışarıdan verilir. Böylece testler saate bağlı kalmaz.
  */
 import { MAX_ROLLUP_BYTES } from '@/platform/rollups'
-import { IS_DURUMLARI, SINIR, type Is, type IsDurumu, type Proje } from './model'
+import { IS_DURUMLARI, kimlikGecerliMi, SINIR, type Is, type IsDurumu, type Proje } from './model'
 import { bugunIso, tarihGecerliMi } from './tarih'
 
 const kisalt = (metin: unknown, sinir: number) => (typeof metin === 'string' ? metin.trim().slice(0, sinir) : '')
@@ -34,7 +34,9 @@ export function yeniProje(girdi: ProjeGirdisi, ctx: { id: string; planId: string
   const baslangic = tarihAl(girdi.baslangic ?? bugunIso(ctx.simdi), 'Başlangıç tarihi')
   const bitis = tarihAl(girdi.bitis, 'Bitiş tarihi')
   aralikDenetle(baslangic, bitis)
-  const bag = kisalt(girdi.moveRowId, SINIR.kimlik)
+  const bag = girdi.moveRowId ?? ''
+  /* Kimlik kesilmez. Kesilen kimlik bağı koparır. Geçersiz kimlik reddedilir. */
+  if (bag && !kimlikGecerliMi(bag)) throw new Error('Bu satıra proje bağlanamıyor. Satırın kimliği geçersiz.')
   return {
     id: ctx.id,
     planId: ctx.planId,
@@ -179,26 +181,26 @@ export function planOzeti(projeler: readonly Proje[], isler: readonly Is[], bugu
     else projeyeGore.set(is.projeId, [is])
   }
   const tum = isOzeti(projeler.flatMap((p) => projeyeGore.get(p.id) ?? []), bugun)
-  const hamleler: Record<string, HamleOzeti> = {}
+  /* Map kullanılır. Böylece "constructor" gibi bir kimlik nesnenin kendi özelliğine yazılmaz. */
+  const hamleMap = new Map<string, HamleOzeti>()
   for (const p of projeler) {
     if (!p.moveRowId) continue
     const o = isOzeti(projeyeGore.get(p.id) ?? [], bugun)
-    const h = (hamleler[p.moveRowId] ??= { proje: 0, acik: 0, geciken: 0, biten: 0 })
+    const h = hamleMap.get(p.moveRowId) ?? { proje: 0, acik: 0, geciken: 0, biten: 0 }
     h.proje += 1
     h.acik += o.acik
     h.geciken += o.geciken
     h.biten += o.biten
+    hamleMap.set(p.moveRowId, h)
   }
-  const ozet: PlanOzeti = { v: 1, tarih: bugun, projeSayisi: projeler.length, acik: tum.acik, geciken: tum.geciken, biten: tum.biten, hamleler }
+  const temel = { v: 1 as const, tarih: bugun, projeSayisi: projeler.length, acik: tum.acik, geciken: tum.geciken, biten: tum.biten }
+  const ozet: PlanOzeti = { ...temel, hamleler: Object.fromEntries(hamleMap) }
   if (boyut(ozet) <= MAX_ROLLUP_BYTES) return ozet
-  /* Sınır aşılırsa hamleler tek tek eklenir. Sığmayan hamle atılır. */
-  const kesik: PlanOzeti = { ...ozet, hamleler: {}, kesik: true }
-  for (const [kimlik, h] of Object.entries(hamleler)) {
-    kesik.hamleler[kimlik] = h
-    if (boyut(kesik) > MAX_ROLLUP_BYTES) {
-      delete kesik.hamleler[kimlik]
-      break
-    }
+  /* Sınır aşılırsa hamleler sırayla eklenir. Sığmayan hamleler atılır. */
+  const sigan: [string, HamleOzeti][] = []
+  for (const kayit of hamleMap) {
+    if (boyut({ ...temel, kesik: true, hamleler: Object.fromEntries([...sigan, kayit]) }) > MAX_ROLLUP_BYTES) break
+    sigan.push(kayit)
   }
-  return kesik
+  return { ...temel, hamleler: Object.fromEntries(sigan), kesik: true }
 }

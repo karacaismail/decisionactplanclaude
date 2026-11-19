@@ -170,6 +170,7 @@ test('ana hamleden proje açılır, iş eklenir, durum klavyeyle ve dokunarak de
   await page.keyboard.press('Enter')
   await expect(statusText(page, 'Ürün fotoğraflarını yenileyin')).toHaveText('Durum: Yapılıyor')
   await expect(page.getByRole('status').filter({ hasText: 'durumu' })).toContainText('"Yapılıyor" oldu.')
+  await expect(first, 'Durum değişince odak düğmede kalır').toBeFocused()
 
   /* Seçimden sonra liste kapanır. */
   await expect(page.locator('.pj-durum-popup').filter({ visible: true })).toHaveCount(0)
@@ -187,13 +188,6 @@ test('ana hamleden proje açılır, iş eklenir, durum klavyeyle ve dokunarak de
   await targets44(page, 'proje listesi')
   await noPageOverflow(page, 'proje listesi')
   await shot(page, `${info.project.name}-proje-liste`)
-
-  /* Kanıt taslağı plana yazılmaz. Taslak ayrı anahtarda durur. */
-  await activate(page, page.getByRole('button', { name: 'Kanıt taslağı hazırla' }), hasTouch)
-  await expect(page.getByRole('status').filter({ hasText: 'Kanıt taslağı' })).toContainText('Plan değişmedi.')
-  const drafts = await page.evaluate(() => JSON.stringify(JSON.parse(localStorage.getItem('decisionactplan-drafts-v1') ?? '{}')))
-  expect(drafts).toContain(`Proje: ${HAMLE}.`)
-  expect(drafts).toContain('Projede 2 iş var. 1 iş bitti. 1 iş açık.')
 
   /* Proje ve iş verisi planı değiştirmez. Sürüm, kararlar ve eskime işaretleri aynı kalır. */
   expect(await storedPlan(page)).toBe(before)
@@ -279,6 +273,27 @@ test('pano beş sütundur, kendi kutusunda kayar ve sayfa kaymaz', async ({ page
   await page.keyboard.press('Enter')
   await expect(board.locator('.pj-pano-sutun').nth(2)).toContainText('Ürün fotoğraflarını yenileyin')
   await expect(board.getByRole('heading', { level: 3 }).nth(2)).toHaveText('Takıldı 1 iş')
+  await expect(statusBox(page, 'Ürün fotoğraflarını yenileyin'), 'Kart sütun değiştirince odak düğmesine döner').toBeFocused()
+})
+
+test('proje bilgileri düzenlenir, hatalı tarih reddedilir, odak düğmeye döner', async ({ page, hasTouch }) => {
+  await openShoeDemo(page, hasTouch)
+  await approveStrategy(page)
+  await openProjectFromMove(page, hasTouch)
+  const toggle = page.getByRole('button', { name: 'Proje bilgilerini düzenle' })
+  await activate(page, toggle, hasTouch)
+  await expect(page.getByRole('button', { name: 'Düzenlemeyi kapat' })).toHaveAttribute('aria-expanded', 'true')
+  await page.getByLabel('Sorumlu kişi').fill('Dijital ekip')
+  await page.getByLabel('Bitiş tarihi').fill('2020-01-01')
+  await activate(page, page.getByRole('button', { name: 'Bilgileri kaydet' }), hasTouch)
+  await expect(page.getByRole('alert')).toHaveText('Bitiş tarihi başlangıç tarihinden önce olamaz.')
+  await page.getByLabel('Bitiş tarihi').fill('2099-12-18')
+  await page.getByRole('button', { name: 'Bilgileri kaydet' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(page.getByRole('button', { name: 'Proje bilgilerini düzenle' })).toBeFocused()
+  await expect(page.locator('.pj-proje-ozet')).toContainText('18 Aralık 2099 Cuma')
+  await expect(page.locator('.pj-proje-ozet')).toContainText('Dijital ekip')
+  await noPageOverflow(page, 'proje bilgileri')
 })
 
 test('başka sekmedeki değişiklik listeyi yeniler', async ({ page, context, hasTouch }) => {

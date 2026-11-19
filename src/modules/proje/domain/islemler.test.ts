@@ -44,6 +44,12 @@ describe('proje kaydı', () => {
     expect('moveRowId' in yeniProje({ ad: 'Depo düzeni' }, { id: 'p2', planId: 'plan-1', simdi: SIMDI })).toBe(false)
   })
 
+  it('geçersiz satır kimliğini reddeder', () => {
+    for (const bag of ['__proto__', '../x', 'a b', 'x'.repeat(SINIR.kimlik + 1)]) {
+      expect(() => yeniProje({ ad: 'A', moveRowId: bag }, { id: 'p1', planId: 'plan-1', simdi: SIMDI }), bag).toThrow(/satır/)
+    }
+  })
+
   it('boş adı reddeder', () => {
     expect(() => yeniProje({ ad: '   ' }, { id: 'p1', planId: 'plan-1', simdi: SIMDI })).toThrow(/Proje adını yazın/)
   })
@@ -148,6 +154,15 @@ describe('özet', () => {
       biten: 2,
       hamleler: { 'satir-1': { proje: 2, acik: 4, geciken: 2, biten: 1 } },
     })
+  })
+
+  it('nesne özelliği adındaki kimlik özeti ve nesneleri bozmaz', () => {
+    const projeler = [proje({ id: 'a', moveRowId: 'constructor' }), proje({ id: 'b', moveRowId: '__proto__' }), proje({ id: 'c', moveRowId: 'toString' })]
+    const ozet = planOzeti(projeler, [is({ projeId: 'a' })], BUGUN)
+    expect(Object.keys(ozet.hamleler).sort()).toEqual(['__proto__', 'constructor', 'toString'])
+    expect(ozet.hamleler.constructor).toEqual({ proje: 1, acik: 1, geciken: 0, biten: 0 })
+    expect(({} as Record<string, unknown>).proje).toBeUndefined()
+    expect(JSON.parse(JSON.stringify(ozet)).hamleler.toString).toEqual({ proje: 1, acik: 0, geciken: 0, biten: 0 })
   })
 
   it('plan özeti 4 KB sınırını aşmaz', () => {

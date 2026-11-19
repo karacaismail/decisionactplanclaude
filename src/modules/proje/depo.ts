@@ -56,16 +56,29 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
   const proje = (planId: string, id: string) => store.get<Proje>(projeAnahtari(planId, id))
   const is = (planId: string, id: string) => store.get<Is>(isAnahtari(planId, id))
 
-  /** Planın özetini asıl veriden yeniden hesaplar ve yazar. */
-  async function ozetiYenile(planId: string): Promise<PlanOzeti> {
-    const ozet = planOzeti(await projeler(planId), await isler(planId), bugunIso(simdi()))
-    try {
-      ozetYaz(planId, ozet)
-    } catch (error) {
-      /* Özet asıl veri değildir. Yazılamazsa kayıt yine geçerlidir. */
-      console.error('Proje özeti yazılamadı.', error)
-    }
-    return ozet
+  const kuyruk = new Map<string, Promise<PlanOzeti>>()
+
+  /**
+   * Planın özetini asıl veriden yeniden hesaplar ve yazar.
+   * Hesaplar sırayla çalışır. Böylece eski özet yeni özetin üzerine yazılmaz.
+   */
+  function ozetiYenile(planId: string): Promise<PlanOzeti> {
+    const onceki = kuyruk.get(planId) ?? Promise.resolve(undefined)
+    const sonraki = onceki.catch(() => undefined).then(async () => {
+      const ozet = planOzeti(await projeler(planId), await isler(planId), bugunIso(simdi()))
+      try {
+        ozetYaz(planId, ozet)
+      } catch (error) {
+        /* Özet asıl veri değildir. Yazılamazsa kayıt yine geçerlidir. */
+        console.error('Proje özeti yazılamadı.', error)
+      }
+      return ozet
+    })
+    kuyruk.set(planId, sonraki)
+    void sonraki.finally(() => {
+      if (kuyruk.get(planId) === sonraki) kuyruk.delete(planId)
+    }).catch(() => undefined)
+    return sonraki
   }
 
   async function projeAc(planId: string, girdi: ProjeGirdisi): Promise<Proje> {
@@ -85,10 +98,14 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     return sonraki
   }
 
-  /** Projeyi ve projenin bütün işlerini siler. */
+  /**
+   * Projeyi ve projenin bütün işlerini siler. Önce proje silinir.
+   * Böylece başka sekme bu projeye artık iş ekleyemez. Arada kalan iş dışa aktarılmaz.
+   */
   async function projeSil(planId: string, id: string): Promise<void> {
-    for (const x of await isler(planId, id)) await store.delete(isAnahtari(planId, x.id))
+    const silinecek = await isler(planId, id)
     await store.delete(projeAnahtari(planId, id))
+    for (const x of silinecek) await store.delete(isAnahtari(planId, x.id))
     await ozetiYenile(planId)
   }
 
