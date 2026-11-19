@@ -178,6 +178,9 @@ test('1 yaşında 3 kişilik kafede KOSGEB Küresel Rekabetçilik uygun değildi
   const kuresel = ret.locator('li', { hasText: 'KOSGEB Küresel Rekabetçilik Destek Programı' })
   await expect(kuresel).toBeVisible()
   await expect(kuresel).toContainText('Sizin ihracatınız ve Ar-Ge çalışmanız yok.')
+  // Yalnız yaşı ya da çalışan sayısı tutan program "Uygun" sayılmaz. Öteki koşullar denetlenmedi.
+  await expect(main.getByRole('heading', { level: 2, name: 'Uygun (0)' })).toBeVisible()
+  await expect(main.locator('section.dt-sonuc-belki li', { hasText: 'Bireysel Katılım Sermayesi' })).toContainText('Tutan koşullar:')
   await denetle(page, 'kafe sonucu')
   await kanit(page, info, 'sonuc-kafe')
 

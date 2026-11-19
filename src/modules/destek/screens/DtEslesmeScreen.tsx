@@ -145,7 +145,14 @@ function SonucSatiri({ program, eslesme }: { program: Program; eslesme: Eslesme 
     <li className="dt-sonuc-satir">
       <Link className="dt-sonuc-ad" to={`/destek/${program.id}`}>{program.ad}</Link>
       <span className="dt-sonuc-kurum">{program.kurum}</span>
-      {eslesme.kuralVar && eslesme.nedenler.length ? (
+      {eslesme.sorulanlarTuttu ? (
+        <>
+          <span className="dt-sonuc-kurum">Tutan koşullar:</span>
+          <ul className="dt-sonuc-nedenler">
+            {eslesme.denetlenenKosullar.map((k) => <li key={k}>{k}</li>)}
+          </ul>
+        </>
+      ) : eslesme.kuralVar && eslesme.nedenler.length ? (
         <ul className="dt-sonuc-nedenler">
           {eslesme.nedenler.map((n) => <li key={n}>{n}</li>)}
         </ul>
@@ -173,7 +180,8 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
   const gruplar = useMemo(() => eslestirHepsi(programlar, profil, bugun), [programlar, profil, bugun])
   const harita = useMemo(() => new Map(programlar.map((p) => [p.id, p])), [programlar])
   const sorular = sonrakiSorular([...gruplar.belki, ...gruplar.uygun])
-  const bilgiEksik = gruplar.belki.filter((e) => e.kuralVar)
+  const tutan = gruplar.belki.filter((e) => e.sorulanlarTuttu)
+  const bilgiEksik = gruplar.belki.filter((e) => e.kuralVar && !e.sorulanlarTuttu)
   const kuralsiz = gruplar.belki.filter((e) => !e.kuralVar)
   return (
     <>
@@ -189,10 +197,18 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
           <Button type="primary" onClick={() => sor(sorulacaklar(profil, sorular))}>Bu soruları cevaplayın</Button>
         </section>
       ) : null}
-      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Bu programlarda sorduğumuz koşulları karşılıyorsunuz. Öteki koşulları programın sayfasında okuyun." eslesmeler={gruplar.uygun} programlar={harita} />
+      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Uygulama bir programın bütün koşullarını denetleyemezse Uygun demez. Bu yüzden bu grup çoğu zaman boş kalır." eslesmeler={gruplar.uygun} programlar={harita} />
       <section className="dt-sonuc-grup dt-sonuc-belki" aria-labelledby="dt-sonuc-belki-baslik">
         <h2 id="dt-sonuc-belki-baslik">Belki ({gruplar.belki.length})</h2>
-        <p>Bu programlar için bilgi eksik. Ya da programın koşullarını uygulama denetlemiyor.</p>
+        <p>Bu programlarda bazı koşulları uygulama denetleyemiyor. Bu koşulları programın sayfasında okuyun.</p>
+        {tutan.length ? (
+          <>
+            <h3>Sorduğumuz koşullar tutuyor ({tutan.length})</h3>
+            <ul className="dt-sonuc-liste">
+              {tutan.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} />)}
+            </ul>
+          </>
+        ) : null}
         {bilgiEksik.length ? (
           <>
             <h3>Bilgi eksik ({bilgiEksik.length})</h3>

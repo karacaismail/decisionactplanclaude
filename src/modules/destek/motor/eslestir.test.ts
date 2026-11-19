@@ -48,10 +48,30 @@ describe('ön eşleşme', () => {
     expect(sonuc.nedenler).toEqual(['Koşulları kendiniz okuyun.'])
   })
 
-  it('bütün kurallar tutarsa sonuç uygundur ve denetlenen koşullar listelenir', () => {
+  it('sorulan kurallar tutsa da denetlenmeyen koşul varsa sonuç belki olur', () => {
     const sonuc = eslestir(program('kosgebGirisimciA'), { kurulus: { yil: 2025, ay: 1 }, faaliyet: ['C'] }, BUGUN)
-    expect(sonuc.sonuc).toBe('uygun')
+    expect(sonuc.sonuc).toBe('belki')
+    expect(sonuc.sorulanlarTuttu).toBe(true)
+    expect(sonuc.nedenler.join(' ')).toMatch(/Öteki koşulları/)
     expect(sonuc.denetlenenKosullar.length).toBe(2)
+  })
+
+  it('kafe profilinde yaş ya da çalışan kuralı tutan program uygun sayılmaz', () => {
+    const gruplar = eslestirHepsi(PROGRAMLAR, KAFE, BUGUN)
+    expect(gruplar.uygun).toEqual([])
+    expect(gruplar.belki.find((e) => e.programId === 'bks')?.sorulanlarTuttu).toBe(true)
+  })
+
+  it('bu sürümde hiçbir kural seti eksiksiz değildir', () => {
+    for (const [id, set] of Object.entries(KURALLAR)) expect(set.eksiksiz, id).toBeFalsy()
+  })
+
+  it('eksiksiz kural setinde bütün kurallar tutarsa sonuç uygundur', () => {
+    const harita = { kosgebGirisimciA: { ...KURALLAR.kosgebGirisimciA, eksiksiz: true } }
+    const profil: DestekProfili = { kurulus: { yil: 2025, ay: 1 }, faaliyet: ['C'] }
+    expect(eslestir(program('kosgebGirisimciA'), profil, BUGUN, harita).sonuc).toBe('uygun')
+    expect(eslestir(program('kosgebGirisimciA'), { faaliyet: ['C'] }, BUGUN, harita).sonuc).toBe('belki')
+    expect(eslestir(program('kosgebGirisimciA'), { ...profil, kurulus: BILMIYORUM }, BUGUN, harita).sonuc).toBe('belki')
   })
 
   it('eksik bilgi belki sonucunu ve sonraki soruyu verir', () => {
@@ -70,9 +90,10 @@ describe('ön eşleşme', () => {
     const iskur = eslestir(program('iskurIep'), { calisan: 3 }, BUGUN)
     expect(iskur.sonuc).toBe('belki')
     expect(iskur.nedenler.join(' ')).toMatch(/5/)
-    expect(eslestir(program('iskurIep'), { calisan: 5 }, BUGUN).sonuc).toBe('uygun')
-    expect(eslestir(program('istka'), { il: 'Ankara' }, BUGUN).sonuc).toBe('belki')
-    expect(eslestir(program('istka'), { il: 'İstanbul' }, BUGUN).sonuc).toBe('uygun')
+    expect(iskur.sorulanlarTuttu).toBe(false)
+    expect(eslestir(program('iskurIep'), { calisan: 5 }, BUGUN).sorulanlarTuttu).toBe(true)
+    expect(eslestir(program('istka'), { il: 'Ankara' }, BUGUN).sorulanlarTuttu).toBe(false)
+    expect(eslestir(program('istka'), { il: 'İstanbul' }, BUGUN).sorulanlarTuttu).toBe(true)
   })
 
   it('yaş sınırına yakın işletme kesin sonuç almaz', () => {
@@ -95,7 +116,7 @@ describe('ön eşleşme', () => {
 
   it('kurucu durumu kadın ya da genç değilse faiz desteği uygun değildir', () => {
     expect(eslestir(program('kosgebGirisimciB'), { kurucu: [] }, BUGUN).sonuc).toBe('uygun_degil')
-    expect(eslestir(program('kosgebGirisimciB'), { kurucu: ['kadin'] }, BUGUN).sonuc).toBe('uygun')
+    expect(eslestir(program('kosgebGirisimciB'), { kurucu: ['kadin'] }, BUGUN).sorulanlarTuttu).toBe(true)
   })
 
   it('sonuçlar katalog sırasını korur ve puanlanmaz', () => {
@@ -107,7 +128,7 @@ describe('ön eşleşme', () => {
       const ids = grup.map((e) => index(e.programId))
       expect(ids).toEqual([...ids].sort((a, b) => a - b))
     }
-    expect(Object.keys(sira[0]).sort()).toEqual(['denetlenenKosullar', 'kuralVar', 'nedenler', 'programId', 'sonrakiSorular', 'sonuc'])
+    expect(Object.keys(sira[0]).sort()).toEqual(['denetlenenKosullar', 'kuralVar', 'nedenler', 'programId', 'sonrakiSorular', 'sonuc', 'sorulanlarTuttu'])
   })
 
   it('sonraki sorular soru sırasıyla ve tekrarsız gelir', () => {

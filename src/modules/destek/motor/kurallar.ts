@@ -84,9 +84,21 @@ const KOSGEB_KAYDI: Kural = {
   },
 }
 
+/**
+ * Bir programın kural seti. Kurallar programın bütün zorunlu koşullarını kapsıyorsa eksiksiz olur.
+ * Eksiksiz olmayan sette bütün kurallar tutsa da sonuç "Belki" olur. Çünkü denetlenmeyen koşul bilinmeyen bilgidir.
+ * Bu sürümde hiçbir program eksiksiz değildir. Her programda uygulamanın soramadığı bir koşul vardır.
+ */
+export interface KuralSeti {
+  kurallar: readonly Kural[]
+  eksiksiz?: boolean
+}
+
+const set = (...kurallar: Kural[]): KuralSeti => ({ kurallar })
+
 /** Program kimliğine göre kurallar. Kuralı olmayan program "Belki" olur. */
-export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
-  kosgebGirisimciA: [
+export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
+  kosgebGirisimciA: set(
     enCokYas(3, 'İşletme en çok 3 yaşında olmalı.'),
     {
       kosul: 'İşletmenin NACE kodu 61, 62, 63, 72 ya da bir imalat kodu olmalı.',
@@ -99,8 +111,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return kaldi('Bu program imalat, bilişim ve Ar-Ge iş kolları içindir. Sizin iş kolunuz bunlardan biri değil.')
       },
     },
-  ],
-  kosgebGirisimciB: [
+  ),
+  kosgebGirisimciB: set(
     {
       kosul: 'Yalnız kadın ya da genç girişimcilerin işletmeleri başvurabilir.',
       kesin: true,
@@ -110,10 +122,10 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return kaldi('Bu program yalnız kadın ya da genç girişimciler içindir. Kurucu için bu durumu seçmediniz.')
       },
     },
-  ],
-  kosgebYapayZekaKredisi: [KOSGEB_KAYDI],
-  kosgebIsletmeGelistirme: [KOSGEB_KAYDI],
-  kosgebKuresel: [
+  ),
+  kosgebYapayZekaKredisi: set(KOSGEB_KAYDI),
+  kosgebIsletmeGelistirme: set(KOSGEB_KAYDI),
+  kosgebKuresel: set(
     {
       kosul: 'Program ihracat ya da Ar-Ge büyümesi şartı arar.',
       kesin: true,
@@ -123,8 +135,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return bilgiYok(p.ihracat === 'yok' ? 'arge' : 'ihracat')
       },
     },
-  ],
-  kosgebDijitalDonusum: [
+  ),
+  kosgebDijitalDonusum: set(
     {
       kosul: 'Yalnız imalat sektöründeki işletmeler başvurabilir.',
       kesin: true,
@@ -134,8 +146,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return h.includes('C') ? GECTI : kaldi('Bu program yalnız imalat işletmeleri içindir. Sizin iş kolunuz imalat değil.')
       },
     },
-  ],
-  tb10962Marka: [
+  ),
+  tb10962Marka: set(
     {
       kosul: 'İşletme, başvurudan en az üç yıl önce kurulmuş olmalı.',
       kesin: true,
@@ -157,9 +169,9 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return okuyun('Üç yıllık ihracat ve gelir koşulunu kurumun sayfasında okuyun.')
       },
     },
-  ],
-  teknogirisimRozeti: [sonYillardaKurulmus(15, 'Son 15 yıl içinde kurulmuş olmalı.')],
-  turcorn: [
+  ),
+  teknogirisimRozeti: set(sonYillardaKurulmus(15, 'Son 15 yıl içinde kurulmuş olmalı.')),
+  turcorn: set(
     {
       kosul: 'Kuruluş yılı ile başvuru yılı arasında en çok 15 yıl olmalı.',
       kesin: true,
@@ -169,8 +181,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return Number(bugun.slice(0, 4)) - k.yil <= 15 ? GECTI : kaldi('Bu program son 15 yıl içinde kurulmuş işletmeler içindir. Sizin işletmeniz daha eski.')
       },
     },
-  ],
-  bks: [
+  ),
+  bks: set(
     {
       kosul: 'Ölçüm gününde en çok 50 çalışan olmalı.',
       kesin: true,
@@ -181,8 +193,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
       },
     },
     enCokYas(10, 'Şirket en çok 10 yaşında olmalı.'),
-  ],
-  argeMerkezi: [
+  ),
+  argeMerkezi: set(
     {
       kosul: 'Merkez için en az 10 tam zamanlı çalışana denk personel gerekir.',
       kesin: true,
@@ -193,8 +205,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return okuyun('Ar-Ge ve tasarım personeli sayınızı kurumun sayfasındaki kuralla karşılaştırın.')
       },
     },
-  ],
-  vergi11257: [
+  ),
+  vergi11257: set(
     {
       kosul: "Hizmet, Türkiye'de yerleşik olmayan kişilere ya da şirketlere verilmeli.",
       kesin: true,
@@ -204,8 +216,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return okuyun('Hizmet ihracatı koşulunu kurumun sayfasında okuyun.')
       },
     },
-  ],
-  iskurIep: [
+  ),
+  iskurIep: set(
     {
       kosul: 'Genel programda işverende genellikle en az 5 sigortalı çalışan aranır.',
       kesin: false,
@@ -215,8 +227,8 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return n >= 5 ? GECTI : kaldi("Genel programda genellikle en az 5 sigortalı çalışan aranır. Sizde 5'ten az çalışan var. Kurumla görüşün.")
       },
     },
-  ],
-  istka: [
+  ),
+  istka: set(
     {
       kosul: 'İstanbul Kalkınma Ajansı İstanbul için çağrı açar.',
       kesin: false,
@@ -225,5 +237,5 @@ export const KURALLAR: Readonly<Record<string, readonly Kural[]>> = {
         return p.il === 'İstanbul' ? GECTI : kaldi('Bu ajans İstanbul için çağrı açar. Başvuru sahibi tanımını çağrı rehberinde okuyun.')
       },
     },
-  ],
+  ),
 }
