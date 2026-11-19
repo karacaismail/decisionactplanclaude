@@ -154,11 +154,14 @@ describe('eski turuncu palet kalıntısı', () => {
 
 describe('gölge tokenlarının CSS ve TypeScript eşitliği', () => {
   const css = readFileSync(new URL('../styles/temel/temel.css', import.meta.url), 'utf8')
-  const read = (block: string, name: string) => new RegExp(`${name}:\\s*([^;]+);`).exec(block)?.[1].trim()
-  const darkBlock = /@media \(prefers-color-scheme: dark\)\s*\{([\s\S]*?)\}\s*\}/.exec(css)?.[1] ?? ''
-  const lightBlock = css.slice(0, css.indexOf('@media (prefers-color-scheme: dark)'))
-  it.each(['card', 'float', 'bar'] as const)('--shadow-%s iki temada tokens.ts ile aynı', (name) => {
-    expect(read(lightBlock, `--shadow-${name}`)).toBe(elevation.light[name])
-    expect(read(darkBlock, `--shadow-${name}`)).toBe(elevation.dark[name])
+  const read = (name: string) => new RegExp(`${name}:\\s*([^;]+);`).exec(css)?.[1].trim()
+  it.each(['card', 'float', 'bar'] as const)('temel.css içindeki --shadow-%s açık tema değeriyle aynı', (name) => {
+    expect(read(`--shadow-${name}`)).toBe(elevation.light[name])
+  })
+  it.each(['light', 'dark'] as const)('%s tema gölgeleri cssVariables ile satır içine yazılır', (mode) => {
+    const vars = cssVariables(mode)
+    expect(vars['--shadow-card']).toBe(elevation[mode].card)
+    expect(vars['--shadow-float']).toBe(elevation[mode].float)
+    expect(vars['--shadow-bar']).toBe(elevation[mode].bar)
   })
 })

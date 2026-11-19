@@ -83,7 +83,7 @@ Kart zeminden kenarlıkla değil gölge ve yüzey tonuyla ayrılır.
 | `--shadow-bar` | Ekranın altındaki sabit menü |
 
 Gölge değerleri `tokens.ts` içindeki `elevation` nesnesinde durur.
-`temel.css` aynı değerleri ilk açılış için taşır. Birim testi iki kaynağın eşitliğini korur.
+`temel.css` açık temanın değerlerini ilk açılış için taşır. Birim testi iki kaynağın eşitliğini korur.
 Koyu temada kart gölgesi yoktur. Kartı zeminden yüzey tonu ayırır.
 
 Açık temada sayfa zemini `#ECEEF4` rengidir. Kart zemini beyazdır.
