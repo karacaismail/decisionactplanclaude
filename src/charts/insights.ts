@@ -82,9 +82,12 @@ export interface InsightChart extends InsightBase {
   height?: number
 }
 
-/** Ekran okuyucu açıklaması. ECharts kendi İngilizce cümlesini yazmaz. Başlık ve özet okunur. */
-function aria(title: string, summary: string) {
-  return { enabled: true, decal: { show: false }, label: { description: `${title}. ${summary}` } }
+/**
+ * Ekran okuyucu adı. ECharts kendi İngilizce cümlesini yazmaz. Ad yalnız başlıktır.
+ * Özet ChartFrame içinde görünür paragraftadır. Grafik o paragrafa aria-describedby ile bağlanır.
+ */
+function aria(title: string) {
+  return { enabled: true, decal: { show: false }, label: { description: title } }
 }
 
 /** Komşu parçayı ayıran boşluk. Boşluk çalışma yüzeyinin rengindedir. */
@@ -301,7 +304,7 @@ function stepsPerDecision(plan: PlanDoc, c: InsightPalette): Insight {
      * Geniş alanda çubuk ucunda "tamamlanan/toplam" yazar. Tablo bütün değerleri korur.
      */
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: s.tooltip,
       legend: s.legend,
       grid: { ...GRID, right: 48 },
@@ -362,7 +365,7 @@ function ladderDistribution(plan: PlanDoc, c: InsightPalette): Insight {
     summary,
     height: 300,
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { name: string; value: number; percent: number }) => `${p.name}: ${p.value} kanıt (%${Math.round(p.percent)})` },
       /* Açıklama altta ve satırlara sarılır; sayfalama yoktur. Halka üstte durur. Her satırda sayı da yazar. */
       legend: { bottom: 0, left: 'center', width: '100%', icon: 'circle', itemWidth: 12, itemHeight: 12, itemGap: 14, textStyle: { color: axis, fontSize: font.helper }, formatter: (name: string) => `${name}: ${counts.get(name) ?? 0}` },
@@ -408,7 +411,7 @@ function offerFunnel(plan: PlanDoc, c: InsightPalette): Insight {
     empty: false,
     summary,
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: { trigger: 'item', textStyle: { fontSize: font.helper } },
       series: [{
         type: 'funnel',
@@ -445,7 +448,7 @@ function measureVsThreshold(plan: PlanDoc, c: InsightPalette): Insight {
     empty: false,
     summary,
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: { ...s.tooltip, valueFormatter: (x: number) => `%${x}` },
       grid: { ...GRID, top: 32 },
       xAxis: { type: 'value', ...s.valueAxis, axisLabel: { ...s.valueAxis.axisLabel, formatter: '%{value}', hideOverlap: true } },
@@ -549,7 +552,7 @@ function cashAndSpend(plan: PlanDoc, c: InsightPalette): Insight {
     )
   }
   const summary = parts.join(' ') || 'Müşteri değeri ve kazanma maliyeti tabloda.'
-  return { ...base, empty: false, summary, option: withAria(option, aria('Nakit akışı', summary)), table }
+  return { ...base, empty: false, summary, option: withAria(option, aria('Nakit akışı')), table }
 }
 
 function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
@@ -569,7 +572,7 @@ function gateTimeline(plan: PlanDoc, c: InsightPalette): Insight {
     empty: false,
     summary,
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: { trigger: 'item', textStyle: { fontSize: font.helper }, formatter: (p: { dataIndex: number }) => { const x = points[p.dataIndex]; return `Kontrol ${x.gate}: ${x.label}<br/>${x.date}<br/>${x.by}` } },
       grid: { ...GRID, top: 16, right: 64 },
       xAxis: { type: 'category', data: points.map((p) => p.date), ...s.categoryAxis, axisLabel: { ...s.categoryAxis.axisLabel, interval: 'auto', hideOverlap: true } },
@@ -615,7 +618,7 @@ function interviewSignals(plan: PlanDoc, c: InsightPalette): Insight {
     empty: false,
     summary,
     option: whenNarrow({
-      aria: aria(title, summary),
+      aria: aria(title),
       tooltip: s.tooltip,
       legend: s.legend,
       grid: GRID,

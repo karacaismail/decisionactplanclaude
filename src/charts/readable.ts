@@ -150,7 +150,8 @@ function arrangeBase(option: Json, ctx: ReadableContext) {
   if (option.color === undefined) option.color = chartSequence(ctx.mode, 8).map((s) => s.color)
   const aria = isPlain(option.aria) ? option.aria : {}
   const label = isPlain(aria.label) ? aria.label : {}
-  option.aria = { decal: { show: false }, ...aria, enabled: true, label: { ...label, description: label.description ?? ctx.description } }
+  /* ECharts bu metni grafiğin adı yapar. Ad çerçevenin kısa başlığıdır. Özet görünür paragraftan bir kez okunur. */
+  option.aria = { decal: { show: false }, ...aria, enabled: true, label: { ...label, description: ctx.description } }
   addMissingText(option)
   arrangeSeries(option, ctx)
   arrangeHeatmap(option, ctx)

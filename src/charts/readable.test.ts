@@ -73,11 +73,12 @@ describe('ortak grafik okunurluğu', () => {
     expect((base.aria as Json).enabled).toBe(true)
   })
 
-  it('ekran okuyucu açıklaması verilmediyse başlığı yazar, verilen açıklamayı korur', () => {
-    const plain = readableOption({ series: [] }, { mode: 'light', gap, description: 'Kasa çizgisi. En düşük bakiye 10 TL.' }) as Json
-    expect(((plain.aria as Json).label as Json).description).toBe('Kasa çizgisi. En düşük bakiye 10 TL.')
-    const given = readableOption({ aria: { enabled: true, label: { description: 'Hazır' } }, series: [] }, { mode: 'light', gap, description: 'Başka' }) as Json
-    expect(((given.aria as Json).label as Json).description).toBe('Hazır')
+  it('ekran okuyucu adı her zaman çerçevenin kısa adıdır', () => {
+    const plain = readableOption({ series: [] }, { mode: 'light', gap, description: 'Kasa çizgisi' }) as Json
+    expect(((plain.aria as Json).label as Json).description).toBe('Kasa çizgisi')
+    /* Seçeneğin kendi uzun açıklaması özeti ikinci kez okutur. Bu yüzden çerçevenin adı geçerlidir. */
+    const given = readableOption({ aria: { enabled: true, label: { description: 'Kasa çizgisi. En düşük bakiye 10 TL.' } }, series: [] }, { mode: 'light', gap, description: 'Kasa çizgisi' }) as Json
+    expect(((given.aria as Json).label as Json).description).toBe('Kasa çizgisi')
   })
 
   it('kaynak seçeneği değiştirmez', () => {
