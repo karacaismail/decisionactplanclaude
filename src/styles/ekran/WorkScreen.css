@@ -1,7 +1,5 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
 
 .action-bar { position: sticky; bottom: 0; z-index: 5; display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px; min-height: 64px; margin: 0 -16px -96px; padding: 12px 16px; background: var(--color-surface-page); border-top: 1px solid var(--color-border); box-sizing: border-box; }

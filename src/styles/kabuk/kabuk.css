@@ -118,8 +118,6 @@
 
 .shell-menu .ant-menu-item-group-title { font-size: 14px; text-transform: none; letter-spacing: 0; color: var(--color-text-secondary); padding: 14px 12px 4px; font-weight: 400; }
 
-.status-dot.is-passed { background: var(--color-status-ok); }
-
 .ant-drawer .brand-text strong { color: var(--color-text-primary); }
 
 .ant-drawer .brand-mark { background: var(--color-action-primary); color: var(--color-on-action); }

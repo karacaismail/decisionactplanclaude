@@ -1,7 +1,5 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .cell-input, .cell-input.ant-select .ant-select-selector, .cell-input.ant-input, .cell-input.ant-input-number { box-shadow: none !important; border-color: transparent !important; }
 
 .tabular { font-variant-numeric: tabular-nums; }

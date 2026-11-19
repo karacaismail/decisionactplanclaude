@@ -2,8 +2,6 @@
 
 html[data-focus-mode='keyboard'] .hero :focus-visible::before { background: var(--color-hero-action); }
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
 
 .hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; background: var(--color-hero-surface); color: var(--color-hero-text); border-radius: var(--radius-panel); padding: 20px; min-height: 160px; box-sizing: border-box; overflow: hidden; min-width: 0; }
@@ -33,8 +31,6 @@ html[data-focus-mode='keyboard'] .hero :focus-visible::before { background: var(
 .hero-art { display: flex; justify-content: center; align-items: center; min-width: 0; }
 
 .hero .ant-btn.hero-button, .hero .ant-btn.hero-button:hover, .hero .ant-btn.hero-button:active { background: var(--color-hero-action); color: var(--color-hero-action-text); border-color: transparent; font-weight: 600; transition: background-color var(--motion-small) var(--motion-ease); }
-
-.hero .ant-btn.hero-button:hover { background: var(--color-hero-action-hover); }
 
 .hero .ant-btn.hero-ghost, .hero .ant-btn.hero-ghost:hover { background: transparent; color: var(--color-hero-text); border-color: var(--color-hero-line); transition: background-color var(--motion-small) var(--motion-ease); }
 

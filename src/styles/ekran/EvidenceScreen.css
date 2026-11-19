@@ -1,7 +1,5 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .helper { font-size: 14px; color: var(--color-text-secondary); line-height: 1.5; }
 
 .two-col { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; }

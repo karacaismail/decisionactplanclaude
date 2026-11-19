@@ -2,8 +2,6 @@
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-.tabular { font-variant-numeric: tabular-nums; }
-
 .fill-tag.ant-tag { margin: 0; font-size: 14px; line-height: 22px; height: auto; max-width: 100%; white-space: normal; }
 
 .field-required { font-weight: 400; color: var(--color-text-secondary); margin-inline-start: 4px; }

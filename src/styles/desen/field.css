@@ -1,7 +1,5 @@
 /* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
 
-.field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
-
 .field .ant-input, .field .ant-input-number, .field .ant-picker, .field .ant-select { width: 100%; }
 
 .field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; min-width: 0; }
