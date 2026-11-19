@@ -4,7 +4,7 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'nod
 import { join } from 'node:path'
 import { control, density, gutter } from '../src/theme/tokens'
 // @ts-expect-error .mjs dosyasının tür bildirimi yok; çalışma zamanında ESM olarak yüklenir.
-import { checkCss, checkProject, checkTsx, parseCss } from './check-ui.mjs'
+import { checkCss, checkCustomProperties, checkProject, checkTsx, parseCss } from './check-ui.mjs'
 
 const css = (s: string) => checkCss(s, 'a.css') as string[]
 const tsx = (s: string) => checkTsx(s, 'a.tsx') as string[]
@@ -435,4 +435,40 @@ describe('proje çapında dokunma alanı', () => {
     writeFileSync(join(root, 'src/base.css'), '.ant-btn { min-height: 44px; min-width: 44px }')
     expect(checkProject(root).join('\n')).toContain('Dokunma alanı')
   })
+})
+
+describe('(h) tanımsız CSS değişkeni', () => {
+  const run = (files: Record<string, string>) => checkCustomProperties(Object.entries(files).map(([file, source]) => ({ file, source }))) as string[]
+
+  it('tanımı olmayan var() kullanımını yakalar', () => {
+    const problems = run({ 'src/a.css': '.kart { box-shadow: var(--shadow-card); }' })
+    expect(problems).toEqual([expect.stringMatching(/^src\/a\.css:1 .*--shadow-card/)])
+  })
+
+  it('tanımsız hareket değişkenini yakalar', () => {
+    expect(run({ 'src/a.css': '.x { transition: opacity var(--motion-yavas) var(--motion-ease); }', 'src/t.css': ':root { --motion-ease: ease; }' }).join('\n')).toContain('--motion-yavas')
+  })
+
+  it('başka CSS dosyasındaki tanımı ve yedek değeri kabul eder', () => {
+    expect(run({
+      'src/temel.css': ':root { --space-2: 8px; }',
+      'src/a.css': '.x { padding: var(--space-2); color: var(--yok, red); }',
+    })).toEqual([])
+  })
+
+  it('TypeScript içinde yazılan değişken adını ve palet anahtarını tanım sayar', () => {
+    expect(run({
+      'src/theme/tokens.ts': "export const light = {\n  surfaceWork: '#FFFFFF',\n} as const\nexport const dark = {\n  surfaceWork: '#000000',\n} as const\nvars['--shadow-card'] = 'none'",
+      'src/a.css': '.x { background: var(--color-surface-work); box-shadow: var(--shadow-card); }',
+    })).toEqual([])
+  })
+
+  it('TSX dizesindeki tanımsız değişkeni de yakalar', () => {
+    expect(run({ 'src/a.tsx': 'const v = <Progress strokeColor="var(--color-yok)" />' }).join('\n')).toContain('--color-yok')
+  })
+
+  it('gerçek projede tanımsız değişken kalmaz', () => {
+    const problems = (checkProject(process.cwd()) as string[]).filter((p) => p.includes('tanımsız CSS değişkeni'))
+    expect(problems).toEqual([])
+  }, 30_000)
 })

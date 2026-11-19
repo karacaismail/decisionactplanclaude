@@ -15,6 +15,8 @@
  *  (e) Davranış `isMobile` bayrağı veya userAgent ile seçilmez.
  *  (f) Gizlenen eylem yalnız hover ile açılmaz. Klavye ve dokunma yolu gerekir.
  *  (g) Kontrolün açık boyutları ve Button small kullanımı 44px alanı korur.
+ *  (h) Yedeksiz her var(--x) kullanımının bir tanımı vardır. Tanım bir CSS dosyasında,
+ *      tokens.ts paletinde ya da TypeScript içinde yazılan '--x' adında durur.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -674,6 +676,40 @@ function checkJsxTargets(source, file, scope) {
   return problems
 }
 
+const CUSTOM_PROPERTY_DECL = /(?:^|[;{\s])(--[a-zA-Z0-9_-]+)\s*:/g
+const CUSTOM_PROPERTY_NAME = /(['"`])(--[a-zA-Z0-9_-]+)\1/g
+const PALETTE_BLOCK = /export\s+const\s+(?:light|dark)\s*=\s*\{([\s\S]*?)\}\s*as\s+const/g
+/* Yedeği olmayan var(--x) kullanımı. Yedekli kullanım bilinçli bir seçimdir. */
+const VAR_WITHOUT_FALLBACK = /var\(\s*(--[a-zA-Z0-9_-]+)\s*\)/g
+
+/**
+ * (h) Tanımsız CSS değişkeni. files: { file, source } listesi.
+ * Tanımlar bütün dosyalardan toplanır, sonra her kullanım denetlenir.
+ */
+export function checkCustomProperties(files) {
+  const defined = new Set()
+  for (const { file, source } of files) {
+    if (file.endsWith('.css')) {
+      for (const m of stripComments(source).matchAll(CUSTOM_PROPERTY_DECL)) defined.add(m[1])
+    } else {
+      for (const m of source.matchAll(CUSTOM_PROPERTY_NAME)) defined.add(m[2])
+      for (const block of source.matchAll(PALETTE_BLOCK)) {
+        for (const key of block[1].matchAll(/^\s*([a-zA-Z0-9]+)\s*:/gm)) {
+          defined.add(`--color-${key[1].replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`)
+        }
+      }
+    }
+  }
+  const problems = []
+  for (const { file, source } of files) {
+    const text = file.endsWith('.css') ? stripComments(source) : source
+    for (const m of text.matchAll(VAR_WITHOUT_FALLBACK)) {
+      if (!defined.has(m[1])) problems.push(`${file}:${lineOf(text, m.index)} ${m[1]} tanımsız CSS değişkeni. Tokenı tanımlayın ya da var içinde yedek değer verin.`)
+    }
+  }
+  return problems
+}
+
 function walk(dir) {
   const out = []
   for (const name of readdirSync(dir)) {
@@ -735,6 +771,7 @@ export function checkProject(root) {
     const context = cssContext(cssFiles.flatMap((path) => ruleCache.get(path) ?? []), controlClasses, false)
     problems.push(...(file.endsWith('.css') ? checkCss(body, rel, context) : checkTsx(body, rel, context)))
   }
+  problems.push(...checkCustomProperties([...sources].map(([file, source]) => ({ file: relative(root, file).split('\\').join('/'), source }))))
   return problems
 }
 
@@ -747,6 +784,6 @@ if (isMain) {
     for (const p of problems) console.error('  ' + p)
     process.exitCode = 1
   } else {
-    console.log('Arayüz kapısı temiz. Yazı, hareket, odak, kenar, cihaz, hover ve dokunma kaynak kuralları geçti. Gerçek alan ölçümü tarayıcıda yapılmalı.')
+    console.log('Arayüz kapısı temiz. Yazı, hareket, odak, kenar, cihaz, hover, dokunma ve CSS değişkeni kaynak kuralları geçti. Gerçek alan ölçümü tarayıcıda yapılmalı.')
   }
 }
