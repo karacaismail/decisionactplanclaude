@@ -27,10 +27,13 @@ import { gzipSync } from 'node:zlib'
 // 19 Kasım 2026: Proje ve destek modülleri kendi ekran CSS'lerini getirdi. Bu CSS yalnız o ekran açılınca iner.
 // Bütün CSS dosyaları 278.998 ham, 66.886 gzip bayt oldu. Toplam sınır yaklaşık %11 payla yükseldi.
 // Modül CSS'i ilk açılış CSS sınırını değiştirmedi. O sınırı yukarıdaki UX turları 12.300 bayta çıkardı.
+// 19 Kasım 2026: Proje ve destek bağlantıları çekirdeğe eklendi. Toplam JS gzip 1.105.385 bayt oldu.
+// Ürün sahibi toplam JS gzip sınırının 1.125.000 bayta çıkmasını onayladı. Bu kod yalnız ilgili ekran açılınca iner.
+// İlk açılış JS sınırı değişmedi.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
-  totalJs: { raw: 3_500_000, gzip: 1_100_000 },
+  totalJs: { raw: 3_500_000, gzip: 1_125_000 },
   initialCss: { raw: 65_000, gzip: 12_300 },
   css: { raw: 310_000, gzip: 74_000 },
 }
