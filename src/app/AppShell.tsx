@@ -14,6 +14,8 @@ import { planPosition } from '@/engine/position'
 import { SaveStatus } from '@/components/SaveStatus'
 import { CommandPaletteButton, CommandPaletteHost } from '@/components/CommandPaletteButton'
 import { cssVariables } from '@/theme/tokens'
+import { BrandMark } from '@/components/BrandMark'
+import { syncThemeColor } from './themeColor'
 import { resolveMode } from '@/theme/antdTheme'
 import { MODULE_NAV, type RegisteredNav } from '@/platform/modules'
 import type { ModuleIcon } from '@/platform/types'
@@ -38,6 +40,7 @@ function useThemeVariables(pref: 'light' | 'dark' | 'system') {
   useLayoutEffect(() => {
     const root = document.documentElement
     for (const [k, v] of Object.entries(cssVariables(resolveMode(pref)))) root.style.setProperty(k, v)
+    syncThemeColor(pref)
   }, [pref])
 }
 
@@ -253,7 +256,7 @@ export function AppShell() {
   const brand = (
     <Link to={plan ? '/ozet' : '/'} className="brand" aria-label="Girişimci Aksiyon Planı, panoya git">
       <span className="brand-mark" aria-hidden>
-        <Compass size={18} weight="fill" />
+        <BrandMark />
       </span>
       <span className="brand-text">
         <strong>Aksiyon Planı</strong>
