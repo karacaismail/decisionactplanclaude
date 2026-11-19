@@ -14,6 +14,7 @@ vi.mock('@/store/planStore', () => ({
 }))
 
 vi.mock('./insights', () => ({
+  insightPalette: vi.fn(() => ({})),
   buildInsights: vi.fn(),
   statCards: vi.fn(),
 }))

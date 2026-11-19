@@ -171,9 +171,6 @@ export function chartPair(mode: ThemeMode): { main: ChartSlot; rest: ChartSlot }
 /** Komşu dilimler arasındaki boşluk. Boşluk çalışma yüzeyinin rengindedir. */
 export const chartGap = 2
 
-/** Eski kategori anahtarları. Göstergeler ekranı chartSequence kullanınca silinir. */
-export const chartSeries = ['toneNavy', 'toneTeal', 'tonePurple', 'toneOrange', 'statusInfo', 'statusHold', 'textSecondary'] as const satisfies readonly (keyof typeof light)[]
-
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {
   light: { proceed: '#1D6B4F', conditional: '#5C7A1F', retry: '#2E5A74', pivot: '#5A4A82', hold: '#53636B', stop: '#A3302F' },

@@ -8,11 +8,11 @@ import { Card, Empty, Progress, Statistic } from 'antd'
 import { ArrowRight } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
 import { ChartFrame } from '@/charts/ChartFrame'
-import { buildInsights, statCards, type Insight, type InsightPalette } from '@/charts/insights'
+import { buildInsights, insightPalette, statCards, type Insight } from '@/charts/insights'
 import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { useResolvedTheme } from '@/app/printMode'
-import { chartSeries, font, palette as paletteOf } from '@/theme/tokens'
+import { font } from '@/theme/tokens'
 /**
  * Göstergeler. Üstte dört istatistik kartı, altında grafik ızgarası.
  * Masaüstünde iki sütun, telefonda tek sütun. Her gösterge kendi kartındadır.
@@ -22,25 +22,8 @@ export function InsightsScreen() {
   const plan = useCurrentPlan()
   const mode = useResolvedTheme()
   const isDark = mode === 'dark'
-  const colors = useMemo<InsightPalette>(() => {
-    const p = paletteOf(mode)
-    return {
-      /* Ana seri lacivert ton. Açık temada koyu, koyu temada açık mavi: zeminden iki temada da ayrışır. */
-      primary: p.toneNavy,
-      info: p.statusInfo,
-      success: p.statusOk,
-      warning: p.statusHold,
-      error: p.statusHarm,
-      /* Kalan: ikincil yazı rengi. Açık temada beyaz zeminden en az 3:1 ayrışır. */
-      muted: p.textSecondary,
-      axis: p.textSecondary,
-      grid: p.border,
-      onInk: p.surfaceWork,
-      ramp: [p.toneNavy, p.toneTeal, p.tonePurple, p.textSecondary],
-      series: chartSeries.map((key) => p[key]),
-      outcome: (o) => outcomeColor(o, isDark),
-    }
-  }, [mode, isDark])
+  /* Grafik renkleri tokens.ts içindeki grafik bantlarından gelir. Komşu iki renk en az 3:1 ayrışır. */
+  const colors = useMemo(() => insightPalette(mode, (o) => outcomeColor(o, isDark)), [mode, isDark])
   const stats = useMemo(() => (plan ? statCards(plan) : []), [plan])
   const insights = useMemo(() => (plan ? buildInsights(plan, colors) : []), [plan, colors])
   if (!plan) return null

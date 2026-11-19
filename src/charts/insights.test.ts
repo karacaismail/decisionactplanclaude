@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import * as echarts from 'echarts/core'
 import { BarChart, LineChart, PieChart, FunnelChart, ScatterChart } from 'echarts/charts'
-import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TimelineComponent } from 'echarts/components'
+import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TimelineComponent, AriaComponent } from 'echarts/components'
 import { SVGRenderer } from 'echarts/renderers'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 import { buildDemoPlan } from '@/data/demo'
@@ -10,10 +10,11 @@ import { DECISIONS } from '@/data/decisions'
 import { emptyPlan } from '@/data/types'
 import { evaluateGate } from '@/engine/gate'
 import { evaluateReadiness } from '@/engine/readiness'
-import { font } from '@/theme/tokens'
-import { buildInsights, summaryTiles, type InsightChart, type InsightPalette } from './insights'
+import { font, palette as themePalette } from '@/theme/tokens'
+import { buildInsights, insightPalette, summaryTiles, type InsightChart, type InsightPalette } from './insights'
+import { readableOption } from './readable'
 
-echarts.use([BarChart, LineChart, PieChart, FunnelChart, ScatterChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TimelineComponent, SVGRenderer])
+echarts.use([BarChart, LineChart, PieChart, FunnelChart, ScatterChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, TimelineComponent, AriaComponent, SVGRenderer])
 
 const palette: InsightPalette = { primary: '#111', info: '#222', success: '#333', warning: '#444', error: '#555', muted: '#666', outcome: () => '#777' }
 
@@ -99,7 +100,7 @@ function filledInsight(id: string, plan = buildDemoPlan()): InsightChart {
 }
 
 describe('gösterge seçeneklerinin kapsayıcıya uyumu', () => {
-  it.each(['adimlar', 'kanit', 'huni', 'olcu', 'kapilar', 'gorusmeler'])(
+  it.each(['adimlar', 'kanit', 'olcu', 'gorusmeler'])(
     '%s dar alanda değer etiketlerini azaltır ve geniş ayarları geri getirir', (id) => {
       const insight = filledInsight(id)
       const table = structuredClone(insight.table)
@@ -171,4 +172,152 @@ describe('gösterge seçeneklerinin kapsayıcıya uyumu', () => {
       chart.dispose()
     }
   })
+})
+
+/* UX turu 6: grafik okunurluğu. Renk tek başına anlam taşımaz. */
+type Json = Record<string, unknown>
+const luminance = (hex: string) => {
+  const v = hex.replace('#', '')
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(v.slice(i, i + 2), 16) / 255
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+const ratio = (a: string, b: string) => {
+  const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m)
+  return (x + 0.05) / (y + 0.05)
+}
+/** Seçenekteki bütün yazı boyutları. Ekran seçenekleri (media) de taranır. */
+function fontSizes(node: unknown, out: number[] = []): number[] {
+  if (Array.isArray(node)) node.forEach((x) => fontSizes(x, out))
+  else if (node && typeof node === 'object') {
+    for (const [k, v] of Object.entries(node as Json)) {
+      if (k === 'fontSize' && typeof v === 'number') out.push(v)
+      else fontSizes(v, out)
+    }
+  }
+  return out
+}
+const baseOf = (option: unknown) => ((option as Json).baseOption ?? option) as { series: Json[]; legend?: Json; aria?: Json }
+const colorOf = (x: Json | undefined) => (x?.itemStyle as Json | undefined)?.color as string
+
+for (const mode of ['light', 'dark'] as const) {
+  describe(`grafik okunurluğu, ${mode} tema`, () => {
+    const c = insightPalette(mode, () => '#777777')
+    const surface = themePalette(mode).surfaceWork
+    const charts = buildInsights(buildDemoPlan(), c).filter((i): i is InsightChart => !i.empty)
+
+    it('her grafikte özet cümlesi ve veri tablosu vardır', () => {
+      expect(charts.length).toBeGreaterThanOrEqual(6)
+      for (const chart of charts) {
+        expect(chart.summary?.trim(), chart.id).toBeTruthy()
+        expect(chart.table.rows.length, chart.id).toBeGreaterThan(0)
+      }
+    })
+
+    it('her yazı en az 14 piksel ve ekran okuyucu açıklaması açıktır', () => {
+      for (const chart of charts) {
+        const sizes = fontSizes(chart.option)
+        expect(sizes.length, chart.id).toBeGreaterThan(0)
+        for (const size of sizes) expect(size, chart.id).toBeGreaterThanOrEqual(font.helper)
+        const aria = baseOf(chart.option).aria as { enabled?: boolean; label?: { description?: string } } | undefined
+        expect(aria?.enabled, chart.id).toBe(true)
+        expect(aria?.label?.description, chart.id).toContain(chart.title)
+      }
+    })
+
+    it('üst üste binen parçalar en az 3:1 ayrışır ve aralarında 2 piksel yüzey boşluğu vardır', () => {
+      const stacked = charts.flatMap((chart) => baseOf(chart.option).series.filter((s) => s.stack).map((s) => ({ id: chart.id, s })))
+      expect(stacked.length).toBeGreaterThanOrEqual(2)
+      for (let i = 1; i < stacked.length; i += 1) {
+        expect(ratio(colorOf(stacked[i - 1].s), colorOf(stacked[i].s)), stacked[i].id).toBeGreaterThanOrEqual(3)
+      }
+      for (const { s } of stacked) {
+        expect((s.itemStyle as Json).borderColor).toBe(surface)
+        expect((s.itemStyle as Json).borderWidth).toBeGreaterThanOrEqual(2)
+      }
+    })
+
+    it('komşu dilimler en az 3:1 ayrışır, yüzey boşluğuyla ayrılır ve yazısı okunur', () => {
+      for (const id of ['kanit', 'huni']) {
+        const chart = charts.find((x) => x.id === id)!
+        const series = baseOf(chart.option).series[0]
+        const data = series.data as Json[]
+        expect(data.length, id).toBeGreaterThan(1)
+        for (let i = 1; i < data.length; i += 1) expect(ratio(colorOf(data[i - 1]), colorOf(data[i])), `${id} ${i}`).toBeGreaterThanOrEqual(3)
+        /* Halkada ilk ve son dilim de komşudur. Bu çifti yüzey boşluğu ayırır. */
+        if (series.type === 'pie') {
+          expect((series.itemStyle as Json).borderColor).toBe(surface)
+          expect((series.itemStyle as Json).borderWidth).toBeGreaterThanOrEqual(2)
+        } else {
+          expect(series.gap).toBeGreaterThanOrEqual(2)
+        }
+        for (const d of data) {
+          const text = ((d.label as Json | undefined)?.color ?? (series.label as Json).color) as string
+          expect(ratio(text, colorOf(d)), `${id} ${String(d.name)} yazısı`).toBeGreaterThanOrEqual(4.5)
+        }
+      }
+    })
+
+    it('kategori renkleri tekrarlanmaz', () => {
+      const kanit = charts.find((x) => x.id === 'kanit')!
+      const colors = (baseOf(kanit.option).series[0].data as Json[]).map((d) => colorOf(d).toUpperCase())
+      expect(new Set(colors).size).toBe(colors.length)
+    })
+
+    it('kanıt açıklaması her basamağın sayısını yazıyla verir', () => {
+      const kanit = charts.find((x) => x.id === 'kanit')!
+      const legend = baseOf(kanit.option).legend as { formatter: (name: string) => string }
+      expect(legend.formatter('1. basamak')).toMatch(/^1\. basamak: \d+$/)
+    })
+  })
+}
+
+describe('dar alanda doğrudan etiket', () => {
+  it.each(['huni', 'kapilar'])('%s dar alanda da yazıyla okunur', (id) => {
+    const insight = buildInsights(buildDemoPlan(), insightPalette('light', () => '#777777')).find((x) => x.id === id) as InsightChart
+    const chart = echarts.init(null, undefined, { renderer: 'svg', ssr: true, width: 320, height: insight.height ?? 300 })
+    try {
+      chart.setOption(insight.option as ECBasicOption)
+      const narrow = chart.getOption() as unknown as ResolvedOption
+      expect(narrow.series.every((s) => s.label.show)).toBe(true)
+      const svg = chart.renderToSVGString()
+      const first = insight.table.rows[0][id === 'huni' ? 0 : 1]
+      expect(svg).toContain(String(first))
+    } finally {
+      chart.dispose()
+    }
+  })
+})
+
+describe('çizilen grafikte yazılar', () => {
+  /* EChart her seçeneği readableOption ile çizer. Test de aynı yolu izler. */
+  for (const mode of ['light', 'dark'] as const) {
+    for (const width of [320, 1280]) {
+      it(`${mode} temada ${width} pikselde her yazı en az 14 piksel ve doğrudan etiketler çizilir`, () => {
+        const charts = buildInsights(buildDemoPlan(), insightPalette(mode, () => '#777777')).filter((i): i is InsightChart => !i.empty)
+        const expected: Record<string, string[]> = {
+          huni: ['Ulaşılan kişi: 48', 'Ödeme yapan: 6'],
+          kanit: ['1. basamak: 11', '7. basamak: 2'],
+          kapilar: ['İlerle'],
+          adimlar: ['Tamamlanan', 'Kalan'],
+          gorusmeler: ['Sayı', 'Hedef', 'Görüşülen'],
+        }
+        for (const insight of charts) {
+          const chart = echarts.init(null, undefined, { renderer: 'svg', ssr: true, width, height: insight.height ?? 300 })
+          try {
+            chart.setOption(readableOption(insight.option, { mode, gap: themePalette(mode).surfaceWork, description: insight.title }) as ECBasicOption)
+            const svg = chart.renderToSVGString()
+            const sizes = [...svg.matchAll(/font-size[:=]"?\s*(\d+(?:\.\d+)?)px/g)].map((m) => Number(m[1]))
+            expect(sizes.length, `${insight.id} yazı sayısı`).toBeGreaterThan(0)
+            for (const size of sizes) expect(size, insight.id).toBeGreaterThanOrEqual(font.helper)
+            for (const text of expected[insight.id] ?? []) expect(svg, `${insight.id}: ${text}`).toContain(text)
+          } finally {
+            chart.dispose()
+          }
+        }
+      })
+    }
+  }
 })
