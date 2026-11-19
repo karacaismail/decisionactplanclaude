@@ -58,7 +58,7 @@ Bildirim React içe aktarmaz. Ekranlar yalnız dinamik içe aktarmayla gelir. Bu
 | Küçük özetler | `decisionactplan-rollups-v1` anahtarı | Pano özeti beklemeden okur. Her özet en çok 4 KB olur. |
 | Taslaklar | `decisionactplan-drafts-v1` anahtarı | Taslak plandan ayrı durur. Bu yüzden hiçbir karar eskimez. |
 
-Modül verisinin anahtarı üç parçadır: modül, plan ve kayıt. Örneğin `proje/plan-1/proje/p-3`. Kayıt parçası da bölünebilir. Proje modülü projeyi `proje/<kimlik>` altında tutar. İşi `is/<kimlik>` altında tutar.
+Modül verisinin anahtarı üç parçadır: modül, plan ve kayıt. Örneğin `proje/plan-1/proje/p-3`. Kayıt parçası da bölünebilir. Proje modülü projeyi `proje/<kimlik>` altında tutar. Görevi `is/<kimlik>` altında tutar.
 
 Depo bir arayüzün arkasındadır. Arayüzün adı `KvStore` arayüzüdür. Tarayıcıda IndexedDB kullanılır. Testte bellek deposu kullanılır.
 
@@ -151,20 +151,66 @@ Uçtan uca test modül rotalarını bildirimden okur. Test her modül ekranını
 Proje modülü 19 Kasım 2026 Perşembe günü çalışır hâle geldi. Modül şu işleri yapar:
 
 1. Kişi bir ana hamleden ya da "Şimdi" işinden proje açar.
-2. Kişi projeye kısa başlıkla iş ekler.
-3. Kişi işin durumunu durum düğmesiyle değiştirir.
-4. Kişi işleri liste ya da pano olarak görür. Pano kendi kutusunda yana kayar.
-5. Son tarihi geçen açık iş "Gecikti" yazısı ve ikonla görünür.
+2. Kişi projeye kısa başlıkla görev ekler.
+3. Kişi görevin durumunu durum düğmesiyle değiştirir.
+4. Kişi görevleri liste ya da pano olarak görür. Pano kendi kutusunda yana kayar.
+5. Son tarihi geçen açık görev "Gecikti" yazısı ve ikonla görünür.
 
-Modül her yazmadan sonra küçük bir özet yazar. Özet `decisionactplan-rollups-v1` anahtarındadır. Özette proje sayısı, açık iş, geciken iş ve biten iş vardır. Özet ayrıca her bağlı satırın sayılarını taşır. Çekirdek bu özeti sonra etiket için okuyabilir.
+Projenin küçük çalışmalarına "görev" denir. "İş" sözü strateji uygulamadaki işlerindir. Örneğin "İlk 90 günün işleri" bu işlerdir. Görev ekranının adresi değişmedi. Adres yine `/projeler/<proje>/is/<görev>` biçimindedir.
 
-İçe alınan proje verisi önce denetlenir. Bozuk ya da sınırı aşan veri yazılmaz. Bir planda en çok 200 proje olabilir. Bir projede en çok 500 iş olabilir.
+Modül her yazmadan sonra küçük bir özet yazar. Özet `decisionactplan-rollups-v1` anahtarındadır. Özette proje sayısı, açık görev, geciken görev ve biten görev vardır. Özet ayrıca her bağlı satırın sayılarını taşır.
 
-Ana hamle tablosundaki etiket henüz yoktur. "Uygulama" ekranındaki proje özeti de henüz yoktur. Bu iki iş çekirdek ekranı değiştirir. Bu yüzden ayrı bir işte yapılacak.
+İçe alınan proje verisi önce denetlenir. Bozuk ya da sınırı aşan veri yazılmaz. Bir planda en çok 200 proje olabilir. Bir projede en çok 500 görev olabilir.
+
+## Çekirdek proje özetini nasıl okur?
+
+Çekirdek proje modülünü içe aktarmaz. Çekirdek yalnız özeti okur. Yol şöyledir:
+
+1. Altyapıdaki `subscribeRollups` işlevi özet değişince haber verir. Öteki sekmenin yazdığı özet de haber olur.
+2. Altyapıdaki `useRollup` kancası özeti React ekranına verir.
+3. Çekirdekteki `src/engine/projectRollup.ts` dosyası özeti denetler. Bozuk özet yok sayılır.
+
+Özet şu yerlerde görünür:
+
+- 2.5 adımındaki her ana hamlenin altında bir etiket durur.
+- 3.2 adımındaki her "Şimdi" işinin altında da etiket durur.
+- "Strateji uygulama" ekranında "Projeler" kartı durur. Proje yoksa kart görünmez.
+
+Etiket açık görevleri sayar. Geciken görev metin ve ikonla görünür. Etiketteki bağlantı Projeler ekranını açar. Adres `?satir=<kimlik>` parçasını taşır. Projeler ekranı o satırı getirir ve satırın düğmesine odaklanır.
+
+Strateji onaylanmadıysa etikette açma bağlantısı yoktur. Proje modülü kayıtlı değilse etiket ve kart görünmez.
+
+Özet geciken görevi yazıldığı güne göre sayar. Kart bu gün bugün değilse hesap gününü yazar. Bir görev değişince özet yenilenir.
+
+## Taslakları kim inceler?
+
+Taslağı bir kişi inceler. Çekirdekteki `DraftReview` bileşeni bekleyen taslakları gösterir.
+
+- Adım taslağı kendi adım ekranında görünür.
+- Kanıt taslağı "Strateji uygulama" ekranında, 3.5 bölümünde görünür.
+
+Kişi "Kaydet" düğmesine basarsa taslak plana yazılır. Kişi "Sil" düğmesine basarsa taslak silinir. Silme onay ister. Plan yalnız "Kaydet" ile değişir.
+
+Aynı kanıt metni iki kez taslak olmaz. Kanıt defterinde aynı metin varsa da yeni taslak açılmaz. Kanıt kaydı karar sürümünü ve kontrolleri değiştirmez.
+
+Proje ekranında "Kanıt taslağı hazırla" düğmesi vardır. Düğme projenin sonucunu kısa bir metne çevirir. Metin taslak olarak saklanır.
+
+## Örnek plan yeniden açılınca ne olur?
+
+Örnek plan zaten varsa ekran önce sorar. Soru iki yolda aynıdır. Kişi örneği menüden açabilir. Kişi örnek dosyasını içe de alabilir.
+
+Kişi onaylarsa yeni örnek eskisinin yerine geçer. Örneğe bağlı projeler ve destek başvuruları silinmez. Dosyada modül verisi varsa bu verinin yanına yazılır.
+
+Plan silinirken onay metni bunu söyler: "Planın projeleri ve destek başvuruları da silinir."
+
+## Yedek
+
+Her yedek modül verisini de taşır. Planlar ekranındaki "JSON indir" düğmesi paket yazar. Pano ekranındaki yedek düğmesi de paket yazar. Çıktılar ekranında güncel taslağın JSON dosyası da paket olur. Eski sürümün JSON dosyası yalnız donmuş planı taşır. Bu dosya yedek sayılmaz.
+
+Bütün planları tek dosyaya yazan bir dışa aktarma yoktur. Her plan kendi dosyasına yazılır.
 
 ## Bu sürümün sınırları
 
 - Proje modülünün ekranları çalışır. Destek modülünün ekranları yalnız açıklama ve boş durum gösterir.
-- Taslakları gösteren ekran henüz yoktur. Taslak kaydetme işlevi hazırdır.
 - Plan silinirken modül verisi silinemezse uyarı yalnız konsola yazılır. Kalan veriyi sonradan temizleyen bir iş henüz yoktur.
 - Çekirdek yolların listesi iki yerde durur. Liste `src/platform/manifest.ts` ve `src/app/routes.tsx` dosyalarındadır. Yeni çekirdek yol eklenince iki liste de güncellenir.

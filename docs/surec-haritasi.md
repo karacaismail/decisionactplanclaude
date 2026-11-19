@@ -24,6 +24,8 @@ Değerlendirme ve uygulamaya çevirme ayrı ana küme değildir. İçerikleri al
 
 **Numaralı aşamaların dışındaki bölümler.** Proje yönetimi ve destek ve teşvik iki ayrı bölümdür. Bu bölümler sıralı sürecin parçası değildir. Numarası yoktur ve hiçbir kontrolü açıp kapatmaz. Bu bölümler planı yalnız okur. Plana yazacakları şeyi taslak olarak önerirler. Taslağı bir kişi kaydeder. Ayrıntı [modül mimarisindedir](moduller/mimari.md).
 
+**Proje bölümü ile aşamaların bağı.** 2.5 adımındaki her ana hamlenin altında küçük bir proje etiketi durur. 3.2 adımındaki her "Şimdi" işinin altında da aynı etiket durur. Etiket açık ve geciken görevleri sayar. "Strateji uygulama" ekranı projelerin kısa özetini gösterir. Projeden gelen kanıt taslağı 3.5 bölümünde görünür. Kişi taslağı kaydederse kanıt defterine eklenir. Bu bağlar hiçbir kontrolü değiştirmez.
+
 Süreç dört bölümle yürür. Bölümler kümelere şöyle bağlıdır:
 
 | Bölüm | Ana küme | Adımlar |
