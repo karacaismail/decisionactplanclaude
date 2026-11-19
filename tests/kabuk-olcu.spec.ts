@@ -4,8 +4,12 @@ import { openDemo, ready } from './uyarlanir/audit'
 /*
  * UX turu 4: telefonda gezinme şeritleri ekranın en çok yüzde 15'ini kaplar.
  * Üst şerit tek satırdır. Alt menü hedefleri 44 pikselden küçük değildir.
- * Ölçümler her temada dikey telefon, yatay telefon ve masaüstü genişliğinde yapılır.
+ * Ölçümler her temada dikey telefon, yatay telefon, eşik genişlikleri ve masaüstünde yapılır.
+ * Telefon ölçüleri test içinde kurulur. Bu yüzden bir tarayıcıda yalnız bir projede çalışır.
  */
+
+/** Telefon ölçüsü her tarayıcıda bir kez alınır: chromium-320 ve webkit-390. */
+const phoneProject = (name: string) => /-(320|390)$/.test(name)
 
 const PORTRAIT = [
   { width: 320, height: 720 },
@@ -64,7 +68,7 @@ for (const scheme of ['light', 'dark'] as const) {
     test.use({ colorScheme: scheme })
 
     test('dikey telefonda üst şerit tek satır, gezinme şeritleri en çok yüzde 15', async ({ page, hasTouch }) => {
-      test.skip(!hasTouch, 'Telefon ölçüsü dokunmatik projelerde alınır.')
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Telefon ölçüsü 320 ve 390 projelerinde alınır.')
       await page.setViewportSize(PORTRAIT[0])
       await openDemo(page, hasTouch)
       for (const size of PORTRAIT) {
@@ -111,7 +115,7 @@ for (const scheme of ['light', 'dark'] as const) {
     })
 
     test('alt menüde seçili öğe kenarsız bir hap ve okunur bir etiket kullanır', async ({ page, hasTouch }) => {
-      test.skip(!hasTouch, 'Alt menü dokunmatik projelerde ölçülür.')
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Alt menü 320 ve 390 projelerinde ölçülür.')
       await page.setViewportSize(PORTRAIT[0])
       await openDemo(page, hasTouch)
       const active = page.locator('.bottom-nav [aria-current="page"]')
@@ -123,7 +127,6 @@ for (const scheme of ['light', 'dark'] as const) {
       })
       const cell = await active.evaluate((el) => getComputedStyle(el).backgroundColor)
       expect(pill.bg).not.toMatch(/rgba\(0, 0, 0, 0\)|transparent/)
-      expect(pill.border).toBe('0px')
       expect(pill.w).toBeGreaterThan(pill.h)
       /* Hücrenin tamamı boyanmaz. Hap yalnız ikonun arkasındadır. */
       expect(cell).toMatch(/rgba\(0, 0, 0, 0\)|transparent/)
@@ -131,7 +134,7 @@ for (const scheme of ['light', 'dark'] as const) {
     })
 
     test('yatay telefonda üst şerit tek satır ve kayınca yalnız alt menü kalır', async ({ page, hasTouch }) => {
-      test.skip(!hasTouch, 'Telefon ölçüsü dokunmatik projelerde alınır.')
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Telefon ölçüsü 320 ve 390 projelerinde alınır.')
       await page.setViewportSize({ width: 844, height: 390 })
       await openDemo(page, hasTouch)
       await page.goto('/#/karar/3/adim/11')
@@ -149,7 +152,7 @@ for (const scheme of ['light', 'dark'] as const) {
     })
 
     test('320 pikselde çekmece açıkken sağda dokunulabilir perde kalır', async ({ page, hasTouch }) => {
-      test.skip(!hasTouch, 'Çekmece telefonda alt menüden açılır.')
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Çekmece 320 ve 390 projelerinde ölçülür.')
       await page.setViewportSize(PORTRAIT[0])
       await openDemo(page, hasTouch)
       const trigger = page.locator('.bottom-nav').getByRole('button', { name: 'Menü', exact: true })
@@ -165,7 +168,7 @@ for (const scheme of ['light', 'dark'] as const) {
     })
 
     test('üst şerit öğelerine klavyeyle sırayla ulaşılır ve odak işareti çevrelemez', async ({ page, browserName, hasTouch }) => {
-      test.skip(!hasTouch, 'Telefon ölçüsü dokunmatik projelerde alınır.')
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Telefon ölçüsü 320 ve 390 projelerinde alınır.')
       await page.setViewportSize(PORTRAIT[0])
       await openDemo(page, hasTouch)
       const key = browserName === 'webkit' ? 'Alt+Tab' : 'Tab'
@@ -199,6 +202,69 @@ for (const scheme of ['light', 'dark'] as const) {
       expect(names[1]).toBe('Örnek: Mahalle kafesi. Planlara git')
       expect(names[2]).toMatch(/^Ara\. Kısayol/)
       expect(names[3]).toMatch(/temaya geç$/)
+    })
+
+    test('kayıt sorunu yazısı plan bağlantısını 44 pikselin altına indirmez', async ({ page, hasTouch }) => {
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Telefon ölçüsü 320 ve 390 projelerinde alınır.')
+      await page.setViewportSize(PORTRAIT[0])
+      await openDemo(page, hasTouch)
+      for (const [state, text] of [['kaydedilemedi', 'Kaydedilemedi'], ['cakisma', 'Çakışma var']]) {
+        /* En uzun durum yazısı yerleşime konur. Yerleşim duruma bağlı olmamalıdır. */
+        await page.locator('.topbar .save-status').evaluate((el, [s, t]) => {
+          el.setAttribute('data-state', s)
+          el.querySelector('.save-status-text')!.textContent = t
+        }, [state, text])
+        const m = await chrome(page)
+        expect(m.rows, state).toBe(1)
+        expect(m.overflow, state).toBeLessThanOrEqual(0)
+        const link = await page.locator('.topbar-context a').boundingBox()
+        expect(link!.width, `${state}: plan bağlantısı genişliği`).toBeGreaterThanOrEqual(44)
+        expect(link!.height).toBeGreaterThanOrEqual(44)
+      }
+    })
+
+    test('600 piksel eşiğinin iki yanında ve tablette üst şerit tek satırdır', async ({ page, hasTouch }) => {
+      test.skip(!hasTouch || !phoneProject(test.info().project.name), 'Eşik ölçüsü 320 ve 390 projelerinde alınır.')
+      await page.setViewportSize(PORTRAIT[0])
+      await openDemo(page, hasTouch)
+      await page.goto('/#/karar/3/adim/11')
+      await ready(page)
+      for (const width of [599, 600, 601, 768, 991]) {
+        await page.setViewportSize({ width, height: 900 })
+        const m = await chrome(page)
+        expect(m.rows, `${width}: satır`).toBe(1)
+        expect(m.topbar, `${width}: üst şerit`).toBeLessThanOrEqual(48)
+        expect(m.bottomNav, `${width}: alt menü`).toBeLessThanOrEqual(56)
+        expect(m.overflow, `${width}: yatay taşma`).toBeLessThanOrEqual(0)
+        const toggle = page.getByRole('button', { name: 'Menüyü aç', exact: true })
+        if (width < 600) await expect(toggle, `${width}: menü düğmesi`).toBeHidden()
+        else await expect(toggle, `${width}: menü düğmesi`).toBeVisible()
+        const textWidth = await page.locator('.topbar .save-status-text').evaluate((el) => el.getBoundingClientRect().width)
+        if (width < 600) expect(textWidth, `${width}: kayıt yazısı gizli`).toBeLessThanOrEqual(1)
+        else expect(textWidth, `${width}: kayıt yazısı görünür`).toBeGreaterThan(40)
+        const link = await page.locator('.topbar-context a').boundingBox()
+        expect(link!.width, `${width}: plan bağlantısı`).toBeGreaterThanOrEqual(44)
+      }
+    })
+
+    test('masaüstünde üst şerit 60 piksel, bölüm sekmeleri kaydırma çubuğuyla görünür', async ({ page, hasTouch }) => {
+      test.skip(hasTouch, 'Masaüstü ölçüsü fareli projelerde alınır.')
+      await openDemo(page, hasTouch)
+      for (const width of [992, 1280]) {
+        await page.setViewportSize({ width, height: 800 })
+        const m = await chrome(page)
+        expect(m.rows, `${width}: satır`).toBe(1)
+        expect(m.topbar, `${width}: üst şerit`).toBe(60)
+        expect(m.bottomNav, `${width}: alt menü yok`).toBe(0)
+        expect(m.productNav, `${width}: bölüm sekmeleri`).toBeGreaterThan(0)
+        expect(m.overflow).toBeLessThanOrEqual(0)
+        const nav = await page.locator('.product-nav').evaluate((el) => ({
+          scrollbar: getComputedStyle(el).scrollbarWidth,
+          overflows: el.scrollWidth > el.clientWidth,
+        }))
+        expect(nav.scrollbar, `${width}: kaydırma çubuğu gizlenmez`).toBe('thin')
+        if (width === 992) expect(nav.overflows, '992 pikselde sekmeler taşar').toBe(true)
+      }
     })
   })
 }

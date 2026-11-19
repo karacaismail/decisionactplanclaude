@@ -8,7 +8,8 @@ const ICON = { kaydedildi: CheckCircle, kaydediliyor: ArrowsClockwise, kaydedile
 /**
  * Kayıt durumu. Durumu planStore yönetir.
  * Ekran okuyucu her genişlikte tam metni duyar.
- * Dar ekranda olağan durumlarda yalnız ikon görünür. Sorun varsa metin de görünür.
+ * Dar ekranda yalnız ikon görünür. Plan adı böylece 44 piksellik alanını korur.
+ * Kayıt sorunu ve çakışma ayrıca SyncGuard uyarısında tam metinle görünür.
  */
 export function SaveStatus() {
   const state = usePlanStore((s) => s.saveState)

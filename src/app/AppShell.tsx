@@ -59,7 +59,9 @@ function useShellFocusContinuity() {
       const candidates = [...document.querySelectorAll<HTMLElement>('.app-shell a, .app-shell button')]
         .filter((element) => element.getClientRects().length)
       const counterpart = candidates.find((element) => href && element.getAttribute('href') === href)
+      /* Üst şeritteki menü düğmesi dar ekranda gizlenir. O zaman alt menüdeki eşi odak alır. */
       const fallback = candidates.find((element) => element.classList.contains('shell-menu-toggle'))
+        ?? candidates.find((element) => element.matches('.bottom-nav button[aria-haspopup="dialog"]'))
         ?? candidates.find((element) => element.classList.contains('brand'))
       const target = counterpart ?? fallback
       target?.focus({ preventScroll: true })

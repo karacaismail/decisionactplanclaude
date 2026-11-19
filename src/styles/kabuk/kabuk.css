@@ -183,7 +183,7 @@ html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--shell-na
 
 .app-shell.has-plan .topbar-context { display: flex; min-height: var(--target-touch); }
 
-.app-shell .topbar-context a { min-width: 0; min-height: var(--target-touch); font-weight: 600; }
+.app-shell .topbar-context a { min-width: var(--target-touch); min-height: var(--target-touch); font-weight: 600; }
 
 .app-shell .topbar-context .crumb { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; line-height: 1.25; }
 
@@ -197,7 +197,7 @@ html:has(.app-shell .bottom-nav) { scroll-padding-block-end: calc(var(--shell-na
 
 @media (max-width: 599px) {
   .app-shell .shell-menu-toggle, .app-shell .topbar .brand-text { display: none; }
-  .save-status:is([data-state='kaydedildi'], [data-state='kaydediliyor']) .save-status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .save-status-text { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
 
 .app-shell .product-nav, .app-shell .journey-rail { display: none; }
