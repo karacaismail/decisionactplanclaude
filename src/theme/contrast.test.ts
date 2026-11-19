@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { buildTheme } from './antdTheme'
-import { cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
+import { chartSeries, cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
 
 /** WCAG 2.x göreli parlaklık ve karşıtlık oranı. */
 function luminance(hex: string): number {
@@ -51,6 +51,7 @@ const textPairs: [string, string][] = [
   ['heroText', 'heroSurface'],
   ['heroMuted', 'heroSurface'],
   ['heroText', 'heroSurfaceAlt'],
+  ['heroMuted', 'heroSurfaceAlt'],
   ['heroActionText', 'heroAction'],
 ]
 
@@ -98,6 +99,34 @@ describe.each(modes)('%s tema karşıtlığı', (mode) => {
     expect(Math.abs(lightness(p.surfaceWork) - lightness(p.surfaceContext))).toBeGreaterThanOrEqual(5)
   })
 
+  it('bağlam yüzeyi sayfa zemininden en az 2,5 L* ayrılır', () => {
+    // Fare üzerine gelme, soluk etiket ve kapalı alan zemini bağlam yüzeyini kullanır.
+    // Bu zeminler sayfa üstünde de görünür kalmalı.
+    expect(Math.abs(lightness(p.surfacePage) - lightness(p.surfaceContext))).toBeGreaterThanOrEqual(2.5)
+    // Açık temada bağlam yüzeyi sayfadan koyudur. Koyu temada yükselen yüzey açılır.
+    if (mode === 'light') expect(lightness(p.surfaceContext)).toBeLessThan(lightness(p.surfacePage))
+    else expect(lightness(p.surfaceContext)).toBeGreaterThan(lightness(p.surfacePage))
+  })
+
+  it('bağlam ile çukur yüzey arasında en az 2,5 L* fark vardır', () => {
+    expect(Math.abs(lightness(p.surfaceContext) - lightness(p.surfaceSunken))).toBeGreaterThanOrEqual(2.5)
+  })
+
+  it('grafik seri renkleri çalışma yüzeyinde en az 3:1', () => {
+    expect(chartSeries.length).toBeGreaterThan(0)
+    for (const key of chartSeries) expect(contrast(p[key], p.surfaceWork), key).toBeGreaterThanOrEqual(3)
+  })
+
+  it('kart gölgesi koyu temada da ayrım kurar ve renkli vurgu kullanmaz', () => {
+    const card = elevation[mode].card
+    expect(card).not.toBe('none')
+    if (mode === 'dark') {
+      // Aynı tondaki iç içe kartı 1 piksellik kenar tokenı ayırır. Halka değil, sabit ayrım çizgisidir.
+      expect(card).toContain(p.border)
+      expect(card).not.toContain(p.actionPrimary)
+    }
+  })
+
   it('gölge tokenları CSS değişkeni olarak her temada tanımlı', () => {
     const vars = cssVariables(mode)
     expect(vars['--shadow-card']).toBeTruthy()
@@ -135,6 +164,12 @@ describe.each(modes)('%s tema karşıtlığı', (mode) => {
     expect(c.Button?.defaultBorderColor).toBe(p.borderInput)
     expect(c.Input?.hoverBorderColor).toBe(p.textSecondary)
     expect(c.Select?.hoverBorderColor).toBe(p.textSecondary)
+  })
+})
+
+describe('palet anahtarları', () => {
+  it('açık ve koyu temanın anahtarları aynıdır', () => {
+    expect(Object.keys(dark).sort()).toEqual(Object.keys(light).sort())
   })
 })
 

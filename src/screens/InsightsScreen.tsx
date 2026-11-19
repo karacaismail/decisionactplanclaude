@@ -12,7 +12,7 @@ import { buildInsights, statCards, type Insight, type InsightPalette } from '@/c
 import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
 import { resolveMode } from '@/theme/antdTheme'
-import { font, palette as paletteOf } from '@/theme/tokens'
+import { chartSeries, font, palette as paletteOf } from '@/theme/tokens'
 /**
  * Göstergeler. Üstte dört istatistik kartı, altında grafik ızgarası.
  * Masaüstünde iki sütun, telefonda tek sütun. Her gösterge kendi kartındadır.
@@ -38,7 +38,7 @@ export function InsightsScreen() {
       grid: p.border,
       onInk: p.surfaceWork,
       ramp: [p.toneNavy, p.toneTeal, p.tonePurple, p.textSecondary],
-      series: [p.toneNavy, p.toneTeal, p.tonePurple, p.toneOrange, p.statusInfo, p.statusHold, p.textSecondary],
+      series: chartSeries.map((key) => p[key]),
       outcome: (o) => outcomeColor(o, isDark),
     }
   }, [mode, isDark])

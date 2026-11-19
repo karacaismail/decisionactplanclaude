@@ -13,15 +13,15 @@
 export const light = {
   surfacePage: '#ECEEF4',
   surfaceWork: '#FFFFFF',
-  surfaceContext: '#EDEFF5',
-  surfaceSunken: '#E3E6F0',
+  surfaceContext: '#E3E6EF',
+  surfaceSunken: '#D9DDE8',
   textPrimary: '#0F1729',
   textSecondary: '#4A5468',
   actionPrimary: '#2F5BEA',
   actionHover: '#2448C4',
   actionText: '#2448C4',
   brandAccent: '#2F5BEA',
-  statusOk: '#0B7A56',
+  statusOk: '#0A6E4D',
   statusHold: '#9A5300',
   statusHarm: '#C0271D',
   statusInfo: '#2448C4',
@@ -107,7 +107,8 @@ export function palette(mode: ThemeMode): Palette {
 /**
  * Yükselti. card kartı zeminden ayırır. float açılan katmanı ayırır.
  * bar, ekranın altına sabitlenen şeridi yukarı doğru ayırır.
- * Koyu temada kart gölgesi yoktur. Ayrımı yüzey tonu kurar.
+ * Koyu temada gölge görünmez. Kartı yüzey tonu ve 1 piksellik kenar tokenı ayırır.
+ * Bu çizgi dört kenarı da sarar. Tek kenarlı renkli vurgu değildir.
  */
 export const elevation = {
   light: {
@@ -116,11 +117,14 @@ export const elevation = {
     bar: '0 -1px 0 rgba(15, 23, 41, 0.08), 0 -4px 12px rgba(15, 23, 41, 0.08)',
   },
   dark: {
-    card: 'none',
+    card: `0 0 0 1px ${dark.border}`,
     float: `0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px ${dark.border}`,
     bar: `0 -1px 0 ${dark.border}, 0 -4px 12px rgba(0, 0, 0, 0.4)`,
   },
 } as const
+
+/** Grafiklerde kategori rengi olarak kullanılan palet anahtarları. Sıra korunur. */
+export const chartSeries = ['toneNavy', 'toneTeal', 'tonePurple', 'toneOrange', 'statusInfo', 'statusHold', 'textSecondary'] as const satisfies readonly (keyof typeof light)[]
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {
