@@ -40,9 +40,10 @@ function reduceOptionMotion(option: ECBasicOption): ECBasicOption {
  * ECharts sarmalayıcı. Çubuk, çizgi, donut (pie), huni, dağılım ve diğer türler kayıtlıdır.
  * Renk ve yazı tokenlardan gelir. Seçenek readableOption ile ortak okunurluk kurallarından geçer:
  * yazı 14 pikselin altına inmez, komşu dilimler ayrışır, ekran okuyucu açıklaması Türkçedir.
- * Desen ve kaydırıcı yoktur. description verilmezse ekran okuyucu ariaLabel değerini okur.
+ * Desen ve kaydırıcı yoktur. Ekran okuyucu kısa adı (ariaLabel) okur.
+ * Özet görünür bir paragraftadır. describedBy o paragrafın kimliğidir. Böylece özet bir kez okunur.
  */
-export default function EChart({ option, height, ariaLabel, description }: { option: unknown; height: number; ariaLabel: string; description?: string }) {
+export default function EChart({ option, height, ariaLabel, describedBy }: { option: unknown; height: number; ariaLabel: string; describedBy?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [failure, setFailure] = useState<{ error: unknown } | null>(null)
   const { token } = theme.useToken()
@@ -50,12 +51,12 @@ export default function EChart({ option, height, ariaLabel, description }: { opt
   const printing = usePrintMode()
   /* Yazdırırken açık tema döner. Boşluk rengi grafiğin çizildiği çalışma yüzeyidir. */
   const mode = useResolvedTheme()
-  /* Açıklama değişince grafik yeniden kurulmaz. Yeni açıklama sonraki çizimde okunur. */
-  const spoken = useRef(description ?? ariaLabel)
-  /* Düzen etkisi çizim etkisinden önce çalışır. Çizim güncel açıklamayı okur. */
+  /* Ad değişince grafik yeniden kurulmaz. Yeni ad sonraki çizimde okunur. */
+  const spoken = useRef(ariaLabel)
+  /* Düzen etkisi çizim etkisinden önce çalışır. Çizim güncel adı okur. */
   useLayoutEffect(() => {
-    spoken.current = description ?? ariaLabel
-  }, [description, ariaLabel])
+    spoken.current = ariaLabel
+  }, [ariaLabel])
   useEffect(() => {
     if (!ref.current) return
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -123,5 +124,5 @@ export default function EChart({ option, height, ariaLabel, description }: { opt
   }, [option, token, printing, mode])
   if (failure) throw failure.error
   /* React ve ECharts aynı adı yazar. Böylece ad eskimez. */
-  return <div ref={ref} role="img" aria-label={description ?? ariaLabel} style={{ width: '100%', height }} />
+  return <div ref={ref} role="img" aria-label={ariaLabel} aria-describedby={describedBy} style={{ width: '100%', height }} />
 }

@@ -3,7 +3,7 @@ import '@/styles/desen/pano.css'
 import '@/styles/desen/pano-ortak.css'
 import '@/styles/desen/step-card.css'
 import '@/styles/bilesen/ChartFrame.css'
-import { Component, lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Component, lazy, Suspense, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import Button from 'antd/es/button'
 import Card from 'antd/es/card'
 import Segmented from 'antd/es/segmented'
@@ -145,6 +145,8 @@ export function ChartFrame({ title, summary, option, table, height = 240, frame 
   const figureRef = useRef<HTMLElement>(null)
   const tableRef = useRef<HTMLDivElement>(null)
   const focusTable = useRef(false)
+  /* Grafiğin adı kısadır. Özet görünür paragraftadır ve grafiğe bu kimlikle bağlanır. Böylece özet bir kez okunur. */
+  const summaryId = useId()
 
   useEffect(() => {
     if (enteredViewport) return
@@ -199,7 +201,7 @@ export function ChartFrame({ title, summary, option, table, height = 240, frame 
           {enteredViewport ? (
             <ChartErrorBoundary onShowTable={showTableAfterError}>
               <Suspense fallback={<p className="chart-loading" role="status">Grafik yükleniyor.</p>}>
-                <LazyChart option={option} height={height} ariaLabel={title} description={summary ? `${title}. ${summary}` : title} />
+                <LazyChart option={option} height={height} ariaLabel={title} describedBy={summary ? summaryId : undefined} />
               </Suspense>
             </ChartErrorBoundary>
           ) : <div className="chart-placeholder" aria-hidden="true" />}
@@ -230,7 +232,7 @@ export function ChartFrame({ title, summary, option, table, height = 240, frame 
           </tbody>
         </table>
       </div>
-      {summary ? <p className="chart-summary">{summary}</p> : null}
+      {summary ? <p id={summaryId} className="chart-summary">{summary}</p> : null}
     </>
   )
   if (frame === 'plain') {

@@ -99,7 +99,7 @@ beforeEach(async () => {
           if (failure === 'effect') throw new Error('Grafik başlatılamadı.')
         }, [])
         if (failure === 'render') throw new Error('Grafik çizilemedi.')
-        return react.createElement('div', { role: 'img', 'aria-label': chartProps.ariaLabel })
+        return react.createElement('div', { role: 'img', 'aria-label': chartProps.ariaLabel, 'aria-describedby': chartProps.describedBy })
       },
     }
   })
@@ -242,10 +242,21 @@ describe('ChartFrame', () => {
     await intersect(true)
     expect(loadChart).toHaveBeenCalledTimes(1)
     expect(container.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe(props.title)
-    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 240, ariaLabel: props.title, description: `${props.title}. ${props.summary}` })
+    /* Grafiğin adı kısadır. Özet görünür paragraftan bir kez okunur. */
+    const summary = container.querySelector('.chart-summary')!
+    expect(summary.id).not.toBe('')
+    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 240, ariaLabel: props.title, describedBy: summary.id })
     expect(observers[0].disconnect).toHaveBeenCalled()
     await intersect(false)
     expect(container.querySelector('[role="img"]')).not.toBeNull()
+  })
+
+  it('özet yoksa grafik yalnız kısa adını taşır', async () => {
+    await mount({ summary: undefined })
+    await intersect(true)
+    expect(container.querySelector('.chart-summary')).toBeNull()
+    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 240, ariaLabel: props.title, describedBy: undefined })
+    expect(container.querySelector('[role="img"]')?.hasAttribute('aria-describedby')).toBe(false)
   })
 
   it.each(['card', 'plain'] as const)('%s görünümünde ekran okuyucu aynı tabloyu sürekli bulur', async (frame) => {
@@ -264,7 +275,7 @@ describe('ChartFrame', () => {
     await react.act(async () => { toggle('Grafik').click() })
     expect(semanticTable()).toBe(table)
     expect(table.closest('.sr-only')).not.toBeNull()
-    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 320, ariaLabel: props.title, description: `${props.title}. ${props.summary}` })
+    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 320, ariaLabel: props.title, describedBy: container.querySelector('.chart-summary')!.id })
   })
 
   it('görünürlük API desteği yoksa ekrana girene kadar grafiği yüklemez', async () => {

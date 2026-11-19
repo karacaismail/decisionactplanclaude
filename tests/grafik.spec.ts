@@ -43,10 +43,14 @@ for (const scheme of ['light', 'dark'] as const) {
         const title = (await frame.locator('h3').innerText()).trim()
         const summary = (await frame.locator('.chart-summary').innerText()).trim()
         expect(summary, title).not.toBe('')
-        /* ECharts kendi İngilizce açıklamasını yazmaz. Başlık ve özet okunur. */
-        const label = await frame.locator('.chart-canvas [role="img"]').getAttribute('aria-label')
-        expect(label, title).toBe(`${title}. ${summary}`)
+        /* ECharts kendi İngilizce açıklamasını yazmaz. Ad kısadır. Özet görünür paragraftan bir kez okunur. */
+        const image = frame.locator('.chart-canvas [role="img"]')
+        const label = await image.getAttribute('aria-label')
+        expect(label, title).toBe(title)
         expect(label).not.toMatch(/This is a chart|chart about/i)
+        const describedBy = await image.getAttribute('aria-describedby')
+        expect(describedBy, title).toBeTruthy()
+        await expect(frame.locator(`[id="${describedBy}"]`)).toHaveText(summary)
         /* Veri tablosu ekran okuyucuya her zaman açıktır. */
         expect(await frame.locator('table.chart-data-table tbody tr').count(), title).toBeGreaterThan(0)
         /* Grafik genişliği kapsayıcıyı aşmaz. */
@@ -93,7 +97,10 @@ for (const scheme of ['light', 'dark'] as const) {
         await expect(frame.locator('.chart-canvas canvas')).toBeVisible()
         const title = (await frame.locator('h3').count()) ? (await frame.locator('h3').innerText()).trim() : (await frame.locator('figcaption').innerText()).trim()
         const summary = (await frame.locator('.chart-summary').innerText()).trim()
-        await expect(frame.locator('.chart-canvas [role="img"]')).toHaveAttribute('aria-label', `${title}. ${summary}`)
+        const image = frame.locator('.chart-canvas [role="img"]')
+        await expect(image).toHaveAttribute('aria-label', title)
+        const describedBy = await image.getAttribute('aria-describedby')
+        await expect(frame.locator(`[id="${describedBy}"]`)).toHaveText(summary)
       }
     })
   })
