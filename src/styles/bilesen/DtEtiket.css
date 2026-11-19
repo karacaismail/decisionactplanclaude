@@ -1,0 +1,9 @@
+/* Destek modülünün durum etiketi. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-etiket { display: inline-flex; align-items: center; padding: var(--padding-tag-block) var(--padding-selection-inline); border-radius: var(--radius-pill); font-size: var(--font-helper); line-height: var(--line-control); font-weight: var(--weight-strong); background: var(--color-surface-context); color: var(--color-text-secondary); overflow-wrap: anywhere; }
+
+.dt-etiket.dt-etiket-uyari { background: var(--color-status-hold-bg); color: var(--color-status-hold); }
+
+.dt-etiket.dt-etiket-kapali { background: var(--color-status-harm-bg); color: var(--color-status-harm); }
+
+.dt-etiket.dt-etiket-olumlu { background: var(--color-status-ok-bg); color: var(--color-status-ok); }

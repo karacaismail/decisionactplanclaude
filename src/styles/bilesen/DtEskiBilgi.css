@@ -1,0 +1,9 @@
+/* Eski bilgi uyarısı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-eski-bilgi { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-label); padding: var(--padding-panel); background: var(--color-status-hold-bg); border-radius: var(--radius-panel); min-inline-size: 0; }
+
+.dt-eski-bilgi h2 { display: inline-flex; align-items: center; gap: var(--gap-icon); margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); color: var(--color-status-hold); }
+
+.dt-eski-bilgi .dt-eski-bilgi-ikon { inline-size: var(--icon-control); block-size: var(--icon-control); flex-shrink: 0; }
+
+.dt-eski-bilgi p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); max-inline-size: 72ch; }

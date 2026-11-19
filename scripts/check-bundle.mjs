@@ -24,12 +24,15 @@ import { gzipSync } from 'node:zlib'
 // Koruyucu ayrı dosyaya bölünmedi. media="print" bağlantısı da dosyayı indirir. Yazdırma anında geç yükleme ise güvenilir değildir.
 // Sınır 12.300 bayt oldu.
 // Bunlar ağ aktarımı veya genel web standardı değildir. Yeni bağımlılık gerekçelendirilmelidir.
+// 19 Kasım 2026: Proje ve destek modülleri kendi ekran CSS'lerini getirdi. Bu CSS yalnız o ekran açılınca iner.
+// Bütün CSS dosyaları 278.998 ham, 66.886 gzip bayt oldu. Toplam sınır yaklaşık %11 payla yükseldi.
+// Modül CSS'i ilk açılış CSS sınırını değiştirmedi. O sınırı yukarıdaki UX turları 12.300 bayta çıkardı.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
   totalJs: { raw: 3_500_000, gzip: 1_100_000 },
   initialCss: { raw: 65_000, gzip: 12_300 },
-  css: { raw: 275_000, gzip: 65_000 },
+  css: { raw: 310_000, gzip: 74_000 },
 }
 
 // routes.tsx içindeki her ekran ayrı dinamik giriş olarak korunur.

@@ -1,0 +1,74 @@
+/* Size uygun destekler ekranı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-eslesme { min-inline-size: 0; }
+
+.dt-eslesme h2 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); }
+
+.dt-eslesme h3 { margin: var(--space-2) 0 0; font-size: var(--font-subsection-title); line-height: 1.3; font-weight: var(--weight-strong); }
+
+.dt-eslesme p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; }
+
+.dt-eslesme .dt-eslesme-hata { color: var(--color-status-harm); }
+
+.dt-eslesme .dt-eslesme-sihirbaz { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-content); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); min-inline-size: 0; }
+
+.dt-eslesme .dt-eslesme-durum { font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
+
+.dt-eslesme .dt-eslesme-durum:empty { display: none; }
+
+.dt-eslesme .dt-eslesme-alanlar { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-content); min-inline-size: 0; }
+
+.dt-eslesme .dt-eslesme-alan { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-label); min-inline-size: 0; max-inline-size: 32rem; }
+
+.dt-eslesme .dt-eslesme-alan label { font-size: var(--font-body); font-weight: var(--weight-strong); }
+
+.dt-eslesme .dt-eslesme-alan .ant-select, .dt-eslesme .dt-eslesme-alan .ant-input-number { inline-size: 100%; }
+
+.dt-eslesme .dt-eslesme-secenekler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); min-inline-size: 0; }
+
+.dt-eslesme .dt-eslesme-secenekler .ant-radio-wrapper, .dt-eslesme .dt-eslesme-secenekler .ant-checkbox-wrapper { display: flex; align-items: center; min-block-size: var(--target-touch); margin-inline-end: 0; font-size: var(--font-body); }
+
+.dt-eslesme .dt-eslesme-eylemler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); }
+
+.dt-eslesme .dt-sonuc-baslik { font-size: var(--font-section-title); }
+
+.dt-eslesme .dt-sonuc-not { color: var(--color-text-secondary); }
+
+.dt-eslesme .dt-sonuc-netlestir, .dt-eslesme .dt-sonuc-grup, .dt-eslesme .dt-sonuc-cevaplar { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); border-radius: var(--radius-panel); background: var(--color-surface-work); min-inline-size: 0; }
+
+.dt-eslesme .dt-sonuc-netlestir { background: var(--color-selected-bg); }
+
+.dt-eslesme .dt-sonuc-netlestir ul { margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); }
+
+.dt-eslesme .dt-sonuc-netlestir .ant-btn { justify-self: start; }
+
+.dt-eslesme .dt-sonuc-uygun h2 { color: var(--color-status-ok); }
+
+.dt-eslesme .dt-sonuc-belki h2 { color: var(--color-status-hold); }
+
+.dt-eslesme .dt-sonuc-uygun-degil h2 { color: var(--color-status-harm); }
+
+.dt-eslesme .dt-sonuc-liste { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); margin: 0; padding: 0; list-style: none; min-inline-size: 0; }
+
+.dt-eslesme .dt-sonuc-satir { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding-block: var(--space-2); border-block-end: 1px solid var(--color-border); min-inline-size: 0; }
+
+.dt-eslesme .dt-sonuc-satir:last-child { border-block-end: 0; }
+
+.dt-eslesme .dt-sonuc-ad { display: inline-flex; align-items: center; justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }
+
+.dt-eslesme .dt-sonuc-kurum { font-size: var(--font-helper); color: var(--color-text-secondary); }
+
+.dt-eslesme .dt-sonuc-nedenler { display: grid; gap: var(--space-1); margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); line-height: var(--line-body); }
+
+.dt-eslesme .dt-sonuc-cevaplar dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); margin: 0; }
+
+.dt-eslesme .dt-sonuc-cevap { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+
+.dt-eslesme .dt-sonuc-cevap dt { font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
+
+.dt-eslesme .dt-sonuc-cevap dd { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); margin: 0; font-size: var(--font-body); }
+
+@media (min-width: 560px) {
+  .dt-eslesme .dt-eslesme-eylemler { grid-template-columns: repeat(3, max-content); }
+  .dt-eslesme .dt-eslesme-alanlar { grid-template-columns: repeat(2, minmax(0, 16rem)); }
+}

@@ -8,6 +8,8 @@ import { createMemoryKvStore } from '@/platform/kv'
 import { setDefaultKvStore } from '@/platform/kv'
 
 const plain = () => emptyPlan('plan-eski', 'Kafe')
+/* Proje modülü dilimi içe almadan önce denetler. Bu yüzden örnek kayıt geçerli biçimdedir. */
+const projeKaydi = (id: string, planId = 'plan-eski') => ({ id, planId, ad: 'Tezgâh', baslangic: '2026-11-19', bitis: '', sorumlu: '', aciklama: '', olusturma: '2026-11-19T07:00:00.000Z' })
 
 beforeEach(() => {
   usePlanStore.setState({ plans: {}, currentId: undefined, loadFailed: false })
@@ -73,10 +75,10 @@ describe('paketi içe alma', () => {
   it('modül dilimini yeni plan kimliğine taşır', async () => {
     const kv = createMemoryKvStore()
     setDefaultKvStore(kv)
-    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: plain(), modules: { proje: { schemaVersion: 1, entries: [['proje-1', { ad: 'Tezgâh' }]] } } }
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: plain(), modules: { proje: { schemaVersion: 1, entries: [['proje/proje-1', projeKaydi('proje-1')]] } } }
     const { planId, warnings } = await importPlanFile(JSON.stringify(bundle))
     expect(warnings).toEqual([])
-    expect(await kv.get(`proje/${planId}/proje-1`)).toEqual({ ad: 'Tezgâh' })
+    expect(await kv.get(`proje/${planId}/proje/proje-1`)).toEqual(projeKaydi('proje-1', planId))
   })
 
   it('bilinmeyen modül dilimini atlar ve uyarır, planı yine alır', async () => {
@@ -114,9 +116,9 @@ describe('örnek planı yeniden içe alma', () => {
     const example = buildDemoPlan()
     usePlanStore.getState().importPlan(structuredClone(example))
     await kv.set(`proje/${example.id}/eski`, 1)
-    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['yeni', 2]] } } }
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/yeni', projeKaydi('yeni', example.id)]] } } }
     const { planId } = await importPlanFile(JSON.stringify(bundle))
     expect(planId).toBe(example.id)
-    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/yeni`])
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/yeni`])
   })
 })
