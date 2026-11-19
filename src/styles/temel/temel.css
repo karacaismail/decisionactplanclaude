@@ -520,3 +520,16 @@ html[data-focus-mode='keyboard'] :is(.ant-radio-button-input, .ant-radio-input, 
 }
 
 @keyframes form-section-reveal {from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; }}
+
+/* Yazdırma koruyucusu: her ekranda gezinme ve sabit şeritler kâğıda basılmaz. Ayrıntı: docs/css-mimarisi.md */
+@media print {
+  .topbar, .bottom-nav, .product-nav, .journey-rail, .action-bar, .sync-alert, .ant-drawer, .no-print { display: none !important; }
+  body { background: var(--color-surface-work) !important; }
+  /* Tarayıcı kâğıtta zemin rengini basmaz. Koyu giriş bloğunun yazısı koyu metin rengine döner. */
+  :root { --shadow-card: none !important; --shadow-float: none !important; --shadow-bar: none !important;
+    --color-hero-surface: var(--color-surface-work) !important; --color-hero-surface-alt: var(--color-surface-work) !important;
+    --color-hero-text: var(--color-text-primary) !important; --color-hero-muted: var(--color-text-secondary) !important; --color-hero-line: var(--color-border) !important; }
+  .tag, .ant-tag { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  /* Tema yazdırmadan hemen önce açılır. Renk geçişi yarıda kalıp kâğıda basılmaz. */
+  *, ::before, ::after { transition: none !important; }
+}

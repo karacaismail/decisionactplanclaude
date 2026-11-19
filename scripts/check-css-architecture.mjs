@@ -161,6 +161,13 @@ export function checkCssArchitecture(files) {
     }
   }
 
+  /* Yazdırma kuralı yazdırma katmanında durur. Tek istisna temel katmanındaki küçük yazdırma koruyucusudur. */
+  for (const css of cssFiles) {
+    const layer = css.split('/')[2]
+    if (layer === 'yazdirma' || layer === 'temel') continue
+    if (/@media\s+print\b/.test(stripComments(files.get(css)))) errors.push(`${css}: @media print kuralı bu katmanda duramaz. Kuralı yazdirma/ katmanına taşıyın.`)
+  }
+
   /* Birebir yinelenen kural ölü koddur. Aynı sorgu, seçici ve bildirimler bir dosyada bir kez durur. */
   for (const css of cssFiles) {
     const seen = new Map()

@@ -16,6 +16,7 @@ import { CommandPaletteButton, CommandPaletteHost } from '@/components/CommandPa
 import { cssVariables } from '@/theme/tokens'
 import { BrandMark } from '@/components/BrandMark'
 import { syncThemeColor } from './themeColor'
+import { usePrintMode } from './printMode'
 import { resolveMode } from '@/theme/antdTheme'
 import { MODULE_NAV, type RegisteredNav } from '@/platform/modules'
 import type { ModuleIcon } from '@/platform/types'
@@ -37,11 +38,13 @@ export function decisionIcon(name: string): typeof Briefcase {
 
 /** Tokenları CSS değişkeni olarak köke yazar. global.css yalnız bunları okur. */
 function useThemeVariables(pref: 'light' | 'dark' | 'system') {
+  // Yazdırma sırasında açık temanın tokenları yazılır.
+  const printing = usePrintMode()
   useLayoutEffect(() => {
     const root = document.documentElement
-    for (const [k, v] of Object.entries(cssVariables(resolveMode(pref)))) root.style.setProperty(k, v)
+    for (const [k, v] of Object.entries(cssVariables(printing ? 'light' : resolveMode(pref)))) root.style.setProperty(k, v)
     syncThemeColor(pref)
-  }, [pref])
+  }, [pref, printing])
 }
 
 /** CSS bir gezinmeyi gizlerse odağı görünür eşine taşır. Yerleşimi değiştirmez. */
