@@ -410,3 +410,8 @@ html[data-focus-mode='keyboard'] .topbar :focus-visible::before { background: va
 }
 
 .ant-select-sm .ant-select-selection-item .tag { height: 22px; }
+
+/* Ekran hatası: yeniden yükleme düğmesi ve dönüş bağlantısı. Bağlantı 44 piksellik alan kullanır. */
+.route-error-actions { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-control); margin-block-start: var(--gap-label); }
+
+.route-error-actions a { display: inline-flex; align-items: center; min-block-size: var(--hit-area-min); color: var(--color-action-text); font-weight: var(--weight-strong); text-decoration: underline; text-underline-offset: 2px; }

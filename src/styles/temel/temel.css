@@ -55,7 +55,7 @@ html[data-focus-mode='keyboard'] a:focus-visible { text-decoration: underline; t
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; scroll-behavior: auto !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
 }
 
 .ant-btn:focus-visible, .ant-input:focus, .ant-input-focused, .ant-select-focused .ant-select-selector, .ant-input-number-focused, .ant-picker-focused, .ant-segmented-item-input:focus + .ant-segmented-item-label, .ant-radio-input:focus-visible + .ant-radio-inner, .ant-checkbox-input:focus-visible + .ant-checkbox-inner, .ant-switch:focus-visible, .ant-slider:focus-visible, .ant-rate:focus-visible, .ant-tabs-tab-btn:focus-visible, .ant-menu-item:focus-visible, .ant-collapse-header:focus-visible, .ant-card:focus-visible { outline: none !important;
@@ -339,7 +339,6 @@ html[data-focus-mode='keyboard'] .ant-drawer:not(.ant-drawer-inline):not(.ant-dr
   --gap-label: 4px;
   --gap-icon: 6px;
   --size-loading-label: 120px;
-  --size-loading-copy: 70%;
   --size-loading-title: 50%;
   --size-loading-head-max: 640px;
   --size-progress-ring: 96px;

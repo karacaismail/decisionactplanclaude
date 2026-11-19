@@ -1,8 +1,7 @@
-import { Component, lazy, Suspense, type ComponentType, type ReactNode } from 'react'
-import { Button } from 'antd'
+import { lazy, Suspense, type ComponentType } from 'react'
 import { matchRoutes, Navigate, Outlet, Route, Routes, useLocation, useParams } from 'react-router'
 import { AppShell } from './AppShell'
-import { Callout } from '@/components/Callout'
+import { RouteErrorBoundary } from './RouteError'
 import { LoadingState } from '@/components/LoadingState'
 import { useCurrentPlan } from '@/store/planStore'
 import { MODULE_ROUTES } from '@/platform/modules'
@@ -91,38 +90,12 @@ export function preloadRoute(href: string): Promise<unknown> {
   return load ? load().catch(() => undefined) : Promise.resolve()
 }
 
-type RouteErrorProps = { children: ReactNode; routeKey: string }
-type RouteErrorState = { failed: boolean; routeKey: string }
-
-/** Ekran hatası menüyü kapatmaz. Başka bir adrese geçilince hata alanı temizlenir. */
-class RouteErrorBoundary extends Component<RouteErrorProps, RouteErrorState> {
-  state: RouteErrorState = { failed: false, routeKey: this.props.routeKey }
-
-  static getDerivedStateFromError(): Partial<RouteErrorState> {
-    return { failed: true }
-  }
-
-  static getDerivedStateFromProps(props: RouteErrorProps, state: RouteErrorState): RouteErrorState | null {
-    return props.routeKey !== state.routeKey ? { failed: false, routeKey: props.routeKey } : null
-  }
-
-  render() {
-    if (!this.state.failed) return this.props.children
-    return (
-      <Callout tone="uyari" title="Ekran açılamadı">
-        <p>Sayfayı yeniden yükleyebilir veya menüden başka bir ekran açabilirsiniz.</p>
-        {/* React.lazy başarısız sonucu saklar. Tam yenileme bu kaydı da temizler. */}
-        <Button onClick={() => window.location.reload()}>Sayfayı yeniden yükle</Button>
-      </Callout>
-    )
-  }
-}
-
 function RouteContent() {
   const location = useLocation()
   const routeKey = `${location.key}:${location.pathname}${location.search}${location.hash}`
+  const hasPlan = Boolean(useCurrentPlan())
   return (
-    <RouteErrorBoundary routeKey={routeKey}>
+    <RouteErrorBoundary routeKey={routeKey} hasPlan={hasPlan}>
       <Suspense key={location.pathname} fallback={<LoadingState />}><Outlet /></Suspense>
     </RouteErrorBoundary>
   )
