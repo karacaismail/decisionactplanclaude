@@ -163,7 +163,7 @@ export default function CommandPalette() {
           }}
           onKeyDown={onInputKey}
           role="combobox"
-          aria-expanded={open}
+          aria-expanded={open && results.length > 0}
           aria-controls="cmdk-list"
           aria-autocomplete="list"
           aria-activedescendant={activeId}
@@ -172,9 +172,11 @@ export default function CommandPalette() {
           Kapat
         </Button>
       </div>
+      {/* Bu durum bölgesi panel açıkken hep yerindedir. Sonuç sayısı değişince ekran okuyucu yeni sayıyı duyar. */}
+      <p className="visually-hidden" role="status">{results.length === 0 ? 'Sonuç yok.' : `${results.length} sonuç.`}</p>
       {results.length === 0 ? (
         <div className="cmdk-empty">
-          <EmptyState title="Sonuç yok" text="Başka bir kelime deneyin." actionless="Arama kutusu bu panelin en üstünde duruyor." />
+          <EmptyState announce={false} title="Sonuç yok" text="Başka bir kelime deneyin." actionless="Arama kutusu bu panelin en üstünde duruyor." />
         </div>
       ) : null}
       <div id="cmdk-list" ref={listRef} className="cmdk-list" role="listbox" aria-label="Sonuçlar">

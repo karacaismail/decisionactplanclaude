@@ -27,6 +27,9 @@ function assertKey(key: string) {
   if (typeof key !== 'string' || !key) throw new Error('Kayıt anahtarı boş olamaz.')
 }
 
+const READ_FAILED = 'Kayıtlı bilgiler okunamadı. Kayıt silinmedi. Sayfayı yeniden yükleyin.'
+const WRITE_FAILED = 'Değişiklik kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.'
+
 const byCodeUnit = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0)
 
 /** Bellek deposu. Değerleri kopya olarak saklar. Sayfa kapanınca veri kaybolur. */
@@ -55,10 +58,10 @@ export function createMemoryKvStore(): KvStore {
   }
 }
 
-function request<T>(req: IDBRequest<T>): Promise<T> {
+function request<T>(req: IDBRequest<T>, failure: string): Promise<T> {
   return new Promise((resolve, reject) => {
     req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error ?? new Error('Kayıtlı bilgiler okunamadı. Kayıt silinmedi. Sayfayı yeniden yükleyin.'))
+    req.onerror = () => reject(req.error ?? new Error(failure))
   })
 }
 
@@ -96,12 +99,12 @@ export function createIndexedDbKvStore(factory: IDBFactory, name = DB_NAME): KvS
     /* Yazma ancak işlem tamamlanınca kalıcıdır. Dinleyici istekten önce bağlanır. */
     const done = new Promise<void>((resolve, reject) => {
       t.oncomplete = () => resolve()
-      t.onerror = () => reject(t.error ?? new Error('Değişiklik kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.'))
+      t.onerror = () => reject(t.error ?? new Error(WRITE_FAILED))
       t.onabort = () => reject(t.error ?? new Error('Kayıt yarıda kaldı. Önceki kayıt duruyor. Yeniden deneyin.'))
     })
     /* İstek hata verirse işlem de hata verir. Bu ikinci hata yutulur. İlk hata çağırana gider. */
     done.catch(() => undefined)
-    const result = await request(run(t.objectStore(STORE)))
+    const result = await request(run(t.objectStore(STORE)), mode === 'readwrite' ? WRITE_FAILED : READ_FAILED)
     if (mode === 'readwrite') await done
     return result
   }

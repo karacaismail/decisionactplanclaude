@@ -366,6 +366,9 @@ Bu durumda geliştirici `actionless` alanına nedeni yazar. Bu neden ekranda gö
 Boş durumdaki düğme dolu ana düğme değildir. Ekranda tek dolu ana düğme olur.
 Eylemin alanı en az 44 × 44 pikseldir. Bağlantı da bu alanı kullanır.
 Başlık düzeyi bulunduğu bölüme göre seçilir. Örneğin kart başlığı `h3` ise boş durum başlığı `h4` olur.
+Boş durum değişince ekran okuyucu onu duyar. Bazı ekranlar sonuç sayısını zaten duyurur.
+Bu ekranlarda geliştirici `announce={false}` verir. Böylece aynı sonuç iki kez okunmaz.
+Örneğin Yöntemler ve Kanıtlar ekranı böyledir.
 
 Ant Design `Empty` bileşeni ve hazır resimleri kullanılmaz. Arayüz kapısının (l) kuralı bunu denetler.
 `src/components/EmptyState.test.tsx` testi her kullanımı tarar. Testte başlık, açıklama ve eylem kuralları denetlenir.
@@ -402,6 +405,18 @@ Bir ekran açılamazsa menü kapanmaz. Ekranın yerinde şu metin görünür:
 "Bu ekran yüklenirken bir sorun çıktı. Planlarınız güvende. Kayıtlı veri değişmedi."
 Altında iki eylem vardır: "Sayfayı yeniden yükle" düğmesi ve dönüş bağlantısı.
 Plan açıksa bağlantı "Panoya dön" yazar. Plan yoksa "Planlara dön" yazar.
+Bağlantı açılamayan ekranı göstermez. Örneğin pano açılamazsa bağlantı planlara döner.
+
+Son değişiklik kaydedilemediyse metin "Planlarınız güvende" demez.
+Metin şunu yazar: "Son değişiklikleriniz yalnız bu sekmede duruyor."
+Bu durumda önce "Kopyamı indir (JSON)" düğmesi görünür. Yeniden yükleme kaydedilmemiş değişikliği siler.
+
+Modül kaydında asıl kayıt önce yazılır. Sonra küçük özet yenilenir.
+Özet yenilenemezse işlem yine başarılı sayılır. Böylece ekran yanlışlıkla "kaydedilemedi" demez.
+Bir işlem yarıda kalabiliyorsa metin söz vermez. Örneğin "Silme yarıda kalmış olabilir." yazar.
+
+Ant Design tablo ya da seçim kutusu boş kalırsa hazır resim çizilmez.
+Tablo "Kayıt yok." yazar. Seçim kutusu "Eşleşen seçenek yok." yazar.
 
 ### Ekran metni
 

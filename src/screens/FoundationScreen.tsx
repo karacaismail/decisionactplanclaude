@@ -66,7 +66,7 @@ function StoneCard({ stone }: { stone: StoneState }) {
         />
         <span className="stone-evidence">{stone.evidenceCount > 0 ? `${stone.evidenceCount} kanıt` : 'Kanıt yok'}</span>
       </div>
-      <Link className="stone-link" to={stepPath(stone.step)} aria-label={`${openLabel(stone.step)}. Taş ${stone.no}: ${stone.title}`}>
+      <Link className="stone-link" to={stepPath(stone.step)} aria-label={`${openLabel(stone.step)}. Soru ${stone.no}: ${stone.title}`}>
         {openLabel(stone.step)}
         <ArrowRight size={16} aria-hidden />
       </Link>
@@ -131,7 +131,7 @@ export function FoundationScreen() {
 
       {shown.length === 0 ? (
         <Card className="k-card" variant="borderless">
-          <EmptyState title="Bu durumda soru yok" text="Bu süzgece uyan temel soru yok. Bütün soruları görmek için süzgeci kaldırın." action={<Button onClick={() => setFilter('hepsi')}>Hepsini göster</Button>} />
+          <EmptyState announce={false} title="Bu durumda soru yok" text="Bu süzgece uyan temel soru yok. Bütün soruları görmek için süzgeci kaldırın." action={<Button onClick={() => setFilter('hepsi')}>Hepsini göster</Button>} />
         </Card>
       ) : (
         <div className="stone-groups">
@@ -145,7 +145,7 @@ export function FoundationScreen() {
               <section key={group} className="stone-group" aria-labelledby={headId}>
                 <div className="stone-group-head">
                   <h2 id={headId}>{group}</h2>
-                  <span className="stone-group-count">{all.length} taşın {groupOk} tanesi var.</span>
+                  <span className="stone-group-count">{all.length} sorunun {groupOk} tanesi var.</span>
                 </div>
                 <div className="stone-grid">
                   {items.map((s) => <StoneCard key={s.no} stone={s} />)}

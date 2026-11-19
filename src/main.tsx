@@ -14,6 +14,15 @@ import { AppRoutes, preloadRoute } from './app/routes'
 import { loadInputStyles } from './app/girisStilleri'
 import { useResolvedTheme } from './app/printMode'
 
+/**
+ * Ant Design tablo ve seçim kutusu boş kalınca hazır resim çizmez. Yalın Türkçe bir cümle yazar.
+ * Ekran boş durumları ortak EmptyState bileşenini kullanır. Bu ayar yalnız gözden kaçan iç listeler içindir.
+ */
+const SELECT_LIKE = new Set(['Select', 'Cascader', 'TreeSelect', 'AutoComplete', 'Transfer'])
+function renderPlainEmpty(componentName?: string) {
+  return <span>{componentName && SELECT_LIKE.has(componentName) ? 'Eşleşen seçenek yok.' : 'Kayıt yok.'}</span>
+}
+
 function Root() {
   /* Kâğıda her zaman açık tema basılır. */
   const resolved = useResolvedTheme()
@@ -60,7 +69,7 @@ function Root() {
     }
   }, [])
   return (
-    <ConfigProvider theme={themeConfig} locale={trTR}>
+    <ConfigProvider theme={themeConfig} locale={trTR} renderEmpty={renderPlainEmpty}>
       <AntApp>
         <FocusMode />
         <SyncGuard />

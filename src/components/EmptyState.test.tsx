@@ -39,6 +39,11 @@ describe('ortak boş durum', () => {
     expect(host.querySelector('h2')).toBeNull()
   })
 
+  it('sayı bölgesi zaten duyuruyorsa boş durum ikinci kez duyurmaz', () => {
+    mount(<EmptyState announce={false} title="Yöntem bulunamadı" text="Başka bir kelime deneyin." action={<button type="button">Aramayı temizle</button>} />)
+    expect(host.querySelector('.empty-state')?.hasAttribute('role')).toBe(false)
+  })
+
   it('eylemsiz boş durum düğme alanı çizmez', () => {
     mount(<EmptyState title="Sonuç yok" text="Başka bir kelime deneyin." actionless="Arama kutusu bu panelin üstünde duruyor." />)
     expect(host.querySelector('.empty-actions')).toBeNull()

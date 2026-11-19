@@ -107,7 +107,7 @@ export function MethodsScreen() {
       </div>
 
       {visible.length === 0 ? (
-        <EmptyState title="Yöntem bulunamadı" text="Bu arama için yöntem yok. Başka bir kelime deneyin." action={<Button onClick={() => { setQuery(''); setSection(TUMU) }}>Aramayı temizle</Button>} />
+        <EmptyState announce={false} title="Yöntem bulunamadı" text="Bu arama için yöntem yok. Başka bir kelime deneyin." action={<Button onClick={() => { setQuery(''); setSection(TUMU) }}>Aramayı temizle</Button>} />
       ) : (
         <section className="method-grid" aria-label="Yöntem listesi">
           {visible.map((m) => <ModelCard key={m.g} model={m} steps={STEPS_BY_MODEL[m.g] ?? []} linkSteps={Boolean(plan)} onHelp={setHelpModel} />)}

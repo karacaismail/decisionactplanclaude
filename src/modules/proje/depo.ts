@@ -81,11 +81,24 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     return sonraki
   }
 
+  /**
+   * Yazmadan sonra özeti yeniler. Asıl kayıt bu noktada yazılmıştır.
+   * Özet okunamaz ya da yazılamazsa işlem yine başarılıdır. Hata yalnız konsola yazılır.
+   * Böylece ekran "kaydedilemedi" demez ve kullanıcı aynı görevi ikinci kez eklemez.
+   */
+  async function ozetiDene(planId: string): Promise<void> {
+    try {
+      await ozetiYenile(planId)
+    } catch (error) {
+      console.error('Proje özeti yenilenemedi.', error)
+    }
+  }
+
   async function projeAc(planId: string, girdi: ProjeGirdisi): Promise<Proje> {
     if ((await store.keys(`${planId}/proje/`)).length >= SINIR.projePerPlan) throw new Error(`Bir planda en çok ${SINIR.projePerPlan} proje olabilir.`)
     const p = yeniProje(girdi, { id: kimlik(), planId, simdi: simdi() })
     await store.set(projeAnahtari(planId, p.id), p)
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
     return p
   }
 
@@ -94,7 +107,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     if (!p) throw new Error('Proje bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const sonraki = projeyiGuncelle(p, degisiklik)
     await store.set(projeAnahtari(planId, id), sonraki)
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
     return sonraki
   }
 
@@ -106,7 +119,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     const silinecek = await isler(planId, id)
     await store.delete(projeAnahtari(planId, id))
     for (const x of silinecek) await store.delete(isAnahtari(planId, x.id))
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
   }
 
   async function isEkle(planId: string, projeId: string, baslik: string): Promise<Is> {
@@ -115,7 +128,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     if (mevcut.length >= SINIR.isPerProje) throw new Error(`Bir projede en çok ${SINIR.isPerProje} görev olabilir.`)
     const yeni = yeniIs({ baslik }, { id: kimlik(), projeId, sira: sonrakiSira(mevcut) })
     await store.set(isAnahtari(planId, yeni.id), yeni)
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
     return yeni
   }
 
@@ -124,7 +137,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     if (!eski) throw new Error('Görev bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const sonraki = isiGuncelle(eski, degisiklik)
     await store.set(isAnahtari(planId, id), sonraki)
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
     return sonraki
   }
 
@@ -133,13 +146,13 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
     if (!eski) throw new Error('Görev bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const sonraki = durumDegistir(eski, durum)
     await store.set(isAnahtari(planId, id), sonraki)
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
     return sonraki
   }
 
   async function isSil(planId: string, id: string): Promise<void> {
     await store.delete(isAnahtari(planId, id))
-    await ozetiYenile(planId)
+    await ozetiDene(planId)
   }
 
   return { projeler, proje, isler, is, ozetiYenile, projeAc, projeDegistir, projeSil, isEkle, isDegistir, durumDegistir: durumuDegistir, isSil }

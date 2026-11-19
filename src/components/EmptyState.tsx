@@ -10,6 +10,11 @@ type EmptyStateBase = {
   icon?: ReactNode
   /** Başlık düzeyi. Boş durumun bulunduğu bölüme göre seçilir. */
   level?: 2 | 3 | 4
+  /**
+   * Boş durum değişince ekran okuyucuya duyurulsun mu? Varsayılan evettir.
+   * Yanında sonuç sayısını duyuran bir durum bölgesi varsa false verilir. Böylece aynı sonuç iki kez okunmaz.
+   */
+  announce?: boolean
 }
 
 /**
@@ -23,9 +28,9 @@ export type EmptyStateProps = EmptyStateBase & ({ action: ReactNode; actionless?
  * Ortak boş durum: başlık, kısa açıklama ve tek eylem.
  * Ant Design boş görünümü kullanılmaz. Metin ve eylem ölçüleri ortak tasarım değişkenlerinden gelir.
  */
-export function EmptyState({ icon, title, text, action, level = 2 }: EmptyStateProps) {
+export function EmptyState({ icon, title, text, action, level = 2, announce = true }: EmptyStateProps) {
   return (
-    <div className="empty-state" role="status">
+    <div className="empty-state" role={announce ? 'status' : undefined}>
       <div className="empty-head">
         {icon ? <span className="empty-icon" aria-hidden>{icon}</span> : null}
         {createElement(`h${level}`, { className: 'empty-title' }, title)}

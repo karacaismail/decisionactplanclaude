@@ -3,7 +3,8 @@ import { matchRoutes, Navigate, Outlet, Route, Routes, useLocation, useParams } 
 import { AppShell } from './AppShell'
 import { RouteErrorBoundary } from './RouteError'
 import { LoadingState } from '@/components/LoadingState'
-import { useCurrentPlan } from '@/store/planStore'
+import { useCurrentPlan, usePlanStore } from '@/store/planStore'
+import { downloadJson, safeFileName } from '@/engine/sync'
 import { MODULE_ROUTES } from '@/platform/modules'
 
 type ScreenModule = { default: ComponentType }
@@ -93,9 +94,13 @@ export function preloadRoute(href: string): Promise<unknown> {
 function RouteContent() {
   const location = useLocation()
   const routeKey = `${location.key}:${location.pathname}${location.search}${location.hash}`
-  const hasPlan = Boolean(useCurrentPlan())
+  const plan = useCurrentPlan()
+  const unsaved = usePlanStore((s) => s.saveState === 'kaydedilemedi')
+  const download = () => {
+    if (plan) downloadJson(`${safeFileName(plan.name)}-kopya.json`, plan)
+  }
   return (
-    <RouteErrorBoundary routeKey={routeKey} hasPlan={hasPlan}>
+    <RouteErrorBoundary routeKey={routeKey} hasPlan={Boolean(plan)} pathname={location.pathname} unsaved={unsaved && Boolean(plan)} onDownload={download}>
       <Suspense key={location.pathname} fallback={<LoadingState />}><Outlet /></Suspense>
     </RouteErrorBoundary>
   )

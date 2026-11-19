@@ -146,7 +146,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
       message.success('Proje silindi.')
       nav('/projeler')
     } catch (error) {
-      message.error(hataMetni(error, 'Proje silinemedi. Proje yerinde duruyor. Yeniden deneyin.'))
+      message.error(hataMetni(error, 'Proje silinemedi. Silme yarıda kalmış olabilir. Sayfayı yenileyip listeyi kontrol edin.'))
     }
   }
 

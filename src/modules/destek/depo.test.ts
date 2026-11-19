@@ -4,7 +4,7 @@ import { readRollup, ROLLUP_KEY } from '@/platform/rollups'
 import { PROGRAMLAR } from './data/programlar'
 import { basvuruEkle, basvuruGuncelle, basvuruSil, basvurulariYukle, ozetHesapla, PLANSIZ, profilAlanKaydet, profilKaydet, profilYukle } from './depo'
 import lifecycle from './lifecycle'
-import { BASVURU_DURUMLARI, basvuruOku } from './motor/basvuru'
+import { BASVURU_DURUMLARI, DESTEKSIZ_CEVAPLARI, basvuruOku } from './motor/basvuru'
 
 const PLAN_KEY = 'decisionactplan-v1'
 const SIMDI = '2026-11-19T10:00:00.000Z'
@@ -142,5 +142,22 @@ describe('yaşam döngüsü', () => {
     await lifecycle.onPlanDeleted!('plan-1')
     expect(await basvurulariYukle('plan-1')).toEqual([])
     expect(await profilYukle(PLANSIZ, BUGUN)).toEqual({ calisan: 9 })
+  })
+})
+
+describe('özet yazma hatası', () => {
+  it('başvuru kaydedildikten sonra özet yazılamazsa işlem başarılı sayılır', async () => {
+    const asilYaz = Storage.prototype.setItem
+    const asilHata = console.error
+    console.error = () => undefined
+    Storage.prototype.setItem = function () { throw new DOMException('dolu', 'QuotaExceededError') }
+    try {
+      const b = await basvuruEkle('plan-1', program(PROGRAMLAR[0].id), DESTEKSIZ_CEVAPLARI[0], SIMDI)
+      await expect(basvuruGuncelle('plan-1', b.id, { durum: BASVURU_DURUMLARI[1] }, SIMDI)).resolves.toMatchObject({ id: b.id })
+      await expect(basvuruSil('plan-1', b.id)).resolves.toBeUndefined()
+    } finally {
+      Storage.prototype.setItem = asilYaz
+      console.error = asilHata
+    }
   })
 })

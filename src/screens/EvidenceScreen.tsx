@@ -263,8 +263,8 @@ export function EvidenceScreen() {
           size="middle"
           rowHoverable={false}
           locale={{ emptyText: hasFilters
-            ? <EmptyState level={3} title="Kanıt bulunamadı" text="Seçtiğiniz filtrelere uyan kanıt yok." action={<Button onClick={clearFilters}>Filtreleri temizle</Button>} />
-            : <EmptyState level={3} title="Henüz kanıt yok" text="İlk görüşme notunuzu ekleyince kanıt burada görünür." action={<Button icon={<Plus size={16} />} onClick={() => setPanel({ mode: 'yeni', item: { kind: 'gozlem', ladder: 5 } })}>Kanıt ekle</Button>} /> }}
+            ? <EmptyState announce={false} level={3} title="Kanıt bulunamadı" text="Seçtiğiniz filtrelere uyan kanıt yok." action={<Button onClick={clearFilters}>Filtreleri temizle</Button>} />
+            : <EmptyState announce={false} level={3} title="Henüz kanıt yok" text="İlk görüşme notunuzu ekleyince kanıt burada görünür." action={<Button icon={<Plus size={16} />} onClick={() => setPanel({ mode: 'yeni', item: { kind: 'gozlem', ladder: 5 } })}>Kanıt ekle</Button>} /> }}
           columns={[{
             key: 'evidence',
             title: 'Kanıt',

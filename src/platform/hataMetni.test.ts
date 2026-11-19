@@ -14,7 +14,8 @@ import { hataMetni } from './hataMetni'
  */
 const ROOT = join(__dirname, '..', '..')
 const FAILURE = /(okunamadı|kaydedilemedi|yazılamadı|açılamadı|eklenemedi|değiştirilemedi|alınamadı|aktarılamadı|yarıda kaldı)/
-const SAFE = /(güvende|değişmedi|duruyor|silinmedi|korunuyor)/
+/* Yarıda kalabilen işte dürüst cümle "yarıda kalmış olabilir" olur. Söz verilmez. */
+const SAFE = /(güvende|değişmedi|duruyor|silinmedi|korunuyor|yarıda kalmış olabilir)/
 const NEXT = /(\p{L}+(?:in|ın|un|ün)\.)/u
 
 const walk = (dir: string): string[] =>
@@ -51,5 +52,6 @@ describe('okuma ve yazma hatası metinleri', () => {
     expect(hataMetni(new DOMException('The quota has been exceeded.', 'QuotaExceededError'), 'Görev kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.')).toBe('Görev kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.')
     expect(hataMetni(new Error('Proje adını yazın.'), 'Yedek.')).toBe('Proje adını yazın.')
     expect(hataMetni('bilinmeyen', 'Yedek metin.')).toBe('Yedek metin.')
+    expect(hataMetni(new TypeError('Cannot read properties of undefined'), 'Yedek metin.')).toBe('Yedek metin.')
   })
 })

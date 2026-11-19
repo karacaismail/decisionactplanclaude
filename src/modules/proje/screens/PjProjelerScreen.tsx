@@ -111,7 +111,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
         {veri.yukleniyor ? <p className="pj-projeler-not" role="status">Projeler yükleniyor.</p> : null}
         {veri.hata ? <p className="pj-projeler-not" role="alert">{veri.hata}</p> : null}
         {!veri.yukleniyor && !veri.hata && veri.projeler.length === 0 ? (
-          <EmptyState title="Henüz proje yok" text="Aşağıdan bir ana hamle seçin. Sonra “Bu hamleden proje aç” düğmesine basın." actionless="Proje açma düğmeleri hemen aşağıdaki hamle kartlarında duruyor." />
+          <EmptyState level={3} title="Henüz proje yok" text="Aşağıdan bir ana hamle seçin. Sonra “Bu hamleden proje aç” düğmesine basın." actionless="Proje açma düğmeleri hemen aşağıdaki hamle kartlarında duruyor." />
         ) : null}
         {veri.projeler.length > 0 ? (
           <ul className="pj-projeler-liste">

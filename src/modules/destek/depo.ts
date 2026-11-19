@@ -61,6 +61,19 @@ export async function basvurulariYukle(planId: string): Promise<Basvuru[]> {
   return liste.sort((a, b) => (a.olusturma < b.olusturma ? -1 : a.olusturma > b.olusturma ? 1 : a.id.localeCompare(b.id)))
 }
 
+/**
+ * Yazmadan sonra özeti yeniler. Asıl kayıt bu noktada yazılmıştır.
+ * Özet yazılamazsa işlem yine başarılıdır. Örneğin tarayıcı kayıt alanı dolu olabilir.
+ * Böylece ekran "kaydedilemedi" demez ve kullanıcı aynı başvuruyu ikinci kez eklemeye çalışmaz.
+ */
+async function ozetDene(planId: string): Promise<void> {
+  try {
+    await ozetYaz(planId)
+  } catch (error) {
+    console.error('Destek özeti yazılamadı.', error)
+  }
+}
+
 async function ozetYaz(planId: string): Promise<void> {
   writeRollup(MODUL_ID, planId, ozetHesapla(await basvurulariYukle(planId)))
 }
@@ -90,7 +103,7 @@ export function basvuruEkle(planId: string, program: Program, desteksizYapar: De
       guncelleme: simdi,
     }
     await depo().set(`${basvuruOnEki(planId)}${b.id}`, b)
-    await ozetYaz(planId)
+    await ozetDene(planId)
     return b
   })
 }
@@ -102,7 +115,7 @@ export function basvuruGuncelle(planId: string, id: string, degisiklik: BasvuruD
     if (!mevcut || mevcut.id !== id) throw new Error('Başvuru bulunamadı.')
     const sonraki = basvuruDegistir(mevcut, degisiklik, simdi)
     await depo().set(key, sonraki)
-    await ozetYaz(planId)
+    await ozetDene(planId)
     return sonraki
   })
 }
@@ -110,6 +123,6 @@ export function basvuruGuncelle(planId: string, id: string, degisiklik: BasvuruD
 export function basvuruSil(planId: string, id: string): Promise<void> {
   return sirayla(async () => {
     await depo().delete(`${basvuruOnEki(planId)}${id}`)
-    await ozetYaz(planId)
+    await ozetDene(planId)
   })
 }

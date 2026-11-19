@@ -108,3 +108,34 @@ describe('proje yaşam döngüsü', () => {
     expect(await base.keys('proje/plan-1/')).toEqual([])
   })
 })
+
+describe('özet yenileme hatası', () => {
+  it('kayıt yazıldıktan sonra özet okunamazsa işlem başarılı sayılır', async () => {
+    const base = createMemoryKvStore()
+    const kv = scopedKvStore(base, 'proje')
+    let bozuk = false
+    let bozulsun = false
+    /* Kayıt yazıldıktan sonraki okuma hata verir. Görev yine de kaydedilmiştir. */
+    const store = {
+      ...kv,
+      keys: async (prefix?: string) => { if (bozuk) throw new Error('okuma hatası'); return kv.keys(prefix) },
+      set: async (key: string, value: unknown) => { await kv.set(key, value); if (bozulsun) bozuk = true },
+    }
+    let n = 0
+    const depo = createProjeDepo({ store, ozetYaz: () => undefined, simdi: () => SIMDI, kimlik: () => `k${++n}` })
+    const p = await depo.projeAc('plan-1', { ad: 'Bir' })
+    bozulsun = true
+    const errors: unknown[] = []
+    const asil = console.error
+    console.error = (...args: unknown[]) => { errors.push(args) }
+    try {
+      await expect(depo.isEkle('plan-1', p.id, 'Görev')).resolves.toMatchObject({ baslik: 'Görev' })
+    } finally {
+      console.error = asil
+    }
+    bozuk = false
+    bozulsun = false
+    expect((await depo.isler('plan-1', p.id)).map((x) => x.baslik)).toEqual(['Görev'])
+    expect(errors.length).toBeGreaterThan(0)
+  })
+})

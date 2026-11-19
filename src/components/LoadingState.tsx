@@ -21,7 +21,7 @@ export function LoadingState({ cards = 3, label = 'Sayfa yükleniyor', onRetry }
   /* React.lazy başarısız ya da takılı isteği saklar. Tam yenileme bu kaydı da temizler. */
   const retry = onRetry ?? (() => window.location.reload())
   return (
-    <div className="loading-state" role="status" aria-live="polite" aria-busy={!slow}>
+    <div className="loading-state" role="status" aria-live="polite">
       {slow ? (
         <div className="loading-slow">
           <p className="loading-text">Yükleme uzun sürdü. Bağlantınızı kontrol edin. Sonra yeniden deneyin.</p>
