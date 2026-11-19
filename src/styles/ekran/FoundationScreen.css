@@ -97,7 +97,7 @@
 
 .stone-evidence { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-.stone-link { display: inline-flex; align-items: center; gap: 6px; justify-self: start; min-height: 28px; font-size: 16px; font-weight: 600; color: var(--color-action-primary); text-decoration: none; }
+.stone-link { display: inline-flex; align-items: center; gap: 6px; justify-self: start; min-height: 28px; font-size: 16px; font-weight: 600; color: var(--color-action-text); text-decoration: none; }
 
 .stone-link::after { content: ''; position: absolute; inset: 0; border-radius: var(--radius-panel); }
 

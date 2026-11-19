@@ -1,21 +1,28 @@
 /**
  * Semantik tasarım tokenları. Bileşen içine sabit değer yazılmaz.
  *
- * Kimlik: sıcak kırık beyaz yüzeyler, derin lacivert-yeşil "hero" paneli,
- * turuncu-kızıl eylem rengi. Ayrım kenarlıkla değil boşluk ve yüzey tonuyla kurulur.
+ * Kimlik: soğuk gri yüzeyler, derin lacivert üst şerit ve mavi eylem rengi.
+ * Ayrım kenarlıkla değil boşluk, yüzey tonu ve gölgeyle kurulur.
+ *
+ * Karşıtlık sözleşmesi `contrast.test.ts` içinde iki tema için denetlenir.
+ * actionPrimary dolgudur. Üstündeki yazı onAction'dır.
+ * Eylem rengindeki yazı, bağlantı ve seçili gezinme metni actionText kullanır.
+ * borderInput, giriş kontrolünün kenarıdır ve zemine karşı en az 3:1 olur.
+ * border yalnız süs ve ayırıcıdır. Kontrol sınırı için kullanılmaz.
  */
 export const light = {
-  surfacePage: '#F5F6FA',
+  surfacePage: '#ECEEF4',
   surfaceWork: '#FFFFFF',
-  surfaceContext: '#F0F2F8',
+  surfaceContext: '#EDEFF5',
   surfaceSunken: '#E3E6F0',
   textPrimary: '#0F1729',
   textSecondary: '#4A5468',
   actionPrimary: '#2F5BEA',
   actionHover: '#2448C4',
+  actionText: '#2448C4',
   brandAccent: '#2F5BEA',
   statusOk: '#0B7A56',
-  statusHold: '#A85B00',
+  statusHold: '#9A5300',
   statusHarm: '#C0271D',
   statusInfo: '#2448C4',
   statusOkBg: '#E6F6EF',
@@ -24,6 +31,7 @@ export const light = {
   statusInfoBg: '#EBF0FF',
   border: '#E1E4EE',
   borderStrong: '#C9CEDD',
+  borderInput: '#737D93',
   selectedBg: '#EBF0FF',
   onAction: '#FFFFFF',
   /* Üst şerit ve giriş bloğu: derin mürekkep. */
@@ -53,8 +61,9 @@ export const dark = {
   surfaceSunken: '#333C58',
   textPrimary: '#F2F4FA',
   textSecondary: '#AEB7CC',
-  actionPrimary: '#4F78FF',
-  actionHover: '#6C8EFF',
+  actionPrimary: '#3360F5',
+  actionHover: '#2D55E0',
+  actionText: '#9DB4FF',
   brandAccent: '#7C9BFF',
   statusOk: '#4ADE9F',
   statusHold: '#FFB84D',
@@ -66,6 +75,7 @@ export const dark = {
   statusInfoBg: '#1C2A55',
   border: '#2A3350',
   borderStrong: '#404B6E',
+  borderInput: '#7A84A0',
   selectedBg: '#1C2A55',
   onAction: '#FFFFFF',
   heroSurface: '#131A2E',
@@ -93,6 +103,24 @@ export type ThemeMode = 'light' | 'dark'
 export function palette(mode: ThemeMode): Palette {
   return (mode === 'dark' ? dark : light) as unknown as Palette
 }
+
+/**
+ * Yükselti. card kartı zeminden ayırır. float açılan katmanı ayırır.
+ * bar, ekranın altına sabitlenen şeridi yukarı doğru ayırır.
+ * Koyu temada kart gölgesi yoktur. Ayrımı yüzey tonu kurar.
+ */
+export const elevation = {
+  light: {
+    card: '0 1px 2px rgba(15, 23, 41, 0.06), 0 1px 3px rgba(15, 23, 41, 0.10)',
+    float: '0 8px 24px rgba(15, 23, 41, 0.12), 0 2px 6px rgba(15, 23, 41, 0.08)',
+    bar: '0 -1px 0 rgba(15, 23, 41, 0.08), 0 -4px 12px rgba(15, 23, 41, 0.08)',
+  },
+  dark: {
+    card: 'none',
+    float: `0 8px 24px rgba(0, 0, 0, 0.5), 0 0 0 1px ${dark.border}`,
+    bar: `0 -1px 0 ${dark.border}, 0 -4px 12px rgba(0, 0, 0, 0.4)`,
+  },
+} as const
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */
 export const decisionColors = {
@@ -151,6 +179,10 @@ export function cssVariables(mode: ThemeMode): Record<string, string> {
   vars['--radius-panel'] = `${radius.panel}px`
   vars['--radius-hero'] = `${radius.hero}px`
   vars['--radius-pill'] = `${radius.pill}px`
-  vars['--focus-marker'] = p.actionPrimary
+  vars['--focus-marker'] = p.actionText
+  const e = elevation[mode]
+  vars['--shadow-card'] = e.card
+  vars['--shadow-float'] = e.float
+  vars['--shadow-bar'] = e.bar
   return vars
 }

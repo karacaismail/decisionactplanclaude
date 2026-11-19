@@ -37,7 +37,7 @@
 
 .devir-toc .ant-anchor-link-title { font-size: 14px; line-height: 1.4; color: var(--color-text-secondary); white-space: normal; overflow: visible; text-overflow: clip; }
 
-.devir-toc .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-primary); font-weight: 600; }
+.devir-toc .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-text); font-weight: 600; }
 
 .devir-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; min-width: 0; }
 
@@ -262,7 +262,7 @@
   text-decoration: none;
   transition: color var(--motion-small) var(--motion-ease); }
 
-.devir-toc nav a:hover { color: var(--color-action-primary); }
+.devir-toc nav a:hover { color: var(--color-action-text); }
 
 .devir-page .devir-section .ant-collapse-header { min-height: var(--target-touch);
   padding: var(--cikti-panel-padding);

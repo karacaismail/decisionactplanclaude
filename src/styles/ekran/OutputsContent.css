@@ -12,7 +12,7 @@
 
 .filter-field .field-label { margin-bottom: 0; }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
@@ -64,7 +64,7 @@
 
 .report-anchor .ant-anchor-link-title { font-size: 14px; color: var(--color-text-secondary); white-space: nowrap; }
 
-.report-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-primary); }
+.report-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-text); }
 
 .report { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; width: 100%; max-width: 820px; min-width: 0; }
 

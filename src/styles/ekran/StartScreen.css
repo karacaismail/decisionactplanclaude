@@ -42,7 +42,7 @@
 
 .entry-icon { display: inline-flex; color: var(--color-text-secondary); transition: color var(--motion-small) var(--motion-ease); }
 
-.entry-card.is-selected .entry-icon, .entry-check { color: var(--color-action-primary); }
+.entry-card.is-selected .entry-icon, .entry-check { color: var(--color-action-text); }
 
 .entry-check { display: inline-flex; min-width: 20px; }
 

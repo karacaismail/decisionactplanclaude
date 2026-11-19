@@ -1,0 +1,164 @@
+// @vitest-environment node
+import { describe, expect, it } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { buildTheme } from './antdTheme'
+import { cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
+
+/** WCAG 2.x göreli parlaklık ve karşıtlık oranı. */
+function luminance(hex: string): number {
+  const v = hex.replace('#', '')
+  const [r, g, b] = [0, 2, 4].map((i) => {
+    const c = parseInt(v.slice(i, i + 2), 16) / 255
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4
+  })
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b
+}
+function contrast(a: string, b: string): number {
+  const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m)
+  return (x + 0.05) / (y + 0.05)
+}
+/** CIE L* açıklık değeri. Yüzey basamaklarını ölçer. */
+function lightness(hex: string): number {
+  const y = luminance(hex)
+  return y > 216 / 24389 ? 116 * Math.cbrt(y) - 16 : (y * 24389) / 27
+}
+
+const themes = { light, dark } as Record<ThemeMode, Record<string, string>>
+const modes: ThemeMode[] = ['light', 'dark']
+
+/** Metin çiftleri: en az 4,5:1 (WCAG 1.4.3). */
+const textPairs: [string, string][] = [
+  ...['surfacePage', 'surfaceWork', 'surfaceContext', 'surfaceSunken', 'selectedBg'].flatMap((bg) => [
+    ['textPrimary', bg] as [string, string],
+    ['textSecondary', bg] as [string, string],
+  ]),
+  ['actionText', 'surfaceWork'],
+  ['actionText', 'surfacePage'],
+  ['actionText', 'surfaceContext'],
+  ['actionText', 'selectedBg'],
+  ['onAction', 'actionPrimary'],
+  ['onAction', 'actionHover'],
+  ['statusOk', 'statusOkBg'],
+  ['statusHold', 'statusHoldBg'],
+  ['statusHarm', 'statusHarmBg'],
+  ['statusInfo', 'statusInfoBg'],
+  ...['surfaceWork', 'surfacePage', 'surfaceContext'].flatMap((bg) => [
+    ['statusOk', bg] as [string, string],
+    ['statusHold', bg] as [string, string],
+    ['statusHarm', bg] as [string, string],
+    ['statusInfo', bg] as [string, string],
+  ]),
+  ['heroText', 'heroSurface'],
+  ['heroMuted', 'heroSurface'],
+  ['heroText', 'heroSurfaceAlt'],
+  ['heroActionText', 'heroAction'],
+]
+
+/** Metin dışı çiftler: en az 3:1 (WCAG 1.4.11). */
+const uiPairs: [string, string][] = [
+  ['actionPrimary', 'surfaceWork'],
+  ['actionPrimary', 'surfacePage'],
+  ['borderInput', 'surfaceWork'],
+  ['borderInput', 'surfacePage'],
+  ['borderInput', 'surfaceContext'],
+  ['borderInput', 'selectedBg'],
+  ['statusHarm', 'surfaceWork'],
+  ['heroAction', 'heroSurface'],
+]
+
+describe.each(modes)('%s tema karşıtlığı', (mode) => {
+  const p = themes[mode]
+
+  it.each(textPairs)('%s metni %s üstünde en az 4,5:1', (fg, bg) => {
+    expect(p[fg], fg).toMatch(/^#[0-9A-F]{6}$/i)
+    expect(contrast(p[fg], p[bg])).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it.each(uiPairs)('%s, %s üstünde en az 3:1', (fg, bg) => {
+    expect(p[fg], fg).toMatch(/^#[0-9A-F]{6}$/i)
+    expect(contrast(p[fg], p[bg])).toBeGreaterThanOrEqual(3)
+  })
+
+  it('odak işareti çalışma, sayfa ve bağlam yüzeyinde en az 3:1', () => {
+    const marker = cssVariables(mode)['--focus-marker']
+    for (const bg of ['surfaceWork', 'surfacePage', 'surfaceContext', 'selectedBg']) {
+      expect(contrast(marker, p[bg]), bg).toBeGreaterThanOrEqual(3)
+    }
+  })
+
+  it('karar renkleri çalışma yüzeyinde en az 4,5:1', async () => {
+    const { decisionColors } = await import('./tokens')
+    for (const [name, color] of Object.entries(decisionColors[mode])) {
+      expect(contrast(color, p.surfaceWork), name).toBeGreaterThanOrEqual(4.5)
+    }
+  })
+
+  it('yüzey basamakları gözle ayrılır: sayfa ile çalışma, çalışma ile bağlam arasında en az 5 L*', () => {
+    expect(Math.abs(lightness(p.surfaceWork) - lightness(p.surfacePage))).toBeGreaterThanOrEqual(5)
+    expect(Math.abs(lightness(p.surfaceWork) - lightness(p.surfaceContext))).toBeGreaterThanOrEqual(5)
+  })
+
+  it('gölge tokenları CSS değişkeni olarak her temada tanımlı', () => {
+    const vars = cssVariables(mode)
+    expect(vars['--shadow-card']).toBeTruthy()
+    expect(vars['--shadow-float']).toBeTruthy()
+    expect(vars['--shadow-float']).not.toBe('none')
+  })
+
+  it('Ant Design birincil zemini seçili durum rengini kullanır, turuncu ton kullanmaz', () => {
+    const t = buildTheme(mode).token!
+    expect(t.colorPrimaryBg).toBe(p.selectedBg)
+    expect(t.colorPrimaryBgHover).toBe(p.selectedBg)
+    expect(t.colorPrimaryBorder).toBe(p.selectedBg)
+    expect(t.colorLink).toBe(p.actionText)
+    const c = buildTheme(mode).components!
+    expect(c.Menu?.itemSelectedColor).toBe(p.actionText)
+    expect(c.Tabs?.itemSelectedColor).toBe(p.actionText)
+  })
+
+  it('Ant Design eylem rengindeki yazıları koyu temada da okunur tutar', () => {
+    const t = buildTheme(mode).token!
+    const c = buildTheme(mode).components! as Record<string, Record<string, string>>
+    expect(t.colorLinkHover).toBe(p.actionText)
+    expect(c.Steps?.colorPrimaryHover).toBe(p.actionText)
+    expect(c.Pagination?.itemActiveColor).toBe(p.actionText)
+    expect(c.Pagination?.itemActiveColorHover).toBe(p.actionText)
+    expect(contrast(c.Avatar.colorTextLightSolid, c.Avatar.colorTextPlaceholder)).toBeGreaterThanOrEqual(4.5)
+    expect(contrast(c.Badge.colorTextLightSolid, c.Badge.colorError)).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('Ant Design giriş kontrollerinin kenarı borderInput tokenından gelir', () => {
+    const c = buildTheme(mode).components! as Record<string, Record<string, unknown>>
+    for (const name of ['Input', 'InputNumber', 'Select', 'DatePicker', 'Checkbox', 'Radio']) {
+      expect(c[name]?.colorBorder, name).toBe(p.borderInput)
+    }
+    expect(c.Button?.defaultBorderColor).toBe(p.borderInput)
+    expect(c.Input?.hoverBorderColor).toBe(p.textSecondary)
+    expect(c.Select?.hoverBorderColor).toBe(p.textSecondary)
+  })
+})
+
+describe('eski turuncu palet kalıntısı', () => {
+  const read = (path: string) => readFileSync(new URL(path, import.meta.url), 'utf8')
+  it('token açıklaması ve CSS yedek değeri turuncu rengi anmaz', () => {
+    expect(read('./tokens.ts')).not.toMatch(/turuncu/i)
+    expect(read('../styles/temel/temel.css')).not.toMatch(/#8f2812/i)
+  })
+  it('antdTheme birincil zemin için tone*Bg kullanmaz', () => {
+    expect(read('./antdTheme.ts')).not.toMatch(/colorPrimary\w*:\s*p\.tone\w*Bg/)
+  })
+  it('kabuk "güncel" noktası turuncu ton kullanmaz', () => {
+    expect(read('../styles/kabuk/kabuk.css')).not.toMatch(/--color-tone-orange/)
+  })
+})
+
+describe('gölge tokenlarının CSS ve TypeScript eşitliği', () => {
+  const css = readFileSync(new URL('../styles/temel/temel.css', import.meta.url), 'utf8')
+  const read = (block: string, name: string) => new RegExp(`${name}:\\s*([^;]+);`).exec(block)?.[1].trim()
+  const darkBlock = /@media \(prefers-color-scheme: dark\)\s*\{([\s\S]*?)\}\s*\}/.exec(css)?.[1] ?? ''
+  const lightBlock = css.slice(0, css.indexOf('@media (prefers-color-scheme: dark)'))
+  it.each(['card', 'float', 'bar'] as const)('--shadow-%s iki temada tokens.ts ile aynı', (name) => {
+    expect(read(lightBlock, `--shadow-${name}`)).toBe(elevation.light[name])
+    expect(read(darkBlock, `--shadow-${name}`)).toBe(elevation.dark[name])
+  })
+})

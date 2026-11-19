@@ -27,7 +27,7 @@
 
 .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
 
-.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-strong); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: var(--form-text-body); line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
+.chip { appearance: none; display: inline-flex; align-items: center; gap: 6px; min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border-input); border-radius: 999px; background: var(--color-surface-work); color: var(--color-text-primary); font: inherit; font-size: var(--form-text-body); line-height: 1.3; text-align: left; cursor: pointer; box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease); }
 
 .chip svg { flex-shrink: 0; }
 
@@ -35,7 +35,7 @@
 
 .chip.is-selected { background: var(--color-selected-bg); border-color: var(--color-action-primary); font-weight: 600; box-shadow: none; }
 
-.chip.is-selected svg { color: var(--color-action-primary); }
+.chip.is-selected svg { color: var(--color-action-text); }
 
 .chip:disabled { cursor: not-allowed; color: var(--color-text-secondary); box-shadow: none; }
 
@@ -57,12 +57,12 @@
 
 .rate-field .ant-rate-star > [role='radio'] { display: flex; align-items: center; justify-content: center; min-width: var(--target-touch); min-height: var(--target-touch); }
 
-.cell-input.ant-input, .cell-input.ant-input-number, .cell-input.ant-picker, .cell-input.ant-select, .cell-input.ant-input-number-group-wrapper .ant-input-number, .cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { background: transparent !important; border-radius: 0 !important; border-bottom: 1px solid var(--color-border) !important;
+.cell-input.ant-input, .cell-input.ant-input-number, .cell-input.ant-picker, .cell-input.ant-select, .cell-input.ant-input-number-group-wrapper .ant-input-number, .cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { background: transparent !important; border-radius: 0 !important; border-bottom: 1px solid var(--color-border-input) !important;
   transition: border-color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 
 .cell-input.ant-input-number-group-wrapper .ant-input-number-group-addon { color: var(--color-text-secondary); }
 
-.cell-input.ant-input:hover, .cell-input.ant-input:focus, .cell-input.ant-input-number:hover, .cell-input.ant-input-number-focused, .cell-input.ant-picker:hover, .cell-input.ant-picker-focused, .cell-input.ant-select:hover, .cell-input.ant-select-focused, .cell-input.ant-select-open, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number-group-addon, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number-group-addon { border-bottom-color: var(--color-border-strong) !important; background: var(--color-surface-context) !important; }
+.cell-input.ant-input:hover, .cell-input.ant-input:focus, .cell-input.ant-input-number:hover, .cell-input.ant-input-number-focused, .cell-input.ant-picker:hover, .cell-input.ant-picker-focused, .cell-input.ant-select:hover, .cell-input.ant-select-focused, .cell-input.ant-select-open, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number, .cell-input.ant-input-number-group-wrapper:hover .ant-input-number-group-addon, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number, .cell-input.ant-input-number-group-wrapper:focus-within .ant-input-number-group-addon { border-bottom-color: var(--color-text-secondary) !important; background: var(--color-surface-context) !important; }
 
 .cell-input.ant-input-number-disabled, .cell-input.ant-input-number-disabled:hover { border-bottom-color: transparent !important; background: transparent !important; }
 

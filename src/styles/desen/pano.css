@@ -32,7 +32,7 @@
 
 .ant-btn.ant-btn-link.plan-name { padding: 0; height: auto; min-height: 0; font-size: 16px; font-weight: 600; white-space: normal; text-align: left; line-height: 1.4; color: var(--color-text-primary); }
 
-.ant-btn.ant-btn-link.plan-name:hover { color: var(--color-action-primary); text-decoration: underline; text-underline-offset: 2px; }
+.ant-btn.ant-btn-link.plan-name:hover { color: var(--color-action-text); text-decoration: underline; text-underline-offset: 2px; }
 
 .plan-cards.ant-list .ant-list-item { padding: 12px 0; }
 

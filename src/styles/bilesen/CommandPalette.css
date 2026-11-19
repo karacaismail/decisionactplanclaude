@@ -30,7 +30,7 @@
 
 .cmdk-option-icon { display: inline-flex; color: var(--color-text-secondary); }
 
-.cmdk-option[aria-selected='true'] .cmdk-option-icon { color: var(--color-action-primary); }
+.cmdk-option[aria-selected='true'] .cmdk-option-icon { color: var(--color-action-text); }
 
 .cmdk-option-text { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1px; min-width: 0; }
 

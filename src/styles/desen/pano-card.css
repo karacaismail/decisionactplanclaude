@@ -10,7 +10,7 @@
 
 .pano-card.ant-card .ant-card-extra { font-size: 14px; padding: 0; margin-inline-start: auto; min-width: 0; }
 
-.pano-card.ant-card .ant-card-extra a { color: var(--color-action-primary); font-weight: 600; text-decoration: none; }
+.pano-card.ant-card .ant-card-extra a { color: var(--color-action-text); font-weight: 600; text-decoration: none; }
 
 .pano-card.ant-card .ant-card-extra a:hover { text-decoration: underline; text-underline-offset: 2px; }
 
@@ -28,7 +28,7 @@
 
 .pano-card .ant-empty .ant-empty-description { font-size: 14px; color: var(--color-text-secondary); }
 
-.pano-card .ant-empty-footer a { color: var(--color-action-primary); font-weight: 600; }
+.pano-card .ant-empty-footer a { color: var(--color-action-text); font-weight: 600; }
 
 .pano-card .ant-statistic-title { font-size: 14px; color: var(--color-text-secondary); margin-bottom: 2px; }
 

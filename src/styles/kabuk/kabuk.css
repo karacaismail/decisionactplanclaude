@@ -18,7 +18,7 @@
 
 .shell-menu .ant-menu-item a span.label { flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.shell-menu .ant-menu-item-selected { background: var(--color-selected-bg) !important; color: var(--color-action-primary) !important; box-shadow: inset 3px 0 0 var(--color-action-primary); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.shell-menu .ant-menu-item-selected { background: var(--color-selected-bg) !important; color: var(--color-action-text) !important; box-shadow: inset 3px 0 0 var(--color-action-primary); border-top-left-radius: 0; border-bottom-left-radius: 0; }
 
 .shell-menu .ant-menu-item-group-title { font-size: 14px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-secondary); padding: 16px 10px 4px; font-weight: 600; }
 
@@ -44,7 +44,7 @@
 
 .tag.is-ok { border-color: transparent; background: var(--color-status-ok-bg); color: var(--color-status-ok); }
 
-.tag.is-open { border-color: transparent; background: var(--color-selected-bg); color: var(--color-action-primary); }
+.tag.is-open { border-color: transparent; background: var(--color-selected-bg); color: var(--color-action-text); }
 
 .tag.is-hold { border-color: transparent; background: var(--color-status-hold-bg); color: var(--color-status-hold); }
 
@@ -96,7 +96,7 @@
 
 .product-nav a:hover { color: var(--color-text-primary); }
 
-.product-nav a[aria-current='page'] { color: var(--color-action-primary); font-weight: 600; }
+.product-nav a[aria-current='page'] { color: var(--color-action-text); font-weight: 600; }
 
 .product-nav a[aria-current='page']::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--color-action-primary); }
 
@@ -120,17 +120,15 @@
 
 .shell-menu .ant-menu-item:hover { background: var(--color-surface-context) !important; }
 
-.shell-menu .ant-menu-item-selected { background: var(--color-selected-bg) !important; color: var(--color-action-primary) !important; font-weight: 600; box-shadow: inset 3px 0 0 var(--color-action-primary); border-top-left-radius: 0; border-bottom-left-radius: 0; }
+.shell-menu .ant-menu-item-selected { background: var(--color-selected-bg) !important; color: var(--color-action-text) !important; font-weight: 600; box-shadow: inset 3px 0 0 var(--color-action-primary); border-top-left-radius: 0; border-bottom-left-radius: 0; }
 
-.shell-menu .ant-menu-item-selected .ant-menu-item-icon { color: var(--color-action-primary); }
+.shell-menu .ant-menu-item-selected .ant-menu-item-icon { color: var(--color-action-text); }
 
 .shell-menu .ant-menu-item-group-title { font-size: 14px; text-transform: none; letter-spacing: 0; color: var(--color-text-secondary); padding: 14px 12px 4px; font-weight: 400; }
 
 .status-dot { width: 8px; height: 8px; background: var(--color-border-strong); }
 
 .status-dot.is-passed { background: var(--color-status-ok); }
-
-.status-dot.is-current { background: var(--color-tone-orange); box-shadow: none; }
 
 .ant-drawer .brand-text strong { color: var(--color-text-primary); }
 
@@ -140,7 +138,7 @@
 
 .drawer-nav a { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; border-radius: var(--radius-control); color: var(--color-text-primary); font-size: 16px; }
 
-.drawer-nav a[aria-current='page'] { background: var(--color-selected-bg); color: var(--color-action-primary); font-weight: 600; }
+.drawer-nav a[aria-current='page'] { background: var(--color-selected-bg); color: var(--color-action-text); font-weight: 600; }
 
 .drawer-section { font-size: 14px; color: var(--color-text-secondary); padding: 16px 24px 4px; }
 
@@ -271,7 +269,7 @@ html[data-focus-mode='keyboard'] .app-shell .page-header-actions .ant-btn-primar
   min-height: var(--shell-nav-height);
   padding: 0 var(--shell-safe-right) var(--shell-safe-bottom) var(--shell-safe-left);
   background: var(--color-surface-work);
-  box-shadow: var(--shadow-float); }
+  box-shadow: var(--shadow-bar); }
 
 .bottom-nav a, .bottom-nav button { appearance: none;
   display: flex;
@@ -295,7 +293,7 @@ html[data-focus-mode='keyboard'] .app-shell .page-header-actions .ant-btn-primar
   cursor: pointer;
   transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 
-.bottom-nav a[aria-current='page'], .bottom-nav button[aria-expanded='true'] { color: var(--color-action-primary);
+.bottom-nav a[aria-current='page'], .bottom-nav button[aria-expanded='true'] { color: var(--color-action-text);
   background: var(--color-selected-bg);
   font-weight: 600; }
 

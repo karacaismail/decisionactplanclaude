@@ -20,7 +20,7 @@
 
 .mobil-insights .insight-empty-link svg { flex-shrink: 0; }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
@@ -68,6 +68,6 @@
 
 .insight-empty-text { font-size: 16px; line-height: 1.5; color: var(--color-text-secondary); }
 
-.insight-empty-link { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; color: var(--color-action-primary); text-decoration: underline; text-underline-offset: 2px; }
+.insight-empty-link { display: inline-flex; align-items: center; gap: 6px; font-size: 16px; color: var(--color-action-text); text-decoration: underline; text-underline-offset: 2px; }
 
 .foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }

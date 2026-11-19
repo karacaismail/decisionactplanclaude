@@ -29,7 +29,7 @@
 
 .durum-meta, .durum-empty, .durum-hint { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); margin: 0; min-width: 0; font-size: var(--pano-font-helper); color: var(--color-text-secondary); overflow-wrap: break-word; }
 
-.durum .durum-link { display: flex; align-items: center; justify-self: start; gap: var(--space-1); min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; box-sizing: border-box; padding: var(--space-2); font-size: var(--pano-font-body); line-height: inherit; white-space: normal; overflow-wrap: break-word; color: var(--color-action-primary); transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
+.durum .durum-link { display: flex; align-items: center; justify-self: start; gap: var(--space-1); min-height: var(--target-touch); min-width: var(--target-touch); max-width: 100%; box-sizing: border-box; padding: var(--space-2); font-size: var(--pano-font-body); line-height: inherit; white-space: normal; overflow-wrap: break-word; color: var(--color-action-text); transition: color var(--motion-small) var(--motion-ease), background-color var(--motion-small) var(--motion-ease); }
 
 .durum-link > svg { flex-shrink: 0; }
 
@@ -42,5 +42,5 @@ html[data-focus-mode='keyboard'] .durum .durum-link:focus-visible::before { disp
 .durum .durum-link:active { background: var(--color-selected-bg); }
 
 @media (hover: hover) {
-  .durum .durum-link:hover { color: var(--color-action-hover); background: var(--color-selected-bg); }
+  .durum .durum-link:hover { color: var(--color-action-text); background: var(--color-selected-bg); }
 }

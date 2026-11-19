@@ -64,7 +64,7 @@
 
 .karar-step-link { display: inline-grid; grid-template-columns: 28px minmax(0, 1fr); gap: 10px; align-items: center; color: var(--color-text-primary); font-weight: 600; min-width: 0; }
 
-.karar-step-link:hover { color: var(--color-action-primary); }
+.karar-step-link:hover { color: var(--color-action-text); }
 
 .karar-table .ant-table-cell .ant-tag { white-space: nowrap; }
 

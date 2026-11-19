@@ -171,7 +171,7 @@ html[data-focus-mode='keyboard'] .foundation-collapse .ant-collapse-header:focus
 
 .work-aside .ant-anchor .ant-anchor-link-title { font-size: 14px; line-height: 1.4; white-space: normal; color: var(--color-text-secondary); }
 
-.work-aside .ant-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-primary); font-weight: 600; }
+.work-aside .ant-anchor .ant-anchor-link-active > .ant-anchor-link-title { color: var(--color-action-text); font-weight: 600; }
 
 .work-aside .note { background: var(--color-surface-context); border-radius: 0 8px 8px 0; padding: 12px 16px; }
 

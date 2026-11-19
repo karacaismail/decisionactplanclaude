@@ -32,7 +32,7 @@
   color: var(--color-text-primary);
   transition: color var(--motion-small) var(--motion-ease); }
 
-.mt-method-card.method-card.ant-card > .ant-card-actions .method-action:hover { color: var(--color-action-primary); }
+.mt-method-card.method-card.ant-card > .ant-card-actions .method-action:hover { color: var(--color-action-text); }
 
 .mt-method-card .mt-method-action-icon { flex: none;
   inline-size: var(--icon-inline);
@@ -71,13 +71,13 @@
   min-block-size: var(--hit-area-min);
   font-size: var(--font-body); }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
 .method-badge .ant-badge-count { background: var(--color-surface-sunken); color: var(--color-text-primary); box-shadow: none; font-weight: 400; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; }
 
-.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-primary); }
+.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-text); }
 
 .page-rapor .method-card.ant-card { display: flex; flex-direction: column; transition: box-shadow var(--motion-small) var(--motion-ease), transform var(--motion-small) var(--motion-ease); }
 
@@ -105,7 +105,7 @@
 
 .method-action { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 100%; min-height: 44px; padding: 6px 8px; font: inherit; font-size: 14px; line-height: 1.3; color: var(--color-text-primary); background: transparent; border: 0; cursor: pointer; text-decoration: none; }
 
-.method-action:hover { color: var(--color-action-primary); }
+.method-action:hover { color: var(--color-action-text); }
 
 .method-steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; max-width: 320px; }
 

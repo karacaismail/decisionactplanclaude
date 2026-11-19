@@ -1,5 +1,5 @@
 import { theme as antTheme, type ThemeConfig } from 'antd'
-import { control, font, motion, palette, radius, space, type ThemeMode } from './tokens'
+import { control, elevation, font, motion, palette, radius, space, type ThemeMode } from './tokens'
 /** Mağaza tercihi "system" ise işletim sistemi tercihine bakar. */
 export function resolveMode(pref: ThemeMode | 'system'): ThemeMode {
   if (pref !== 'system') return pref
@@ -11,7 +11,9 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
   const p = palette(mode)
   const s = motion.ease
   const dark = mode === 'dark'
-    return {
+  /* Giriş kontrollerinin ortak kenarı. Dinlenme, üzerine gelme ve odak aynı aileden gelir. */
+  const field = { colorBorder: p.borderInput, hoverBorderColor: p.textSecondary, activeBorderColor: p.borderInput }
+  return {
     cssVar: { key: 'gap' },
     hashed: false,
     algorithm: dark ? antTheme.darkAlgorithm : antTheme.defaultAlgorithm,
@@ -19,16 +21,16 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
       colorPrimary: p.actionPrimary,
       colorPrimaryHover: p.actionHover,
       colorPrimaryActive: p.actionHover,
-      colorLink: p.textPrimary,
-      colorLinkHover: p.actionPrimary,
+      colorLink: p.actionText,
+      colorLinkHover: p.actionText,
       colorInfo: p.statusInfo,
       colorSuccess: p.statusOk,
       colorWarning: p.statusHold,
       colorError: p.statusHarm,
-      /* antd koyu durum renklerinden gri ton üretir; açık zeminleri biz veririz. */
-      colorPrimaryBg: p.toneOrangeBg,
-      colorPrimaryBgHover: p.toneOrangeBg,
-      colorPrimaryBorder: p.toneOrangeBg,
+      /* antd koyu durum renklerinden gri ton üretir. Açık zeminleri biz veririz. */
+      colorPrimaryBg: p.selectedBg,
+      colorPrimaryBgHover: p.selectedBg,
+      colorPrimaryBorder: p.selectedBg,
       colorSuccessBg: p.statusOkBg,
       colorSuccessBgHover: p.statusOkBg,
       colorSuccessBorder: p.statusOkBg,
@@ -88,8 +90,8 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
       motionDurationFast: `${motion.micro}ms`,
       motionDurationMid: `${motion.small}ms`,
       motionDurationSlow: `${motion.panel}ms`,
-      boxShadow: `0 16px 40px ${p.shadow}`,
-      boxShadowSecondary: `0 8px 24px ${p.shadow}`,
+      boxShadow: elevation[mode].float,
+      boxShadowSecondary: elevation[mode].float,
       boxShadowTertiary: 'none',
       colorBgSpotlight: p.textPrimary,
     },
@@ -102,7 +104,7 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
         dangerShadow: 'none',
         primaryColor: p.onAction,
         defaultBg: p.surfaceWork,
-        defaultBorderColor: p.borderStrong,
+        defaultBorderColor: p.borderInput,
         defaultColor: p.textPrimary,
         defaultHoverBorderColor: p.textSecondary,
         defaultHoverColor: p.textPrimary,
@@ -115,7 +117,7 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
         itemHeight: control.hitArea,
         activeBarBorderWidth: 0,
         itemSelectedBg: p.selectedBg,
-        itemSelectedColor: p.actionPrimary,
+        itemSelectedColor: p.actionText,
         itemColor: p.textPrimary,
         itemHoverColor: p.textPrimary,
         itemHoverBg: p.surfaceContext,
@@ -125,13 +127,18 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
         iconSize: 20,
       },
       Segmented: { itemSelectedBg: p.surfaceWork, trackBg: p.surfaceContext },
-      Tabs: { inkBarColor: p.brandAccent, itemSelectedColor: p.actionPrimary, itemHoverColor: p.actionHover },
-      Steps: { iconSize: 28 },
+      Tabs: { inkBarColor: p.brandAccent, itemSelectedColor: p.actionText, itemHoverColor: p.actionText },
+      /* Adım başlığının üzerine gelme rengi yazıdır. Dolgu rengi koyu temada okunmaz. */
+      Steps: { iconSize: 28, colorPrimaryHover: p.actionText },
+      Pagination: { itemActiveColor: p.actionText, itemActiveColorHover: p.actionText },
+      Avatar: { colorTextPlaceholder: p.selectedBg, colorTextLightSolid: p.actionText },
+      Badge: { colorError: p.statusHarm, colorTextLightSolid: dark ? p.surfacePage : p.onAction },
       Table: { headerBg: p.surfaceContext, cellPaddingBlock: 14, cellPaddingInline: 16, headerSplitColor: 'transparent', rowHoverBg: p.surfaceContext, headerColor: p.textSecondary },
       Tag: { borderRadiusSM: 6, defaultBg: p.surfaceContext, defaultColor: p.textSecondary },
-      Input: { paddingBlock: 8, activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong },
+      Input: { ...field, paddingBlock: 8 },
       // Yedi gün 320 piksele sığar. Her günün dokunma alanı korunur.
       DatePicker: {
+        ...field,
         cellWidth: control.hitArea,
         cellHeight: control.hitArea,
         textHeight: control.hitArea,
@@ -139,16 +146,16 @@ export function buildTheme(mode: ThemeMode): ThemeConfig {
         paddingXS: space.xs,
         paddingXXS: 0,
       },
-      InputNumber: { activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong },
-      Select: { activeBorderColor: p.textSecondary, hoverBorderColor: p.borderStrong, optionSelectedBg: p.selectedBg },
-      Radio: { buttonSolidCheckedBg: p.actionPrimary, buttonSolidCheckedColor: p.onAction, buttonSolidCheckedHoverBg: p.actionHover },
-      Checkbox: { colorPrimary: p.actionPrimary, colorPrimaryHover: p.actionHover, colorBorder: p.borderStrong },
+      InputNumber: { ...field },
+      Select: { ...field, optionSelectedBg: p.selectedBg },
+      Radio: { colorBorder: p.borderInput, buttonSolidCheckedBg: p.actionPrimary, buttonSolidCheckedColor: p.onAction, buttonSolidCheckedHoverBg: p.actionHover },
+      Checkbox: { colorPrimary: p.actionPrimary, colorPrimaryHover: p.actionHover, colorBorder: p.borderInput },
       Tooltip: { fontSize: font.helper },
       Statistic: { contentFontSize: 24 },
       Rate: { starColor: p.brandAccent },
       Drawer: { paddingLG: 20 },
       Progress: { defaultColor: p.toneTeal, remainingColor: p.surfaceSunken },
-      Switch: { colorPrimary: p.toneTeal, colorPrimaryHover: p.toneTeal },
+      Switch: { colorPrimary: p.actionPrimary, colorPrimaryHover: p.actionHover },
       Layout: { siderBg: 'transparent', headerBg: p.heroSurface, bodyBg: p.surfacePage, headerHeight: 60, headerPadding: '0 16px' },
       Collapse: { headerBg: 'transparent', contentBg: 'transparent' },
       Timeline: { dotBg: p.surfaceWork },

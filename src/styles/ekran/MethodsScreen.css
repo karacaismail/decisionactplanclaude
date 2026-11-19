@@ -10,7 +10,7 @@
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-primary); text-decoration: none; }
+.text-link { display: inline-flex; align-items: center; gap: 6px; width: fit-content; font-size: 16px; color: var(--color-action-text); text-decoration: none; }
 
 .text-link:hover { text-decoration: underline; }
 
@@ -36,7 +36,7 @@
 
 .method-badge .ant-badge-count { background: var(--color-surface-sunken); color: var(--color-text-primary); box-shadow: none; font-weight: 400; min-width: 22px; height: 22px; line-height: 22px; padding: 0 7px; }
 
-.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-primary); }
+.ant-tabs-tab-active .method-badge .ant-badge-count { background: var(--color-selected-bg); color: var(--color-action-text); }
 
 .method-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; min-width: 0; align-items: stretch; }
 
