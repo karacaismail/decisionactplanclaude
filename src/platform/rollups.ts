@@ -19,9 +19,8 @@ const browserStorage = (): Storage | undefined => {
   }
 }
 
-function read(storage: Storage | undefined): RollupFile {
+function parse(raw: string | null | undefined): RollupFile {
   try {
-    const raw = storage?.getItem(ROLLUP_KEY)
     const parsed = raw ? (JSON.parse(raw) as RollupFile) : null
     if (parsed && parsed.v === 1 && parsed.data && typeof parsed.data === 'object') return parsed
   } catch {
@@ -30,12 +29,67 @@ function read(storage: Storage | undefined): RollupFile {
   return { v: 1, data: {} }
 }
 
+function read(storage: Storage | undefined): RollupFile {
+  try {
+    return parse(storage?.getItem(ROLLUP_KEY))
+  } catch {
+    return parse(null)
+  }
+}
+
+type Listener = () => void
+const listeners = new Set<Listener>()
+let storageListening = false
+
+function emit() {
+  for (const listener of [...listeners]) {
+    try {
+      listener()
+    } catch (error) {
+      console.error('Özet bildirimi işlenemedi.', error)
+    }
+  }
+}
+
 function write(file: RollupFile, storage: Storage | undefined) {
   storage?.setItem(ROLLUP_KEY, JSON.stringify(file))
+  emit()
+}
+
+/**
+ * Özet değişince haber verir. Bu sekmedeki yazma ve öteki sekmedeki yazma haber olur.
+ * Dönen işlev aboneliği kapatır. Çekirdek ekranı etiketleri bu haberle yeniler.
+ */
+export function subscribeRollups(listener: Listener): () => void {
+  listeners.add(listener)
+  if (!storageListening && typeof window !== 'undefined') {
+    storageListening = true
+    window.addEventListener('storage', (event) => {
+      if (event.key === ROLLUP_KEY || event.key === null) emit()
+    })
+  }
+  return () => {
+    listeners.delete(listener)
+  }
+}
+
+/** Özet deposunun ham metni. Metin değişmedikçe aynı değer döner. React aboneliği bunu kullanır. */
+export function readRollupRaw(storage = browserStorage()): string | null {
+  try {
+    return storage?.getItem(ROLLUP_KEY) ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Ham metindeki özeti okur. Bozuk metinde undefined döner. */
+export function readRollupFrom<T = unknown>(raw: string | null, moduleId: string, planId: string): T | undefined {
+  const byPlan = parse(raw).data[moduleId]
+  return byPlan && Object.prototype.hasOwnProperty.call(byPlan, planId) ? (byPlan[planId] as T) : undefined
 }
 
 export function readRollup<T = unknown>(moduleId: string, planId: string, storage = browserStorage()): T | undefined {
-  return read(storage).data[moduleId]?.[planId] as T | undefined
+  return readRollupFrom<T>(readRollupRaw(storage), moduleId, planId)
 }
 
 /** Özeti yazar. 4 KB sınırını aşan özet reddedilir. */
