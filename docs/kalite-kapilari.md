@@ -58,7 +58,7 @@ Denetim on bir kuralı uygular.
    Ölçek dışı piksel boyutu her katmanda hatadır. Örneğin `font-size: 15px` hata verir.
    `temel` dışında yeni `clamp()` başlık boyutu yazılmaz. Sayfa başlığı `var(--font-page-title)` kullanır.
    `temel` dışındaki ham boyutlar sayılır. Sayı `RAW_FONT_SIZE_BASELINE` değerini aşarsa denetim hata verir.
-   Bu sayı yalnız azalabilir. 19 Kasım 2026 Çarşamba günü sayı 444'ten 52'ye indi.
+   Bu sayı yalnız azalabilir. 19 Kasım 2026 Perşembe günü sayı 444'ten 52'ye indi.
    Gezinme şeridindeki eski kurallar silinince sayı 50'ye indi. Sayı şimdi `scripts/check-ui-baseline.json` dosyasındadır.
 10. **Hover kalkışı.** Fare üzerine gelince kartı kaldıran `transform` dokunmatik ekranda takılı kalır.
     Bu kural yalnız `@media (hover: hover) and (pointer: fine)` içinde ya da `giris/fare.css` dosyasında durur.

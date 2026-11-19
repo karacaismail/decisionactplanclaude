@@ -158,7 +158,7 @@ Mimari kendi kendine korunmaz. Bu yüzden üç kapı eklenir.
    - Fare profili temel, kabuk ve fare katmanından oluşur.
 
    Ham sınır 65.000 bayttır. Sıkıştırılmış sınır 12.300 bayttır.
-   Sınır 19 Kasım 2026 Çarşamba günü 12.000 bayttan yükseldi. Gövde yazı ailesi ve yazdırma koruyucusu ilk açılışta gerekir. Sahip bu artışa önceden izin verdi.
+   Sınır 19 Kasım 2026 Perşembe günü 12.000 bayttan yükseldi. Gövde yazı ailesi ve yazdırma koruyucusu ilk açılışta gerekir. Sahip bu artışa önceden izin verdi.
 3. Üçüncü kapı ağ testidir. Testin dosyası `tests/css-teslim.spec.ts` dosyasıdır. Test gerçek ağ isteklerini denetler:
    - Dokunma profilinde `fare.css` istenmez.
    - Fare profilinde `dokunma.css` istenmez.
