@@ -199,7 +199,7 @@ export function ChartFrame({ title, summary, option, table, height = 240, frame 
           {enteredViewport ? (
             <ChartErrorBoundary onShowTable={showTableAfterError}>
               <Suspense fallback={<p className="chart-loading" role="status">Grafik yükleniyor.</p>}>
-                <LazyChart option={option} height={height} ariaLabel={title} />
+                <LazyChart option={option} height={height} ariaLabel={title} description={summary ? `${title}. ${summary}` : title} />
               </Suspense>
             </ChartErrorBoundary>
           ) : <div className="chart-placeholder" aria-hidden="true" />}

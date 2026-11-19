@@ -123,7 +123,55 @@ export const elevation = {
   },
 } as const
 
-/** Grafiklerde kategori rengi olarak kullanılan palet anahtarları. Sıra korunur. */
+/**
+ * Grafik renkleri. İki parlaklık bandı vardır: güçlü ve orta.
+ * Komşu seriler ve dilimler bantları sırayla kullanır. Böylece iki komşu renk en az 3:1 ayrışır.
+ * Her renk çalışma yüzeyinden de en az 3:1 ayrışır. Dilim içindeki yazı bandın yazı rengini kullanır.
+ * Örneğin açık temada güçlü dilimde beyaz, orta dilimde koyu mürekkep yazı vardır.
+ * rest, "kalan" gibi ikincil seridir. Bu renk orta banttaki gridir.
+ */
+export const chartColors = {
+  light: {
+    strong: ['#172A6E', '#033A28', '#371E7A', '#512800'],
+    mid: ['#C9761A', '#5B7FE8', '#2E9A72', '#858EA3'],
+    onStrong: '#FFFFFF',
+    onMid: '#0F1729',
+  },
+  dark: {
+    strong: ['#BFD0FF', '#8EE8C4', '#D9C9FF', '#FFD08A'],
+    mid: ['#A1601C', '#4766C8', '#227A65', '#646E8A'],
+    onStrong: '#171D2E',
+    onMid: '#FFFFFF',
+  },
+} as const
+
+/** Bir grafik rengi ve üstündeki yazının rengi. */
+export interface ChartSlot {
+  color: string
+  text: string
+}
+
+/** Komşuları ayrışan renk sırası: güçlü, orta, güçlü, orta. n kadar renk döner. */
+export function chartSequence(mode: ThemeMode, n: number): ChartSlot[] {
+  const c = chartColors[mode]
+  return Array.from({ length: n }, (_x, i) => {
+    const k = Math.floor(i / 2)
+    return i % 2 === 0
+      ? { color: c.strong[k % c.strong.length], text: c.onStrong }
+      : { color: c.mid[k % c.mid.length], text: c.onMid }
+  })
+}
+
+/** İki serili grafik: ana seri güçlü lacivert, ikincil seri orta gri. */
+export function chartPair(mode: ThemeMode): { main: ChartSlot; rest: ChartSlot } {
+  const c = chartColors[mode]
+  return { main: { color: c.strong[0], text: c.onStrong }, rest: { color: c.mid[c.mid.length - 1], text: c.onMid } }
+}
+
+/** Komşu dilimler arasındaki boşluk. Boşluk çalışma yüzeyinin rengindedir. */
+export const chartGap = 2
+
+/** Eski kategori anahtarları. Göstergeler ekranı chartSequence kullanınca silinir. */
 export const chartSeries = ['toneNavy', 'toneTeal', 'tonePurple', 'toneOrange', 'statusInfo', 'statusHold', 'textSecondary'] as const satisfies readonly (keyof typeof light)[]
 
 /** Altı karar sonucunun rengi. Başka yerde kullanılmaz. */

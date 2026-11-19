@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync, readdirSync } from 'node:fs'
 import { buildTheme } from './antdTheme'
-import { chartSeries, cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
+import { chartColors, chartPair, chartSequence, cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
 
 /** WCAG 2.x göreli parlaklık ve karşıtlık oranı. */
 function luminance(hex: string): number {
@@ -112,9 +112,31 @@ describe.each(modes)('%s tema karşıtlığı', (mode) => {
     expect(Math.abs(lightness(p.surfaceContext) - lightness(p.surfaceSunken))).toBeGreaterThanOrEqual(2.5)
   })
 
-  it('grafik seri renkleri çalışma yüzeyinde en az 3:1', () => {
-    expect(chartSeries.length).toBeGreaterThan(0)
-    for (const key of chartSeries) expect(contrast(p[key], p.surfaceWork), key).toBeGreaterThanOrEqual(3)
+  it('grafik renkleri çalışma yüzeyinde en az 3:1', () => {
+    const c = chartColors[mode]
+    for (const color of [...c.strong, ...c.mid]) expect(contrast(color, p.surfaceWork), color).toBeGreaterThanOrEqual(3)
+  })
+
+  it('komşu grafik renkleri birbirinden en az 3:1 ayrışır ve renk tekrarlanmaz', () => {
+    // Yedi dilim kanıt basamağı grafiğinin en uzun dizisidir.
+    const seq = chartSequence(mode, 8)
+    for (let i = 1; i < seq.length; i += 1) {
+      expect(contrast(seq[i - 1].color, seq[i].color), `${seq[i - 1].color} ile ${seq[i].color}`).toBeGreaterThanOrEqual(3)
+    }
+    expect(new Set(seq.map((s) => s.color.toUpperCase())).size).toBe(seq.length)
+    const { main, rest } = chartPair(mode)
+    expect(contrast(main.color, rest.color)).toBeGreaterThanOrEqual(3)
+  })
+
+  it('ısı haritası yazısı renk aralığının iki ucunda da en az 4,5:1', () => {
+    const c = chartColors[mode]
+    for (const end of [p.surfaceContext, c.mid[1]]) expect(contrast(c.onMid, end), end).toBeGreaterThanOrEqual(4.5)
+  })
+
+  it('dilim içindeki yazı dilim renginde en az 4,5:1', () => {
+    for (const slot of [...chartSequence(mode, 8), ...Object.values(chartPair(mode))]) {
+      expect(contrast(slot.text, slot.color), `${slot.text} / ${slot.color}`).toBeGreaterThanOrEqual(4.5)
+    }
   })
 
   it('kart gölgesi koyu temada da ayrım kurar ve renkli vurgu kullanmaz', () => {
