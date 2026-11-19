@@ -85,7 +85,7 @@ describe('iş kaydı', () => {
   })
 
   it('boş başlığı reddeder', () => {
-    expect(() => yeniIs({ baslik: '' }, { id: 'i1', projeId: 'p1', sira: 1 })).toThrow(/İş başlığını yazın/)
+    expect(() => yeniIs({ baslik: '' }, { id: 'i1', projeId: 'p1', sira: 1 })).toThrow(/Görev başlığını yazın/)
   })
 
   it('durumu değiştirir ve bilinmeyen durumu reddeder', () => {

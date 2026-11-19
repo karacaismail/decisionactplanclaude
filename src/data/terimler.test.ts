@@ -47,6 +47,14 @@ const stripComments = (text: string): string =>
 
 const files = [...walk(join(ROOT, 'src')), join(ROOT, 'index.html')].filter((f) => !SKIP.has(relative(ROOT, f)))
 
+/* Proje modülünün görünen metni. Test dosyaları taranmaz. */
+const moduleFiles = walk(join(ROOT, 'src', 'modules', 'proje')).filter((f) => !/\.test\.tsx?$/.test(f))
+/* "iş" ile başlayan söz. "işlem" ve "işaret" başka sözlerdir. */
+const PROJECT_TASK_WORD = /(?<![\p{L}])[İi]ş(?!lem|aret)\p{L}*/u
+/* Strateji uygulamadaki işleri anlatan sözler. Bu sözler "iş" olarak kalır. */
+const STRATEGY_TASK_PHRASES = [/İlk 90 günün iş(?:i|leri)/gu, /Bu işten proje aç/gu, /Bu işe bağlı/gu, /uygulamadaki şu işe bağlı/gu, /Bu işler strateji uygulamadaki/gu, /Büyük bir işi projeye/gu]
+const withoutStrategyTasks = (line: string) => STRATEGY_TASK_PHRASES.reduce((text, re) => text.replace(re, ''), line)
+
 describe('terim sözlüğü', () => {
   it('görünen metinde eski terim kalmaz', () => {
     const found: string[] = []
@@ -59,6 +67,34 @@ describe('terim sözlüğü', () => {
       })
     }
     expect(found).toEqual([])
+  })
+
+  /*
+   * Projenin küçük çalışmalarının adı "Görev" olur. "İş" sözü strateji uygulamadaki işlerindir.
+   * Örneğin "İlk 90 günün işleri" ve "Bu işten proje aç" bu işleri anlatır. Bu sözler kalır.
+   * "işlem" başka bir sözdür. Örneğin "Bu işlem geri alınamaz." cümlesi kalır.
+   */
+  it('proje modülünde projenin çalışmalarına "iş" denmez', () => {
+    const found: string[] = []
+    for (const file of moduleFiles) {
+      const lines = stripComments(readFileSync(file, 'utf8')).split('\n')
+      lines.forEach((line, i) => {
+        if (PROJECT_TASK_WORD.test(withoutStrategyTasks(line))) found.push(`${relative(ROOT, file)}:${i + 1} "iş" yerine "görev": ${line.trim().slice(0, 120)}`)
+      })
+    }
+    expect(found).toEqual([])
+  })
+
+  it('proje görevi kuralı doğru sözleri yakalar', () => {
+    const hit = (text: string) => PROJECT_TASK_WORD.test(withoutStrategyTasks(stripComments(text)))
+    expect(hit("'Yeni iş'")).toBe(true)
+    expect(hit("'İş ekle'")).toBe(true)
+    expect(hit("'Henüz iş yok.'")).toBe(true)
+    expect(hit("'Görev ekle'")).toBe(false)
+    expect(hit("'Bu işlem geri alınamaz.'")).toBe(false)
+    expect(hit("'İlk 90 günün işleri'")).toBe(false)
+    expect(hit('`Bu işten proje aç: ${t}`')).toBe(false)
+    expect(hit("const isler = []")).toBe(false)
   })
 
   it('test eski terimleri yakalar', () => {

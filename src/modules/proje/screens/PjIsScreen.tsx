@@ -25,8 +25,8 @@ export default function PjIsScreen() {
   if (veri.yukleniyor) {
     return (
       <div className="page pj-is">
-        <PageHeader title="Proje işi" kicker="Proje yönetimi" />
-        <p className="pj-is-not" role="status">İş yükleniyor.</p>
+        <PageHeader title="Proje görevi" kicker="Proje yönetimi" />
+        <p className="pj-is-not" role="status">Görev yükleniyor.</p>
       </div>
     )
   }
@@ -35,11 +35,11 @@ export default function PjIsScreen() {
   if (!proje || !is) {
     return (
       <PjBosEkran
-        title="Proje işi"
+        title="Proje görevi"
         kicker="Proje yönetimi"
-        description="Bu ekran projedeki tek bir işi gösterir."
-        emptyTitle={veri.hata ?? 'İş bulunamadı.'}
-        text="İş silinmiş olabilir. Projeye dönün."
+        description="Bu ekran projedeki tek bir görevi gösterir."
+        emptyTitle={veri.hata ?? 'Görev bulunamadı.'}
+        text="Görev silinmiş olabilir. Projeye dönün."
         actions={<Button onClick={() => nav(proje ? projeAdresi : '/projeler')}>{proje ? 'Projeye dön' : 'Projelere dön'}</Button>}
       />
     )
@@ -69,9 +69,9 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
       const kayit = await projeDepo.isDegistir(proje.planId, is.id, degisen)
       setTemel(ilk(kayit))
       setTaslak(ilk(kayit))
-      message.success('İş kaydedildi.')
+      message.success('Görev kaydedildi.')
     } catch (error) {
-      setHata(error instanceof Error ? error.message : 'İş kaydedilemedi.')
+      setHata(error instanceof Error ? error.message : 'Görev kaydedilemedi.')
     } finally {
       setKaydediliyor(false)
     }
@@ -80,10 +80,10 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
   const sil = async () => {
     try {
       await projeDepo.isSil(proje.planId, is.id)
-      message.success('İş silindi.')
+      message.success('Görev silindi.')
       nav(projeAdresi)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'İş silinemedi.')
+      message.error(error instanceof Error ? error.message : 'Görev silinemedi.')
     }
   }
 
@@ -91,19 +91,19 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
     <div className="page pj-is">
       <PageHeader
         title={is.baslik}
-        documentTitle={`İş: ${is.baslik}`}
+        documentTitle={`Görev: ${is.baslik}`}
         kicker={`Proje: ${proje.ad}`}
-        description="İşin bilgilerini değiştirin. Sonra “Kaydet” düğmesine basın."
+        description="Görevin bilgilerini değiştirin. Sonra “Kaydet” düğmesine basın."
         actions={<Button icon={<ArrowLeft size={18} aria-hidden />} onClick={() => nav(projeAdresi)}>Projeye dön</Button>}
       />
       {gec ? (
         <p className="pj-is-uyari">
           <PjGecikti />
-          <span>Son tarih {tarihYaz(is.sonTarih)} günüydü. İş henüz bitmedi.</span>
+          <span>Son tarih {tarihYaz(is.sonTarih)} günüydü. Görev henüz bitmedi.</span>
         </p>
       ) : null}
       <form className="pj-is-form" onSubmit={(e) => void kaydet(e)}>
-        <label className="pj-is-etiket" htmlFor="pj-is-baslik">İş başlığı</label>
+        <label className="pj-is-etiket" htmlFor="pj-is-baslik">Görev başlığı</label>
         <Input id="pj-is-baslik" value={taslak.baslik} maxLength={SINIR.baslik} onChange={alan('baslik')} autoComplete="off" />
         <label className="pj-is-etiket" htmlFor="pj-is-durum">Durum</label>
         <PjDurumSecici id="pj-is-durum" value={taslak.durum} baslik={is.baslik} onChange={(durum) => setTaslak((t) => ({ ...t, durum }))} />
@@ -118,14 +118,14 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
         <div className="pj-is-dugmeler">
           <Button type="primary" htmlType="submit" icon={<FloppyDisk size={18} aria-hidden />} loading={kaydediliyor}>Kaydet</Button>
           <Popconfirm
-            title="İş silinsin mi?"
+            title="Görev silinsin mi?"
             description="Bu işlem geri alınamaz."
             okText="Sil"
             cancelText="Vazgeç"
             okButtonProps={{ danger: true }}
             onConfirm={() => void sil()}
           >
-            <Button danger icon={<Trash size={18} aria-hidden />}>İşi sil</Button>
+            <Button danger icon={<Trash size={18} aria-hidden />}>Görevi sil</Button>
           </Popconfirm>
         </div>
       </form>

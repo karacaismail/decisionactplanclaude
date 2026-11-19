@@ -112,7 +112,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
   async function isEkle(planId: string, projeId: string, baslik: string): Promise<Is> {
     if (!(await proje(planId, projeId))) throw new Error('Proje bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const mevcut = await isler(planId, projeId)
-    if (mevcut.length >= SINIR.isPerProje) throw new Error(`Bir projede en çok ${SINIR.isPerProje} iş olabilir.`)
+    if (mevcut.length >= SINIR.isPerProje) throw new Error(`Bir projede en çok ${SINIR.isPerProje} görev olabilir.`)
     const yeni = yeniIs({ baslik }, { id: kimlik(), projeId, sira: sonrakiSira(mevcut) })
     await store.set(isAnahtari(planId, yeni.id), yeni)
     await ozetiYenile(planId)
@@ -121,7 +121,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
 
   async function isDegistir(planId: string, id: string, degisiklik: IsDegisikligi): Promise<Is> {
     const eski = await is(planId, id)
-    if (!eski) throw new Error('İş bulunamadı. Başka bir sekmede silinmiş olabilir.')
+    if (!eski) throw new Error('Görev bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const sonraki = isiGuncelle(eski, degisiklik)
     await store.set(isAnahtari(planId, id), sonraki)
     await ozetiYenile(planId)
@@ -130,7 +130,7 @@ export function createProjeDepo({ store, ozetYaz, simdi = () => new Date(), kiml
 
   async function durumuDegistir(planId: string, id: string, durum: IsDurumu): Promise<Is> {
     const eski = await is(planId, id)
-    if (!eski) throw new Error('İş bulunamadı. Başka bir sekmede silinmiş olabilir.')
+    if (!eski) throw new Error('Görev bulunamadı. Başka bir sekmede silinmiş olabilir.')
     const sonraki = durumDegistir(eski, durum)
     await store.set(isAnahtari(planId, id), sonraki)
     await ozetiYenile(planId)

@@ -14,7 +14,7 @@ const manifest: ModuleManifest = {
   routes: [
     { path: '/projeler', title: 'Projeler', requiresPlan: true, load: () => import('./screens/PjProjelerScreen') },
     { path: '/projeler/:pid', title: 'Proje', requiresPlan: true, example: '/projeler/ornek-proje', load: () => import('./screens/PjProjeScreen') },
-    { path: '/projeler/:pid/is/:iid', title: 'Proje işi', requiresPlan: true, example: '/projeler/ornek-proje/is/ornek-is', load: () => import('./screens/PjIsScreen') },
+    { path: '/projeler/:pid/is/:iid', title: 'Proje görevi', requiresPlan: true, example: '/projeler/ornek-proje/is/ornek-is', load: () => import('./screens/PjIsScreen') },
   ],
   lifecycle: () => import('./lifecycle'),
 }

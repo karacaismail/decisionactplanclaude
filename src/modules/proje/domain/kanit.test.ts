@@ -11,14 +11,14 @@ describe('kanıt taslağı metni', () => {
     expect(metin).toBe([
       'Proje: Amazon satışını büyüt.',
       'Tarih: 19 Kasım 2026 Perşembe.',
-      'Projede 3 iş var. 1 iş bitti. 1 iş açık. 1 iş iptal edildi.',
-      '1 işin son tarihi geçti.',
-      'Biten işler: Fotoğrafları yenile.',
+      'Projede 3 görev var. 1 görev bitti. 1 görev açık. 1 görev iptal edildi.',
+      '1 görevin son tarihi geçti.',
+      'Biten görevler: Fotoğrafları yenile.',
     ].join('\n'))
   })
 
   it('iş yoksa bunu açıkça yazar', () => {
-    expect(kanitMetni(proje, [], '2026-11-19')).toBe('Proje: Amazon satışını büyüt.\nTarih: 19 Kasım 2026 Perşembe.\nProjede henüz iş yok.')
+    expect(kanitMetni(proje, [], '2026-11-19')).toBe('Proje: Amazon satışını büyüt.\nTarih: 19 Kasım 2026 Perşembe.\nProjede henüz görev yok.')
   })
 
   it('metni 2000 karakteri aşmaz', () => {

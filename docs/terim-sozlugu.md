@@ -47,6 +47,20 @@ Kullanıcı bu terimleri 19 Kasım 2026 Perşembe günü onayladı. Hedef takibi
 
 İngilizce "OKR" adı ekranda yalnız bir yerde geçer. Bu yer, "Hedef takibi" kartının açıklamasıdır. "Anahtar sonuç" terimi kullanılmaz. Onun yerine "Gösterge" yazılır.
 
+## Proje terimleri
+
+Kullanıcı bu terimi 19 Kasım 2026 Perşembe günü onayladı. Proje yönetimi modülü bu terimi kullanır.
+
+| Terim | Anlamı | Örnek |
+|---|---|---|
+| Görev | Projedeki küçük çalışma | "Görev ekle", "Henüz görev yok." |
+
+Projenin çalışmalarına "iş" denmez. "İş" sözü strateji uygulamadaki işlerindir. Örneğin "Ana işler" ve "İlk 90 günün işleri" bu işlerdir. İki sözün ayrı kalması karışıklığı önler.
+
+Adres değişmedi. Görev ekranının adresi yine `/projeler/<proje>/is/<görev>` biçimindedir. Eski bağlantılar çalışmaya devam eder.
+
+`src/data/terimler.test.ts` testi proje modülünü de tarar. Projenin çalışmasına "iş" denirse test başarısız olur.
+
 ## Değişmeyen terimler
 
 Kullanıcı şu terimleri olduğu gibi bıraktı:

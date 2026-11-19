@@ -13,14 +13,14 @@ export function kanitMetni(proje: Proje, isler: readonly Is[], bugun: string): s
   const o = isOzeti(isler, bugun)
   const satirlar = [`Proje: ${proje.ad}.`, `Tarih: ${tarihYaz(bugun)}.`]
   if (!o.toplam) {
-    satirlar.push('Projede henüz iş yok.')
+    satirlar.push('Projede henüz görev yok.')
   } else {
-    const sayilar = [`Projede ${o.toplam} iş var.`, `${o.biten} iş bitti.`, `${o.acik} iş açık.`]
-    if (o.iptal) sayilar.push(`${o.iptal} iş iptal edildi.`)
+    const sayilar = [`Projede ${o.toplam} görev var.`, `${o.biten} görev bitti.`, `${o.acik} görev açık.`]
+    if (o.iptal) sayilar.push(`${o.iptal} görev iptal edildi.`)
     satirlar.push(sayilar.join(' '))
-    if (o.geciken) satirlar.push(`${o.geciken} işin son tarihi geçti.`)
+    if (o.geciken) satirlar.push(`${o.geciken} görevin son tarihi geçti.`)
     const biten = isler.filter((is) => is.durum === 'bitti').map((is) => is.baslik)
-    if (biten.length) satirlar.push(`Biten işler: ${biten.join(', ')}.`)
+    if (biten.length) satirlar.push(`Biten görevler: ${biten.join(', ')}.`)
   }
   const metin = satirlar.join('\n')
   /* Sınırı aşan metin kesilir. Kesildiği üç noktayla belli olur. */

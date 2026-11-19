@@ -16,7 +16,7 @@ import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
 
 const KICKER = 'Proje yönetimi'
-const DESCRIPTION = 'Projeler stratejideki ana hamleleri işe çevirir. Bu bölüm numaralı aşamaların dışındadır.'
+const DESCRIPTION = 'Projeler stratejideki ana hamleleri görevlere böler. Bu bölüm numaralı aşamaların dışındadır.'
 
 /** Proje listesi. Strateji onaylanmadan proje açılmaz. Ekran bunun nedenini söyler. */
 export default function PjProjelerScreen() {
@@ -40,8 +40,8 @@ export default function PjProjelerScreen() {
 
 function sayiMetni(isler: readonly Is[], bugun: string) {
   const o = isOzeti(isler, bugun)
-  if (!o.toplam) return 'Henüz iş yok.'
-  return `${o.acik} açık iş. ${o.biten} iş bitti.`
+  if (!o.toplam) return 'Henüz görev yok.'
+  return `${o.acik} açık görev. ${o.biten} görev bitti.`
 }
 
 function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
@@ -88,7 +88,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
       <PageHeader
         title="Projeler"
         kicker={KICKER}
-        description="Proje, bir ana hamleyi küçük işlere böler. İşlerin durumunu buradan izlersiniz. Projeler planın kararlarını değiştirmez."
+        description="Proje, bir ana hamleyi küçük görevlere böler. Görevlerin durumunu buradan izlersiniz. Projeler planın kararlarını değiştirmez."
       />
 
       <section className="pj-projeler-bolum" aria-labelledby="pj-projeleriniz">
@@ -114,7 +114,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
                     {geciken ? (
                       <span className="pj-projeler-geciken">
                         <PjGecikti />
-                        <span>{geciken} işin son tarihi geçti.</span>
+                        <span>{geciken} görevin son tarihi geçti.</span>
                       </span>
                     ) : null}
                   </p>
@@ -132,7 +132,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
 
       <section className="pj-projeler-bolum" aria-labelledby="pj-hamleler">
         <h2 id="pj-hamleler" className="pj-projeler-baslik">Ana hamleler</h2>
-        <p className="pj-projeler-aciklama">Ana hamle, stratejideki büyük iştir. Bir hamleden proje açınca proje o hamleye bağlanır.</p>
+        <p className="pj-projeler-aciklama">Ana hamle, stratejinin büyük bir parçasıdır. Bir hamleden proje açınca proje o hamleye bağlanır.</p>
         {hamleler.length === 0 ? <p className="pj-projeler-not">Strateji belgesinde ana hamle yok.</p> : (
           <ul className="pj-projeler-liste">
             {hamleler.map((m) => {

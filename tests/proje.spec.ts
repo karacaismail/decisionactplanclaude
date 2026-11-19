@@ -79,10 +79,10 @@ async function openProjectFromMove(page: Page, touch: boolean) {
 }
 
 async function addTask(page: Page, title: string, how: 'enter' | 'button', touch: boolean) {
-  const input = page.getByLabel('Yeni iş', { exact: true })
+  const input = page.getByLabel('Yeni görev', { exact: true })
   await input.fill(title)
   if (how === 'enter') await input.press('Enter')
-  else await activate(page, page.getByRole('button', { name: 'İş ekle' }), touch)
+  else await activate(page, page.getByRole('button', { name: 'Görev ekle' }), touch)
   await expect(page.getByRole('link', { name: title, exact: true })).toBeVisible()
   await expect(input).toHaveValue('')
 }
@@ -158,7 +158,7 @@ test('ana hamleden proje açılır, iş eklenir, durum klavyeyle ve dokunarak de
   await expect(page.getByRole('main')).toContainText(`Bu proje şu ana hamleye bağlı: ${HAMLE}`)
   await addTask(page, 'Ürün fotoğraflarını yenileyin', 'enter', hasTouch)
   await addTask(page, 'İlan metnini İngilizce yazın', 'button', hasTouch)
-  await expect(page.getByRole('status').filter({ hasText: 'işi eklendi' })).toContainText('"İlan metnini İngilizce yazın" işi eklendi.')
+  await expect(page.getByRole('status').filter({ hasText: 'görevi eklendi' })).toContainText('"İlan metnini İngilizce yazın" görevi eklendi.')
 
   /* Klavye: odak durum düğmesine gelir. Aşağı ok listeyi açar ve sonraki durumu seçer. Enter kaydeder. */
   const first = statusBox(page, 'Ürün fotoğraflarını yenileyin')
@@ -227,7 +227,7 @@ test('ana hamleden proje açılır, iş eklenir, durum klavyeyle ve dokunarak de
   await gotoProjects(page)
   await expect(page.getByRole('link', { name: HAMLE, exact: true })).toBeVisible()
   await expect(page.getByRole('main')).toContainText('Bu hamleye bağlı 1 proje var.')
-  await expect(page.locator('.pj-projeler-kart')).toContainText('1 işin son tarihi geçti.')
+  await expect(page.locator('.pj-projeler-kart')).toContainText('1 görevin son tarihi geçti.')
   await shot(page, `${info.project.name}-projeler`)
 })
 
@@ -241,12 +241,12 @@ test('pano beş sütundur, kendi kutusunda kayar ve sayfa kaymaz', async ({ page
   await activate(page, segment('Pano'), hasTouch)
   await activate(page, segment('Liste'), hasTouch)
   await expect(page).toHaveURL(/gorunum=liste/)
-  await expect(page.getByRole('list', { name: 'İş listesi' })).toBeVisible()
+  await expect(page.getByRole('list', { name: 'Görev listesi' })).toBeVisible()
   await activate(page, segment('Pano'), hasTouch)
   await expect(page).toHaveURL(/gorunum=pano/)
-  const board = page.getByRole('region', { name: /İş panosu/ })
+  const board = page.getByRole('region', { name: /Görev panosu/ })
   await expect(board).toBeVisible()
-  await expect(board.getByRole('heading', { level: 3 })).toHaveText(['Yapılacak 1 iş', 'Yapılıyor 0 iş', 'Takıldı 0 iş', 'Bitti 0 iş', 'İptal 0 iş'])
+  await expect(board.getByRole('heading', { level: 3 })).toHaveText(['Yapılacak 1 görev', 'Yapılıyor 0 görev', 'Takıldı 0 görev', 'Bitti 0 görev', 'İptal 0 görev'])
   await noPageOverflow(page, 'pano')
   await designRules(page, 'pano')
   const scroll = await board.evaluate((el) => ({ sw: el.scrollWidth, cw: el.clientWidth, ox: getComputedStyle(el).overflowX }))
@@ -272,7 +272,7 @@ test('pano beş sütundur, kendi kutusunda kayar ve sayfa kaymaz', async ({ page
   await page.keyboard.press('ArrowDown')
   await page.keyboard.press('Enter')
   await expect(board.locator('.pj-pano-sutun').nth(2)).toContainText('Ürün fotoğraflarını yenileyin')
-  await expect(board.getByRole('heading', { level: 3 }).nth(2)).toHaveText('Takıldı 1 iş')
+  await expect(board.getByRole('heading', { level: 3 }).nth(2)).toHaveText('Takıldı 1 görev')
   await expect(statusBox(page, 'Ürün fotoğraflarını yenileyin'), 'Kart sütun değiştirince odak düğmesine döner').toBeFocused()
 })
 
@@ -304,7 +304,7 @@ test('başka sekmedeki değişiklik listeyi yeniler', async ({ page, context, ha
   const other = await context.newPage()
   await other.goto(url)
   await ready(other)
-  await expect(other.getByRole('main')).toContainText('Henüz iş yok.')
+  await expect(other.getByRole('main')).toContainText('Henüz görev yok.')
   await addTask(page, 'Fiyatı gözden geçirin', 'enter', hasTouch)
   await expect(other.getByRole('link', { name: 'Fiyatı gözden geçirin', exact: true })).toBeVisible()
   await other.close()
@@ -315,19 +315,19 @@ test('silme onay ister, dışa ve içe aktarma projeleri korur, plan silinince p
   await approveStrategy(page)
   await openProjectFromMove(page, hasTouch)
   await addTask(page, 'Ürün fotoğraflarını yenileyin', 'enter', hasTouch)
-  await addTask(page, 'Silinecek iş', 'enter', hasTouch)
+  await addTask(page, 'Silinecek görev', 'enter', hasTouch)
 
   /* İş silme onay ister. Vazgeçince iş kalır. */
-  await activate(page, page.getByRole('link', { name: 'Silinecek iş', exact: true }), hasTouch)
+  await activate(page, page.getByRole('link', { name: 'Silinecek görev', exact: true }), hasTouch)
   await ready(page)
-  await activate(page, page.getByRole('button', { name: 'İşi sil' }), hasTouch)
-  await expect(page.getByText('İş silinsin mi?')).toBeVisible()
+  await activate(page, page.getByRole('button', { name: 'Görevi sil' }), hasTouch)
+  await expect(page.getByText('Görev silinsin mi?')).toBeVisible()
   await activate(page, page.getByRole('button', { name: 'Vazgeç' }), hasTouch)
-  await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveText('Silinecek iş')
-  await activate(page, page.getByRole('button', { name: 'İşi sil' }), hasTouch)
+  await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toHaveText('Silinecek görev')
+  await activate(page, page.getByRole('button', { name: 'Görevi sil' }), hasTouch)
   await activate(page, page.locator('.ant-popconfirm').getByRole('button', { name: 'Sil' }), hasTouch)
   await expect(page).toHaveURL(/#\/projeler\/[^/]+$/)
-  await expect(page.getByRole('link', { name: 'Silinecek iş', exact: true })).toHaveCount(0)
+  await expect(page.getByRole('link', { name: 'Silinecek görev', exact: true })).toHaveCount(0)
   await expect.poll(() => moduleKeys(page, `proje/${PLAN_ID}/`)).toHaveLength(2)
 
   /* Dışa aktarma paket dosyası yazar. Paket proje verisini taşır. */
@@ -359,7 +359,7 @@ test('silme onay ister, dışa ve içe aktarma projeleri korur, plan silinince p
 
   /* Proje silme onay ister. Silinince listede proje kalmaz. */
   await activate(page, page.getByRole('button', { name: 'Projeyi sil' }), hasTouch)
-  await expect(page.getByText('Projenin bütün işleri de silinir. Bu işlem geri alınamaz.')).toBeVisible()
+  await expect(page.getByText('Projenin bütün görevleri de silinir. Bu işlem geri alınamaz.')).toBeVisible()
   await activate(page, page.locator('.ant-popconfirm').getByRole('button', { name: 'Sil' }), hasTouch)
   await expect(page).toHaveURL(/#\/projeler$/)
   await expect(page.getByRole('main')).toContainText('Henüz proje yok.')

@@ -6,7 +6,7 @@ import { openDemo, ready } from './uyarlanir/audit'
 const MODULE_PAGES = [
   { path: '/projeler', heading: 'Projeler' },
   { path: '/projeler/ornek-proje', heading: 'Proje' },
-  { path: '/projeler/ornek-proje/is/ornek-is', heading: 'Proje işi' },
+  { path: '/projeler/ornek-proje/is/ornek-is', heading: 'Proje görevi' },
   { path: '/destek', heading: 'Destek ve teşvik programları' },
   { path: '/destek/ornek-program', heading: 'Destek programı' },
   { path: '/destek/eslesme', heading: 'Size uygun destekler' },

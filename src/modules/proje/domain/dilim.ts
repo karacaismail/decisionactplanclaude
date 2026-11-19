@@ -56,9 +56,9 @@ export function dilimiDogrula(dilim: unknown, hedefPlanId: string): PlanSlice {
   if (projeler.size > SINIR.projePerPlan) throw new Error(`Bir planda en çok ${SINIR.projePerPlan} proje olabilir. Dosyada ${projeler.size} proje var.`)
   const projeBasina = new Map<string, number>()
   for (const is of isler.values()) {
-    if (!projeler.has(is.projeId)) throw new Error('Dosyada projesi yok olan bir iş var. Dosyayı yeniden dışa aktarın.')
+    if (!projeler.has(is.projeId)) throw new Error('Dosyada projesi yok olan bir görev var. Dosyayı yeniden dışa aktarın.')
     const n = (projeBasina.get(is.projeId) ?? 0) + 1
-    if (n > SINIR.isPerProje) throw new Error(`Bir projede en çok ${SINIR.isPerProje} iş olabilir.`)
+    if (n > SINIR.isPerProje) throw new Error(`Bir projede en çok ${SINIR.isPerProje} görev olabilir.`)
     projeBasina.set(is.projeId, n)
   }
   const entries: [string, unknown][] = [

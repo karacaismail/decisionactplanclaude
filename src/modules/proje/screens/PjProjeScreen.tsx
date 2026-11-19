@@ -49,7 +49,7 @@ export default function PjProjeScreen() {
       <PjBosEkran
         title="Proje"
         kicker="Proje yönetimi"
-        description="Bu ekran tek bir projenin işlerini gösterir."
+        description="Bu ekran tek bir projenin görevlerini gösterir."
         emptyTitle={veri.hata ?? 'Proje bulunamadı.'}
         text="Proje silinmiş olabilir. Projeler listesine dönün."
         actions={<Button onClick={() => nav('/projeler')}>Projelere dön</Button>}
@@ -104,7 +104,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
     e.preventDefault()
     if (ekleniyor) return
     if (!baslik.trim()) {
-      message.error('İş başlığını yazın.')
+      message.error('Görev başlığını yazın.')
       girdi.current?.focus()
       return
     }
@@ -112,9 +112,9 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
     try {
       const yeni = await projeDepo.isEkle(proje.planId, proje.id, baslik)
       setBaslik('')
-      setDuyuru(`"${yeni.baslik}" işi eklendi. Durumu "Yapılacak".`)
+      setDuyuru(`"${yeni.baslik}" görevi eklendi. Durumu "Yapılacak".`)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'İş eklenemedi.')
+      message.error(error instanceof Error ? error.message : 'Görev eklenemedi.')
     } finally {
       setEkleniyor(false)
       girdi.current?.focus()
@@ -128,7 +128,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
     setOdakIs(is.id)
     try {
       await projeDepo.durumDegistir(proje.planId, is.id, d)
-      setDuyuru(`"${is.baslik}" işinin durumu "${DURUM_ADI[d]}" oldu.`)
+      setDuyuru(`"${is.baslik}" görevinin durumu "${DURUM_ADI[d]}" oldu.`)
     } catch (error) {
       message.error(error instanceof Error ? error.message : 'Durum değiştirilemedi.')
     } finally {
@@ -164,14 +164,14 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
         <div><dt>Başlangıç</dt><dd>{proje.baslangic ? <time dateTime={proje.baslangic}>{tarihYaz(proje.baslangic)}</time> : 'Yazılmadı.'}</dd></div>
         <div><dt>Bitiş</dt><dd>{proje.bitis ? <time dateTime={proje.bitis}>{tarihYaz(proje.bitis)}</time> : 'Yazılmadı.'}</dd></div>
         <div><dt>Sorumlu</dt><dd>{proje.sorumlu || 'Yazılmadı.'}</dd></div>
-        <div><dt>İşler</dt><dd>{ozet.toplam ? `${ozet.acik} açık, ${ozet.biten} bitti` : 'Henüz iş yok.'}</dd></div>
-        {ozet.geciken ? <div><dt>Geciken</dt><dd className="pj-proje-geciken"><PjGecikti /> {ozet.geciken} iş</dd></div> : null}
+        <div><dt>Görevler</dt><dd>{ozet.toplam ? `${ozet.acik} açık, ${ozet.biten} bitti` : 'Henüz görev yok.'}</dd></div>
+        {ozet.geciken ? <div><dt>Geciken</dt><dd className="pj-proje-geciken"><PjGecikti /> {ozet.geciken} görev</dd></div> : null}
         {proje.aciklama ? <div className="pj-proje-ozet-genis"><dt>Açıklama</dt><dd className="pj-proje-aciklama">{proje.aciklama}</dd></div> : null}
       </dl>
 
       <form className="pj-proje-ekle" onSubmit={(e) => void ekle(e)}>
-        <label className="pj-proje-etiket" htmlFor="pj-yeni-is">Yeni iş</label>
-        <p className="pj-proje-yardim" id="pj-yeni-is-yardim">İşin kısa başlığını yazın. Sonra “İş ekle” düğmesine basın.</p>
+        <label className="pj-proje-etiket" htmlFor="pj-yeni-is">Yeni görev</label>
+        <p className="pj-proje-yardim" id="pj-yeni-is-yardim">Görevin kısa başlığını yazın. Sonra “Görev ekle” düğmesine basın.</p>
         <div className="pj-proje-ekle-satir">
           <Input
             id="pj-yeni-is"
@@ -183,14 +183,14 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
             aria-describedby="pj-yeni-is-yardim"
             autoComplete="off"
           />
-          <Button type="primary" htmlType="submit" icon={<Plus size={18} aria-hidden />} loading={ekleniyor}>İş ekle</Button>
+          <Button type="primary" htmlType="submit" icon={<Plus size={18} aria-hidden />} loading={ekleniyor}>Görev ekle</Button>
         </div>
       </form>
       <p className="pj-proje-duyuru" role="status" aria-live="polite">{duyuru}</p>
 
       <section className="pj-proje-isler" aria-labelledby="pj-isler-baslik">
         <div className="pj-proje-isler-ust">
-          <h2 id="pj-isler-baslik" className="pj-proje-baslik">İşler</h2>
+          <h2 id="pj-isler-baslik" className="pj-proje-baslik">Görevler</h2>
           <Segmented<Gorunum>
             aria-label="Görünüm"
             options={GORUNUMLER}
@@ -206,16 +206,16 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
           />
         </div>
         {isler.length === 0 ? (
-          <EmptyState title="Henüz iş yok." text="Yukarıya bir iş yazın. Sonra “İş ekle” düğmesine basın." />
+          <EmptyState title="Henüz görev yok." text="Yukarıya bir görev yazın. Sonra “Görev ekle” düğmesine basın." />
         ) : gorunum === 'liste' ? (
-          <ol className="pj-proje-liste" aria-label="İş listesi">
+          <ol className="pj-proje-liste" aria-label="Görev listesi">
             {isler.map((is) => <li key={is.id}>{kart(is)}</li>)}
           </ol>
         ) : (
           <div
             className="pj-pano"
             role="region"
-            aria-label="İş panosu. Sütunlar yana kayar."
+            aria-label="Görev panosu. Sütunlar yana kayar."
             tabIndex={0}
             onKeyDown={scrollRegionWithKeyboard}
           >
@@ -224,9 +224,9 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
               return (
                 <section key={d} className="pj-pano-sutun" aria-labelledby={`pj-sutun-${d}`}>
                   <h3 id={`pj-sutun-${d}`} className="pj-pano-baslik">
-                    {DURUM_ADI[d]} <span className="pj-pano-sayi">{sutun.length} iş</span>
+                    {DURUM_ADI[d]} <span className="pj-pano-sayi">{sutun.length} görev</span>
                   </h3>
-                  {sutun.length === 0 ? <p className="pj-pano-bos">Bu sütunda iş yok.</p> : (
+                  {sutun.length === 0 ? <p className="pj-pano-bos">Bu sütunda görev yok.</p> : (
                     <ul className="pj-pano-liste">
                       {sutun.map((is) => <li key={is.id}>{kart(is)}</li>)}
                     </ul>
@@ -246,7 +246,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
           </Button>
           <Popconfirm
             title="Proje silinsin mi?"
-            description="Projenin bütün işleri de silinir. Bu işlem geri alınamaz."
+            description="Projenin bütün görevleri de silinir. Bu işlem geri alınamaz."
             okText="Sil"
             cancelText="Vazgeç"
             okButtonProps={{ danger: true }}

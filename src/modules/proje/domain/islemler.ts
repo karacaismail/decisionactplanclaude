@@ -71,7 +71,7 @@ export function projeyiGuncelle(p: Proje, degisiklik: ProjeDegisikligi): Proje {
 /** Yeni iş kaydı kurar. İş "Yapılacak" durumunda açılır. */
 export function yeniIs(girdi: { baslik: string }, ctx: { id: string; projeId: string; sira: number }): Is {
   const baslik = kisalt(girdi.baslik, SINIR.baslik)
-  if (!baslik) throw new Error('İş başlığını yazın.')
+  if (!baslik) throw new Error('Görev başlığını yazın.')
   return { id: ctx.id, projeId: ctx.projeId, baslik, durum: 'yapilacak', sorumlu: '', sonTarih: '', not: '', sira: ctx.sira }
 }
 
@@ -86,7 +86,7 @@ export function isiGuncelle(is: Is, degisiklik: IsDegisikligi): Is {
   const sonraki: Is = { ...is }
   if (degisiklik.baslik !== undefined) {
     const baslik = kisalt(degisiklik.baslik, SINIR.baslik)
-    if (!baslik) throw new Error('İş başlığını yazın.')
+    if (!baslik) throw new Error('Görev başlığını yazın.')
     sonraki.baslik = baslik
   }
   if (degisiklik.durum !== undefined) sonraki.durum = durumDegistir(sonraki, degisiklik.durum).durum
