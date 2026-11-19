@@ -6,7 +6,8 @@
  * - Eksen, etiket, açıklama ve ipucu yazısı en az 14 pikseldir. Daha büyük boyut korunur.
  * - Renk verilmeyen huni ve halka dilimleri sıralı grafik rengini alır. Dilim yazısı bandın yazı rengidir.
  * - Halka dilimleri, yığılı çubuk parçaları ve ısı haritası hücreleri 2 piksel yüzey boşluğuyla ayrılır.
- * - Huninin en dar basamağı yüzde 60 genişliktedir. Böylece basamak yazısı dilimin içinde kalır.
+ * - Yazısı içeride olan huninin en dar basamağı en az yüzde 60 genişliktedir. Böylece yazı dilime sığar.
+ *   Grafiğin kendi ekran seçeneği bu sınırı geniş alanda değiştirebilir.
  * - Rengi verilmeyen ısı haritası bağlam yüzeyinden orta maviye gider. Hücre yazısı her tonda okunur.
  * - Ekran okuyucu açıklaması açıktır. Açıklama verilmediyse başlık ve özet yazılır.
  * Kaynak seçenek değişmez. İşlev yeni bir kopya döner.
@@ -41,23 +42,45 @@ function clone<T>(node: T): T {
   return node
 }
 
-const readable = (style: unknown): Json => {
-  const s = isPlain(style) ? style : {}
-  const size = typeof s.fontSize === 'number' ? s.fontSize : 0
-  return { ...s, fontSize: Math.max(size, font.helper) }
+/** Yazı boyutu sayı ya da "20px" gibi yazı olabilir. Okunamayan boyut undefined döner. */
+const sizeOf = (x: unknown): number | undefined => {
+  const n = typeof x === 'number' ? x : typeof x === 'string' ? parseFloat(x) : NaN
+  return Number.isFinite(n) ? n : undefined
 }
 
-/** Ağacı gezer. Yazı biçimi nesnelerinde yazı boyutunu 14 pikselin altına indirmez. */
-function walk(node: unknown): void {
+const readable = (style: unknown): Json => {
+  const s = isPlain(style) ? style : {}
+  return { ...s, fontSize: Math.max(sizeOf(s.fontSize) ?? 0, font.helper) }
+}
+
+/** Ekran seçeneği yalnız verilen küçük boyutu düzeltir. Boyut eklemez, ana seçenekteki büyük boyutu ezmez. */
+const raiseOnly = (style: Json): Json => {
+  const size = sizeOf(style.fontSize)
+  return size === undefined ? style : { ...style, fontSize: Math.max(size, font.helper) }
+}
+
+/**
+ * Ağacı gezer. Yazı biçimi nesnelerinde yazı boyutunu 14 pikselin altına indirmez.
+ * add true ise boyutu olmayan nesneye 14 piksel eklenir. Ekran seçeneklerinde add false olur.
+ */
+function walk(node: unknown, add: boolean): void {
   if (Array.isArray(node)) {
-    node.forEach(walk)
+    node.forEach((x) => walk(x, add))
     return
   }
   if (!isPlain(node)) return
   for (const [key, value] of Object.entries(node)) {
-    if (TEXT_KEYS.has(key) && isPlain(value)) node[key] = readable(value)
-    walk(node[key])
+    if (TEXT_KEYS.has(key) && isPlain(value)) node[key] = add ? readable(value) : raiseOnly(value)
+    walk(node[key], add)
   }
+}
+
+/** Yazı dilimin içinde mi? ECharts halka ve huni yazısını varsayılan olarak dışarı koyar. */
+const INSIDE = new Set(['inside', 'inner', 'center'])
+const insideLabel = (item: Json, series: Json): boolean => {
+  const own = isPlain(item.label) ? item.label.position : undefined
+  const shared = isPlain(series.label) ? series.label.position : undefined
+  return INSIDE.has(String(own ?? shared ?? 'outside'))
 }
 
 const list = (x: unknown): Json[] => (Array.isArray(x) ? x.filter(isPlain) : isPlain(x) ? [x] : [])
@@ -87,9 +110,9 @@ function arrangeSeries(option: Json, ctx: ReadableContext) {
     if (SEPARATED.has(type) || (type === 'bar' && series.stack !== undefined)) separate(series, ctx.gap)
     if (type === 'funnel') {
       series.gap = Math.max(typeof series.gap === 'number' ? series.gap : 0, chartGap)
-      /* Dilim yazısı en dar basamağa da sığar. Yükseklik boş kenara harcanmaz. */
+      /* Yazı içerideyse en dar basamağa da sığar. Yükseklik boş kenara harcanmaz. */
       const min = typeof series.minSize === 'string' ? parseFloat(series.minSize) : 0
-      if (!(min >= FUNNEL_MIN)) series.minSize = `${FUNNEL_MIN}%`
+      if (insideLabel({}, series) && !(min >= FUNNEL_MIN)) series.minSize = `${FUNNEL_MIN}%`
       if (series.top === undefined && series.bottom === undefined) Object.assign(series, { top: space.sm, bottom: space.sm })
     }
     if (SLICED.has(type) && Array.isArray(series.data)) {
@@ -98,8 +121,11 @@ function arrangeSeries(option: Json, ctx: ReadableContext) {
         const d: Json = isPlain(item) ? item : { value: item }
         const style = isPlain(d.itemStyle) ? d.itemStyle : {}
         if (style.color !== undefined) return d
+        const colored = { ...d, itemStyle: { ...style, color: slots[i].color } }
+        /* Yazı rengi yalnız dilimin içindeki yazıya verilir. Dışarıdaki yazı zeminin yazı rengini korur. */
+        if (!insideLabel(d, series)) return colored
         const label = isPlain(d.label) ? d.label : {}
-        return { ...d, itemStyle: { ...style, color: slots[i].color }, label: { ...label, color: label.color ?? slots[i].text } }
+        return { ...colored, label: { ...label, color: label.color ?? slots[i].text } }
       })
     }
   }
@@ -134,8 +160,14 @@ function arrangeBase(option: Json, ctx: ReadableContext) {
 export function readableOption(option: unknown, ctx: ReadableContext): unknown {
   const out = clone(option)
   if (!isPlain(out)) return out
-  if (isPlain(out.baseOption)) arrangeBase(out.baseOption, ctx)
-  else arrangeBase(out, ctx)
-  walk(out)
+  if (isPlain(out.baseOption)) {
+    arrangeBase(out.baseOption, ctx)
+    walk(out.baseOption, true)
+    for (const media of list(out.media)) walk(media.option, false)
+    walk(out.options, false)
+  } else {
+    arrangeBase(out, ctx)
+    walk(out, true)
+  }
   return out
 }

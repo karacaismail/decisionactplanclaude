@@ -100,8 +100,8 @@ describe('ortak grafik okunurluğu', () => {
   it('huninin en dar basamağı içindeki yazıyı taşıyacak kadar geniş kalır', () => {
     const out = readableOption({
       series: [
-        { type: 'funnel', minSize: '10%', data: [{ name: 'A', value: 2 }, { name: 'B', value: 1 }] },
-        { type: 'funnel', minSize: '70%', top: 20, data: [{ name: 'A', value: 2 }] },
+        { type: 'funnel', minSize: '10%', label: { position: 'inside' }, data: [{ name: 'A', value: 2 }, { name: 'B', value: 1 }] },
+        { type: 'funnel', minSize: '70%', top: 20, label: { position: 'inside' }, data: [{ name: 'A', value: 2 }] },
       ],
     }, { mode: 'light', gap, description: 'Huni' }) as Json
     const [narrow, wide] = out.series as Json[]
@@ -109,5 +109,38 @@ describe('ortak grafik okunurluğu', () => {
     expect([narrow.top, narrow.bottom]).toEqual([8, 8])
     expect(wide.minSize).toBe('70%')
     expect(wide.top).toBe(20)
+  })
+
+  it('ekran seçeneği büyük yazıyı küçültmez ve yazı boyutu eklemez, piksel yazısını okur', () => {
+    const out = readableOption({
+      baseOption: { series: [{ type: 'bar', data: [1], label: { show: true, fontSize: 18 } }], legend: { textStyle: { fontSize: '20px' } } },
+      media: [{ query: { maxWidth: 520 }, option: { series: [{ label: { show: false } }], legend: { textStyle: { fontSize: '12px' } } } }],
+    }, { mode: 'light', gap, description: 'Ekran' }) as Json
+    const base = out.baseOption as Json
+    expect(((base.series as Json[])[0].label as Json).fontSize).toBe(18)
+    expect(((base.legend as Json).textStyle as Json).fontSize).toBe(20)
+    const media = (out.media as Json[])[0].option as Json
+    expect(((media.series as Json[])[0].label as Json).fontSize).toBeUndefined()
+    expect(((media.legend as Json).textStyle as Json).fontSize).toBe(font.helper)
+  })
+
+  it('dilim yazı rengini yalnız yazı dilimin içindeyse verir', () => {
+    const out = readableOption({
+      series: [
+        { type: 'pie', data: [{ name: 'A', value: 1 }] },
+        { type: 'funnel', label: { position: 'inside' }, data: [{ name: 'B', value: 1 }] },
+      ],
+    }, { mode: 'light', gap, description: 'Dilim' }) as Json
+    const [pie, funnel] = (out.series as Json[]).map((x) => (x.data as Json[])[0])
+    expect((pie.label as Json | undefined)?.color).toBeUndefined()
+    expect((pie.itemStyle as Json).color).toBe(chartSequence('light', 1)[0].color)
+    expect((funnel.label as Json).color).toBe(chartSequence('light', 1)[0].text)
+  })
+
+  it('huninin dar basamak sınırı yalnız yazı içerideyse uygulanır', () => {
+    const out = readableOption({
+      series: [{ type: 'funnel', minSize: '10%', label: { position: 'left' }, data: [{ name: 'A', value: 1 }] }],
+    }, { mode: 'light', gap, description: 'Huni' }) as Json
+    expect((out.series as Json[])[0].minSize).toBe('10%')
   })
 })

@@ -203,8 +203,9 @@ Telefonun güvenli kenar boşluğu bu ölçülere eklenir. Bu boşluk dokunma al
 4. Arama düğmesi.
 5. Tema düğmesi.
 
-Dar telefonda kayıt durumu yalnız ikonla görünür. Ekran okuyucu tam metni duyar.
-Kayıt sorunu varsa metin de görünür. Örneğin "Kaydedilemedi" yazar.
+600 pikselden dar ekranda kayıt durumu yalnız ikonla görünür. Ekran okuyucu tam metni duyar.
+Kayıt sorunu varsa ekranın üstünde ayrıca bir uyarı çıkar. Örneğin "Plan kaydedilemedi" yazar.
+Böylece plan adı her durumda en az 44 piksel genişlikte kalır.
 Her durumun ikonu ayrıdır. Anlam yalnız renkle verilmez.
 
 600 pikselden dar ekranda menü düğmesi yalnız alt menüdedir.
@@ -331,7 +332,8 @@ Bu ayar adım ekranlarındaki grafiklere de uygulanır. Ayar şunları yapar:
 
 - Eksen, etiket ve açıklama yazısını en az 14 piksel yapar.
 - Rengi verilmeyen dilimlere bant rengini ve okunur yazı rengini verir.
-- Huninin en dar basamağını yüzde 60 genişlikte tutar. Böylece yazı basamağa sığar.
+- Yazısı dilimin içinde olan huniyi düzenler. En dar basamak en az yüzde 60 genişlikte olur.
+  Böylece yazı basamağa sığar. Göstergeler ekranı geniş alanda bu sınırı yüzde 30'a indirir.
 - Isı haritasına açık uçtan orta maviye giden bir renk aralığı verir.
 
 Yazdırırken grafik açık temanın renkleriyle çizilir.

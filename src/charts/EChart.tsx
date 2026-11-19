@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { theme } from 'antd'
 import * as echarts from 'echarts/core'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
@@ -52,7 +52,10 @@ export default function EChart({ option, height, ariaLabel, description }: { opt
   const mode = useResolvedTheme()
   /* Açıklama değişince grafik yeniden kurulmaz. Yeni açıklama sonraki çizimde okunur. */
   const spoken = useRef(description ?? ariaLabel)
-  spoken.current = description ?? ariaLabel
+  /* Düzen etkisi çizim etkisinden önce çalışır. Çizim güncel açıklamayı okur. */
+  useLayoutEffect(() => {
+    spoken.current = description ?? ariaLabel
+  }, [description, ariaLabel])
   useEffect(() => {
     if (!ref.current) return
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -119,5 +122,6 @@ export default function EChart({ option, height, ariaLabel, description }: { opt
     }
   }, [option, token, printing, mode])
   if (failure) throw failure.error
-  return <div ref={ref} role="img" aria-label={ariaLabel} style={{ width: '100%', height }} />
+  /* React ve ECharts aynı adı yazar. Böylece ad eskimez. */
+  return <div ref={ref} role="img" aria-label={description ?? ariaLabel} style={{ width: '100%', height }} />
 }

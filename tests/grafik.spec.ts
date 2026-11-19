@@ -88,10 +88,12 @@ for (const scheme of ['light', 'dark'] as const) {
         await page.goto(url)
         await ready(page)
         await loadCharts(page)
-        const img = page.locator('.chart-canvas [role="img"]').first()
-        await expect(img).toBeAttached()
-        await expect.poll(() => img.getAttribute('aria-label')).not.toMatch(/This is a chart|chart about/i)
-        expect(await img.getAttribute('aria-label')).toMatch(/\S/)
+        /* ECharts çizdikten sonra adı yeniden yazar. Ad önce çizim bittikten sonra okunur. */
+        const frame = page.locator('.chart-frame').first()
+        await expect(frame.locator('.chart-canvas canvas')).toBeVisible()
+        const title = (await frame.locator('h3').count()) ? (await frame.locator('h3').innerText()).trim() : (await frame.locator('figcaption').innerText()).trim()
+        const summary = (await frame.locator('.chart-summary').innerText()).trim()
+        await expect(frame.locator('.chart-canvas [role="img"]')).toHaveAttribute('aria-label', `${title}. ${summary}`)
       }
     })
   })
