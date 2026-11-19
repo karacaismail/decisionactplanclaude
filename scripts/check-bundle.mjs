@@ -20,12 +20,15 @@ import { gzipSync } from 'node:zlib'
 // 19 Kasım 2026, UX turu 3: Gövdeye Outfit yazı ailesi ve yazı ölçeği tokenları eklendi.
 // İlk açılış CSS'i 11.985 bayttan 12.057 bayta çıktı. Sahip CSS sınırını yükseltmeye önceden izin verdi.
 // Sınır 12.100 bayt oldu. Üst sınır 13.000 bayttır.
+// UX turu 10: Her ekran için yazdırma koruyucusu temel.css içine eklendi. İlk açılış CSS'i 12.194 bayt oldu.
+// Koruyucu ayrı dosyaya bölünmedi. media="print" bağlantısı da dosyayı indirir. Yazdırma anında geç yükleme ise güvenilir değildir.
+// Sınır 12.300 bayt oldu.
 // Bunlar ağ aktarımı veya genel web standardı değildir. Yeni bağımlılık gerekçelendirilmelidir.
 export const BUDGETS = {
   initialJs: { raw: 2_100_000, gzip: 660_000 },
   fileJs: { raw: 1_500_000, gzip: 450_000 },
   totalJs: { raw: 3_500_000, gzip: 1_100_000 },
-  initialCss: { raw: 65_000, gzip: 12_100 },
+  initialCss: { raw: 65_000, gzip: 12_300 },
   css: { raw: 275_000, gzip: 65_000 },
 }
 
