@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test'
  * Her ekran yazdırılırken üst şerit, alt menü, çekmece ve sabit eylem şeridi gizlenir.
  * Koyu tema seçili olsa da kâğıda açık tema basılır.
  */
-const SCREENS = ['/#/ozet', '/#/karar/5', '/#/karar/1/adim/00', '/#/gostergeler', '/#/ciktilar']
+const SCREENS = ['/#/ozet', '/#/karar/5', '/#/karar/1/adim/00', '/#/gostergeler', '/#/ciktilar', '/#/projeler', '/#/destek']
 
 async function openDemo(page: Page) {
   await page.goto('/')

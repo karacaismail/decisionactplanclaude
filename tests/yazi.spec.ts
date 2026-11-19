@@ -5,7 +5,7 @@ import { expect, test, type Page } from '@playwright/test'
  * Ölçek: 14, 16, 18, 20, 24 ve 36 piksel. Sayfa başlığı 28 ile 36 piksel arasında büyür.
  */
 const SCALE = [14, 16, 18, 20, 24, 36]
-const SCREENS = ['/#/', '/#/ozet', '/#/karar/1', '/#/karar/1/adim/00', '/#/gostergeler', '/#/ciktilar']
+const SCREENS = ['/#/', '/#/ozet', '/#/karar/1', '/#/karar/1/adim/00', '/#/gostergeler', '/#/ciktilar', '/#/projeler', '/#/destek', '/#/destek/eslesme']
 
 async function openDemo(page: Page) {
   await page.goto('/')

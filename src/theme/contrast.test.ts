@@ -1,6 +1,6 @@
 // @vitest-environment node
 import { describe, expect, it } from 'vitest'
-import { readFileSync } from 'node:fs'
+import { readFileSync, readdirSync } from 'node:fs'
 import { buildTheme } from './antdTheme'
 import { chartSeries, cssVariables, dark, elevation, light, type ThemeMode } from './tokens'
 
@@ -198,5 +198,23 @@ describe('gölge tokenlarının CSS ve TypeScript eşitliği', () => {
     expect(vars['--shadow-card']).toBe(elevation[mode].card)
     expect(vars['--shadow-float']).toBe(elevation[mode].float)
     expect(vars['--shadow-bar']).toBe(elevation[mode].bar)
+  })
+})
+
+describe('modül CSS dosyaları', () => {
+  /* Modül ekranları (Pj*, Dt*) renkleri yalnız paletten alır. Böylece yukarıdaki karşıtlık testleri onları da kapsar. */
+  const dir = new URL('../styles/', import.meta.url)
+  const files = ['bilesen', 'ekran'].flatMap((layer) => readdirSync(new URL(`${layer}/`, dir))
+    .filter((name) => /^(Pj|Dt)[A-Z].*\.css$/.test(name)).map((name) => [`${layer}/${name}`, readFileSync(new URL(`${layer}/${name}`, dir), 'utf8')] as const))
+  const paletteVars = new Set(Object.keys(cssVariables('light')))
+
+  it('modül CSS dosyası bulunur', () => {
+    expect(files.length).toBeGreaterThan(0)
+  })
+
+  it.each(files)('%s ham renk yazmaz ve yalnız tanımlı renk tokenı kullanır', (_name, source) => {
+    const text = source.replace(/\/\*[\s\S]*?\*\//g, '')
+    expect(text).not.toMatch(/#[0-9a-f]{3,8}\b|\brgba?\(|\bhsla?\(/i)
+    for (const m of text.matchAll(/var\(\s*(--color-[a-z0-9-]+)/g)) expect(paletteVars.has(m[1]), m[1]).toBe(true)
   })
 })
