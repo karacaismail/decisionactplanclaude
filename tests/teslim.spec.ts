@@ -184,9 +184,21 @@ async function createPlan(page: Page) {
   await expect(page.getByRole('heading', { name: 'Bugün nereden başlayacaksınız?' })).toBeVisible()
 }
 
+/**
+ * Görünen menü düğmesi. Dar telefonda üst şeritte menü düğmesi yoktur.
+ * O genişlikte çekmece alt menüdeki "Menü" düğmesiyle açılır. Geniş ekranda düğme yoktur.
+ */
+async function visibleMenuButton(page: Page): Promise<Locator | null> {
+  for (const button of [
+    page.getByRole('button', { name: 'Menüyü aç', exact: true }),
+    page.locator('.bottom-nav').getByRole('button', { name: 'Menü', exact: true }),
+  ]) if (await button.isVisible()) return button
+  return null
+}
+
 async function menuLink(page: Page, name: string) {
-  const menuButton = page.getByRole('button', { name: 'Menüyü aç', exact: true })
-  if (await menuButton.isVisible() && !await page.getByRole('dialog').isVisible()) await menuButton.click()
+  const menuButton = await visibleMenuButton(page)
+  if (menuButton && !await page.getByRole('dialog').isVisible()) await menuButton.click()
   const link = page.getByRole('navigation', { name: 'Ana bölümler' }).getByRole('link', { name, exact: true })
   await expect(link).toBeVisible()
   return link
@@ -291,9 +303,9 @@ async function captureFocus(page: Page, target: Locator, testInfo: TestInfo, nam
 }
 
 async function keyboardRoute(page: Page, name: string, browserName: string, testInfo: TestInfo) {
-  const menu = page.getByRole('button', { name: 'Menüyü aç', exact: true })
-  const mobile = await menu.isVisible()
-  if (mobile) {
+  const menu = await visibleMenuButton(page)
+  const mobile = menu !== null
+  if (menu) {
     await tabTo(page, menu, browserName)
     await page.keyboard.press('Enter')
     await captureState(page, testInfo, `route-${name}-menu-opening`)

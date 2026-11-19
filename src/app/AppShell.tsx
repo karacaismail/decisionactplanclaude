@@ -280,11 +280,12 @@ export function AppShell() {
             </Link>
           {plan?.example ? <span className="tag">Örnek plan</span> : null}
         </nav>
+        {/* Kayıt durumu plan adının yanında durur. Odak almaz, sekme sırasını değiştirmez. */}
+        {plan ? <div className="topbar-save"><SaveStatus /></div> : null}
         <div className="topbar-actions">
           <CommandPaletteButton />
           <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
         </div>
-        {plan ? <div className="topbar-save"><SaveStatus /></div> : null}
       </Layout.Header>
         <nav className="no-print product-nav" aria-label="Ana bölümler">
           {!plan ? (
