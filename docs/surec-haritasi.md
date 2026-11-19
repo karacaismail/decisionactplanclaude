@@ -26,6 +26,8 @@ Değerlendirme ve uygulamaya çevirme ayrı ana küme değildir. İçerikleri al
 
 **Proje bölümü ile aşamaların bağı.** 2.5 adımındaki her ana hamlenin altında küçük bir proje etiketi durur. 3.2 adımındaki her "Şimdi" işinin altında da aynı etiket durur. Etiket açık ve geciken görevleri sayar. "Strateji uygulama" ekranı projelerin kısa özetini gösterir. Projeden gelen kanıt taslağı 3.5 bölümünde görünür. Kişi taslağı kaydederse kanıt defterine eklenir. Bu bağlar hiçbir kontrolü değiştirmez.
 
+**Destek bölümü ile aşamaların bağı.** Profilde "Dış para" seçildiyse Adım 02 olası desteklere bağlantı verir. 3.3 adımı destek başvurularının sayısını gösterir. Destek parası kesin para sayılmaz. Bu yüzden bağlanan toplam para değişmez.
+
 Süreç dört bölümle yürür. Bölümler kümelere şöyle bağlıdır:
 
 | Bölüm | Ana küme | Adımlar |

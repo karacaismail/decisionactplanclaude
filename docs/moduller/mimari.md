@@ -178,9 +178,11 @@ Modül her yazmadan sonra küçük bir özet yazar. Özet `decisionactplan-rollu
 
 Etiket açık görevleri sayar. Geciken görev metin ve ikonla görünür. Etiketteki bağlantı Projeler ekranını açar. Adres `?satir=<kimlik>` parçasını taşır. Projeler ekranı o satırı getirir ve satırın düğmesine odaklanır.
 
-Strateji onaylanmadıysa etikette açma bağlantısı yoktur. Proje modülü kayıtlı değilse etiket ve kart görünmez.
+Strateji onaylanmadıysa etikette bağlantı yoktur. Kartta da bağlantı yoktur. Örneğin strateji 3.5 bölümünde yeniden açılabilir. O zaman Projeler ekranı proje göstermez. Bu yüzden bağlantı da gösterilmez. Proje modülü kayıtlı değilse etiket ve kart görünmez.
 
-Özet geciken görevi yazıldığı güne göre sayar. Kart bu gün bugün değilse hesap gününü yazar. Bir görev değişince özet yenilenir.
+Özet 4 KB sınırına sığmazsa bazı satırlar eksik kalır. Eksik satırın etiketi "Projeleri gör" der. "Proje aç" demez.
+
+Özet geciken görevi yazıldığı güne göre sayar. Hesap günü bugün değilse etiket ve kart bu günü yazar. Bir görev değişince özet yenilenir.
 
 ## Taslakları kim inceler?
 
@@ -199,9 +201,22 @@ Proje ekranında "Kanıt taslağı hazırla" düğmesi vardır. Düğme projenin
 
 Örnek plan zaten varsa ekran önce sorar. Soru iki yolda aynıdır. Kişi örneği menüden açabilir. Kişi örnek dosyasını içe de alabilir.
 
-Kişi onaylarsa yeni örnek eskisinin yerine geçer. Örneğe bağlı projeler ve destek başvuruları silinmez. Dosyada modül verisi varsa bu verinin yanına yazılır.
+Kişi onaylarsa yeni örnek eskisinin yerine geçer. Örneğe bağlı projeler ve destek başvuruları olduğu gibi kalır. Dosyadaki modül verisi bu durumda alınmaz. Böylece eski dosya yeni kayıtların üzerine yazılmaz. Silinmiş kayıt da geri gelmez. Ekran bunu soruda ve uyarıda söyler.
+
+Örnek silinmişse dosyadaki modül verisi yazılır. İçe alma önce bekleyen silme işlerinin bitmesini bekler. Böylece silinen planın temizliği yeni veriyi silmez.
 
 Plan silinirken onay metni bunu söyler: "Planın projeleri ve destek başvuruları da silinir."
+
+## Çekirdek destek özetini nasıl okur?
+
+Destek modülü her başvuru yazımından sonra özet yazar. Özette başvuru sayısı ve durumların sayısı vardır. Çekirdek bu özeti `src/engine/supportRollup.ts` dosyasıyla okur. Çekirdek destek modülünü içe aktarmaz.
+
+Özet şu yerlerde görünür:
+
+- Adım 02 kaynak sınırını sorar. Profilde "Dış para" seçildiyse bu adımda "Olası destekler" bağlantısı durur. Bağlantı uygun destekler ekranını açar.
+- 3.3 adımında "Destek başvuruları" satırı durur. Satır başvuru sayısını ve durumları yazar. Başvuru yoksa satır görünmez.
+
+Destek parası kesin para sayılmaz. İki yer de bunu açıkça yazar. 3.3 satırında "Beklenen, kesin değil" başlığı ayrı durur. Bağlanan toplam para değişmez. Uçtan uca test bu toplamı başvurudan önce ve sonra karşılaştırır.
 
 ## Yedek
 
