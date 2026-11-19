@@ -58,7 +58,7 @@ Bildirim React içe aktarmaz. Ekranlar yalnız dinamik içe aktarmayla gelir. Bu
 | Küçük özetler | `decisionactplan-rollups-v1` anahtarı | Pano özeti beklemeden okur. Her özet en çok 4 KB olur. |
 | Taslaklar | `decisionactplan-drafts-v1` anahtarı | Taslak plandan ayrı durur. Bu yüzden hiçbir karar eskimez. |
 
-Modül verisinin anahtarı üç parçadır: modül, plan ve kayıt. Örneğin `proje/plan-1/proje-3`.
+Modül verisinin anahtarı üç parçadır: modül, plan ve kayıt. Örneğin `proje/plan-1/proje/p-3`. Kayıt parçası da bölünebilir. Proje modülü projeyi `proje/<kimlik>` altında tutar. İşi `is/<kimlik>` altında tutar.
 
 Depo bir arayüzün arkasındadır. Arayüzün adı `KvStore` arayüzüdür. Tarayıcıda IndexedDB kullanılır. Testte bellek deposu kullanılır.
 
@@ -146,9 +146,25 @@ Boyut kapısı `npm run build` içinde çalışır. Kapı modül ekranlarını b
 
 Uçtan uca test modül rotalarını bildirimden okur. Test her modül ekranını ölçer. Taşma, yazı boyutu ve dokunma alanı ölçülür.
 
+## Proje modülü
+
+Proje modülü 19 Kasım 2026 Perşembe günü çalışır hâle geldi. Modül şu işleri yapar:
+
+1. Kişi bir ana hamleden ya da "Şimdi" işinden proje açar.
+2. Kişi projeye kısa başlıkla iş ekler.
+3. Kişi işin durumunu durum düğmesiyle değiştirir.
+4. Kişi işleri liste ya da pano olarak görür. Pano kendi kutusunda yana kayar.
+5. Son tarihi geçen açık iş "Gecikti" yazısı ve ikonla görünür.
+
+Modül her yazmadan sonra küçük bir özet yazar. Özet `decisionactplan-rollups-v1` anahtarındadır. Özette proje sayısı, açık iş, geciken iş ve biten iş vardır. Özet ayrıca her bağlı satırın sayılarını taşır. Çekirdek bu özeti sonra etiket için okuyabilir.
+
+İçe alınan proje verisi önce denetlenir. Bozuk ya da sınırı aşan veri yazılmaz. Bir planda en çok 200 proje olabilir. Bir projede en çok 500 iş olabilir.
+
+Ana hamle tablosundaki etiket henüz yoktur. "Uygulama" ekranındaki proje özeti de henüz yoktur. Bu iki iş çekirdek ekranı değiştirir. Bu yüzden ayrı bir işte yapılacak.
+
 ## Bu sürümün sınırları
 
-- Modül ekranları yalnız açıklama ve boş durum gösterir. Asıl işler sonraki sürümde gelir.
+- Proje modülünün ekranları çalışır. Destek modülünün ekranları yalnız açıklama ve boş durum gösterir.
 - Taslakları gösteren ekran henüz yoktur. Taslak kaydetme işlevi hazırdır.
 - Plan silinirken modül verisi silinemezse uyarı yalnız konsola yazılır. Kalan veriyi sonradan temizleyen bir iş henüz yoktur.
 - Çekirdek yolların listesi iki yerde durur. Liste `src/platform/manifest.ts` ve `src/app/routes.tsx` dosyalarındadır. Yeni çekirdek yol eklenince iki liste de güncellenir.

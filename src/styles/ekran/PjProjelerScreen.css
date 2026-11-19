@@ -1,0 +1,41 @@
+/* Projeler listesi ekranı. Seçiciler "pj-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.pj-projeler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-8); min-inline-size: 0; }
+
+.pj-projeler-bolum { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); min-inline-size: 0; }
+
+.pj-projeler-baslik { margin: 0; font-size: var(--font-section-title); line-height: 1.25; color: var(--color-text-primary); }
+
+.pj-projeler-aciklama { margin: 0; max-inline-size: 70ch; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-secondary); }
+
+.pj-projeler-not { margin: 0; font-size: var(--font-body); color: var(--color-text-secondary); }
+
+.pj-projeler-liste { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); margin: 0; padding: 0; list-style: none; min-inline-size: 0; }
+
+@media (min-width: 48em) {
+  .pj-projeler-liste { grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr)); }
+}
+
+.pj-projeler-kart, .pj-projeler-kaynak { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); align-content: start; min-inline-size: 0; padding: var(--space-4); background: var(--color-surface-work); border-radius: var(--radius-panel); }
+
+.pj-projeler-kaynak { background: var(--color-surface-context); }
+
+.pj-projeler-kart-ad { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; }
+
+.pj-projeler-kart-ad a { display: flex; align-items: center; min-block-size: var(--target-touch); color: var(--color-text-primary); overflow-wrap: break-word; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+.pj-projeler-kaynak-ad { margin: 0; font-size: var(--font-body); font-weight: var(--weight-strong); line-height: var(--line-body); color: var(--color-text-primary); overflow-wrap: break-word; }
+
+.pj-projeler-kart-bilgi { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; font-size: var(--font-helper); line-height: var(--line-body); color: var(--color-text-secondary); overflow-wrap: break-word; }
+
+.pj-projeler-geciken { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+
+.pj-projeler-kaynak .ant-btn { justify-self: start; max-inline-size: 100%; white-space: normal; block-size: auto; min-block-size: var(--target-touch); }
+
+.pj-projeler-form { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-label); max-inline-size: 40rem; }
+
+.pj-projeler-etiket { font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-primary); }
+
+.pj-projeler-form-satir { display: flex; flex-wrap: wrap; gap: var(--gap-control); }
+
+.pj-projeler-form-satir .ant-input { flex: 1 1 14rem; min-inline-size: 0; min-block-size: var(--target-touch); font-size: var(--font-body); }

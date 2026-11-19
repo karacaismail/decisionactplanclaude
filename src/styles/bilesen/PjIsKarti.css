@@ -1,0 +1,9 @@
+/* Proje işinin kartı. Liste ve pano bu kartı kullanır. Seçiciler "pj-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.pj-is-karti { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-inline-size: 0; padding: var(--space-3) var(--space-4); background: var(--color-surface-work); border-radius: var(--radius-panel); }
+
+.pj-is-karti-baslik { display: flex; align-items: center; min-block-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); line-height: var(--line-body); color: var(--color-text-primary); overflow-wrap: break-word; text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+
+.pj-is-karti-bilgi { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; font-size: var(--font-helper); color: var(--color-text-secondary); }
+
+.pj-gecikti { display: inline-flex; align-items: center; gap: var(--gap-icon); font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-status-harm); }
