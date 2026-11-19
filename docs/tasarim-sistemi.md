@@ -178,6 +178,53 @@ Bileşenler bu değişkenleri kullanır. Yeni ham ölçü gerekiyorsa ortak kayn
 TypeScript yoğunluk değerleri `density` nesnesinde bulunur.
 CSS ile TypeScript ölçülerinin eşitliği birim testiyle korunur.
 
+## Gezinme şeritleri
+
+Gezinme şeritleri ekranın üstündeki ve altındaki sabit çubuklardır.
+Telefonda bu iki çubuk ekranın en çok yüzde 15'ini kaplar.
+
+| Görünüm | Üst şerit | Alt menü | Toplam pay |
+|---|---|---|---|
+| 320 × 720 dikey | 48 piksel | 56 piksel | yüzde 14,4 |
+| 360 × 780 dikey | 48 piksel | 56 piksel | yüzde 13,3 |
+| 390 × 844 dikey | 48 piksel | 56 piksel | yüzde 12,3 |
+| 844 × 390 yatay | 44 piksel | 44 piksel | ilk açılışta yüzde 22,6 |
+| 1280 × 800 masaüstü | 60 piksel | yok | yüzde 13,6 |
+
+Yatay telefonda üst şerit sayfayla birlikte kayar. Sonra yalnız 44 piksellik alt menü kalır.
+Masaüstünde alt menü yoktur. Bölüm sekmeleri üst şeridin altında durur.
+Telefonun güvenli kenar boşluğu bu ölçülere eklenir. Bu boşluk dokunma alanı değildir.
+
+Üst şerit her genişlikte tek satırdır. Soldan sağa şu öğeler durur:
+
+1. Ürün işareti. Telefonda 24, masaüstünde 32 pikseldir.
+2. Plan adı. Bu bağlantı planlar ekranını açar. Ad en çok iki satır olur.
+3. Kayıt durumu.
+4. Arama düğmesi.
+5. Tema düğmesi.
+
+Dar telefonda kayıt durumu yalnız ikonla görünür. Ekran okuyucu tam metni duyar.
+Kayıt sorunu varsa metin de görünür. Örneğin "Kaydedilemedi" yazar.
+Her durumun ikonu ayrıdır. Anlam yalnız renkle verilmez.
+
+600 pikselden dar ekranda menü düğmesi yalnız alt menüdedir.
+Üst şeritte aynı işi yapan ikinci düğme olmaz.
+600 piksel ve daha geniş ekranda menü düğmesi üst şeritte de görünür.
+Örneğin yatay telefon ve tablet bu gruptadır.
+
+Alt menüde her hedef en az 44 × 44 pikseldir. Etiket 14 pikseldir.
+Seçili öğede ikonun arkasında hap biçimli bir zemin durur. Hapın kenar çizgisi yoktur.
+Seçili etiketin rengi `actionText` tokenıdır. Etiket zemine karşı en az 4,5:1 okunur.
+
+Çekmece 320 pikselden geniş açılmaz. Sağda en az 56 piksel perde kalır.
+Perdeye dokununca çekmece kapanır. Odak menüyü açan düğmeye döner.
+Çekmecedeki sıra değişmez. Önce numaralı üç aşama gelir. Sonra numarasız "Destek ve teşvik" gelir.
+
+Masaüstündeki bölüm sekmeleri sığmazsa ince kaydırma çubuğu görünür.
+Böylece kullanıcı sağda başka sekme olduğunu anlar.
+
+`tests/kabuk-olcu.spec.ts` bu ölçüleri iki temada gerçek tarayıcıda denetler.
+
 ## Giriş türü
 
 CSS, `pointer`, `any-pointer` ve `hover` sorgularını ayrı değerlendirir.
@@ -248,6 +295,47 @@ Bu yüzden uygulama internetsiz çalışma sözü vermez.
 
 Tarayıcı çubuğunun rengi üst şeridin rengiyle aynıdır. `index.html` açık ve koyu tema için iki renk taşır.
 Kullanıcı temayı elle seçerse iki renk de seçilen temaya göre değişir.
+
+## Grafik
+
+Grafik renkleri `tokens.ts` içindeki `chartColors` nesnesinden gelir.
+Renkler iki parlaklık bandına ayrılır: güçlü bant ve orta bant.
+Komşu seriler ve dilimler iki bandı sırayla kullanır.
+Böylece komşu iki renk birbirinden en az 3:1 ayrışır.
+Her renk kart zemininden de en az 3:1 ayrışır.
+
+Örneğin "Karar ilerlemesi" grafiğinde tamamlanan parça koyu laciverttir. Kalan parça orta gridir.
+Eski renklerde bu iki parça yalnız 1,01:1 ayrışıyordu.
+
+Bazı parçalar birbirine değer. Örneğin halka dilimleri, huni basamakları ve yığılı çubuk parçaları böyledir.
+Bu parçaların arasında 2 piksel boşluk vardır. Boşluk kart zemininin rengindedir.
+Halkanın ilk ve son dilimi aynı bantta olabilir. Bu çifti de boşluk ayırır.
+
+Dilimin içindeki yazı bandın yazı rengini kullanır.
+Açık temada güçlü dilimde beyaz yazı vardır. Orta dilimde koyu yazı vardır.
+Bu yazı dilim rengine karşı en az 4,5:1 okunur.
+
+Renk tek başına anlam taşımaz. Her grafikte şu üç yol vardır:
+
+- Kısa bir özet cümlesi,
+- Ekran okuyucunun her zaman bulduğu veri tablosu,
+- Başlığı ve özeti okuyan ekran okuyucu açıklaması.
+
+Bazı grafikler dar ekranda da yazıyla okunur.
+Huni her basamağın adını ve sayısını yazar.
+Karar zaman çizgisinde sonucun adı noktanın üstünde yazar. Noktanın şekli de sonuca göre değişir.
+Kanıt grafiğinin açıklaması her basamağın sayısını yazar. Örneğin "1. basamak: 11" yazar.
+
+Her grafik çizilmeden önce `src/charts/readable.ts` ayarından geçer.
+Bu ayar adım ekranlarındaki grafiklere de uygulanır. Ayar şunları yapar:
+
+- Eksen, etiket ve açıklama yazısını en az 14 piksel yapar.
+- Rengi verilmeyen dilimlere bant rengini ve okunur yazı rengini verir.
+- Huninin en dar basamağını yüzde 60 genişlikte tutar. Böylece yazı basamağa sığar.
+- Isı haritasına açık uçtan orta maviye giden bir renk aralığı verir.
+
+Yazdırırken grafik açık temanın renkleriyle çizilir.
+ECharts grafik dosyası ilk açılışta inmez. Grafik ekrana girince iner.
 
 ## Yazdırma
 
