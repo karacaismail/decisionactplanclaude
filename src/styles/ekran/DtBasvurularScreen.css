@@ -12,11 +12,11 @@
 
 .dt-basvurular .dt-basvuru { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-content); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); min-inline-size: 0; }
 
-.dt-basvurular .dt-basvuru h2 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); overflow-wrap: break-word; }
+.dt-basvurular .dt-basvuru h3 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); overflow-wrap: break-word; }
 
-.dt-basvurular .dt-basvuru h2 a { display: inline-flex; align-items: center; min-block-size: var(--target-touch); text-decoration: underline; text-underline-offset: 3px; }
+.dt-basvurular .dt-basvuru h3 a { display: inline-flex; align-items: center; min-block-size: var(--target-touch); text-decoration: underline; text-underline-offset: 3px; }
 
-.dt-basvurular .dt-basvuru h3 { margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); }
+.dt-basvurular .dt-basvuru h4 { margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); }
 
 .dt-basvurular .dt-basvuru-bolum { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
 
@@ -33,3 +33,5 @@
 .dt-basvurular .dt-basvuru-alan .ant-select, .dt-basvurular .dt-basvuru-alan .ant-picker { inline-size: 100%; }
 
 .dt-basvurular .dt-basvuru-cikar { justify-self: start; }
+
+.dt-basvurular .dt-basvurular-baslik { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); }

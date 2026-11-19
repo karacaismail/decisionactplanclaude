@@ -2,13 +2,15 @@
  * Destek modülünün deposu. Veri plan dosyasına yazılmaz. Modül deposunda durur.
  * Anahtarlar: "<plan>/profil" ve "<plan>/basvuru/<kimlik>".
  * Plan açık değilse profil "_plansiz" yerinde durur. Bu yer bir plana bağlı değildir.
- * Her başvuru yazımından sonra plan özeti yeniden hesaplanır.
+ * Yazmalar sırayla çalışır. Her yazma son kaydı okur, değişikliği uygular ve sonra yazar.
+ * Böylece arka arkaya iki değişiklik birbirini silmez. Her başvuru yazımından sonra plan özeti yeniden hesaplanır.
  */
 import { moduleStore } from '@/platform/kv'
 import { writeRollup } from '@/platform/rollups'
-import type { Program } from './data/tipler'
+import type { IsoTarih, Program } from './data/tipler'
 import { basvuruDegistir, basvuruOku, ozetHesapla, type Basvuru, type BasvuruDegisikligi, type DesteksizCevap } from './motor/basvuru'
-import { profilOku, type DestekProfili } from './motor/profil'
+import { profilOku, type Alan, type DestekProfili } from './motor/profil'
+import { bugunIso } from './motor/tazelik'
 
 export { ozetHesapla } from './motor/basvuru'
 
@@ -20,28 +22,52 @@ const depo = () => moduleStore(MODUL_ID)
 const profilAnahtari = (yer: string) => `${yer}/profil`
 const basvuruOnEki = (planId: string) => `${planId}/basvuru/`
 
-export async function profilYukle(yer: string, buYil: number): Promise<DestekProfili> {
-  return profilOku(await depo().get(profilAnahtari(yer)), buYil)
+let kuyruk: Promise<unknown> = Promise.resolve()
+
+/** Yazmaları bu sekmede sırayla çalıştırır. Bir yazmanın hatası sonrakileri durdurmaz. */
+function sirayla<T>(is: () => Promise<T>): Promise<T> {
+  const sonuc = kuyruk.then(is, is)
+  kuyruk = sonuc.catch(() => undefined)
+  return sonuc
 }
 
-export async function profilKaydet(yer: string, profil: DestekProfili): Promise<void> {
-  await depo().set(profilAnahtari(yer), profil)
+export async function profilYukle(yer: string, bugun: IsoTarih = bugunIso()): Promise<DestekProfili> {
+  return profilOku(await depo().get(profilAnahtari(yer)), bugun)
 }
 
+export function profilKaydet(yer: string, profil: DestekProfili): Promise<void> {
+  return sirayla(() => depo().set(profilAnahtari(yer), profil))
+}
+
+/** Tek bir cevabı yazar. Öteki cevaplar depodaki son halinden okunur. Başka sekmenin yazdığı cevap silinmez. */
+export function profilAlanKaydet(yer: string, alan: Alan, deger: DestekProfili[Alan], bugun: IsoTarih = bugunIso()): Promise<DestekProfili> {
+  return sirayla(async () => {
+    const sonraki = profilOku({ ...(await profilYukle(yer, bugun)), [alan]: deger }, bugun)
+    await depo().set(profilAnahtari(yer), sonraki)
+    return sonraki
+  })
+}
+
+/** Planın başvuruları. Kimliği anahtarıyla uyuşmayan kayıt okunmaz. Böyle kayıt silinemez ve güncellenemez. */
 export async function basvurulariYukle(planId: string): Promise<Basvuru[]> {
   const d = depo()
-  const keys = await d.keys(basvuruOnEki(planId))
+  const onEk = basvuruOnEki(planId)
+  const keys = await d.keys(onEk)
   const liste: Basvuru[] = []
   for (const key of keys) {
     const b = basvuruOku(await d.get(key))
-    if (b) liste.push(b)
+    if (b && b.id === key.slice(onEk.length)) liste.push(b)
   }
   return liste.sort((a, b) => (a.olusturma < b.olusturma ? -1 : a.olusturma > b.olusturma ? 1 : a.id.localeCompare(b.id)))
 }
 
-/** Plan özetini asıl veriden yeniden yazar. */
-export async function ozetiYenile(planId: string): Promise<void> {
+async function ozetYaz(planId: string): Promise<void> {
   writeRollup(MODUL_ID, planId, ozetHesapla(await basvurulariYukle(planId)))
+}
+
+/** Plan özetini asıl veriden yeniden yazar. */
+export function ozetiYenile(planId: string): Promise<void> {
+  return sirayla(() => ozetYaz(planId))
 }
 
 function yeniKimlik(): string {
@@ -49,35 +75,41 @@ function yeniKimlik(): string {
   return `b-${rastgele}`
 }
 
-export async function basvuruEkle(planId: string, program: Program, desteksizYapar: DesteksizCevap, simdi: string): Promise<Basvuru> {
-  if (!planId || planId === PLANSIZ) throw new Error('Başvuru listesi için bir plan açın.')
-  if ((await basvurulariYukle(planId)).some((b) => b.programId === program.id)) throw new Error('Bu program başvuru listenizde zaten var.')
-  const b: Basvuru = {
-    id: yeniKimlik(),
-    programId: program.id,
-    programAdi: program.ad,
-    durum: 'hazirlaniyor',
-    desteksizYapar,
-    belgeler: program.belgeler.map((ad) => ({ ad, hazir: false })),
-    olusturma: simdi,
-    guncelleme: simdi,
-  }
-  await depo().set(`${basvuruOnEki(planId)}${b.id}`, b)
-  await ozetiYenile(planId)
-  return b
+export function basvuruEkle(planId: string, program: Program, desteksizYapar: DesteksizCevap, simdi: string): Promise<Basvuru> {
+  return sirayla(async () => {
+    if (!planId || planId === PLANSIZ) throw new Error('Başvuru listesi için bir plan açın.')
+    if ((await basvurulariYukle(planId)).some((b) => b.programId === program.id)) throw new Error('Bu program başvuru listenizde zaten var.')
+    const b: Basvuru = {
+      id: yeniKimlik(),
+      programId: program.id,
+      programAdi: program.ad,
+      durum: 'hazirlaniyor',
+      desteksizYapar,
+      belgeler: program.belgeler.map((ad) => ({ ad, hazir: false })),
+      olusturma: simdi,
+      guncelleme: simdi,
+    }
+    await depo().set(`${basvuruOnEki(planId)}${b.id}`, b)
+    await ozetYaz(planId)
+    return b
+  })
 }
 
-export async function basvuruGuncelle(planId: string, id: string, degisiklik: BasvuruDegisikligi, simdi: string): Promise<Basvuru> {
-  const key = `${basvuruOnEki(planId)}${id}`
-  const mevcut = basvuruOku(await depo().get(key))
-  if (!mevcut) throw new Error('Başvuru bulunamadı.')
-  const sonraki = basvuruDegistir(mevcut, degisiklik, simdi)
-  await depo().set(key, sonraki)
-  await ozetiYenile(planId)
-  return sonraki
+export function basvuruGuncelle(planId: string, id: string, degisiklik: BasvuruDegisikligi, simdi: string): Promise<Basvuru> {
+  return sirayla(async () => {
+    const key = `${basvuruOnEki(planId)}${id}`
+    const mevcut = basvuruOku(await depo().get(key))
+    if (!mevcut || mevcut.id !== id) throw new Error('Başvuru bulunamadı.')
+    const sonraki = basvuruDegistir(mevcut, degisiklik, simdi)
+    await depo().set(key, sonraki)
+    await ozetYaz(planId)
+    return sonraki
+  })
 }
 
-export async function basvuruSil(planId: string, id: string): Promise<void> {
-  await depo().delete(`${basvuruOnEki(planId)}${id}`)
-  await ozetiYenile(planId)
+export function basvuruSil(planId: string, id: string): Promise<void> {
+  return sirayla(async () => {
+    await depo().delete(`${basvuruOnEki(planId)}${id}`)
+    await ozetYaz(planId)
+  })
 }

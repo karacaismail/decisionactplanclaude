@@ -76,7 +76,7 @@ export function tarihGectiMi(iso: IsoTarih, bugun: IsoTarih): boolean {
  * Metindeki para tutarları. Örneğin "20.000.000 TL", "2 milyar TL", "1.500.000 ABD doları".
  * Tutarın ardındaki ek de alınır. Örneğin "100.000.000 TL'dir".
  */
-export const PARA_TUTARI = /\d[\d.,]*\s*(?:milyar\s+|milyon\s+|bin\s+)?(?:TL|ABD doları|dolar|avro|euro|EUR|USD)(?:'[a-zçğıöşü]+)?/giu
+export const PARA_TUTARI = /\d[\d.,]*\s*(?:milyar\s+|milyon\s+|bin\s+)?(?:TL|ABD doları|dolar|avro|euro|EUR|USD)(?!\p{L})(?:'[a-zçğıöşü]+)?/giu
 
 export const GIZLI_TUTAR = '(tutar gizlendi)'
 

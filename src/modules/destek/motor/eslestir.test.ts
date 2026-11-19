@@ -17,9 +17,12 @@ const KAFE: DestekProfili = { kurulus: { yil: 2025, ay: 11 }, calisan: 3, faaliy
 const HEPSI_BILMIYORUM: DestekProfili = Object.fromEntries(SORU_SIRASI.map((a) => [a, BILMIYORUM]))
 
 describe('ön eşleşme', () => {
-  it('kafe profilinde KOSGEB Küresel Rekabetçilik uygun değildir ve neden söylenir', () => {
+  it('kafe profilinde KOSGEB Küresel Rekabetçilik belki olur ve tutmayan koşulu söyler', () => {
+    // Kurumun sayfasına göre dört yoldan biri yeterlidir. İki yol ihracat ya da Ar-Ge istemez. Bu yüzden ret kesin değildir.
     const sonuc = eslestir(program('kosgebKuresel'), KAFE, BUGUN)
-    expect(sonuc.sonuc).toBe('uygun_degil')
+    expect(sonuc.sonuc).toBe('belki')
+    expect(sonuc.sorulanlarTuttu).toBe(false)
+    expect(sonuc.nedenler.join(' ')).toMatch(/Sizin ihracatınız ve Ar-Ge çalışmanız yok\./)
     expect(sonuc.nedenler.join(' ')).toMatch(/ihracat/i)
     expect(sonuc.nedenler.join(' ')).toMatch(/Ar-Ge/)
   })

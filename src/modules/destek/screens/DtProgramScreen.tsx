@@ -102,6 +102,7 @@ export default function DtProgramScreen() {
   }
 
   const eski = tazelik(program.kaynak.asOf, bugun).eski
+  /* Eski bilgide bütün metinlerdeki tutarlar gizlenir. */
   const metin = (m: string) => (eski ? tutarlariGizle(m) : m)
   const durum = gecerliDurum(program, bugun)
   return (
@@ -110,7 +111,7 @@ export default function DtProgramScreen() {
         <CaretLeft aria-hidden className="dt-program-ikon" />
         Bütün programlar
       </Link>
-      <PageHeader title={program.ad} kicker="Destek programı" description={program.ozet} />
+      <PageHeader title={metin(program.ad)} kicker="Destek programı" description={metin(program.ozet)} />
       <div className="dt-program-ust">
         <p className="dt-program-kurum">Kurum: {program.kurum}</p>
         <div className="dt-program-etiketler">
@@ -147,7 +148,7 @@ export default function DtProgramScreen() {
             <ul className="dt-program-liste">
               {program.tarihler.map((t) => (
                 <li key={t.ad}>
-                  {t.ad}:{' '}
+                  {metin(t.ad)}:{' '}
                   {t.tarih.state === 'kaynakli' ? (
                     <>
                       {tarihYaz(t.tarih.value)}
@@ -162,8 +163,8 @@ export default function DtProgramScreen() {
           )}
         </Bolum>
         <Bolum no={5} baslik="Resmî sayfa nerede?">
-          <p>Başvuru yolu: {program.kanal}</p>
-          <p className="dt-program-kaynak">Kaynak: {program.kaynak.ad}</p>
+          <p>Başvuru yolu: {metin(program.kanal)}</p>
+          <p className="dt-program-kaynak">Kaynak: {metin(program.kaynak.ad)}</p>
           <a className="dt-program-dis" href={program.kaynak.url} target="_blank" rel="noopener noreferrer">
             Kurumun sayfasını açın
             <ArrowSquareOut aria-hidden className="dt-program-ikon" />
@@ -175,7 +176,7 @@ export default function DtProgramScreen() {
         </Bolum>
       </div>
 
-      <DtBasvuruEkle program={program} />
+      <DtBasvuruEkle key={program.id} program={program} />
       <DtTerimler />
     </div>
   )

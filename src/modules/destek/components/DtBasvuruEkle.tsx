@@ -4,7 +4,7 @@ import { Link } from 'react-router'
 import { Button } from 'antd'
 import type { Program } from '../data/tipler'
 import { basvuruEkle } from '../depo'
-import { useBasvurular, usePlanYeri } from '../kancalar'
+import { OKUMA_HATASI, useBasvurular, usePlanYeri } from '../kancalar'
 import { DESTEKSIZ_ADI } from '../metinler'
 import { DESTEKSIZ_CEVAPLARI, type DesteksizCevap } from '../motor/basvuru'
 
@@ -17,7 +17,9 @@ type Adim = 'bekliyor' | 'soru' | 'eklendi'
  */
 export function DtBasvuruEkle({ program }: { program: Program }) {
   const { planId } = usePlanYeri()
-  const { basvurular } = useBasvurular(planId)
+  const { basvurular, hata: okumaHatasi } = useBasvurular(planId)
+  const ekleDugmesi = useRef<HTMLButtonElement>(null)
+  const [geriDondu, setGeriDondu] = useState(false)
   const [adim, setAdim] = useState<Adim>('bekliyor')
   const [hata, setHata] = useState<string>()
   const [calisiyor, setCalisiyor] = useState(false)
@@ -27,7 +29,8 @@ export function DtBasvuruEkle({ program }: { program: Program }) {
   useEffect(() => {
     if (adim === 'soru') soruBaslik.current?.focus()
     if (adim === 'eklendi') sonucMetni.current?.focus()
-  }, [adim])
+    if (adim === 'bekliyor' && geriDondu) ekleDugmesi.current?.focus()
+  }, [adim, geriDondu])
 
   const baslik = <h2 id="dt-ekle-baslik">Başvuru listesi</h2>
 
@@ -51,7 +54,18 @@ export function DtBasvuruEkle({ program }: { program: Program }) {
     )
   }
 
-  if (basvurular?.some((b) => b.programId === program.id)) {
+  if (okumaHatasi) {
+    return (
+      <section className="dt-basvuru-ekle" aria-labelledby="dt-ekle-baslik">
+        {baslik}
+        <p className="dt-basvuru-ekle-hata" role="alert">{OKUMA_HATASI}</p>
+      </section>
+    )
+  }
+
+  if (!basvurular) return null
+
+  if (basvurular.some((b) => b.programId === program.id)) {
     return (
       <section className="dt-basvuru-ekle" aria-labelledby="dt-ekle-baslik">
         {baslik}
@@ -80,7 +94,7 @@ export function DtBasvuruEkle({ program }: { program: Program }) {
       {adim === 'bekliyor' ? (
         <>
           <p>Bu programa başvurmayı düşünüyorsanız listenize ekleyin. Belgeleri ve son tarihi listede izlersiniz.</p>
-          <Button type="primary" className="dt-basvuru-ekle-ana" onClick={() => setAdim('soru')}>Başvuru listeme ekle</Button>
+          <Button ref={ekleDugmesi} type="primary" className="dt-basvuru-ekle-ana" onClick={() => setAdim('soru')}>Başvuru listeme ekle</Button>
         </>
       ) : (
         <div className="dt-basvuru-ekle-soru">
@@ -90,7 +104,7 @@ export function DtBasvuruEkle({ program }: { program: Program }) {
             {DESTEKSIZ_CEVAPLARI.map((c) => (
               <Button key={c} disabled={calisiyor} onClick={() => void ekle(c)}>{DESTEKSIZ_ADI[c]}</Button>
             ))}
-            <Button type="text" disabled={calisiyor} onClick={() => setAdim('bekliyor')}>Vazgeçin</Button>
+            <Button type="text" disabled={calisiyor} onClick={() => { setGeriDondu(true); setAdim('bekliyor') }}>Vazgeçin</Button>
           </div>
           {hata ? <p className="dt-basvuru-ekle-hata" role="alert">{hata}</p> : null}
         </div>

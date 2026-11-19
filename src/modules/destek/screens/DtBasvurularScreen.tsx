@@ -1,6 +1,6 @@
 import '@/styles/ekran/DtBasvurularScreen.css'
 import 'dayjs/locale/tr'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { Button, Checkbox, DatePicker, Popconfirm, Select } from 'antd'
 import dayjs from 'dayjs'
@@ -10,14 +10,18 @@ import { DtEtiket } from '../components/DtEtiket'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
 import { basvuruGuncelle, basvuruSil } from '../depo'
-import { useBasvurular, useBugun, useKatalog, usePlanYeri } from '../kancalar'
+import { OKUMA_HATASI, useBasvurular, useBugun, useKatalog, usePlanYeri } from '../kancalar'
 import { BASVURU_DURUM_ADI, DESTEKSIZ_ADI } from '../metinler'
 import { BASVURU_DURUMLARI, type Basvuru, type BasvuruDegisikligi, type BasvuruDurumu } from '../motor/basvuru'
 import { tarihGectiMi, tarihYaz } from '../motor/tazelik'
 
-function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru: Basvuru; program: Program | undefined; planId: string; bugun: string; hataGoster: (m: string) => void }) {
+function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: { basvuru: Basvuru; program: Program | undefined; planId: string; bugun: string; hataGoster: (m: string) => void; silindi: () => void }) {
   const id = `dt-basvuru-${basvuru.id}`
-  const hazir = basvuru.belgeler.filter((b) => b.hazir).length
+  /* İşaret hemen görünür. Kayıt bitince depodaki hal gelir ve bekleyen işaret temizlenir. */
+  const [bekleyen, setBekleyen] = useState<Record<number, boolean>>({})
+  useEffect(() => setBekleyen({}), [basvuru.guncelleme])
+  const belgeler = basvuru.belgeler.map((b, i) => ({ ...b, hazir: bekleyen[i] ?? b.hazir }))
+  const hazir = belgeler.filter((b) => b.hazir).length
   const degistir = (d: BasvuruDegisikligi) => {
     basvuruGuncelle(planId, basvuru.id, d, new Date().toISOString()).catch((error: unknown) => {
       console.error(error)
@@ -27,9 +31,9 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru
   const programTarihleri = program?.tarihler.filter((t) => t.kritik && t.tarih.state === 'kaynakli') ?? []
   return (
     <article className="dt-basvuru" aria-labelledby={`${id}-ad`}>
-      <h2 id={`${id}-ad`}>
+      <h3 id={`${id}-ad`}>
         {program ? <Link to={`/destek/${program.id}`}>{basvuru.programAdi}</Link> : basvuru.programAdi}
-      </h2>
+      </h3>
       {program ? null : <p>Bu program artık listede yok. Kurumun sayfasından kontrol edin.</p>}
       <div className="dt-basvuru-alan">
         <label htmlFor={`${id}-durum`}>Başvurunun durumu</label>
@@ -38,7 +42,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru
       <p>Bu işi destek olmadan da yapar mıydınız? Cevabınız: {DESTEKSIZ_ADI[basvuru.desteksizYapar]}.</p>
 
       <section className="dt-basvuru-bolum" aria-labelledby={`${id}-tarih`}>
-        <h3 id={`${id}-tarih`}>Son tarihler</h3>
+        <h4 id={`${id}-tarih`}>Son tarihler</h4>
         {programTarihleri.length ? (
           <ul>
             {programTarihleri.map((t) => (
@@ -71,14 +75,22 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru
       </section>
 
       <section className="dt-basvuru-bolum" aria-labelledby={`${id}-belge`}>
-        <h3 id={`${id}-belge`}>Belgeler</h3>
+        <h4 id={`${id}-belge`}>Belgeler</h4>
         {basvuru.belgeler.length ? (
           <>
-            <p>{hazir} / {basvuru.belgeler.length} belge hazır.</p>
+            <p>{belgeler.length} belgeden {hazir} tanesi hazır.</p>
             <ul className="dt-basvuru-belgeler">
-              {basvuru.belgeler.map((b, i) => (
-                <li key={b.ad}>
-                  <Checkbox checked={b.hazir} onChange={(e) => degistir({ belgeler: basvuru.belgeler.map((x, j) => (j === i ? { ...x, hazir: e.target.checked } : x)) })}>{b.ad}</Checkbox>
+              {belgeler.map((b, i) => (
+                <li key={i}>
+                  <Checkbox
+                    checked={b.hazir}
+                    onChange={(e) => {
+                      setBekleyen((x) => ({ ...x, [i]: e.target.checked }))
+                      degistir({ belge: { sira: i, hazir: e.target.checked } })
+                    }}
+                  >
+                    {b.ad}
+                  </Checkbox>
                 </li>
               ))}
             </ul>
@@ -88,7 +100,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru
         )}
       </section>
 
-      <Popconfirm title="Bu başvuru listeden çıkarılsın mı?" description="Belge işaretleri de silinir." okText="Çıkarın" cancelText="Vazgeçin" onConfirm={() => void basvuruSil(planId, basvuru.id).catch(() => hataGoster('Başvuru silinemedi. Yeniden deneyin.'))}>
+      <Popconfirm title="Bu başvuru listeden çıkarılsın mı?" description="Belge işaretleri de silinir." okText="Çıkarın" cancelText="Vazgeçin" onConfirm={() => void basvuruSil(planId, basvuru.id).then(silindi, () => hataGoster('Başvuru silinemedi. Yeniden deneyin.'))}>
         <Button className="dt-basvuru-cikar">Listeden çıkarın</Button>
       </Popconfirm>
     </article>
@@ -98,7 +110,8 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster }: { basvuru
 /** Planın başvuruları. Başvuru verisi plana yazılmaz. */
 export default function DtBasvurularScreen() {
   const { planId } = usePlanYeri()
-  const { basvurular } = useBasvurular(planId)
+  const { basvurular, hata: okumaHatasi } = useBasvurular(planId)
+  const listeBasligi = useRef<HTMLHeadingElement>(null)
   const programlar = useKatalog()
   const bugun = useBugun()
   const nav = useNavigate()
@@ -114,7 +127,9 @@ export default function DtBasvurularScreen() {
         actions={<Button onClick={() => nav('/destek')}>Program ekleyin</Button>}
       />
       <DtUyari />
+      {okumaHatasi ? <p className="dt-basvurular-hata" role="alert">{OKUMA_HATASI}</p> : null}
       {hata ? <p className="dt-basvurular-hata" role="alert">{hata}</p> : null}
+      <h2 className="dt-basvurular-baslik" ref={listeBasligi} tabIndex={-1}>Başvuru listesi</h2>
       {planId && basvurular ? (
         basvurular.length ? (
           <>
@@ -122,7 +137,7 @@ export default function DtBasvurularScreen() {
             <ul className="dt-basvurular-liste">
               {basvurular.map((b) => (
                 <li key={b.id}>
-                  <BasvuruKarti basvuru={b} program={programlar.find((p) => p.id === b.programId)} planId={planId} bugun={bugun} hataGoster={setHata} />
+                  <BasvuruKarti basvuru={b} program={programlar.find((p) => p.id === b.programId)} planId={planId} bugun={bugun} hataGoster={setHata} silindi={() => listeBasligi.current?.focus()} />
                 </li>
               ))}
             </ul>

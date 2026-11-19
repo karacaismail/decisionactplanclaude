@@ -92,11 +92,19 @@ export function cevaplandi(profil: DestekProfili, alan: Alan): boolean {
 
 const tamSayi = (v: unknown, min: number, max: number): v is number => typeof v === 'number' && Number.isInteger(v) && v >= min && v <= max
 
+/** Kuruluş tarihi bugünden sonra olamaz. Bugün "2026-11-19" biçiminde verilir. */
+export function kurulusGecerli(k: { yil: number; ay?: number }, bugun: string): boolean {
+  const [by, bm] = bugun.split('-').map(Number)
+  if (!tamSayi(k.yil, EN_ESKI_KURULUS_YILI, by)) return false
+  if (k.ay === undefined) return true
+  return tamSayi(k.ay, 1, 12) && (k.yil < by || k.ay <= bm)
+}
+
 /**
  * Depodan ya da dosyadan gelen değeri profile çevirir. Geçersiz alan atılır.
- * Bugünün yılı verilir. Gelecek yıl kuruluş tarihi olamaz.
+ * Bugünün tarihi verilir. Gelecekteki bir kuruluş tarihi atılır.
  */
-export function profilOku(value: unknown, buYil: number): DestekProfili {
+export function profilOku(value: unknown, bugun: string): DestekProfili {
   const p: DestekProfili = {}
   if (!value || typeof value !== 'object' || Array.isArray(value)) return p
   const v = value as Record<string, unknown>
@@ -104,9 +112,8 @@ export function profilOku(value: unknown, buYil: number): DestekProfili {
   if (v.kurulus === BILMIYORUM) p.kurulus = BILMIYORUM
   else if (v.kurulus && typeof v.kurulus === 'object') {
     const k = v.kurulus as Record<string, unknown>
-    if (tamSayi(k.yil, EN_ESKI_KURULUS_YILI, buYil)) {
-      p.kurulus = tamSayi(k.ay, 1, 12) ? { yil: k.yil, ay: k.ay } : { yil: k.yil }
-    }
+    const aday = typeof k.yil === 'number' ? (k.ay === undefined ? { yil: k.yil } : { yil: k.yil, ay: k.ay as number }) : undefined
+    if (aday && kurulusGecerli(aday, bugun)) p.kurulus = aday
   }
   if (v.calisan === BILMIYORUM || tamSayi(v.calisan, 0, 1_000_000)) p.calisan = v.calisan
   if (v.ihracat === BILMIYORUM || IHRACAT_DURUMLARI.includes(v.ihracat as IhracatDurumu)) p.ihracat = v.ihracat as DestekProfili['ihracat']

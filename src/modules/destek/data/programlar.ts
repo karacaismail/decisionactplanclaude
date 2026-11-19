@@ -3,6 +3,7 @@
  * Kaynak: önceki destek ve teşvik çalışmasındaki 46 program. Bu verinin son kontrolü 12 Ağustos 2026 Çarşamba günüdür.
  * Veri kod çalıştırılmadan aktarıldı. Tek bir işletmeye göre yazılmış özetler, puanlar ve notlar alınmadı.
  * Programın yapılacaklar listesi de alınmadı. Bu listenin çoğu tek bir işletmenin bakışıyla yazılmıştı.
+ * Yalnız bir işletmeye verilmiş bir yanıta dayanan koşul ve öneri niteliğindeki belgeler de alınmadı.
  * Her sayı kaynağı ve tarihiyle birlikte durur. Tutar metindeyse eski bilgide ekran tutarı gizler.
  * Katalog denetimi: programlar.test.ts
  */
@@ -51,7 +52,6 @@ export const PROGRAMLAR: readonly Program[] = [
       'KOBİ beyannamesi',
       'Ar-Ge personelinin kişi, ay ve proje listesi',
       'Teknik belirsizliğin ve iş paketlerinin tanımı',
-      'İşin başvurudan önce ne kadar bittiğini gösteren belge',
       'Proforma faturalar',
       'Fikri haklar planı',
       '1 Ocak 2020\'den sonra desteklenen projelerin listesi',
@@ -125,7 +125,7 @@ export const PROGRAMLAR: readonly Program[] = [
       'Proje 24 ay sürer.',
     ],
     uygunGider: [
-      'Müşteriye özel modülü geliştiren Ar-Ge personelinin aylık giderleri',
+      'Müşteri için yapılan Ar-Ge işinin personel giderleri',
       'Proje ekipmanı ve yazılım',
       'Ar-Ge hizmet alımı',
     ],
@@ -171,7 +171,7 @@ export const PROGRAMLAR: readonly Program[] = [
       'Model geliştirme ve veri altyapısı',
     ],
     haricGider: [
-      'Öncelikli alanların dışındaki genel platform geliştirme',
+      'Öncelikli alanların dışındaki geliştirme işleri',
     ],
     belgeler: [
       'Dört taraflı ortaklık sözleşmesi',
@@ -823,7 +823,6 @@ export const PROGRAMLAR: readonly Program[] = [
     tarihler: [],
     kosullar: [
       'Yatırım, en düşük sabit yatırım tutarını karşılamalıdır.',
-      'İhtisas serbest bölgesindeki yazılım ve bilişim ürünü üretim yatırımlarında en düşük tutar aranmaz. Bu yatırımlar öncelikli sayılır. Bunun için bölgeye gerçekten yerleşmek gerekir.',
       'İstanbul\'daki hedef yatırımlarda vergi indirimi ile faiz ya da kâr payı desteği uygulanmaz.',
     ],
     uygunGider: [
@@ -837,7 +836,7 @@ export const PROGRAMLAR: readonly Program[] = [
       'Sabit yatırımların kalem kalem listesi ve proforma faturalar',
     ],
     kanal: 'Yatırım teşvik başvuru sistemi',
-    kaynak: { url: 'https://www.sanayi.gov.tr/destek-ve-tesvikler/yatirim-tesvik-sistemleri', ad: '9903 sayılı Karar ve yatırım destek ofisi resmî soru-cevap yanıtı', asOf: '2026-08-12' },
+    kaynak: { url: 'https://www.sanayi.gov.tr/destek-ve-tesvikler/yatirim-tesvik-sistemleri', ad: '9903 sayılı Karar', asOf: '2026-08-12' },
     kombinasyon: { kanun4691: 'ayri_gider' },
   },
   {
@@ -932,7 +931,6 @@ export const PROGRAMLAR: readonly Program[] = [
     belgeler: [
       'Bölge kabul kararı',
       'Ayrı tutulmuş muhasebe ve bordro',
-      'Mali müşavirin istisna tahmini',
     ],
     kanal: 'Teknoloji geliştirme bölgesi yönetici şirketi başvurusu',
     kaynak: { url: 'https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf', ad: '4691 sayılı Kanun ve girişim sermayesi fonu parametrelerini belirleyen Cumhurbaşkanı Kararı', asOf: '2026-08-12' },
@@ -1067,7 +1065,6 @@ export const PROGRAMLAR: readonly Program[] = [
       'Hizmetin yurt dışında kullanıldığını gösteren belge',
       'Kazancın Türkiye\'ye geldiğini gösteren kayıt',
       'Bu gelirin ayrı tutulduğu muhasebe',
-      'Mali müşavir görüşü',
     ],
     kanal: 'Kurumlar vergisi beyannamesi',
     kaynak: { url: 'https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=DUYURU%2FUNIVERSAL%2F2026%2FCK11257_not.pdf', ad: 'Gelir İdaresi Başkanlığı 11257 sayılı Karar açıklayıcı bilgi notu', asOf: '2026-08-12' },
@@ -1124,8 +1121,8 @@ export const PROGRAMLAR: readonly Program[] = [
     },
     tarihler: [],
     kosullar: [
-      'Kapsamdaki koşullar sağlanmalı.',
-      'Desteğin bütün çalışanlara uygulanacağını varsaymayın.',
+      'Destek, kapsamdaki koşulları sağlayan işverene verilir.',
+      'Destek her çalışana kendiliğinden uygulanmayabilir.',
     ],
     uygunGider: [
       'Bordrodaki prim gideri',

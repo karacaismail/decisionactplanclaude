@@ -1,5 +1,6 @@
 import '@/styles/ekran/DtProgramlarScreen.css'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
+import type { InputRef } from 'antd'
 import { useNavigate } from 'react-router'
 import { Button, Input, Select } from 'antd'
 import { PageHeader } from '@/components/PageHeader'
@@ -21,6 +22,7 @@ export default function DtProgramlarScreen() {
   const { planId } = usePlanYeri()
   const nav = useNavigate()
   const [arama, setArama] = useState('')
+  const aramaKutusu = useRef<InputRef>(null)
   const [kurum, setKurum] = useState<string>()
   const [tur, setTur] = useState<Kategori>()
   const [durum, setDurum] = useState<GecerliDurum>()
@@ -43,6 +45,7 @@ export default function DtProgramlarScreen() {
     setKurum(undefined)
     setTur(undefined)
     setDurum(undefined)
+    aramaKutusu.current?.focus()
   }
 
   return (
@@ -70,7 +73,7 @@ export default function DtProgramlarScreen() {
         <div className="dt-programlar-alanlar">
           <div className="dt-programlar-alan dt-programlar-alan-genis">
             <label htmlFor="dt-arama">Programlarda arayın</label>
-            <Input id="dt-arama" type="search" value={arama} onChange={(e) => setArama(e.target.value)} placeholder="Örneğin KOSGEB ya da hibe" allowClear autoComplete="off" />
+            <Input ref={aramaKutusu} id="dt-arama" enterKeyHint="search" value={arama} onChange={(e) => setArama(e.target.value)} placeholder="Örneğin KOSGEB ya da hibe" allowClear autoComplete="off" />
           </div>
           <div className="dt-programlar-alan">
             <label htmlFor="dt-kurum">Kurum</label>

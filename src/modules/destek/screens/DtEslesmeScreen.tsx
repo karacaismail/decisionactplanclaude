@@ -6,10 +6,12 @@ import { PageHeader } from '@/components/PageHeader'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
-import { profilKaydet } from '../depo'
-import { useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
-import { AYLAR, IHRACAT_ADI, KURUCU_ADI, SORULAR } from '../metinler'
-import { eslestirHepsi, sonrakiSorular, type Eslesme } from '../motor/eslestir'
+import { profilAlanKaydet } from '../depo'
+import { DtEtiket } from '../components/DtEtiket'
+import { OKUMA_HATASI, useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
+import { AYLAR, DURUM_ADI, IHRACAT_ADI, KURUCU_ADI, SORULAR } from '../metinler'
+import { eslestirHepsi, sonrakiSorular, type Eslesme, type EslesmeGruplari } from '../motor/eslestir'
+import { gecerliDurum } from '../motor/tazelik'
 import {
   BILMIYORUM, EN_ESKI_KURULUS_YILI, IHRACAT_DURUMLARI, ILLER, KURUCU_DURUMLARI, NACE_BOLUMLERI, profilDoluMu, sorulacaklar, SORU_SIRASI,
   type Alan, type DestekProfili, type IhracatDurumu, type KurucuDurumu, type NaceHarfi,
@@ -29,7 +31,7 @@ function cevapYaz(profil: DestekProfili, alan: Alan): string {
   switch (alan) {
     case 'kurulus': {
       const k = profil.kurulus as { yil: number; ay?: number }
-      return k.ay ? `${AYLAR[k.ay - 1]} ${k.yil}.` : `${k.yil}. Ayı bilinmiyor.`
+      return k.ay ? `${AYLAR[k.ay - 1]} ${k.yil}.` : `${k.yil} yılı. Ay bilinmiyor.`
     }
     case 'calisan':
       return `${String(v)} kişi.`
@@ -55,7 +57,8 @@ function taslakGecerli(alan: Alan, t: Taslak): boolean {
 }
 
 /** Tek sorunun denetimi. Her soru ayrı ekranda gelir. */
-function SoruAlani({ alan, taslak, setTaslak, buYil }: { alan: Alan; taslak: Taslak; setTaslak: (t: Taslak) => void; buYil: number }) {
+function SoruAlani({ alan, taslak, setTaslak, bugun }: { alan: Alan; taslak: Taslak; setTaslak: (t: Taslak) => void; bugun: string }) {
+  const [buYil, buAy] = bugun.split('-').map(Number)
   const yillar = useMemo(() => Array.from({ length: buYil - EN_ESKI_KURULUS_YILI + 1 }, (_, i) => buYil - i), [buYil])
   switch (alan) {
     case 'kurulus': {
@@ -64,11 +67,11 @@ function SoruAlani({ alan, taslak, setTaslak, buYil }: { alan: Alan; taslak: Tas
         <div className="dt-eslesme-alanlar">
           <div className="dt-eslesme-alan">
             <label htmlFor="dt-soru-yil">Kuruluş yılı</label>
-            <Select<number> id="dt-soru-yil" value={k.yil} placeholder="Yıl seçin" showSearch optionFilterProp="label" notFoundContent="Eşleşen yıl yok." options={yillar.map((y) => ({ value: y, label: String(y) }))} onChange={(yil) => setTaslak(k.ay ? { yil, ay: k.ay } : { yil })} />
+            <Select<number> id="dt-soru-yil" value={k.yil} placeholder="Yıl seçin" showSearch optionFilterProp="label" notFoundContent="Eşleşen yıl yok." options={yillar.map((y) => ({ value: y, label: String(y) }))} onChange={(yil) => setTaslak(k.ay && (yil < buYil || k.ay <= buAy) ? { yil, ay: k.ay } : { yil })} />
           </div>
           <div className="dt-eslesme-alan">
             <label htmlFor="dt-soru-ay">Kuruluş ayı</label>
-            <Select<number> id="dt-soru-ay" value={k.ay ?? 0} virtual={false} options={[{ value: 0, label: 'Ayı bilmiyorum' }, ...AYLAR.map((ad, i) => ({ value: i + 1, label: ad }))]} onChange={(ay) => setTaslak(k.yil ? (ay ? { yil: k.yil, ay } : { yil: k.yil }) : undefined)} disabled={!k.yil} />
+            <Select<number> id="dt-soru-ay" value={k.ay ?? 0} virtual={false} options={[{ value: 0, label: 'Ayı bilmiyorum' }, ...AYLAR.map((ad, i) => ({ value: i + 1, label: ad, disabled: k.yil === buYil && i + 1 > buAy }))]} onChange={(ay) => setTaslak(k.yil ? (ay ? { yil: k.yil, ay } : { yil: k.yil }) : undefined)} disabled={!k.yil} />
           </div>
         </div>
       )
@@ -115,22 +118,21 @@ function SoruAlani({ alan, taslak, setTaslak, buYil }: { alan: Alan; taslak: Tas
   }
 }
 
-function Sihirbaz({ mod, profil, buYil, cevapla, geri }: { mod: Extract<Mod, { tur: 'soru' }>; profil: DestekProfili; buYil: number; cevapla: (alan: Alan, deger: DestekProfili[Alan]) => void; geri: () => void }) {
+function Sihirbaz({ mod, profil, bugun, odakla, cevapla, geri }: { mod: Extract<Mod, { tur: 'soru' }>; profil: DestekProfili; bugun: string; odakla: boolean; cevapla: (alan: Alan, deger: DestekProfili[Alan]) => void; geri: () => void }) {
   const alan = mod.sorular[mod.i]
   const mevcut = profil[alan]
   const [taslak, setTaslak] = useState<Taslak>(mevcut === BILMIYORUM ? undefined : mevcut)
   const baslik = useRef<HTMLHeadingElement>(null)
   useEffect(() => {
-    if (mod.i > 0) baslik.current?.focus()
-  }, [mod.i])
+    if (odakla) baslik.current?.focus()
+  }, [odakla])
   const son = mod.i === mod.sorular.length - 1
   const soru = SORULAR[alan]
   return (
     <section className="dt-eslesme-sihirbaz" aria-labelledby="dt-soru-baslik">
-      <p role="status" className="dt-eslesme-ilerleme">Soru {mod.i + 1} / {mod.sorular.length}</p>
       <h2 id="dt-soru-baslik" ref={baslik} tabIndex={-1}>{soru.baslik}</h2>
       <p>{soru.aciklama}</p>
-      <SoruAlani alan={alan} taslak={taslak} setTaslak={setTaslak} buYil={buYil} />
+      <SoruAlani alan={alan} taslak={taslak} setTaslak={setTaslak} bugun={bugun} />
       <div className="dt-eslesme-eylemler">
         <Button type="primary" disabled={!taslakGecerli(alan, taslak)} onClick={() => cevapla(alan, taslak)}>{son ? 'Sonucu gösterin' : 'Devam'}</Button>
         <Button onClick={() => cevapla(alan, BILMIYORUM)}>Bilmiyorum</Button>
@@ -140,11 +142,14 @@ function Sihirbaz({ mod, profil, buYil, cevapla, geri }: { mod: Extract<Mod, { t
   )
 }
 
-function SonucSatiri({ program, eslesme }: { program: Program; eslesme: Eslesme }) {
+function SonucSatiri({ program, eslesme, bugun }: { program: Program; eslesme: Eslesme; bugun: string }) {
+  const durum = gecerliDurum(program, bugun)
+  const kapali = durum === 'kapandi' || durum === 'kapali'
   return (
     <li className="dt-sonuc-satir">
       <Link className="dt-sonuc-ad" to={`/destek/${program.id}`}>{program.ad}</Link>
       <span className="dt-sonuc-kurum">{program.kurum}</span>
+      {kapali ? <span><DtEtiket ton="kapali">{DURUM_ADI[durum]}</DtEtiket></span> : null}
       {eslesme.sorulanlarTuttu ? (
         <>
           <span className="dt-sonuc-kurum">Tutan koşullar:</span>
@@ -161,7 +166,7 @@ function SonucSatiri({ program, eslesme }: { program: Program; eslesme: Eslesme 
   )
 }
 
-function Grup({ sinif, baslik, aciklama, eslesmeler, programlar }: { sinif: string; baslik: string; aciklama: string; eslesmeler: Eslesme[]; programlar: Map<string, Program> }) {
+function Grup({ sinif, baslik, aciklama, eslesmeler, programlar, bugun }: { sinif: string; baslik: string; aciklama: string; eslesmeler: Eslesme[]; programlar: Map<string, Program>; bugun: string }) {
   const id = `${sinif}-baslik`
   return (
     <section className={`dt-sonuc-grup ${sinif}`} aria-labelledby={id}>
@@ -169,15 +174,18 @@ function Grup({ sinif, baslik, aciklama, eslesmeler, programlar }: { sinif: stri
       <p>{aciklama}</p>
       {eslesmeler.length ? (
         <ul className="dt-sonuc-liste">
-          {eslesmeler.map((e) => <SonucSatiri key={e.programId} program={programlar.get(e.programId)!} eslesme={e} />)}
+          {eslesmeler.map((e) => <SonucSatiri key={e.programId} program={programlar.get(e.programId)!} eslesme={e} bugun={bugun} />)}
         </ul>
       ) : null}
     </section>
   )
 }
 
-function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; programlar: readonly Program[]; bugun: string; sor: (sorular: Alan[]) => void }) {
-  const gruplar = useMemo(() => eslestirHepsi(programlar, profil, bugun), [programlar, profil, bugun])
+function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil: DestekProfili; programlar: readonly Program[]; gruplar: EslesmeGruplari; bugun: string; odakla: boolean; sor: (sorular: Alan[]) => void }) {
+  const baslik = useRef<HTMLHeadingElement>(null)
+  useEffect(() => {
+    if (odakla) baslik.current?.focus()
+  }, [odakla])
   const harita = useMemo(() => new Map(programlar.map((p) => [p.id, p])), [programlar])
   const sorular = sonrakiSorular([...gruplar.belki, ...gruplar.uygun])
   const tutan = gruplar.belki.filter((e) => e.sorulanlarTuttu)
@@ -185,7 +193,7 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
   const kuralsiz = gruplar.belki.filter((e) => !e.kuralVar)
   return (
     <>
-      <p role="status" className="dt-sonuc-sayilar">Uygun: {gruplar.uygun.length}. Belki: {gruplar.belki.length}. Uygun değil: {gruplar.uygunDegil.length}.</p>
+      <h2 className="dt-sonuc-baslik" ref={baslik} tabIndex={-1}>Sonuçlar</h2>
       <p className="dt-sonuc-not">Bu bir ön eşleşmedir. Uygulama yalnız sorduğu koşulları denetler. Kesin kararı kurum verir.</p>
       {sorular.length ? (
         <section className="dt-sonuc-netlestir" aria-labelledby="dt-netlestir-baslik">
@@ -197,7 +205,7 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
           <Button type="primary" onClick={() => sor(sorulacaklar(profil, sorular))}>Bu soruları cevaplayın</Button>
         </section>
       ) : null}
-      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Uygulama bir programın bütün koşullarını denetleyemezse Uygun demez. Bu yüzden bu grup çoğu zaman boş kalır." eslesmeler={gruplar.uygun} programlar={harita} />
+      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Uygulama bir programın bütün koşullarını denetleyemezse “Uygun” demez. Bu sürümde hiçbir programın bütün koşulları denetlenmiyor. Bu yüzden bu grup boş kalır." eslesmeler={gruplar.uygun} programlar={harita} bugun={bugun} />
       <section className="dt-sonuc-grup dt-sonuc-belki" aria-labelledby="dt-sonuc-belki-baslik">
         <h2 id="dt-sonuc-belki-baslik">Belki ({gruplar.belki.length})</h2>
         <p>Bu programlarda bazı koşulları uygulama denetleyemiyor. Bu koşulları programın sayfasında okuyun.</p>
@@ -205,15 +213,15 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
           <>
             <h3>Sorduğumuz koşullar tutuyor ({tutan.length})</h3>
             <ul className="dt-sonuc-liste">
-              {tutan.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} />)}
+              {tutan.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
             </ul>
           </>
         ) : null}
         {bilgiEksik.length ? (
           <>
-            <h3>Bilgi eksik ({bilgiEksik.length})</h3>
+            <h3>Bilgi eksik ya da sonuç kesin değil ({bilgiEksik.length})</h3>
             <ul className="dt-sonuc-liste">
-              {bilgiEksik.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} />)}
+              {bilgiEksik.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
             </ul>
           </>
         ) : null}
@@ -221,12 +229,12 @@ function Sonuclar({ profil, programlar, bugun, sor }: { profil: DestekProfili; p
           <>
             <h3>Koşulları kendiniz okuyun ({kuralsiz.length})</h3>
             <ul className="dt-sonuc-liste">
-              {kuralsiz.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} />)}
+              {kuralsiz.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
             </ul>
           </>
         ) : null}
       </section>
-      <Grup sinif="dt-sonuc-uygun-degil" baslik="Uygun değil" aciklama="Bu programlarda en az bir koşul tutmuyor. Neden tutmadığı yazıyor." eslesmeler={gruplar.uygunDegil} programlar={harita} />
+      <Grup sinif="dt-sonuc-uygun-degil" baslik="Uygun değil" aciklama="Bu programlarda en az bir koşul tutmuyor. Tutmayan koşul her programın altında yazıyor." eslesmeler={gruplar.uygunDegil} programlar={harita} bugun={bugun} />
       <section className="dt-sonuc-cevaplar" aria-labelledby="dt-cevaplar-baslik">
         <h2 id="dt-cevaplar-baslik">Cevaplarınız</h2>
         <p>Cevaplarınız plan dosyasına yazılmaz. Bu cevaplar kararlarınızı eskitmez.</p>
@@ -255,28 +263,40 @@ export default function DtEslesmeScreen() {
 function Eslesme({ yer }: { yer: string }) {
   const programlar = useKatalog()
   const bugun = useBugun()
-  const buYil = Number(bugun.slice(0, 4))
-  const { profil: yuklenen } = useProfil(yer)
+  const { profil: yuklenen, hata: okumaHatasi } = useProfil(yer)
   const [profil, setProfil] = useState<DestekProfili>()
   const [mod, setMod] = useState<Mod>()
+  /* Kişi bir düğmeye basınca odak yeni ekranın başlığına taşınır. İlk açılışta odak yerinde kalır. */
+  const [odakla, setOdakla] = useState(false)
   const [hata, setHata] = useState<string>()
 
   useEffect(() => {
-    if (!yuklenen || profil) return
+    if (!yuklenen) return
+    /* Başka sekme profili değiştirirse ekran son hali kullanır. */
     setProfil(yuklenen)
-    setMod(profilDoluMu(yuklenen) ? { tur: 'sonuc' } : { tur: 'soru', sorular: sorulacaklar(yuklenen), i: 0 })
-  }, [yuklenen, profil])
+    setMod((m) => m ?? (profilDoluMu(yuklenen) ? { tur: 'sonuc' } : { tur: 'soru', sorular: sorulacaklar(yuklenen), i: 0 }))
+  }, [yuklenen])
+
+  const gruplar = useMemo(() => (profil ? eslestirHepsi(programlar, profil, bugun) : undefined), [programlar, profil, bugun])
+
+  const git = (sonraki: Mod) => {
+    setOdakla(true)
+    setMod(sonraki)
+  }
 
   const cevapla = (alan: Alan, deger: DestekProfili[Alan]) => {
     if (!profil || mod?.tur !== 'soru') return
-    const sonraki = { ...profil, [alan]: deger }
-    setProfil(sonraki)
-    profilKaydet(yer, sonraki).catch((error: unknown) => {
+    setProfil({ ...profil, [alan]: deger })
+    profilAlanKaydet(yer, alan, deger, bugun).catch((error: unknown) => {
       console.error(error)
       setHata('Cevabınız kaydedilemedi. Sayfayı yenileyip yeniden deneyin.')
     })
-    setMod(mod.i + 1 < mod.sorular.length ? { ...mod, i: mod.i + 1 } : { tur: 'sonuc' })
+    git(mod.i + 1 < mod.sorular.length ? { ...mod, i: mod.i + 1 } : { tur: 'sonuc' })
   }
+
+  const durumMetni = mod?.tur === 'soru'
+    ? `Soru ${mod.i + 1}. Toplam ${mod.sorular.length} soru var.`
+    : gruplar ? `Uygun: ${gruplar.uygun.length}. Belki: ${gruplar.belki.length}. Uygun değil: ${gruplar.uygunDegil.length}.` : ''
 
   return (
     <div className="page dt-eslesme">
@@ -286,11 +306,13 @@ function Eslesme({ yer }: { yer: string }) {
         description="Birkaç soruyu cevaplayın. Uygulama size uygun olabilecek programları gösterir. Bu bir ön eşleşmedir. Kesin kararı kurum verir."
       />
       <DtUyari />
+      {okumaHatasi ? <p className="dt-eslesme-hata" role="alert">{OKUMA_HATASI}</p> : null}
       {hata ? <p className="dt-eslesme-hata" role="alert">{hata}</p> : null}
+      <p role="status" className="dt-eslesme-durum">{durumMetni}</p>
       {profil && mod?.tur === 'soru' ? (
-        <Sihirbaz key={`${mod.sorular.join('-')}-${mod.i}`} mod={mod} profil={profil} buYil={buYil} cevapla={cevapla} geri={() => setMod({ ...mod, i: mod.i - 1 })} />
+        <Sihirbaz key={`${mod.sorular.join('-')}-${mod.i}`} mod={mod} profil={profil} bugun={bugun} odakla={odakla} cevapla={cevapla} geri={() => git({ ...mod, i: mod.i - 1 })} />
       ) : null}
-      {profil && mod?.tur === 'sonuc' ? <Sonuclar profil={profil} programlar={programlar} bugun={bugun} sor={(sorular) => setMod({ tur: 'soru', sorular, i: 0 })} /> : null}
+      {profil && gruplar && mod?.tur === 'sonuc' ? <Sonuclar profil={profil} programlar={programlar} gruplar={gruplar} bugun={bugun} odakla={odakla} sor={(sorular) => git({ tur: 'soru', sorular, i: 0 })} /> : null}
       <DtTerimler />
     </div>
   )

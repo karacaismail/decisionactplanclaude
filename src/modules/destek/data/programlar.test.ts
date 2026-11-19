@@ -70,6 +70,11 @@ describe('katalog denetimi', () => {
     expect(hatalar((p) => { p.ozet = 'Kapsam dışıdır.' })).toMatch(/işletme/)
   })
 
+  it('her ekranda görünen alanlarda tutar reddedilir', () => {
+    expect(hatalar((p) => { p.ozet = 'TÜBİTAK projelere 20.000.000 TL verir.' })).toMatch(/tutar/)
+    expect(hatalar((p) => { p.kanal = 'Başvuru ücreti 500 TL olan sistem' })).toMatch(/tutar/)
+  })
+
   it('özet tek cümledir ve kısadır', () => {
     expect(hatalar((p) => { p.ozet = 'Birinci cümle. İkinci cümle.' })).toMatch(/özet/i)
     expect(hatalar((p) => { p.ozet = 'Bu özet bilerek çok uzun yazıldı ve on altı kelimeden fazla kelime taşıdığı için bu denetimden asla geçmemelidir.' })).toMatch(/özet/i)
@@ -83,5 +88,6 @@ describe('katalog denetimi', () => {
     expect(tutarlariGizle("Sınır 100.000.000 TL'dir.")).toBe('Sınır (tutar gizlendi).')
     expect(tutarlariGizle('Eşik 2 milyar TL dolayındadır.')).toBe('Eşik (tutar gizlendi) dolayındadır.')
     expect(tutarlariGizle('Oran %75 olur.')).toBe('Oran %75 olur.')
+    expect(tutarVarMi('1709 EUREKA ve Eurostars-3')).toBe(false)
   })
 })

@@ -127,11 +127,16 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
   kosgebIsletmeGelistirme: set(KOSGEB_KAYDI),
   kosgebKuresel: set(
     {
-      kosul: 'Program ihracat ya da Ar-Ge büyümesi şartı arar.',
-      kesin: true,
+      /*
+       * Kesin değildir. Kurumun sayfası 19 Kasım 2026 günü okundu. Sayfaya göre dört yoldan biri yeterlidir.
+       * İki yol ihracat artışı ister. Öteki iki yol yüksek teknolojili orta ölçekli işletme ya da Turcorn 100 üyeliğidir.
+       * Uygulama bu iki yolu sormaz. Bu yüzden ihracatı ve Ar-Ge'si olmayan işletme "Belki" sonucunu alır.
+       */
+      kosul: 'Program hızlı büyüme, yüksek teknoloji, ihracat ya da Ar-Ge büyümesi şartı arar.',
+      kesin: false,
       denetle(p) {
         if (p.ihracat === 'yeni' || p.ihracat === 'duzenli' || p.arge === 'evet') return GECTI
-        if (p.ihracat === 'yok' && p.arge === 'hayir') return kaldi('Bu program ihracat ya da Ar-Ge büyümesi ister. Sizin ihracatınız ve Ar-Ge çalışmanız yok.')
+        if (p.ihracat === 'yok' && p.arge === 'hayir') return kaldi('Bu program çoğu yolda ihracat ya da Ar-Ge büyümesi ister. Sizin ihracatınız ve Ar-Ge çalışmanız yok. Program yüksek teknolojili işletmelere de açık olabilir. Kurumun sayfasını okuyun.')
         return bilgiYok(p.ihracat === 'yok' ? 'arge' : 'ihracat')
       },
     },

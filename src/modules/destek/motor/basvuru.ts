@@ -31,7 +31,11 @@ export interface Basvuru {
   guncelleme: string
 }
 
-export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'belgeler' | 'sonTarih'>>
+/**
+ * Başvuru değişikliği. Belge işareti tek madde olarak gelir.
+ * Böylece arka arkaya iki işaret birbirini silmez. Değişiklik her zaman son okunan kayda uygulanır.
+ */
+export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'sonTarih'>> & { belge?: { sira: number; hazir: boolean } }
 
 const metin = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0
 
@@ -47,12 +51,15 @@ function belgelerOku(v: unknown): BelgeMaddesi[] | undefined {
   return out
 }
 
+/** Başvuru kimliği. Kimlik anahtarda ve ekrandaki bağlantılarda kullanılır. */
+export const BASVURU_KIMLIGI = /^[A-Za-z0-9][A-Za-z0-9_-]{0,80}$/
+
 /** Depodan ya da dosyadan gelen değeri okur. Bozuk kayıt için undefined döner. */
 export function basvuruOku(value: unknown): Basvuru | undefined {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return undefined
   const v = value as Record<string, unknown>
   const belgeler = belgelerOku(v.belgeler)
-  if (!metin(v.id) || !metin(v.programId) || !metin(v.programAdi) || !metin(v.olusturma) || !metin(v.guncelleme)) return undefined
+  if (typeof v.id !== 'string' || !BASVURU_KIMLIGI.test(v.id) || !metin(v.programId) || !metin(v.programAdi) || !metin(v.olusturma) || !metin(v.guncelleme)) return undefined
   if (!BASVURU_DURUMLARI.includes(v.durum as BasvuruDurumu) || !DESTEKSIZ_CEVAPLARI.includes(v.desteksizYapar as DesteksizCevap) || !belgeler) return undefined
   if (v.sonTarih !== undefined && !gecerliIsoTarih(v.sonTarih)) return undefined
   const b: Basvuru = {
@@ -71,8 +78,13 @@ export function basvuruOku(value: unknown): Basvuru | undefined {
 
 /** Değişikliği uygular. Geçersiz değişiklikte hata fırlatır. */
 export function basvuruDegistir(b: Basvuru, degisiklik: BasvuruDegisikligi, simdi: string): Basvuru {
-  const sonraki: Basvuru = { ...b, ...degisiklik, guncelleme: simdi }
+  const { belge, ...alanlar } = degisiklik
+  const sonraki: Basvuru = { ...b, ...alanlar, guncelleme: simdi }
   if ('sonTarih' in degisiklik && degisiklik.sonTarih === undefined) delete sonraki.sonTarih
+  if (belge) {
+    if (!Number.isInteger(belge.sira) || belge.sira < 0 || belge.sira >= b.belgeler.length || typeof belge.hazir !== 'boolean') throw new Error('Belge bulunamadı.')
+    sonraki.belgeler = b.belgeler.map((x, i) => (i === belge.sira ? { ...x, hazir: belge.hazir } : x))
+  }
   const okunan = basvuruOku(sonraki)
   if (!okunan) throw new Error('Başvuru değişikliği geçersiz.')
   return okunan

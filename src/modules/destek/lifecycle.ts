@@ -6,8 +6,9 @@
 import { createPlanScopedLifecycle } from '@/platform/planScoped'
 import type { ModuleLifecycle } from '@/platform/types'
 import { MODUL_ID, ozetiYenile } from './depo'
+import manifest from './manifest'
 
-const ortak = createPlanScopedLifecycle(MODUL_ID, 1)
+const ortak = createPlanScopedLifecycle(MODUL_ID, manifest.schemaVersion)
 
 const lifecycle: ModuleLifecycle = {
   ...ortak,

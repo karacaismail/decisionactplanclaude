@@ -12,7 +12,9 @@
 
 .dt-eslesme .dt-eslesme-sihirbaz { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-content); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); min-inline-size: 0; }
 
-.dt-eslesme .dt-eslesme-ilerleme { font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
+.dt-eslesme .dt-eslesme-durum { font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
+
+.dt-eslesme .dt-eslesme-durum:empty { display: none; }
 
 .dt-eslesme .dt-eslesme-alanlar { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-content); min-inline-size: 0; }
 
@@ -28,7 +30,7 @@
 
 .dt-eslesme .dt-eslesme-eylemler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); }
 
-.dt-eslesme .dt-sonuc-sayilar { font-size: var(--font-subsection-title); font-weight: var(--weight-strong); }
+.dt-eslesme .dt-sonuc-baslik { font-size: var(--font-section-title); }
 
 .dt-eslesme .dt-sonuc-not { color: var(--color-text-secondary); }
 

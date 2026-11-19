@@ -3,7 +3,7 @@
  * Kaynağı ve tarihi olmayan sayı katalogda duramaz. Bilinmeyen sabit değer, tekrar eden kimlik,
  * https olmayan adres ve ISO biçiminde olmayan tarih de reddedilir.
  */
-import { gecerliIsoTarih } from '../motor/tazelik'
+import { gecerliIsoTarih, tutarVarMi } from '../motor/tazelik'
 import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type Program } from './tipler'
 
 const KIMLIK = /^[a-zA-Z][a-zA-Z0-9]*$/
@@ -93,6 +93,10 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     if (!gecerliIsoTarih(p.kaynak?.asOf)) hatalar.push(`${yer('kaynak.asOf')}: son kontrol tarihi ISO biçiminde değil.`)
     hatalar.push(...metinHatalari(p.kaynak?.ad, yer('kaynak.ad')))
     for (const alan of ['ad', 'kurum', 'destekTuru', 'ozet', 'kanal'] as const) hatalar.push(...metinHatalari(p[alan], yer(alan)))
+    /* Bu alanlar her ekranda görünür. Tutar bu alanlarda durmaz. Tutar yalnız tutar bölümünde ve gizlenebilen metinlerde durur. */
+    for (const [alan, m] of [['ad', p.ad], ['ozet', p.ozet], ['kanal', p.kanal], ['kurum', p.kurum], ['kaynak.ad', p.kaynak?.ad], ...p.tarihler.map((t, i) => [`tarihler[${i}].ad`, t.ad])] as [string, string][]) {
+      if (typeof m === 'string' && tutarVarMi(m)) hatalar.push(`${yer(alan)}: bu alanda tutar olmamalı.`)
+    }
     for (const alan of ['kosullar', 'uygunGider', 'haricGider', 'belgeler'] as const) {
       p[alan].forEach((m, i) => hatalar.push(...metinHatalari(m, yer(`${alan}[${i}]`))))
     }

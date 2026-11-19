@@ -6,7 +6,7 @@
  */
 import type { IsoTarih, Program } from '../data/tipler'
 import { KURALLAR, type KuralSeti } from './kurallar'
-import { cevaplandi, SORU_SIRASI, type Alan, type DestekProfili } from './profil'
+import { SORU_SIRASI, type Alan, type DestekProfili } from './profil'
 
 export type EslesmeSonucu = 'uygun' | 'belki' | 'uygun_degil'
 
@@ -80,7 +80,3 @@ export function sonrakiSorular(eslesmeler: readonly Eslesme[]): Alan[] {
   return SORU_SIRASI.filter((a) => alanlar.has(a))
 }
 
-/** Henüz sorulmamış ve sonucu netleştirecek sorular. "Bilmiyorum" cevabı yeniden sorulmaz. */
-export function sorulmamisSorular(eslesmeler: readonly Eslesme[], profil: DestekProfili): Alan[] {
-  return sonrakiSorular(eslesmeler).filter((a) => !cevaplandi(profil, a))
-}
