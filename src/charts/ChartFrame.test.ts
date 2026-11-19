@@ -242,7 +242,7 @@ describe('ChartFrame', () => {
     await intersect(true)
     expect(loadChart).toHaveBeenCalledTimes(1)
     expect(container.querySelector('[role="img"]')?.getAttribute('aria-label')).toBe(props.title)
-    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 240, ariaLabel: props.title })
+    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 240, ariaLabel: props.title, description: `${props.title}. ${props.summary}` })
     expect(observers[0].disconnect).toHaveBeenCalled()
     await intersect(false)
     expect(container.querySelector('[role="img"]')).not.toBeNull()
@@ -264,7 +264,7 @@ describe('ChartFrame', () => {
     await react.act(async () => { toggle('Grafik').click() })
     expect(semanticTable()).toBe(table)
     expect(table.closest('.sr-only')).not.toBeNull()
-    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 320, ariaLabel: props.title })
+    expect(renderChart).toHaveBeenLastCalledWith({ option: props.option, height: 320, ariaLabel: props.title, description: `${props.title}. ${props.summary}` })
   })
 
   it('görünürlük API desteği yoksa ekrana girene kadar grafiği yüklemez', async () => {

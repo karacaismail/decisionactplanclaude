@@ -59,7 +59,9 @@ function useShellFocusContinuity() {
       const candidates = [...document.querySelectorAll<HTMLElement>('.app-shell a, .app-shell button')]
         .filter((element) => element.getClientRects().length)
       const counterpart = candidates.find((element) => href && element.getAttribute('href') === href)
+      /* Üst şeritteki menü düğmesi dar ekranda gizlenir. O zaman alt menüdeki eşi odak alır. */
       const fallback = candidates.find((element) => element.classList.contains('shell-menu-toggle'))
+        ?? candidates.find((element) => element.matches('.bottom-nav button[aria-haspopup="dialog"]'))
         ?? candidates.find((element) => element.classList.contains('brand'))
       const target = counterpart ?? fallback
       target?.focus({ preventScroll: true })
@@ -280,11 +282,12 @@ export function AppShell() {
             </Link>
           {plan?.example ? <span className="tag">Örnek plan</span> : null}
         </nav>
+        {/* Kayıt durumu plan adının yanında durur. Odak almaz, sekme sırasını değiştirmez. */}
+        {plan ? <div className="topbar-save"><SaveStatus /></div> : null}
         <div className="topbar-actions">
           <CommandPaletteButton />
           <Button type="text" aria-label={nextTheme === 'dark' ? 'Koyu temaya geç' : 'Açık temaya geç'} icon={themeMode === 'dark' ? <Sun size={20} /> : <Moon size={20} />} onClick={() => setTheme(nextTheme)} />
         </div>
-        {plan ? <div className="topbar-save"><SaveStatus /></div> : null}
       </Layout.Header>
         <nav className="no-print product-nav" aria-label="Ana bölümler">
           {!plan ? (

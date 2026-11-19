@@ -1,12 +1,13 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { theme } from 'antd'
 import * as echarts from 'echarts/core'
 import type { ECBasicOption } from 'echarts/types/dist/shared'
 import { BarChart, LineChart, PieChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart } from 'echarts/charts'
 import { GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, TimelineComponent } from 'echarts/components'
 import { CanvasRenderer } from 'echarts/renderers'
-import { font, motion } from '@/theme/tokens'
-import { usePrintMode } from '@/app/printMode'
+import { font, motion, palette } from '@/theme/tokens'
+import { usePrintMode, useResolvedTheme } from '@/app/printMode'
+import { readableOption } from './readable'
 
 echarts.use([BarChart, LineChart, PieChart, RadarChart, GaugeChart, FunnelChart, ScatterChart, HeatmapChart, SankeyChart, GridComponent, TooltipComponent, LegendComponent, MarkLineComponent, VisualMapComponent, AriaComponent, DatasetComponent, TimelineComponent, CanvasRenderer])
 
@@ -35,22 +36,33 @@ function reduceOptionMotion(option: ECBasicOption): ECBasicOption {
   }
 }
 
-/** ECharts sarmalayıcı. Çubuk, çizgi, donut (pie), huni, dağılım ve diğer türler kayıtlıdır. Renk ve yazı tokenlardan gelir. Etiketler 14 pikselin altına inmez. Desen ve kaydırıcı yoktur. */
-export default function EChart({ option, height, ariaLabel }: { option: unknown; height: number; ariaLabel: string }) {
+/**
+ * ECharts sarmalayıcı. Çubuk, çizgi, donut (pie), huni, dağılım ve diğer türler kayıtlıdır.
+ * Renk ve yazı tokenlardan gelir. Seçenek readableOption ile ortak okunurluk kurallarından geçer:
+ * yazı 14 pikselin altına inmez, komşu dilimler ayrışır, ekran okuyucu açıklaması Türkçedir.
+ * Desen ve kaydırıcı yoktur. description verilmezse ekran okuyucu ariaLabel değerini okur.
+ */
+export default function EChart({ option, height, ariaLabel, description }: { option: unknown; height: number; ariaLabel: string; description?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [failure, setFailure] = useState<{ error: unknown } | null>(null)
   const { token } = theme.useToken()
   /* Yazdırırken grafik ilk karede tam çizilir. Giriş hareketi kâğıda yarım basılmaz. */
   const printing = usePrintMode()
+  /* Yazdırırken açık tema döner. Boşluk rengi grafiğin çizildiği çalışma yüzeyidir. */
+  const mode = useResolvedTheme()
+  /* Açıklama değişince grafik yeniden kurulmaz. Yeni açıklama sonraki çizimde okunur. */
+  const spoken = useRef(description ?? ariaLabel)
+  /* Düzen etkisi çizim etkisinden önce çalışır. Çizim güncel açıklamayı okur. */
+  useLayoutEffect(() => {
+    spoken.current = description ?? ariaLabel
+  }, [description, ariaLabel])
   useEffect(() => {
     if (!ref.current) return
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     /* Desen (decal) yok. Yazı 14 px Outfit. Süre ve eğri hareket tokenından gelir. */
     const base = {
-      color: [token.colorText, token.colorTextSecondary, token.colorBorder, token.colorSuccess, token.colorWarning, token.colorError],
       backgroundColor: 'transparent',
       textStyle: { fontFamily: font.family, fontSize: font.helper, color: token.colorText },
-      aria: { enabled: true, decal: { show: false } },
       animationDuration: motion.page,
       animationDurationUpdate: motion.page,
       animationEasing: 'cubicInOut' as const,
@@ -58,7 +70,8 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
     }
     /* Seçenek "baseOption" ve "media" taşıyabilir. Ortak biçim o zaman baseOption içine girer. ECharts bu biçimde zaman çizgisi bileşenini arar; bileşen bu yüzden kayıtlıdır. */
     const o = option as ECBasicOption
-    const resolved: ECBasicOption = o.baseOption ? { ...o, baseOption: { ...base, ...o.baseOption }, media: o.media ?? [] } : { ...base, ...o }
+    const merged: ECBasicOption = o.baseOption ? { ...o, baseOption: { ...base, ...o.baseOption }, media: o.media ?? [] } : { ...base, ...o }
+    const resolved = readableOption(merged, { mode, gap: palette(mode).surfaceWork, description: spoken.current }) as ECBasicOption
     const chart = echarts.init(ref.current, undefined, { renderer: 'canvas' })
     let disposed = false
     let ro: ResizeObserver | undefined
@@ -107,7 +120,8 @@ export default function EChart({ option, height, ariaLabel }: { option: unknown;
       cleanup()
       throw error
     }
-  }, [option, token, printing])
+  }, [option, token, printing, mode])
   if (failure) throw failure.error
-  return <div ref={ref} role="img" aria-label={ariaLabel} style={{ width: '100%', height }} />
+  /* React ve ECharts aynı adı yazar. Böylece ad eskimez. */
+  return <div ref={ref} role="img" aria-label={description ?? ariaLabel} style={{ width: '100%', height }} />
 }

@@ -14,6 +14,14 @@ async function openDemo(page: Page) {
   }).toPass()
 }
 
+/** Çekmeceyi açan görünen düğme. Dar telefonda bu düğme alt menüdedir. Geniş ekranda düğme yoktur. */
+async function drawerToggle(page: Page) {
+  for (const button of [page.locator('.shell-menu-toggle').first(), page.locator('.bottom-nav button[aria-haspopup="dialog"]')]) {
+    if (await button.isVisible()) return button
+  }
+  return null
+}
+
 type Motion = { prop: string; easing: string; duration: number; running: boolean }
 
 function drawerMotion(page: Page): Promise<Motion[]> {
@@ -28,8 +36,9 @@ function drawerMotion(page: Page): Promise<Motion[]> {
 
 test('menü çekmecesi iki yönde aynı eğri ve süreyle hareket eder', async ({ page }) => {
   await openDemo(page)
-  const toggle = page.locator('.shell-menu-toggle').first()
-  test.skip(!(await toggle.isVisible()), 'Bu genişlikte çekmece düğmesi yok')
+  const toggle = await drawerToggle(page)
+  test.skip(!toggle, 'Bu genişlikte çekmece düğmesi yok')
+  if (!toggle) return
 
   await toggle.click()
   // Anlamsal durum hemen güncellenir. Hareket o sırada sürer.
@@ -57,8 +66,9 @@ test.describe('azaltılmış hareket', () => {
   test.use({ reducedMotion: 'reduce' })
   test('çekmece hareketi 0,01 milisaniyeye iner', async ({ page }) => {
     await openDemo(page)
-    const toggle = page.locator('.shell-menu-toggle').first()
-    test.skip(!(await toggle.isVisible()), 'Bu genişlikte çekmece düğmesi yok')
+    const toggle = await drawerToggle(page)
+    test.skip(!toggle, 'Bu genişlikte çekmece düğmesi yok')
+    if (!toggle) return
     await toggle.click()
     await expect(toggle).toHaveAttribute('aria-expanded', 'true')
     const durations = await page.evaluate(() => [...document.querySelectorAll('.shell-drawer .ant-drawer-content-wrapper, .shell-drawer .ant-drawer-mask')]

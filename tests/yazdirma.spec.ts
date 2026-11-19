@@ -127,7 +127,11 @@ test.describe('gerçek yazdırma yolu', () => {
     const darkAxisPixels = () => page.evaluate(async () => {
       await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
       let count = 0
+      // Halka ve huni dilimleri arasında 2 piksellik beyaz boşluk vardır (UX turu 6).
+      // Koyu dilimin beyaza yumuşak geçişi bu renge yakın piksel üretir. Bu iki grafik sayılmaz.
+      const skipped = ['Kanıt basamağı dağılımı', 'Teklif ve ödeme hunisi']
       for (const canvas of document.querySelectorAll<HTMLCanvasElement>('main canvas')) {
+        if (skipped.includes(canvas.closest('figure')?.querySelector('h3')?.textContent?.trim() ?? '')) continue
         const ctx = canvas.getContext('2d')
         if (!ctx || !canvas.width || !canvas.height) continue
         const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data
