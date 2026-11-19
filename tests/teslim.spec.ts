@@ -611,7 +611,8 @@ test('ekran kodu beklenirken yükleme durumu ve uygulama başlığı görünür 
     await page.goto('./#/yontemler', { waitUntil: 'domcontentloaded' })
     const loading = page.getByRole('status').filter({ hasText: 'Sayfa yükleniyor' })
     await expect(loading).toBeVisible()
-    await expect(loading).toHaveAttribute('aria-busy', 'true')
+    /* Durum bölgesi meşgul işaretlenmez. Meşgul bölge duyuruyu bekletir ve "Sayfa yükleniyor." okunmaz. */
+    await expect(loading).not.toHaveAttribute('aria-busy', 'true')
     await expect(page.getByRole('link', { name: 'Girişimci Aksiyon Planı, panoya git' })).toBeVisible()
     await captureState(page, testInfo, 'initial-loading')
     const brand = page.getByRole('link', { name: 'Girişimci Aksiyon Planı, panoya git' })
@@ -644,7 +645,7 @@ test('klavye ile ekran açılırken menü kapanır ve yükleme odağı korunur',
     const loading = page.getByRole('status').filter({ hasText: 'Sayfa yükleniyor' })
     await captureState(page, testInfo, 'keyboard-loading')
     await expect.soft(loading).toBeVisible()
-    await expect.soft(loading).toHaveAttribute('aria-busy', 'true')
+    await expect.soft(loading).not.toHaveAttribute('aria-busy', 'true')
     const brand = page.getByRole('link', { name: 'Girişimci Aksiyon Planı, panoya git' })
     await tabTo(page, brand, browserName)
     await page.keyboard.press(tabKey(browserName, true))

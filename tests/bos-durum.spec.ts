@@ -44,6 +44,12 @@ test('boş planda Geçmiş, Kanıtlar ve Çıktılar boş durumu nedenini ve eyl
   await ready(page)
   const evidence = page.getByRole('main').locator('.empty-state')
   await expect(evidence.getByRole('heading', { name: 'Henüz kanıt yok' })).toBeVisible()
+  /* Tablonun boş satırı yazıyı soluk renge boyar. Boş durum başlığı yine sayfa başlığının rengindedir. */
+  const colors = await page.evaluate(() => ({
+    title: getComputedStyle(document.querySelector('main .evidence-table .empty-title')!).color,
+    heading: getComputedStyle(document.querySelector('main h1')!).color,
+  }))
+  expect(colors.title).toBe(colors.heading)
   const add = evidence.getByRole('button', { name: 'Kanıt ekle' })
   await expectTarget(add)
   /* Ekranda tek dolu ana düğme olur. Boş durumdaki düğme dolu değildir. */

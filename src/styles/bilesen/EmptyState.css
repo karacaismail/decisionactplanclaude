@@ -1,6 +1,6 @@
 /* Ortak boş durum. Mimari: docs/css-mimarisi.md. Kurallar: docs/tasarim-sistemi.md, "Boş, yükleme ve hata durumları". */
 
-.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--gap-control); min-inline-size: 0; padding-block: var(--padding-empty-block); }
+.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--gap-control); min-inline-size: 0; padding-block: var(--padding-empty-block); text-align: start; }
 
 .empty-head { display: flex; align-items: center; gap: var(--gap-icon); min-inline-size: 0; }
 
@@ -8,7 +8,8 @@
 
 .empty-icon > svg { inline-size: var(--icon-inline); block-size: var(--icon-inline); }
 
-.empty-state .empty-title { margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); line-height: var(--line-body); }
+/* Tablo boş satırı yazıyı soluk renge boyar. Başlık bu yüzden kendi rengini açıkça alır. */
+.empty-state .empty-title { color: var(--color-text-primary); margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); line-height: var(--line-body); }
 
 .empty-state > p { margin: 0; max-inline-size: 52ch; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-secondary); }
 
