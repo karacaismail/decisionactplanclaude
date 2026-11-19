@@ -1,0 +1,35 @@
+/* Tek destek programının ekranı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-program { min-inline-size: 0; }
+
+.dt-program .dt-program-geri, .dt-program .dt-program-baglanti, .dt-program .dt-program-dis { display: inline-flex; align-items: center; gap: var(--gap-icon); justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); }
+
+.dt-program .dt-program-baglanti, .dt-program .dt-program-dis { text-decoration: underline; text-underline-offset: 3px; }
+
+.dt-program .dt-program-ikon { inline-size: var(--icon-inline); block-size: var(--icon-inline); flex-shrink: 0; }
+
+.dt-program .dt-gizli { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+.dt-program .dt-program-ust { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-inline-size: 0; }
+
+.dt-program .dt-program-ust p { margin: 0; font-size: var(--font-body); }
+
+.dt-program .dt-program-kontrol, .dt-program .dt-program-kaynak { color: var(--color-text-secondary); }
+
+.dt-program .dt-program-etiketler { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.dt-program .dt-program-eslesme { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); background: var(--color-selected-bg); border-radius: var(--radius-panel); min-inline-size: 0; }
+
+.dt-program .dt-program-bolumler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-section); min-inline-size: 0; }
+
+.dt-program .dt-program-bolum { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-program h2 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); }
+
+.dt-program h3 { margin: var(--space-2) 0 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); }
+
+.dt-program .dt-program-bolum p, .dt-program .dt-program-eslesme p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; overflow-wrap: break-word; }
+
+.dt-program .dt-program-vurgu { font-weight: var(--weight-strong); }
+
+.dt-program .dt-program-liste { display: grid; gap: var(--space-2); margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; overflow-wrap: break-word; }
