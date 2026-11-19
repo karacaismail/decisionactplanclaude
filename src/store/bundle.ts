@@ -6,7 +6,7 @@
  */
 import type { PlanDoc } from '@/data/types'
 import { MAX_IMPORT_BYTES, validatePlanDoc } from '@/data/validate'
-import { collectModuleSlices, notifyPlanDeleted, restoreModuleSlices } from '@/platform/lifecycle'
+import { collectModuleSlices, restoreModuleSlices } from '@/platform/lifecycle'
 import { usePlanStore } from './planStore'
 
 export const BUNDLE_KIND = 'decisionactplan-bundle'
@@ -71,15 +71,26 @@ export async function exportPlanFile(plan: PlanDoc): Promise<PlanDoc | PlanBundl
 }
 
 /**
- * Dosyayı içe alır. Plan kopya olarak eklenir ve yeni kimlik alır.
- * Modül verisi yeni kimliğe taşınır. Modül hatası planı geri almaz. Hata uyarı listesinde döner.
+ * Dosyadaki örnek plan var olan örneğin yerine geçer mi?
+ * Geçecekse ekran önce kişiye sorar. Örnek plan kimliğini korur ve eskisinin yerine yazılır.
  */
-export async function importPlanFile(text: string, byteLength?: number): Promise<{ planId: string; warnings: string[] }> {
-  const { plan, modules } = parseImportFile(text, byteLength)
-  /* Örnek plan kimliğini korur ve eskisinin yerine geçer. Eski örneğin modül verisi de silinir. */
-  const replaced = Boolean(usePlanStore.getState().plans[plan.id]) && Boolean(plan.example)
+export function replacesExistingExample(plan: PlanDoc): boolean {
+  return Boolean(plan.example) && Boolean(usePlanStore.getState().plans[plan.id])
+}
+
+/**
+ * Çözülmüş dosyayı içe alır. Plan kopya olarak eklenir ve yeni kimlik alır.
+ * Örnek plan kimliğini korur ve eskisinin yerine geçer. Eski örneğin modül verisi silinmez.
+ * Böylece örneğe bağlı projeler ve destek başvuruları kaybolmaz. Dosyadaki dilim bu verinin yanına yazılır.
+ * Modül hatası planı geri almaz. Hata uyarı listesinde döner.
+ */
+export async function importParsedFile({ plan, modules }: { plan: PlanDoc; modules: Record<string, unknown> }): Promise<{ planId: string; warnings: string[] }> {
   const planId = usePlanStore.getState().importPlan(plan)
-  const cleanup = replaced ? await notifyPlanDeleted(planId) : []
   const warnings = await restoreModuleSlices(modules, { [plan.id]: planId })
-  return { planId, warnings: [...cleanup, ...warnings] }
+  return { planId, warnings }
+}
+
+/** Dosya metnini çözer ve içe alır. Sorun varsa Türkçe hata fırlatır. */
+export async function importPlanFile(text: string, byteLength?: number): Promise<{ planId: string; warnings: string[] }> {
+  return importParsedFile(parseImportFile(text, byteLength))
 }

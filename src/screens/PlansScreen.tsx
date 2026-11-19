@@ -8,7 +8,7 @@ import { App as AntApp, Button, Card, Dropdown, Empty, Input, Modal, Pagination,
 import { Plus, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSquareOut } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
-import { exportPlanFile, importPlanFile } from '@/store/bundle'
+import { exportPlanFile, importParsedFile, parseImportFile, replacesExistingExample } from '@/store/bundle'
 import { formatDate } from '@/engine/format'
 import { downloadJson, safeFileName } from '@/engine/sync'
 import { buildDemoPlan } from '@/data/demo'
@@ -79,7 +79,7 @@ export function PlansScreen() {
   const markBackup = usePlanStore((s) => s.markBackup)
   /* Kayıt okunamadıysa yeni plan açılmaz. Açılırsa depoya yazılmaz ve kaybolur. */
   const loadFailed = usePlanStore((s) => s.loadFailed)
-  const { message } = AntApp.useApp()
+  const { message, modal } = AntApp.useApp()
   const [open, setOpen] = useState(false)
   const [name, setName] = useState('')
   const [query, setQuery] = useState('')
@@ -128,9 +128,32 @@ export function PlansScreen() {
     goTop('/baslangic')
   }
 
-  const openDemo = (build: () => PlanDoc) => {
+  /*
+   * Örnek zaten varsa yeni örnek eskisinin yerine geçer. Bu yüzden önce kişiye sorulur.
+   * Menüdeki örnek ve dosyadan gelen örnek aynı soruyu sorar. İkisi de modül verisini silmez.
+   */
+  const confirmExampleReplace = (name: string) => new Promise<boolean>((resolve) => {
+    modal.confirm({
+      title: 'Örnek plan yeniden açılsın mı?',
+      content: (
+        <>
+          <p>“{name}” planı zaten var. Yeni örnek eski örneğin yerine geçer.</p>
+          <p>Örnek planda yaptığınız değişiklikler silinir.</p>
+          <p>Bu örneğe bağlı projeler ve destek başvuruları silinmez.</p>
+        </>
+      ),
+      okText: 'Örneği yeniden aç',
+      cancelText: 'Vazgeç',
+      onOk: () => resolve(true),
+      onCancel: () => resolve(false),
+    })
+  })
+
+  const openDemo = async (build: () => PlanDoc) => {
     try {
-      importPlan(build())
+      const plan = build()
+      if (replacesExistingExample(plan) && !(await confirmExampleReplace(plan.name))) return
+      importPlan(plan)
       goTop('/ozet')
     } catch (err) {
       message.error(err instanceof Error ? err.message : 'Örnek plan açılamadı.')
@@ -156,8 +179,10 @@ export function PlansScreen() {
     if (!file) return
     /* Eski düz plan dosyası ve paket dosyası aynı yoldan alınır. */
     file.text()
-      .then((t) => importPlanFile(t, file.size))
-      .then(({ warnings }) => {
+      .then(async (t) => {
+        const parsed = parseImportFile(t, file.size)
+        if (replacesExistingExample(parsed.plan) && !(await confirmExampleReplace(parsed.plan.name))) return
+        const { warnings } = await importParsedFile(parsed)
         message.success('Plan içe alındı.')
         for (const w of warnings) message.warning(w)
       })
@@ -172,14 +197,14 @@ export function PlansScreen() {
     onClick: ({ key }: { key: string }) => {
       if (key === 'import') fileInput.current?.click()
       const example = EXAMPLES.find((e) => e.key === key)
-      if (example) openDemo(example.build)
+      if (example) void openDemo(example.build)
     },
   }
 
   const emptyActions = (
     <span className="empty-actions">
       {EXAMPLES.map((e) => (
-        <Button key={e.key} icon={<Sparkle size={16} />} onClick={() => openDemo(e.build)} disabled={loadFailed}>
+        <Button key={e.key} icon={<Sparkle size={16} />} onClick={() => void openDemo(e.build)} disabled={loadFailed}>
           {e.label}
         </Button>
       ))}
@@ -283,7 +308,7 @@ export function PlansScreen() {
                     </Button>
                     <Popconfirm
                       title="Plan silinsin mi?"
-                      description="Bu işlem geri alınamaz."
+                      description="Planın projeleri ve destek başvuruları da silinir. Bu işlem geri alınamaz."
                       okText="Sil"
                       cancelText="Vazgeç"
                       open={confirmId === r.plan.id}

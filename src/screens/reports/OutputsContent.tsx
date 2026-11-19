@@ -3,10 +3,11 @@ import '@/styles/desen/strateji.css'
 import '@/styles/ekran/OutputsContent.css'
 import '@/styles/yazdirma/yazdirma.css'
 import { useLayoutEffect, useMemo, useState } from 'react'
-import { Anchor, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
+import { Anchor, App as AntApp, Button, Card, Collapse, Descriptions, Grid, Input, Select, Table, Timeline, Typography } from 'antd'
 import { DownloadSimple, FileCode, Printer, PushPin } from '@phosphor-icons/react'
 import { Link, useSearchParams } from 'react-router'
 import { usePlanStore, useCurrentPlan, migratePlan } from '@/store/planStore'
+import { exportPlanFile } from '@/store/bundle'
 import { buildActionPlan, buildExecutiveReport, reportToMarkdown, type Fact, type Report, type ReportSection } from '@/reports/build'
 import { buildHandoffReport, handoffToMarkdown, type HandoffReport } from '@/reports/handoff'
 import { formatDate, uid } from '@/engine/format'
@@ -124,6 +125,7 @@ export function OutputsScreen() {
   const update = usePlanStore((s) => s.update)
   const snapshot = usePlanStore((s) => s.snapshot)
   const markBackup = usePlanStore((s) => s.markBackup)
+  const { message } = AntApp.useApp()
   const bp = Grid.useBreakpoint()
   const wide = Boolean(bp.md)
   const [params] = useSearchParams()
@@ -192,9 +194,17 @@ export function OutputsScreen() {
   const stateText = isCurrent ? 'Güncel taslak her değişiklikle güncellenir.' : `Sürüm kaydı: ${formatDate(revision!.createdAt)}. Bu sürüm donduruldu. Sonraki değişiklikler bu belgeyi etkilemez.`
   const downloadJson = () => {
     if (!viewed) return
-    download(`${slug}-veri-${versionSlug}.json`, JSON.stringify(viewed, null, 2), 'application/json')
-    /* Güncel taslağın indirilmesi yedek sayılır. Eski sürümün indirilmesi sayılmaz. */
-    if (isCurrent && plan) markBackup(plan.id)
+    const name = `${slug}-veri-${versionSlug}.json`
+    /* Eski sürüm donmuş plan kopyasıdır. Modül verisi taşımaz ve yedek sayılmaz. */
+    if (!isCurrent || !plan) {
+      download(name, JSON.stringify(viewed, null, 2), 'application/json')
+      return
+    }
+    /* Güncel taslak yedek sayılır. Bu yüzden dosya modül verisini de taşır. Modül verisi yoksa düz plan yazılır. */
+    exportPlanFile(plan).then((data) => {
+      download(name, JSON.stringify(data, null, 2), 'application/json')
+      markBackup(plan.id)
+    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Plan dışa aktarılamadı.'))
   }
 
   /* Sürüm zaman çizgisi: en yeni üstte, güncel taslak en altta. Seçili sürüm turuncu nokta ile işaretlidir. */

@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { buildDemoPlan } from '@/data/demo'
 import { emptyPlan } from '@/data/types'
 import { usePlanStore } from './planStore'
-import { BUNDLE_KIND, buildExportFile, importPlanFile, MAX_BUNDLE_BYTES, parseImportFile } from './bundle'
+import { BUNDLE_KIND, buildExportFile, importParsedFile, importPlanFile, MAX_BUNDLE_BYTES, parseImportFile, replacesExistingExample } from './bundle'
 import { MAX_IMPORT_BYTES } from '@/data/validate'
 import { createMemoryKvStore } from '@/platform/kv'
 import { setDefaultKvStore } from '@/platform/kv'
@@ -110,7 +110,15 @@ describe('dışa aktarma sınırı', () => {
 })
 
 describe('örnek planı yeniden içe alma', () => {
-  it('eski örneğin modül verisi silinir, yeni dilim yazılır', async () => {
+  it('örnek zaten varsa bunu söyler, kopya planda söylemez', () => {
+    const example = buildDemoPlan()
+    expect(replacesExistingExample(example)).toBe(false)
+    usePlanStore.getState().importPlan(structuredClone(example))
+    expect(replacesExistingExample(example)).toBe(true)
+    expect(replacesExistingExample(plain())).toBe(false)
+  })
+
+  it('eski örneğin modül verisi sessizce silinmez, dosyadaki dilim eklenir', async () => {
     const kv = createMemoryKvStore()
     setDefaultKvStore(kv)
     const example = buildDemoPlan()
@@ -119,6 +127,15 @@ describe('örnek planı yeniden içe alma', () => {
     const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: example, modules: { proje: { schemaVersion: 1, entries: [['proje/yeni', projeKaydi('yeni', example.id)]] } } }
     const { planId } = await importPlanFile(JSON.stringify(bundle))
     expect(planId).toBe(example.id)
-    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/yeni`])
+    expect((await kv.keys(`proje/${planId}/`)).sort()).toEqual([`proje/${planId}/eski`, `proje/${planId}/proje/yeni`])
+  })
+
+  it('çözülmüş dosya da aynı yoldan alınır', async () => {
+    const kv = createMemoryKvStore()
+    setDefaultKvStore(kv)
+    const bundle = { kind: BUNDLE_KIND, bundleVersion: 1, plan: plain(), modules: { proje: { schemaVersion: 1, entries: [['proje/a', projeKaydi('a')]] } } }
+    const { planId } = await importParsedFile(parseImportFile(JSON.stringify(bundle)))
+    expect(planId).not.toBe('plan-eski')
+    expect(await kv.keys(`proje/${planId}/`)).toEqual([`proje/${planId}/proje/a`])
   })
 })
