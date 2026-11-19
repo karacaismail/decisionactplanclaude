@@ -1,9 +1,10 @@
 import '@/styles/bilesen/CommandPalette.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Empty, Input, List, Modal } from 'antd'
+import { Button, Input, List, Modal } from 'antd'
 import { useNavigate } from 'react-router'
 import { ArrowElbowDownLeft, BookOpen, Compass, Flag, ListChecks, MagnifyingGlass, SquaresFour } from '@phosphor-icons/react'
 import { useCommandPalette } from './CommandPaletteButton'
+import { EmptyState } from './EmptyState'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
 import { STEPS, stepPath, stepHeading } from '@/data/registry'
 import models from '@/data/models.json'
@@ -171,12 +172,12 @@ export default function CommandPalette() {
           Kapat
         </Button>
       </div>
+      {results.length === 0 ? (
+        <div className="cmdk-empty">
+          <EmptyState title="Sonuç yok" text="Başka bir kelime deneyin." actionless="Arama kutusu bu panelin en üstünde duruyor." />
+        </div>
+      ) : null}
       <div id="cmdk-list" ref={listRef} className="cmdk-list" role="listbox" aria-label="Sonuçlar">
-        {results.length === 0 ? (
-          <div className="cmdk-empty">
-            <Empty description="Sonuç yok. Başka bir kelime deneyin." image={Empty.PRESENTED_IMAGE_SIMPLE} />
-          </div>
-        ) : null}
         {groups.map(({ g, items }) => {
           const Icon = GROUP_ICON[g]
           const titleId = `cmdk-group-${g}`

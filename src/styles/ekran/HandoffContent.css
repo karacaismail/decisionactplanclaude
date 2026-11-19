@@ -81,7 +81,7 @@
 
 .devir-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; min-width: 0; }
 
-.devir-missing a, .devir-coverage a, .devir-page .ant-empty a { text-decoration: underline; text-underline-offset: 2px; }
+.devir-missing a, .devir-coverage a { text-decoration: underline; text-underline-offset: 2px; }
 
 .devir-meta { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 2px 24px; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); }
 
@@ -200,8 +200,6 @@
 @media (min-width: 768px) {
   .devir-coverage .devir-step-link { grid-column: 3; white-space: nowrap; }
 }
-
-.devir-empty-text { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
 
 .devir-summary-label { margin: 0; font-size: var(--font-helper); line-height: 1.5; color: var(--color-text-secondary); }
 

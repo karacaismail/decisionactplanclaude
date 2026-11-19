@@ -9,7 +9,7 @@ import '@/styles/desen/kapi.css'
 import '@/styles/desen/task-card.css'
 import '@/styles/ekran/TasksScreen.css'
 import { useId, useRef, useState } from 'react'
-import { Avatar, Badge, Button, Card, DatePicker, Drawer, Empty, Form, Input, Pagination, Select, Statistic, Tabs, Tag, App as AntApp } from 'antd'
+import { Avatar, Badge, Button, Card, DatePicker, Drawer, Form, Input, Pagination, Select, Statistic, Tabs, Tag, App as AntApp } from 'antd'
 import type { RefSelectProps } from 'antd'
 import dayjs from 'dayjs'
 import { Plus, Check, CalendarBlank, User, Kanban, ListBullets } from '@phosphor-icons/react'
@@ -17,6 +17,7 @@ import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import type { Task, TaskStatus } from '@/data/types'
 import { formatDate } from '@/engine/format'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 const STATUS: { value: TaskStatus; label: string; cls: string }[] = [
   { value: 'taslak', label: 'Taslak', cls: '' },
   { value: 'acik', label: 'Açık', cls: 'is-open' },
@@ -245,7 +246,7 @@ export function TasksScreen() {
 
       {tasks.length === 0 ? (
         <Card className="k-card" variant="borderless" title="İş listesi">
-          <Empty description={'Henüz iş yok. Kontrol kararları iş doğurur. İlk işi "İş ekle" düğmesiyle de ekleyebilirsiniz.'} />
+          <EmptyState title="Henüz iş yok" text="Kontrol kararları iş doğurur. İlk işi kendiniz de ekleyebilirsiniz." action={<Button icon={<Plus size={16} />} onClick={() => setOpen(true)}>İş ekle</Button>} />
         </Card>
       ) : (
         <Tabs

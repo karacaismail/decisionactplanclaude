@@ -5,11 +5,14 @@ import '@/styles/desen/kapi-ortak.css'
 import '@/styles/desen/kapi.css'
 import '@/styles/ekran/HistoryScreen.css'
 import { useId, useState } from 'react'
-import { Avatar, Card, Empty, Radio, Statistic, Tag, Timeline } from 'antd'
+import { Avatar, Card, Radio, Statistic, Tag, Timeline } from 'antd'
 import { DoorOpen, Flag, PencilSimpleLine } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
 import { DecisionBadge } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
+import { Link } from 'react-router'
+import { stepPath } from '@/data/registry'
 import { formatDate, formatMoney } from '@/engine/format'
 import { OUTCOME_LABEL, TRANSITION_LABEL, type ChangeRecord, type Decision, type TransitionOutcome, type TransitionRecord } from '@/data/types'
 import { DECISIONS } from '@/data/decisions'
@@ -17,11 +20,12 @@ type Filter = 'hepsi' | 'kararlar' | 'gecis' | 'degisiklikler'
 type Entry = { kind: 'karar'; at: string; d: Decision } | { kind: 'gecis'; at: string; t: TransitionRecord } | { kind: 'degisiklik'; at: string; c: ChangeRecord }
 
 const FILTER_KIND: Record<Exclude<Filter, 'hepsi'>, Entry['kind']> = { kararlar: 'karar', gecis: 'gecis', degisiklikler: 'degisiklik' }
-const EMPTY_TEXT: Record<Filter, string> = {
-  hepsi: 'Henüz kayıt yok. İlk kontrolde kararı kaydedince burada görünür.',
-  kararlar: 'Henüz kayıt yok. İlk kontrolde kararı kaydedince burada görünür.',
-  gecis: 'Hazırlık kararı yok. Hazırlık kontrolünde kararı kaydedince burada görünür.',
-  degisiklikler: 'Sınır değişikliği yok. Harcama sınırı, bitiş tarihi veya deneme hakkı değişince kayıt buraya düşer.',
+/* Her süzgecin boş durumu nedenini ve kaydın doğduğu ekranı söyler. */
+const EMPTY_TEXT: Record<Filter, { title: string; text: string; to: string; link: string }> = {
+  hepsi: { title: 'Henüz kayıt yok', text: 'İlk kontrolde kararı kaydedince burada görünür.', to: '/karar/1/kapi', link: "Kontrol 1'i aç" },
+  kararlar: { title: 'Henüz karar yok', text: 'İlk kontrolde kararı kaydedince burada görünür.', to: '/karar/1/kapi', link: "Kontrol 1'i aç" },
+  gecis: { title: 'Hazırlık kararı yok', text: 'Hazırlık kontrolünde kararı kaydedince burada görünür.', to: '/gecis', link: 'Hazırlık kontrolünü aç' },
+  degisiklikler: { title: 'Sınır değişikliği yok', text: 'Harcama sınırı, bitiş tarihi ya da deneme hakkı değişince kayıt burada görünür.', to: stepPath('02'), link: "Adım 2'yi aç" },
 }
 const TRANSITION_TAG: Record<TransitionOutcome, string | undefined> = { hazir: 'success', kosullu: 'warning', degil: undefined }
 
@@ -162,7 +166,7 @@ export function HistoryScreen() {
             />
           </div>
           {entries.length === 0 ? (
-            <Empty description={EMPTY_TEXT[filter]} />
+            <EmptyState level={3} title={EMPTY_TEXT[filter].title} text={EMPTY_TEXT[filter].text} action={<Link to={EMPTY_TEXT[filter].to}>{EMPTY_TEXT[filter].link}</Link>} />
           ) : (
             <Timeline
               className="k-timeline history-timeline"

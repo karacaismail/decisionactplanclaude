@@ -7,13 +7,14 @@ import '@/styles/desen/temel-stats.css'
 import '@/styles/desen/cikti-ortak.css'
 import '@/styles/ekran/AssumptionsScreen.css'
 import { useId, useState } from 'react'
-import { Button, Card, Empty, Grid, Input, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
+import { Button, Card, Grid, Input, Select, Statistic, Segmented, Tag, App as AntApp } from 'antd'
 import { Link, useNavigate } from 'react-router'
 import { CheckCircle, HourglassMedium, PencilSimple, Star, XCircle } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { stepPath } from '@/data/registry'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 /** Adım 10'daki varsayım satırı. Boş durum "Denenmedi" sayılır. */
 type Row = Record<string, unknown> & { _id: string }
 type Status = 'denenmedi' | 'dogrulandi' | 'curudu'
@@ -181,9 +182,7 @@ export function AssumptionsScreen() {
 
       {rows.length === 0 ? (
         <Card className="k-card assumption-empty" variant="borderless">
-          <Empty description="Henüz varsayım yok. Varsayımlarınızı Adım 10'da yazın.">
-            <Link to={stepPath(STEP)}>Adım 10'u aç</Link>
-          </Empty>
+          <EmptyState title="Henüz varsayım yok" text="Varsayımlarınızı Adım 10'da yazın. Yazdıklarınız burada panoya dizilir." action={<Link to={stepPath(STEP)}>Adım 10'u aç</Link>} />
         </Card>
       ) : (
         <>

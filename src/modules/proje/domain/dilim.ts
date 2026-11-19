@@ -37,7 +37,7 @@ function isOku(v: unknown, id: string): Is {
 
 /** Dilimi denetler ve projeleri hedef plana bağlar. Sorun varsa Türkçe hata fırlatır. */
 export function dilimiDogrula(dilim: unknown, hedefPlanId: string): PlanSlice {
-  if (!nesneMi(dilim) || !Array.isArray(dilim.entries)) throw new Error('Proje verisi okunamadı. Dosya bozuk olabilir.')
+  if (!nesneMi(dilim) || !Array.isArray(dilim.entries)) throw new Error('Proje verisi okunamadı. Dosya bozuk olabilir. Planlarınız değişmedi. Başka bir dosya seçin.')
   if (dilim.schemaVersion !== VERI_SURUMU) throw new Error(`Proje verisinin sürümü desteklenmiyor. Dosyadaki sürüm: ${String(dilim.schemaVersion)}.`)
   const enCok = SINIR.projePerPlan * (SINIR.isPerProje + 1)
   if (dilim.entries.length > enCok) throw new Error(`Dosyada çok fazla proje kaydı var. Bir planda en çok ${SINIR.projePerPlan} proje olabilir.`)

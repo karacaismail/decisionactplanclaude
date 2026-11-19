@@ -18,6 +18,7 @@ import { kanitMetni } from '../domain/kanit'
 import { bugunIso, tarihYaz } from '../domain/tarih'
 import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
+import { hataMetni } from '@/platform/hataMetni'
 
 type Gorunum = 'liste' | 'pano'
 const GORUNUMLER = [
@@ -52,9 +53,9 @@ export default function PjProjeScreen() {
         title="Proje"
         kicker="Proje yönetimi"
         description="Bu ekran tek bir projenin görevlerini gösterir."
-        emptyTitle={veri.hata ?? 'Proje bulunamadı.'}
-        text="Proje silinmiş olabilir. Projeler listesine dönün."
-        actions={<Button onClick={() => nav('/projeler')}>Projelere dön</Button>}
+        emptyTitle={veri.hata ? 'Projeler okunamadı' : 'Proje bulunamadı'}
+        text={veri.hata ?? 'Proje silinmiş olabilir. Projeler listesine dönün.'}
+        action={<Button onClick={() => nav('/projeler')}>Projelere dön</Button>}
       />
     )
   }
@@ -117,7 +118,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
       setBaslik('')
       setDuyuru(`"${yeni.baslik}" görevi eklendi. Durumu "Yapılacak".`)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Görev eklenemedi.')
+      message.error(hataMetni(error, 'Görev eklenemedi. Projeniz değişmedi. Yeniden deneyin.'))
     } finally {
       setEkleniyor(false)
       girdi.current?.focus()
@@ -133,7 +134,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
       await projeDepo.durumDegistir(proje.planId, is.id, d)
       setDuyuru(`"${is.baslik}" görevinin durumu "${DURUM_ADI[d]}" oldu.`)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Durum değiştirilemedi.')
+      message.error(hataMetni(error, 'Durum değiştirilemedi. Önceki durum duruyor. Yeniden deneyin.'))
     } finally {
       setMesgul(null)
     }
@@ -145,7 +146,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
       message.success('Proje silindi.')
       nav('/projeler')
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Proje silinemedi.')
+      message.error(hataMetni(error, 'Proje silinemedi. Proje yerinde duruyor. Yeniden deneyin.'))
     }
   }
 
@@ -218,7 +219,7 @@ function ProjeIcerik({ proje, isler, bag }: { proje: Proje; isler: Is[]; bag: st
           />
         </div>
         {isler.length === 0 ? (
-          <EmptyState title="Henüz görev yok." text="Yukarıya bir görev yazın. Sonra “Görev ekle” düğmesine basın." />
+          <EmptyState level={3} title="Henüz görev yok" text="Yukarıya bir görev yazın. Sonra “Görev ekle” düğmesine basın." actionless="Görev ekleme alanı hemen üstte duruyor." />
         ) : gorunum === 'liste' ? (
           <ol className="pj-proje-liste" aria-label="Görev listesi">
             {isler.map((is) => <li key={is.id}>{kart(is)}</li>)}
@@ -310,7 +311,7 @@ function ProjeFormu({ proje, kapat }: { proje: Proje; kapat: () => void }) {
       message.success('Proje bilgileri kaydedildi.')
       kapat()
     } catch (error) {
-      setHata(error instanceof Error ? error.message : 'Proje kaydedilemedi.')
+      setHata(hataMetni(error, 'Proje kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.'))
     } finally {
       setKaydediliyor(false)
     }

@@ -28,8 +28,6 @@
 
 .path-stack .path-cell { overflow-wrap: normal; }
 
-.path-compare-empty .ant-empty-footer a { display: inline-flex; align-items: center; min-height: var(--target-touch); }
-
 .path-compare { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; }
 
 .path-compare-scroll { overflow-x: auto; max-width: 100%; min-width: 0; -webkit-overflow-scrolling: touch;
@@ -59,12 +57,6 @@
 .path-cell { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; font-size: var(--font-body); line-height: 1.5; color: var(--color-text-primary); min-width: 0; overflow-wrap: break-word; }
 
 .path-cell-empty { color: var(--color-text-secondary); }
-
-.path-compare-empty.ant-empty { margin: 8px 0; }
-
-.path-compare-empty .ant-empty-description { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
-
-.path-compare-empty .ant-empty-footer a { font-size: var(--font-body); text-decoration: underline; text-underline-offset: 2px; }
 
 html[data-focus-mode='keyboard'] .path-compare-scroll:focus-visible::before { display: none; }
 

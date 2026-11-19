@@ -25,6 +25,8 @@
  *  (j) hover ile transform değişimi yalnız @media (hover: hover) and (pointer: fine) içinde
  *      ya da giris/fare.css dosyasının kendi any-hover sorgusunda durur.
  *  (k) Durum seçicisindeki geçişin temel seçicide de geçişi olur. Böylece hareket iki yönde çalışır.
+ *  (l) Ant Design Empty bileşeni yalnız src/components/EmptyState.tsx içinde içe aktarılabilir.
+ *      Ekranlar ortak boş durumu kullanır: başlık, kısa açıklama ve tek eylem.
  *
  * Statik sınır: DOM ölçümü yapılmaz. Dinamik stiller, CSS-in-JS, karmaşık seçiciler,
  * örtüşme, padding ve taşan sözde öğelerin gerçek dokunma alanı tarayıcıda doğrulanır.
@@ -45,6 +47,7 @@ const RAW_EASING = /\b(cubic-bezier|steps|linear|ease(-in|-out|-in-out)?)\b/i
 const SIDE_BORDER_CSS = /^border-(left|right|top|bottom)(-color)?$/
 const SIDE_BORDER_TSX = /\bborder(Left|Right|Top|Bottom)(Color)?\s*:\s*(['"`])((?:(?!\3).)*)\3/g
 const DEVICE_FLAG = /\bisMobile\b|navigator\.userAgent|\buserAgent\b/
+const ANTD_EMPTY_IMPORT = /import\s+(?:\{[^}]*\bEmpty\b[^}]*\}|Empty\b[^;\n]*)\s*from\s*['"]antd(?:\/(?:es|lib)\/empty)?['"]|import\s+[\w{}\s,]+\s+from\s*['"]antd\/(?:es|lib)\/empty['"]/g
 
 /** Yoksayılan dosyalar. Token kaynağı ham değer taşır; başka yerde kullanılmaz. */
 const IGNORED = new Set(['src/theme/tokens.ts'])
@@ -252,6 +255,12 @@ export function checkTsx(source, file, context) {
   // (e) Cihaz bayrağı: .ts ve .tsx için geçerli.
   for (const m of text.matchAll(new RegExp(DEVICE_FLAG.source, 'g'))) {
     report(m.index, `"${m[0]}" ile davranış seçilmez. Yerleşim alanını, giriş türünü ve hover desteğini ayrı ayrı sorgulayın.`)
+  }
+  // (l) Ant Design boş görünümü yalnız ortak boş durum bileşeninde kullanılabilir.
+  if (!file.endsWith('src/components/EmptyState.tsx')) {
+    for (const m of text.matchAll(ANTD_EMPTY_IMPORT)) {
+      report(m.index, 'Ant Design Empty kullanılmaz. Ortak EmptyState bileşenini kullanın. Başlık, açıklama ve tek eylem verin.')
+    }
   }
   if (!isTsx) return problems
 

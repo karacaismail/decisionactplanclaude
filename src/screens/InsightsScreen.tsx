@@ -4,13 +4,14 @@ import '@/styles/desen/page-rapor.css'
 import '@/styles/ekran/InsightsScreen.css'
 import { useMemo } from 'react'
 import { Link } from 'react-router'
-import { Card, Empty, Progress, Statistic } from 'antd'
+import { Card, Progress, Statistic } from 'antd'
 import { ArrowRight } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
 import { ChartFrame } from '@/charts/ChartFrame'
 import { buildInsights, insightPalette, statCards, type Insight } from '@/charts/insights'
 import { outcomeColor } from '@/components/DecisionBadge'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 import { useResolvedTheme } from '@/app/printMode'
 import { font } from '@/theme/tokens'
 /**
@@ -65,15 +66,17 @@ function InsightCard({ insight }: { insight: Insight }) {
     return (
       <section className="insight-card is-empty" aria-label={insight.title}>
         <Card title={<h3 className="insight-title">{insight.title}</h3>} variant="borderless">
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={<span className="insight-empty-text">Bu gösterge için ölçüm bekleniyor. {insight.hint}</span>}
-          >
-            <Link className="insight-empty-link" to={insight.link.to}>
-              {insight.link.label}
-              <ArrowRight size={font.body} aria-hidden />
-            </Link>
-          </Empty>
+          <EmptyState
+            level={4}
+            title="Ölçüm bekleniyor"
+            text={insight.hint}
+            action={(
+              <Link className="insight-empty-link" to={insight.link.to}>
+                {insight.link.label}
+                <ArrowRight size={font.body} aria-hidden />
+              </Link>
+            )}
+          />
           <p className="helper insight-source">{insight.source}</p>
         </Card>
       </section>

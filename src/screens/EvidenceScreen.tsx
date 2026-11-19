@@ -21,6 +21,7 @@ import { ChartFrame } from '@/charts/ChartFrame'
 import { formatDate } from '@/engine/format'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 const KIND_LABEL: Record<EvidenceKind, string> = { gozlem: 'Gözlem', tahmin: 'Tahmin', varsayim: 'Varsayım' }
 const KIND_OPTIONS = (Object.keys(KIND_LABEL) as EvidenceKind[]).map((k) => ({ value: k, label: KIND_LABEL[k] }))
 const LADDER_OPTIONS = LADDER.map((l) => ({ label: `${l.level}. ${l.label}`, value: l.level }))
@@ -261,7 +262,9 @@ export function EvidenceScreen() {
           tableLayout="fixed"
           size="middle"
           rowHoverable={false}
-          locale={{ emptyText: <p className="helper" role="status">{hasFilters ? 'Filtrelere uyan kanıt yok.' : 'Kanıt yok. İlk görüşme notunu ekleyin.'}</p> }}
+          locale={{ emptyText: hasFilters
+            ? <EmptyState level={3} title="Kanıt bulunamadı" text="Seçtiğiniz filtrelere uyan kanıt yok." action={<Button onClick={clearFilters}>Filtreleri temizle</Button>} />
+            : <EmptyState level={3} title="Henüz kanıt yok" text="İlk görüşme notunuzu ekleyince kanıt burada görünür." action={<Button icon={<Plus size={16} />} onClick={() => setPanel({ mode: 'yeni', item: { kind: 'gozlem', ladder: 5 } })}>Kanıt ekle</Button>} /> }}
           columns={[{
             key: 'evidence',
             title: 'Kanıt',

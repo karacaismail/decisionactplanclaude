@@ -1,7 +1,7 @@
 import '@/styles/desen/page-rapor.css'
 import '@/styles/ekran/MethodsScreen.css'
 import { useMemo, useRef, useState } from 'react'
-import { Badge, Input, Pagination, Tabs, Empty, Grid } from 'antd'
+import { Badge, Button, Input, Pagination, Tabs, Grid } from 'antd'
 import models from '@/data/models.json'
 import { STEP_LIST } from '@/data/steps'
 import type { StepDef } from '@/data/schema'
@@ -9,6 +9,7 @@ import { useCurrentPlan } from '@/store/planStore'
 import { ModelCard, type ModelEntry } from '@/components/ModelCard'
 import { ModelDrawer } from '@/components/ModelDrawer'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 const ALL = models as ModelEntry[]
 const TUMU = '__tumu__'
 
@@ -106,7 +107,7 @@ export function MethodsScreen() {
       </div>
 
       {visible.length === 0 ? (
-        <Empty description={<span className="insight-empty-text">Bu arama için yöntem yok. Başka bir kelime deneyin ya da “Hepsi” sekmesine dönün.</span>} />
+        <EmptyState title="Yöntem bulunamadı" text="Bu arama için yöntem yok. Başka bir kelime deneyin." action={<Button onClick={() => { setQuery(''); setSection(TUMU) }}>Aramayı temizle</Button>} />
       ) : (
         <section className="method-grid" aria-label="Yöntem listesi">
           {visible.map((m) => <ModelCard key={m.g} model={m} steps={STEPS_BY_MODEL[m.g] ?? []} linkSteps={Boolean(plan)} onHelp={setHelpModel} />)}

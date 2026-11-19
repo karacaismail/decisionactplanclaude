@@ -14,6 +14,8 @@ import { formatDate, uid } from '@/engine/format'
 import type { PlanDoc, Revision } from '@/data/types'
 import { PageHeader } from '@/components/PageHeader'
 import { Callout } from '@/components/Callout'
+import { EmptyState } from '@/components/EmptyState'
+import { hataMetni } from '@/platform/hataMetni'
 /** "temel" anahtarı eski bağlantılar için korunur. Sekme artık strateje teslim raporunun özetidir. */
 type Kind = 'temel' | 'yonetici' | 'aksiyon'
 const KIND_LABEL: Record<Kind, string> = { temel: 'Strateje teslim raporu', yonetici: 'Yönetici raporu', aksiyon: 'Girişimci aksiyon planı' }
@@ -204,7 +206,7 @@ export function OutputsScreen() {
     exportPlanFile(plan).then((data) => {
       download(name, JSON.stringify(data, null, 2), 'application/json')
       markBackup(plan.id)
-    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Plan dışa aktarılamadı.'))
+    }, (err: unknown) => message.error(hataMetni(err, 'Plan dışa aktarılamadı. Planınız tarayıcıda duruyor. Yeniden deneyin.')))
   }
 
   /* Sürüm zaman çizgisi: en yeni üstte, güncel taslak en altta. Seçili sürüm turuncu nokta ile işaretlidir. */
@@ -328,7 +330,12 @@ export function OutputsScreen() {
               <Button block icon={<FileCode size={16} />} onClick={downloadJson} disabled={!viewed}>JSON indir</Button>
             </div>
             {plan.outputs.length === 0 ? (
-              <p className="helper">Markdown indirince yönetici raporu ve aksiyon planı yayımlanmış sayılır. Yayımlanan belgeler burada listelenir.</p>
+              <EmptyState
+                level={3}
+                title="Henüz yayımlanan belge yok"
+                text="Markdown indirince rapor yayımlanmış sayılır. Yayımlanan belgeler burada listelenir."
+                actionless="Markdown indir düğmesi aynı kartta, hemen üstte duruyor. İkinci düğme aynı işi tekrarlar."
+              />
             ) : (
               <ul className="published-list" aria-label="Yayımlanan belgeler">
                 {[...plan.outputs].reverse().map((o) => (

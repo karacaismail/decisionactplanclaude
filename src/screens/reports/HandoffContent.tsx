@@ -4,7 +4,7 @@ import '@/styles/desen/cikti-ortak.css'
 import '@/styles/ekran/HandoffContent.css'
 import '@/styles/yazdirma/yazdirma.css'
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
-import { Button, Collapse, Descriptions, Empty, Grid, Progress, Segmented, Table, Tag } from 'antd'
+import { Button, Collapse, Descriptions, Grid, Progress, Segmented, Table, Tag } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link, useNavigate } from 'react-router'
 import { CheckCircle, CircleHalf, DownloadSimple, FileCode, Printer, XCircle } from '@phosphor-icons/react'
@@ -32,6 +32,7 @@ import { CONDITION_LABEL, DISSENT_LABEL, RELATION_LABEL, type ConditionStatus } 
 import { BLIND_SPOT_LABEL } from '@/engine/blindspots'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 /** İçindekiler ve bölüm kimlikleri. Sıra raporun sırasıdır. */
 const SECTIONS = [
   { id: 'devir-karar', toc: '1. Karar sorusu' },
@@ -590,9 +591,7 @@ export function HandoffScreen() {
                 </div>
               </>
             ) : (
-              <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={<span className="devir-empty-text">{NO_PATHS}</span>}>
-                <StepLink step="18" />
-              </Empty>
+              <EmptyState level={3} title="Yol adayı yok" text={`${NO_PATHS} Adım 18'de yol adaylarını yazın.`} action={<StepLink step="18" />} />
             )}
           </HandoffSection>
 

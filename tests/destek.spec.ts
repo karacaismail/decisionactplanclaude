@@ -259,7 +259,7 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   await main.getByRole('button', { name: 'Listeden çıkarın' }).click()
   await page.locator('.ant-popover:visible').getByRole('button', { name: 'Çıkarın' }).click()
   await expect(main.getByRole('heading', { level: 2, name: 'Başvuru listesi' })).toBeFocused()
-  await expect(main.getByRole('status')).toContainText('Henüz başvuru yok.')
+  await expect(main.getByRole('status')).toContainText('Henüz başvuru yok')
   const sonOzet = await page.evaluate(() => JSON.parse(localStorage.getItem('decisionactplan-rollups-v1') ?? '{}').data?.destek?.['ornek-mahalle-kafesi'])
   expect(sonOzet).toMatchObject({ toplam: 0 })
   expect(await planOku(page)).toEqual(once)

@@ -39,7 +39,7 @@ export function useProjeVerisi(planId: string | undefined): ProjeVerisi {
           } catch (error) {
             console.error(error)
             /* Okunan son veri korunur. Hata yanında gösterilir. */
-            if (!kapandi) setVeri((onceki) => ({ planId, yukleniyor: false, hata: 'Projeler okunamadı. Sayfayı yeniden yükleyin.', projeler: onceki.planId === planId ? onceki.projeler : [], isler: onceki.planId === planId ? onceki.isler : [] }))
+            if (!kapandi) setVeri((onceki) => ({ planId, yukleniyor: false, hata: 'Projeler okunamadı. Kayıtlı projeleriniz silinmedi. Sayfayı yeniden yükleyin.', projeler: onceki.planId === planId ? onceki.projeler : [], isler: onceki.planId === planId ? onceki.isler : [] }))
           }
         } while (kirli && !kapandi)
       } finally {

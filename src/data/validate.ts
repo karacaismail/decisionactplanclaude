@@ -29,7 +29,7 @@ export function parsePlanImport(text: string, byteLength = new TextEncoder().enc
   try {
     parsed = JSON.parse(text)
   } catch {
-    throw new Error('Dosya okunamadı. Geçerli bir JSON dosyası seçin.')
+    throw new Error('Dosya okunamadı. Planlarınız değişmedi. Bu uygulamadan indirilen bir JSON dosyası seçin.')
   }
   if (!validatePlanDoc(parsed)) throw new Error('Bu dosya bir plan dosyası değil. Plan dosyasını bu uygulamadan dışa aktarın.')
   return parsed

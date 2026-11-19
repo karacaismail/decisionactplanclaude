@@ -1,65 +1,27 @@
-/* Bu dosya CSS göç aracıyla üretildi. Kurallar eski yükleme sırasını korur. Mimari: docs/css-mimarisi.md */
+/* Ortak boş durum. Mimari: docs/css-mimarisi.md. Kurallar: docs/tasarim-sistemi.md, "Boş, yükleme ve hata durumları". */
 
-.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: 6px; padding: 16px 0; border-top: 1px solid var(--color-border); }
+.empty-state { display: grid; grid-template-columns: minmax(0, 1fr); justify-items: start; gap: var(--gap-control); min-inline-size: 0; padding-block: var(--padding-empty-block); }
 
-.empty-state h2 { margin: 0; font-size: var(--font-body); font-weight: 600; }
+.empty-head { display: flex; align-items: center; gap: var(--gap-icon); min-inline-size: 0; }
 
-.empty-state p { margin: 0; font-size: var(--font-helper); color: var(--color-text-secondary); max-width: 52ch; line-height: 1.5; }
+.empty-icon { display: inline-flex; flex-shrink: 0; color: var(--color-text-secondary); }
 
-.empty-state .empty-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.empty-icon > svg { inline-size: var(--icon-inline); block-size: var(--icon-inline); }
 
-.empty-state { border-top: 0; padding: 8px 0; }
+.empty-state .empty-title { margin: 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); line-height: var(--line-body); }
 
-.empty-state.mt-empty-state { min-inline-size: 0;
-  gap: var(--gap-control);
-  padding-block: var(--padding-empty-block); }
+.empty-state > p { margin: 0; max-inline-size: 52ch; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-secondary); }
 
-.empty-state.mt-empty-state > h2 { font-size: var(--font-subsection-title);
-  font-weight: var(--weight-strong);
-  line-height: var(--line-body); }
+.empty-state :is(.empty-title, p) { min-inline-size: 0; word-break: normal; overflow-wrap: normal; }
 
-.empty-state.mt-empty-state > p { font-size: var(--font-body);
-  line-height: var(--line-body); }
+.empty-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: var(--gap-control); max-inline-size: 100%; margin-block-start: var(--gap-label); }
 
-.mt-empty-state > h2, .mt-empty-state > p { min-inline-size: 0;
-  word-break: normal;
-  overflow-wrap: normal; }
+.empty-actions :is(button, a) { box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; gap: var(--gap-icon); min-inline-size: var(--hit-area-min); max-inline-size: 100%; min-block-size: var(--hit-area-min); block-size: auto; padding-block: var(--padding-control-block); padding-inline: var(--padding-control-inline); font-family: inherit; font-size: var(--font-body); line-height: var(--line-control); white-space: normal; text-align: center; }
 
-.mt-empty-state .mt-empty-icon > svg { inline-size: var(--icon-inline);
-  block-size: var(--icon-inline); }
+.empty-actions a { color: var(--color-action-text); font-weight: var(--weight-strong); text-decoration: underline; text-underline-offset: 2px; }
 
-.empty-state.mt-empty-state .mt-empty-actions { min-inline-size: 0;
-  max-inline-size: 100%;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  gap: var(--gap-control);
-  margin-block-start: var(--gap-label); }
+.empty-actions :is(button, a) > span { min-inline-size: 0; white-space: normal; }
 
-.mt-empty-actions > * { min-inline-size: 0;
-  max-inline-size: 100%; }
+.empty-actions :is(.ant-btn-icon, svg) { flex-shrink: 0; }
 
-.empty-state.mt-empty-state .mt-empty-actions :is(button, a) { box-sizing: border-box;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-inline-size: var(--hit-area-min);
-  max-inline-size: 100%;
-  min-block-size: var(--hit-area-min);
-  block-size: auto;
-  gap: var(--gap-icon);
-  padding-block: var(--padding-control-block);
-  padding-inline: var(--padding-control-inline);
-  font-family: inherit;
-  font-size: var(--font-body);
-  line-height: var(--line-control);
-  white-space: normal;
-  word-break: normal;
-  overflow-wrap: normal;
-  text-align: center; }
-
-.mt-empty-actions :is(button, a) > span { min-inline-size: 0;
-  white-space: normal; }
-
-.mt-empty-actions :is(.ant-btn-icon, svg) { flex-shrink: 0; }
-
-.empty-state .empty-icon { display: inline-flex; color: var(--color-text-secondary); }
+.empty-actions a { padding-inline: 0; }

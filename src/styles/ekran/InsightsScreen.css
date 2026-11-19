@@ -64,10 +64,6 @@
 
 .page-rapor .insight-card > .chart-frame:not(.ant-card) { background: var(--color-surface-work); border-radius: var(--radius-panel); box-shadow: var(--shadow-card); padding: 20px 24px 24px; display: grid; gap: 12px; }
 
-.insight-card.is-empty .ant-empty { margin: 8px 0 0; }
-
-.insight-empty-text { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
-
 .insight-empty-link { display: inline-flex; align-items: center; gap: 6px; font-size: var(--font-body); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 2px; }
 
 .foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }

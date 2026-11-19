@@ -2,10 +2,11 @@ import '@/styles/desen/kapi.css'
 import '@/styles/desen/strateji.css'
 import '@/styles/bilesen/PathCompare.css'
 import { useId, useSyncExternalStore } from 'react'
-import { Empty, Table } from 'antd'
+import { Table } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { Link } from 'react-router'
 import { stepPath } from '@/data/registry'
+import { EmptyState } from './EmptyState'
 import { DOOR_LABEL, NO_PATHS, pathBasis, type PathColumn } from '@/reports/handoff'
 interface CompareRow {
   key: string
@@ -61,9 +62,9 @@ export function PathCompare({ paths, label = 'Yol adayları karşılaştırması
 
   if (paths.length === 0) {
     return (
-      <Empty className="path-compare-empty" image={Empty.PRESENTED_IMAGE_SIMPLE} description={NO_PATHS}>
-        <Link to={stepPath('18')}>Adım 18'de yol adaylarını yazın</Link>
-      </Empty>
+      <div className="path-compare-empty">
+        <EmptyState level={3} title="Yol adayı yok" text={`${NO_PATHS} Adım 18'de yol adaylarını yazın.`} action={<Link to={stepPath('18')}>Adım 18'i aç</Link>} />
+      </div>
     )
   }
 

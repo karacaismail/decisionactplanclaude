@@ -68,6 +68,10 @@ function touch(p: PlanDoc) {
   p.updatedAt = new Date().toISOString()
 }
 
+/** Kayıt yazılamayınca görünen metin. Son değişiklik yalnız bu sekmenin belleğinde durur. */
+export const SAVE_ERROR = 'Plan tarayıcıya kaydedilemedi. Son değişiklikleriniz bu sekmede duruyor. Sekmeyi kapatmayın. Önce kopyanızı indirin.'
+export const SAVE_QUOTA_ERROR = 'Tarayıcının kayıt alanı doldu. Plan kaydedilemedi. Son değişiklikleriniz bu sekmede duruyor. Önce kopyanızı indirin.'
+
 /** Yazma sonucu durumu günceller. Aynı durumu yeniden yazmaz, böylece döngü oluşmaz. */
 function onSaveResult(r: SaveResult) {
   setTimeout(() => {
@@ -76,7 +80,7 @@ function onSaveResult(r: SaveResult) {
       if (s.saveState === 'kaydediliyor' || s.saveState === 'kaydedilemedi') usePlanStore.setState({ saveState: 'kaydedildi', saveError: undefined })
       return
     }
-    const msg = r.quota ? 'Tarayıcı depolama alanı dolu. Plan kaydedilemedi. Kopyanızı indirin.' : 'Plan tarayıcıya kaydedilemedi. Kopyanızı indirin.'
+    const msg = r.quota ? SAVE_QUOTA_ERROR : SAVE_ERROR
     if (s.saveState !== 'kaydedilemedi' || s.saveError !== msg) usePlanStore.setState({ saveState: 'kaydedilemedi', saveError: msg })
   }, 0)
 }
@@ -88,8 +92,8 @@ const baseStorage = createJSONStorage<PlanState>(() => createGuardedStorage(type
  * Böylece okunamayan kayıt, boş durumla ezilmez. Kullanıcının verisi tarayıcıda olduğu gibi durur.
  */
 let hydrationFailed = false
-export const HYDRATION_ERROR = 'Kayıtlı planlar okunamadı. Yazılım kayıtlı veriyi değiştirmedi. Önce ham kaydı indirin. Bu sırada yeni plan açmak ve dosya içe almak kapalıdır.'
-export const LOAD_BLOCKED = 'Kayıtlı planlar okunamadı. Önce ham kaydı indirin. Yeni plan bu sırada kaydedilemez.'
+export const HYDRATION_ERROR = 'Kayıtlı planlar okunamadı. Kayıtlı veri değişmedi. Önce ham kaydı indirin. Bu sırada yeni plan açmak ve dosya içe almak kapalıdır.'
+export const LOAD_BLOCKED = 'Kayıtlı planlar okunamadı. Kayıtlı veri değişmedi. Yeni plan bu sırada kaydedilemez. Önce ham kaydı indirin.'
 const storage = baseStorage
   ? {
       ...baseStorage,
@@ -132,7 +136,7 @@ export const usePlanStore = create<PlanState>()(
       selectPlan: (id) => set({ currentId: id }),
       importPlan: (doc) => {
         if (get().loadFailed) throw new Error(LOAD_BLOCKED)
-        if (!validatePlanDoc(doc)) throw new Error('Bu dosya bir plan dosyası değil. Plan dosyasını bu uygulamadan dışa aktarın.')
+        if (!validatePlanDoc(doc)) throw new Error('Bu dosya bir plan dosyası değil. Planlarınız değişmedi. Plan dosyasını bu uygulamadan dışa aktarın.')
         /* Eski sürümden dışa aktarılan dosya da güncel alan yerleşimine taşınır. */
         const copy = migratePlan(doc.example ? doc : prepareImportedPlan(doc))
         set((s) => ({ plans: { ...s.plans, [copy.id]: copy }, currentId: copy.id, saveState: 'kaydediliyor' }))

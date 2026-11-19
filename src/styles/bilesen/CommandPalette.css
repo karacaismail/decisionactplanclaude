@@ -2,10 +2,6 @@
 
 .cmdk-root .cmdk-input { --focus-field-marker-start: var(--focus-marker-inset); }
 
-.devralma-table .ant-table-cell { font-size: var(--font-body); vertical-align: top; }
-
-.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
-
 .cmdk-modal .ant-modal-content { padding: 0; border-radius: var(--radius-panel); overflow: hidden; box-shadow: var(--shadow-float); }
 
 .cmdk-modal .ant-modal-body { padding: 0; }

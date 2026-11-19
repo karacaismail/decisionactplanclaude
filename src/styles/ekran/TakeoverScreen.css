@@ -34,14 +34,6 @@
 
 .devralma-form .ant-form-item-extra { font-size: var(--font-helper); color: var(--color-text-secondary); margin-top: 4px; }
 
-.devralma-table .ant-table-cell { font-size: var(--font-body); vertical-align: top; }
-
-.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
-
-.devralma-table .devralma-result { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2px; min-width: 0; }
-
-.devralma-table .devralma-result a { text-decoration: underline; text-underline-offset: 2px; }
-
 :root { --cikti-focus-thickness: 2px;
   --cikti-focus-offset: 0.2em;
   --cikti-body-size: 1rem;

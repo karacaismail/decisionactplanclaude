@@ -7,19 +7,19 @@ import { EmptyState } from '@/components/EmptyState'
  * Modülün ilk sürüm ekranı. Başlık, kısa açıklama ve boş durum gösterir.
  * Sonraki sürüm bu ekranın içini doldurur.
  */
-export function PjBosEkran({ title, kicker, description, emptyTitle, text, actions }: {
+export function PjBosEkran({ title, kicker, description, emptyTitle, text, action }: {
   title: string
   kicker: string
   description: ReactNode
   emptyTitle: string
   text: ReactNode
-  actions?: ReactNode
+  action: ReactNode
 }) {
   return (
     <div className="page pj-bos-ekran">
       <PageHeader title={title} kicker={kicker} description={description} />
       <section className="pj-bos-ekran-govde" aria-label={emptyTitle}>
-        <EmptyState title={emptyTitle} text={text} actions={actions} />
+        <EmptyState title={emptyTitle} text={text} action={action} />
       </section>
     </div>
   )

@@ -5,6 +5,7 @@ import { emptyPlan, type PlanDoc } from '@/data/types'
 import { formatDate } from '@/engine/format'
 import { HistoryScreen } from '@/screens/HistoryScreen'
 import { useCurrentPlan } from '@/store/planStore'
+import { MemoryRouter } from 'react-router'
 
 vi.mock('@/store/planStore', () => ({ useCurrentPlan: vi.fn() }))
 
@@ -73,7 +74,7 @@ describe('Geçmiş kartları', () => {
   })
 
   async function render() {
-    await act(async () => root.render(createElement(HistoryScreen)))
+    await act(async () => root.render(createElement(MemoryRouter, null, createElement(HistoryScreen))))
   }
 
   async function selectFilter(label: string) {
@@ -156,7 +157,8 @@ describe('Geçmiş kartları', () => {
     await render()
     await selectFilter('Hazırlık')
     expect(cards()).toHaveLength(0)
-    expect(host.textContent).toContain('Hazırlık kararı yok.')
+    expect(host.querySelector('.empty-state h3')?.textContent).toBe('Hazırlık kararı yok')
+    expect(host.querySelector<HTMLAnchorElement>('.empty-actions a')?.getAttribute('href')).toBe('/gecis')
     await selectFilter('Kararlar')
     expect(cards()).toHaveLength(1)
   })

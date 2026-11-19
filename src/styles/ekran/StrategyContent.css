@@ -12,10 +12,6 @@
 
 .karar-step-count { font-variant-numeric: tabular-nums; }
 
-.devralma-table .ant-table-cell { font-size: var(--font-body); vertical-align: top; }
-
-.devralma-table .ant-table-tbody > tr > td { padding-top: 10px !important; padding-bottom: 10px !important; }
-
 .mobil-kapi-page .strateji-aside { top: var(--kapi-aside-top); }
 
 @media (max-width: 767px), (max-height: 559px) {

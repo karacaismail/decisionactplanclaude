@@ -25,7 +25,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
   const degistir = (d: BasvuruDegisikligi) => {
     basvuruGuncelle(planId, basvuru.id, d, new Date().toISOString()).catch((error: unknown) => {
       console.error(error)
-      hataGoster('Değişiklik kaydedilemedi. Yeniden deneyin.')
+      hataGoster('Değişiklik kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.')
     })
   }
   const programTarihleri = program?.tarihler.filter((t) => t.kritik && t.tarih.state === 'kaynakli') ?? []
@@ -143,7 +143,7 @@ export default function DtBasvurularScreen() {
             </ul>
           </>
         ) : (
-          <EmptyState title="Henüz başvuru yok." text="Bir programın sayfasını açın. Sonra “Başvuru listeme ekle” düğmesine basın." actions={<Button onClick={() => nav('/destek')}>Programlara bakın</Button>} />
+          <EmptyState title="Henüz başvuru yok" text="Bir programın sayfasını açın. Sonra “Başvuru listeme ekle” düğmesine basın." action={<Button onClick={() => nav('/destek')}>Programlara bakın</Button>} />
         )
       ) : null}
     </div>

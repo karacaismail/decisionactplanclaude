@@ -78,10 +78,6 @@
 
 .assumption-field .ant-select, .assumption-field .ant-input { width: 100%; min-width: 0; }
 
-.assumption-empty .ant-empty-description { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
-
-.assumption-empty a { font-size: var(--font-body); font-weight: 600; }
-
 :root { --cikti-focus-thickness: 2px;
   --cikti-focus-offset: 0.2em;
   --cikti-body-size: 1rem;

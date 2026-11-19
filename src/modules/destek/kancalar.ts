@@ -81,4 +81,4 @@ export function useBasvurular(planId: string | undefined) {
   return { basvurular: planId ? veri : [], hata, yenile }
 }
 
-export const OKUMA_HATASI = 'Kayıtlı bilgiler okunamadı. Sayfayı yenileyin. Sorun sürerse tarayıcının depolama iznini kontrol edin.'
+export const OKUMA_HATASI = 'Kayıtlı bilgiler okunamadı. Bilgileriniz silinmedi. Sayfayı yenileyin. Sorun sürerse tarayıcının depolama iznini kontrol edin.'

@@ -610,3 +610,17 @@ describe('(k) iki yönlü geçiş', () => {
     expect(checkCss('.kart { transition: opacity var(--motion-small) var(--motion-ease); }\n.kart:hover { opacity: 0.8; transition: opacity var(--motion-small) var(--motion-ease); }', 'src/styles/ekran/A.css')).toEqual([])
   })
 })
+
+describe('(l) Ant Design boş görünümü', () => {
+  it('ekranda Empty içe aktarmasını yakalar', () => {
+    expect(tsx("import { Button, Empty } from 'antd'")).toHaveLength(1)
+    expect(tsx("import Empty from 'antd/es/empty'")).toHaveLength(1)
+    expect(checkTsx("import { Empty } from 'antd'", 'src/screens/A.ts')).toHaveLength(1)
+  })
+
+  it('ortak boş durum bileşenini ve başka adları geçirir', () => {
+    expect(tsx("import { EmptyState } from '@/components/EmptyState'")).toEqual([])
+    expect(tsx("import { Button, Input } from 'antd'")).toEqual([])
+    expect(checkTsx("import { Empty } from 'antd'", 'src/components/EmptyState.tsx')).toEqual([])
+  })
+})

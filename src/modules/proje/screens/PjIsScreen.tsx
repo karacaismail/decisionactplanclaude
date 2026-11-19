@@ -13,6 +13,7 @@ import { SINIR, type Is, type Proje } from '../domain/model'
 import { bugunIso, tarihYaz } from '../domain/tarih'
 import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
+import { hataMetni } from '@/platform/hataMetni'
 
 /** Projedeki tek işin ekranı. İşin bütün bilgileri burada değişir. */
 export default function PjIsScreen() {
@@ -38,9 +39,9 @@ export default function PjIsScreen() {
         title="Proje görevi"
         kicker="Proje yönetimi"
         description="Bu ekran projedeki tek bir görevi gösterir."
-        emptyTitle={veri.hata ?? 'Görev bulunamadı.'}
-        text="Görev silinmiş olabilir. Projeye dönün."
-        actions={<Button onClick={() => nav(proje ? projeAdresi : '/projeler')}>{proje ? 'Projeye dön' : 'Projelere dön'}</Button>}
+        emptyTitle={veri.hata ? 'Projeler okunamadı' : 'Görev bulunamadı'}
+        text={veri.hata ?? 'Görev silinmiş olabilir. Projeye dönün.'}
+        action={<Button onClick={() => nav(proje ? projeAdresi : '/projeler')}>{proje ? 'Projeye dön' : 'Projelere dön'}</Button>}
       />
     )
   }
@@ -71,7 +72,7 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
       setTaslak(ilk(kayit))
       message.success('Görev kaydedildi.')
     } catch (error) {
-      setHata(error instanceof Error ? error.message : 'Görev kaydedilemedi.')
+      setHata(hataMetni(error, 'Görev kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.'))
     } finally {
       setKaydediliyor(false)
     }
@@ -83,7 +84,7 @@ function IsFormu({ proje, is, projeAdresi }: { proje: Proje; is: Is; projeAdresi
       message.success('Görev silindi.')
       nav(projeAdresi)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Görev silinemedi.')
+      message.error(hataMetni(error, 'Görev silinemedi. Görev yerinde duruyor. Yeniden deneyin.'))
     }
   }
 

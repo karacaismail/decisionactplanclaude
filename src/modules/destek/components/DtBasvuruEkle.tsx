@@ -7,6 +7,7 @@ import { basvuruEkle } from '../depo'
 import { OKUMA_HATASI, useBasvurular, usePlanYeri } from '../kancalar'
 import { DESTEKSIZ_ADI } from '../metinler'
 import { DESTEKSIZ_CEVAPLARI, type DesteksizCevap } from '../motor/basvuru'
+import { hataMetni } from '@/platform/hataMetni'
 
 type Adim = 'bekliyor' | 'soru' | 'eklendi'
 
@@ -82,7 +83,7 @@ export function DtBasvuruEkle({ program }: { program: Program }) {
       await basvuruEkle(planId, program, cevap, new Date().toISOString())
       setAdim('eklendi')
     } catch (error) {
-      setHata(error instanceof Error ? error.message : 'Başvuru eklenemedi. Yeniden deneyin.')
+      setHata(hataMetni(error, 'Başvuru eklenemedi. Listeniz değişmedi. Yeniden deneyin.'))
     } finally {
       setCalisiyor(false)
     }

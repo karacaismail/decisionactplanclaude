@@ -25,6 +25,4 @@
 
 .calc-warn { font-size: var(--font-helper); font-weight: 600; color: var(--color-status-harm); }
 
-.insight-card.is-empty .ant-empty { margin: 8px 0 0; }
-
 .foundation-lines.is-empty { list-style: none; padding: 0; color: var(--color-text-secondary); }

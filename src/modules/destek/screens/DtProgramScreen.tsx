@@ -96,7 +96,7 @@ export default function DtProgramScreen() {
       <div className="page dt-program">
         <PageHeader title="Destek programı" kicker="Destek ve teşvik" description="Bu adreste bir program yok. Program listesinden seçin." />
         <DtUyari />
-        <EmptyState title="Bu program bulunamadı." text="Program adı değişmiş ya da listeden çıkmış olabilir." actions={<Button onClick={() => nav('/destek')}>Programlara dönün</Button>} />
+        <EmptyState title="Bu program bulunamadı" text="Program adı değişmiş ya da listeden çıkmış olabilir." action={<Button onClick={() => nav('/destek')}>Programlara dönün</Button>} />
       </div>
     )
   }

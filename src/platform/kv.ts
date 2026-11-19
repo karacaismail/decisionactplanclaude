@@ -58,7 +58,7 @@ export function createMemoryKvStore(): KvStore {
 function request<T>(req: IDBRequest<T>): Promise<T> {
   return new Promise((resolve, reject) => {
     req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error ?? new Error('Modül deposu okunamadı.'))
+    req.onerror = () => reject(req.error ?? new Error('Kayıtlı bilgiler okunamadı. Kayıt silinmedi. Sayfayı yeniden yükleyin.'))
   })
 }
 
@@ -81,11 +81,11 @@ export function createIndexedDbKvStore(factory: IDBFactory, name = DB_NAME): KvS
       }
       req.onerror = () => {
         opening = undefined
-        reject(req.error ?? new Error('Modül deposu açılamadı.'))
+        reject(req.error ?? new Error('Kayıtlı bilgiler açılamadı. Kayıt silinmedi. Sayfayı yeniden yükleyin.'))
       }
       req.onblocked = () => {
         opening = undefined
-        reject(new Error('Modül deposu başka bir sekmede kilitli. Öteki sekmeyi kapatıp yeniden deneyin.'))
+        reject(new Error('Kayıtlı bilgiler başka bir sekmede kilitli. Kayıt silinmedi. Öteki sekmeyi kapatıp yeniden deneyin.'))
       }
     })
     return opening
@@ -96,8 +96,8 @@ export function createIndexedDbKvStore(factory: IDBFactory, name = DB_NAME): KvS
     /* Yazma ancak işlem tamamlanınca kalıcıdır. Dinleyici istekten önce bağlanır. */
     const done = new Promise<void>((resolve, reject) => {
       t.oncomplete = () => resolve()
-      t.onerror = () => reject(t.error ?? new Error('Modül deposuna yazılamadı.'))
-      t.onabort = () => reject(t.error ?? new Error('Modül deposuna yazma yarıda kaldı.'))
+      t.onerror = () => reject(t.error ?? new Error('Değişiklik kaydedilemedi. Önceki kayıt duruyor. Yeniden deneyin.'))
+      t.onabort = () => reject(t.error ?? new Error('Kayıt yarıda kaldı. Önceki kayıt duruyor. Yeniden deneyin.'))
     })
     /* İstek hata verirse işlem de hata verir. Bu ikinci hata yutulur. İlk hata çağırana gider. */
     done.catch(() => undefined)

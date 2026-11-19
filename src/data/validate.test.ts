@@ -38,7 +38,7 @@ describe('parsePlanImport', () => {
   })
 
   it('bozuk JSON ve yanlış biçim Türkçe hata verir', () => {
-    expect(() => parsePlanImport('{')).toThrow('Dosya okunamadı. Geçerli bir JSON dosyası seçin.')
+    expect(() => parsePlanImport('{')).toThrow('Dosya okunamadı. Planlarınız değişmedi. Bu uygulamadan indirilen bir JSON dosyası seçin.')
     expect(() => parsePlanImport('{"a":1}')).toThrow('Bu dosya bir plan dosyası değil.')
   })
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Alert, Button, Modal, Space, Typography } from 'antd'
-import { HYDRATION_ERROR, usePlanStore, useCurrentPlan } from '@/store/planStore'
+import { HYDRATION_ERROR, SAVE_ERROR, usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { detectConflict, downloadJson, formatDateTime, safeFileName, STORAGE_KEY } from '@/engine/sync'
 import type { PlanDoc } from '@/data/types'
 
@@ -111,7 +111,7 @@ export function SyncGuard() {
           showIcon
           role="alert"
           message="Plan kaydedilemedi"
-          description={saveError ?? 'Plan tarayıcıya kaydedilemedi. Kopyanızı indirin.'}
+          description={saveError ?? SAVE_ERROR}
           action={<Button size="small" onClick={downloadMine} disabled={!plan}>Kopyamı indir (JSON)</Button>}
         />
       ) : null}

@@ -14,6 +14,7 @@ import type { Is, Proje } from '../domain/model'
 import { bugunIso, tarihGecerliMi, tarihYaz } from '../domain/tarih'
 import { projeDepo } from '../projeDepo'
 import { useProjeVerisi } from '../useProjeVerisi'
+import { hataMetni } from '@/platform/hataMetni'
 
 const KICKER = 'Proje yönetimi'
 const DESCRIPTION = 'Projeler stratejideki ana hamleleri görevlere böler. Bu bölüm numaralı aşamaların dışındadır.'
@@ -29,9 +30,9 @@ export default function PjProjelerScreen() {
         title="Projeler"
         kicker={KICKER}
         description={DESCRIPTION}
-        emptyTitle="Projeler burada görünecek."
+        emptyTitle="Projeler burada görünecek"
         text="Önce strateji belgesini onaylayın. Strateji onaylanınca ana hamlelerden proje açabilirsiniz."
-        actions={<Button onClick={() => nav('/strateji')}>Strateji oluşturmaya git</Button>}
+        action={<Button onClick={() => nav('/strateji')}>Strateji oluşturmaya git</Button>}
       />
     )
   }
@@ -83,7 +84,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
       const p = await projeDepo.projeAc(plan.id, girdi)
       nav(`/projeler/${encodeURIComponent(p.id)}`)
     } catch (error) {
-      message.error(error instanceof Error ? error.message : 'Proje açılamadı.')
+      message.error(hataMetni(error, 'Proje açılamadı. Planınız değişmedi. Yeniden deneyin.'))
       setMesgul(null)
     }
   }
@@ -110,7 +111,7 @@ function ProjelerIcerik({ plan }: { plan: ReadonlyPlan }) {
         {veri.yukleniyor ? <p className="pj-projeler-not" role="status">Projeler yükleniyor.</p> : null}
         {veri.hata ? <p className="pj-projeler-not" role="alert">{veri.hata}</p> : null}
         {!veri.yukleniyor && !veri.hata && veri.projeler.length === 0 ? (
-          <EmptyState title="Henüz proje yok." text="Aşağıdan bir ana hamle seçin. Sonra “Bu hamleden proje aç” düğmesine basın." />
+          <EmptyState title="Henüz proje yok" text="Aşağıdan bir ana hamle seçin. Sonra “Bu hamleden proje aç” düğmesine basın." actionless="Proje açma düğmeleri hemen aşağıdaki hamle kartlarında duruyor." />
         ) : null}
         {veri.projeler.length > 0 ? (
           <ul className="pj-projeler-liste">

@@ -4,7 +4,7 @@ import '@/styles/desen/pano-ortak.css'
 import '@/styles/ekran/PlansScreen.css'
 import { BACKUP_DAYS } from '@/engine/backup'
 import { useMemo, useRef, useState, type ChangeEvent } from 'react'
-import { App as AntApp, Button, Card, Dropdown, Empty, Input, Modal, Pagination, Popconfirm, Progress, Select, Statistic, Tag } from 'antd'
+import { App as AntApp, Button, Card, Dropdown, Input, Modal, Pagination, Popconfirm, Progress, Select, Statistic, Tag } from 'antd'
 import { Plus, CaretDown, DownloadSimple, UploadSimple, Sparkle, Trash, ArrowSquareOut } from '@phosphor-icons/react'
 import { useNavigate } from 'react-router'
 import { usePlanStore } from '@/store/planStore'
@@ -16,8 +16,10 @@ import { buildDemoPlan } from '@/data/demo'
 import { buildShoeDemoPlan } from '@/data/demoAyakkabi'
 import type { PlanDoc } from '@/data/types'
 import { Callout } from '@/components/Callout'
+import { EmptyState } from '@/components/EmptyState'
 import { PageHeader } from '@/components/PageHeader'
 import { planPosition, type PlanPosition } from '@/engine/position'
+import { hataMetni } from '@/platform/hataMetni'
 /** Kanıt düzeyinin en üst basamağı. Beş temel kontrol geçilince 5 olur. */
 const MAX_LEVEL = 5
 const PAGE_SIZE = 10
@@ -121,7 +123,7 @@ export function PlansScreen() {
     try {
       createPlan(name.trim())
     } catch (err) {
-      message.error(err instanceof Error ? err.message : 'Plan açılamadı.')
+      message.error(hataMetni(err, 'Plan açılamadı. Planlarınız değişmedi. Yeniden deneyin.'))
       return
     }
     setOpen(false)
@@ -160,7 +162,7 @@ export function PlansScreen() {
       importPlan(plan)
       goTop('/ozet')
     } catch (err) {
-      message.error(err instanceof Error ? err.message : 'Örnek plan açılamadı.')
+      message.error(hataMetni(err, 'Örnek plan açılamadı. Planlarınız değişmedi. Yeniden deneyin.'))
     }
   }
 
@@ -174,7 +176,7 @@ export function PlansScreen() {
     exportPlanFile(plan).then((data) => {
       downloadJson(`${safeFileName(plan.name)}.json`, data)
       markBackup(plan.id)
-    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Plan dışa aktarılamadı.'))
+    }, (err: unknown) => message.error(hataMetni(err, 'Plan dışa aktarılamadı. Planınız tarayıcıda duruyor. Yeniden deneyin.')))
   }
 
   const onFile = (e: ChangeEvent<HTMLInputElement>) => {
@@ -190,7 +192,7 @@ export function PlansScreen() {
         message.success('Plan içe alındı.')
         for (const w of warnings) message.warning(w)
       })
-      .catch((err: unknown) => message.error(err instanceof Error ? err.message : 'Dosya okunamadı.'))
+      .catch((err: unknown) => message.error(hataMetni(err, 'Dosya okunamadı. Planlarınız değişmedi. Başka bir dosya seçin.')))
   }
 
   const moreMenu = {
@@ -206,7 +208,7 @@ export function PlansScreen() {
   }
 
   const emptyActions = (
-    <span className="empty-actions">
+    <>
       {EXAMPLES.map((e) => (
         <Button key={e.key} icon={<Sparkle size={16} />} onClick={() => void openDemo(e.build)} disabled={loadFailed}>
           {e.label}
@@ -215,7 +217,7 @@ export function PlansScreen() {
       <Button type="text" icon={<UploadSimple size={16} />} onClick={() => fileInput.current?.click()} disabled={loadFailed}>
         JSON içe al
       </Button>
-    </span>
+    </>
   )
 
   return (
@@ -272,13 +274,14 @@ export function PlansScreen() {
           />
         </div>
         {rows.length === 0 ? (
-          <Empty description="Henüz plan yok. Yeni bir plan açın. Ya da bir örnek planla ekranları tanıyın. Ayakkabı örneği gerçek bir şirkete dayanır. Kafe örneği yeni bir fikirdir.">{emptyActions}</Empty>
+          <EmptyState level={3} title="Henüz plan yok" text="Yeni bir plan açın ya da bir örnekle başlayın. Ayakkabı örneği gerçek bir şirkete dayanır. Kafe örneği yeni bir fikirdir." action={emptyActions} />
         ) : filtered.length === 0 ? (
-          <Empty description={`"${query}" adında plan bulunamadı.`}>
-            <Button type="text" onClick={() => { setQuery(''); setPage(1) }}>
-              Aramayı temizle
-            </Button>
-          </Empty>
+          <EmptyState
+            level={3}
+            title="Plan bulunamadı"
+            text={`"${query}" adında plan yok. Başka bir ad deneyin.`}
+            action={<Button onClick={() => { setQuery(''); setPage(1) }}>Aramayı temizle</Button>}
+          />
         ) : (
           <ul className="mobil-plans-list" aria-labelledby="plan-list-heading">
             {visibleRows.map((r) => (

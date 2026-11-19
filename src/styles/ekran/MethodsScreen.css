@@ -12,8 +12,6 @@
 
 .text-link:hover { text-decoration: underline; }
 
-.insight-empty-text { font-size: var(--font-body); line-height: 1.5; color: var(--color-text-secondary); }
-
 .method-tools { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; min-width: 0; scroll-margin-top: 76px; }
 
 .method-tools .field-label { margin-bottom: 0; }

@@ -326,7 +326,8 @@ describe('Genel bakış ekranının dar alandaki içeriği', () => {
     expect(header.textContent).toBe('Son kararlar (0)')
     expect(header.getAttribute('aria-expanded')).toBe('false')
     await pressKey(header, 'Enter')
-    expect(host.querySelector('.overview-recent-collapse')?.textContent).toContain('Henüz karar kaydı yok. İlk kontrolde kararı kaydedince burada görünür.')
+    expect(host.querySelector('.overview-recent-collapse h3')?.textContent).toBe('Henüz karar kaydı yok')
+    expect(host.querySelector('.overview-recent-collapse')?.textContent).toContain('İlk kontrolde kararı kaydedince burada görünür.')
     expect(host.querySelector('.pano-timeline')).toBeNull()
   })
 

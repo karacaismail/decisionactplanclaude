@@ -289,7 +289,7 @@ function Eslesme({ yer }: { yer: string }) {
     setProfil({ ...profil, [alan]: deger })
     profilAlanKaydet(yer, alan, deger, bugun).catch((error: unknown) => {
       console.error(error)
-      setHata('Cevabınız kaydedilemedi. Sayfayı yenileyip yeniden deneyin.')
+      setHata('Cevabınız kaydedilemedi. Önceki cevaplarınız duruyor. Sayfayı yenileyip yeniden deneyin.')
     })
     git(mod.i + 1 < mod.sorular.length ? { ...mod, i: mod.i + 1 } : { tur: 'sonuc' })
   }

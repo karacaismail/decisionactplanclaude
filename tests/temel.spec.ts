@@ -50,7 +50,7 @@ test('temel sorular: 20 kart görünür, süzgeç daraltır, kart adımı açar'
   expect(await page.locator('main .ant-btn-primary').count(), 'dolu düğme').toBe(0)
 
   await page.locator('.temel-filter .ant-segmented').getByText('Eksik', { exact: true }).click()
-  await expect(page.locator('.temel-filter-count')).not.toHaveText('20 taş gösteriliyor.')
+  await expect(page.locator('.temel-filter-count')).not.toHaveText('20 soru gösteriliyor.')
   const missing = await cards.count()
   expect(missing).toBeLessThan(20)
   expect(await page.locator('.stone-card:not(.is-eksik)').count(), 'süzgeçte yalnız eksik taş').toBe(0)
@@ -155,7 +155,7 @@ test('varsayım panosu: varsayım yoksa boş durum Adım 10 bağlantısı verir'
   await expect(page).toHaveURL(/#\/baslangic/)
   await page.goto('/#/varsayimlar')
   await expect(page.locator('.assumption-card')).toHaveCount(0)
-  await expect(page.getByText('Henüz varsayım yok.')).toBeVisible()
+  await expect(page.getByText('Henüz varsayım yok')).toBeVisible()
   await noHorizontalOverflow(page, 'varsayımlar, boş')
   await page.getByRole('link', { name: "Adım 10'u aç" }).click()
   await expect(page).toHaveURL(/#\/karar\/3\/adim\/10/)

@@ -6,7 +6,7 @@ import '@/styles/desen/temel-stats.css'
 import '@/styles/desen/cikti-ortak.css'
 import '@/styles/ekran/FoundationScreen.css'
 import { useMemo, useState } from 'react'
-import { Card, Empty, Progress, Segmented, Statistic, Tag } from 'antd'
+import { Button, Card, Progress, Segmented, Statistic, Tag } from 'antd'
 import { Link } from 'react-router'
 import { ArrowRight, CheckCircle, MinusCircle, Warning } from '@phosphor-icons/react'
 import { useCurrentPlan } from '@/store/planStore'
@@ -15,6 +15,7 @@ import { stepPath } from '@/data/registry'
 import { LEVELS, validationLevel } from '@/engine/readiness'
 import { Callout } from '@/components/Callout'
 import { PageHeader } from '@/components/PageHeader'
+import { EmptyState } from '@/components/EmptyState'
 type Filter = 'hepsi' | StoneStatus
 
 const FILTERS: { value: Filter; label: string }[] = [
@@ -93,21 +94,21 @@ export function FoundationScreen() {
         newPath="/temel"
         kicker="Temel sorular"
         title="Strateji öncesi 20 temel soru"
-        description="Her taş bir soruya cevap verir. Eksik taşa tıklayın, ilgili adım açılır."
+        description="Her kart bir temel soruyu gösterir. Eksik soruya dokunun. İlgili adım açılır."
       />
 
       <div className="temel-stats has-wide" role="group" aria-label="Temel soru özeti">
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Var" value={ok} prefix={<CheckCircle className="stat-ico is-ok" size={22} weight="fill" aria-hidden />} />
-          <span className="stat-note">Cevabı yazılı ve kanıtı güçlü taşlar.</span>
+          <span className="stat-note">Cevabı yazılı ve kanıtı güçlü sorular.</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Zayıf kanıtlı" value={weak} prefix={<Warning className="stat-ico is-hold" size={22} weight="fill" aria-hidden />} />
-          <span className="stat-note">Cevabı yazılı ama kanıtı zayıf taşlar.</span>
+          <span className="stat-note">Cevabı yazılı ama kanıtı zayıf sorular.</span>
         </Card>
         <Card className="k-card stat-card" variant="borderless">
           <Statistic title="Eksik" value={missing} prefix={<MinusCircle className="stat-ico is-harm" size={22} weight="fill" aria-hidden />} />
-          <span className="stat-note">Cevabı henüz yeterli olmayan taşlar.</span>
+          <span className="stat-note">Cevabı henüz yeterli olmayan sorular.</span>
         </Card>
         <Card className="k-card temel-progress is-wide" variant="borderless">
           <h2 className="temel-progress-title">Temel ne kadar hazır?</h2>
@@ -124,13 +125,13 @@ export function FoundationScreen() {
       <Callout tone="ipucu" title="Zayıf kanıt ne demek?">Var ama dayanağı zayıf. Adıma bağlı kanıt yok ya da kanıt sözden ibaret.</Callout>
 
       <div className="temel-filter">
-        <Segmented<Filter> aria-label="Taşları duruma göre süz" options={FILTERS} value={filter} onChange={setFilter} />
-        <span className="temel-filter-count" role="status">{shown.length} taş gösteriliyor.</span>
+        <Segmented<Filter> aria-label="Soruları duruma göre süz" options={FILTERS} value={filter} onChange={setFilter} />
+        <span className="temel-filter-count" role="status">{shown.length} soru gösteriliyor.</span>
       </div>
 
       {shown.length === 0 ? (
         <Card className="k-card" variant="borderless">
-          <Empty description="Bu durumda taş yok. Başka bir süzgeç seçin." />
+          <EmptyState title="Bu durumda soru yok" text="Bu süzgece uyan temel soru yok. Bütün soruları görmek için süzgeci kaldırın." action={<Button onClick={() => setFilter('hepsi')}>Hepsini göster</Button>} />
         </Card>
       ) : (
         <div className="stone-groups">

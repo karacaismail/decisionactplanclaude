@@ -32,14 +32,14 @@ export function parseImportFile(text: string, byteLength = bytes(text)): { plan:
   try {
     parsed = JSON.parse(text)
   } catch {
-    throw new Error('Dosya okunamadı. Geçerli bir JSON dosyası seçin.')
+    throw new Error('Dosya okunamadı. Planlarınız değişmedi. Bu uygulamadan indirilen bir JSON dosyası seçin.')
   }
   if (isRecord(parsed) && parsed.kind === BUNDLE_KIND) {
     if (parsed.bundleVersion !== BUNDLE_VERSION) throw new Error('Bu paket dosyasının sürümü desteklenmiyor. Uygulamanın güncel sürümünü kullanın.')
     if (bytes(JSON.stringify(parsed.plan ?? null)) > MAX_IMPORT_BYTES) throw new Error(TOO_BIG_PLAN)
     if (!validatePlanDoc(parsed.plan)) throw new Error(NOT_A_PLAN)
     const modules = parsed.modules ?? {}
-    if (!isRecord(modules)) throw new Error('Paketteki modül verisi okunamadı.')
+    if (!isRecord(modules)) throw new Error('Paketteki modül verisi okunamadı. Planlarınız değişmedi. Dosyayı yeniden indirip deneyin.')
     return { plan: parsed.plan, modules }
   }
   if (byteLength > MAX_IMPORT_BYTES) throw new Error(TOO_BIG_PLAN)

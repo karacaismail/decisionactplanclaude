@@ -4,18 +4,19 @@ import '@/styles/desen/pano-ortak.css'
 import '@/styles/desen/form.css'
 import '@/styles/ekran/OverviewScreen.css'
 import { useEffect, useMemo, useState } from 'react'
-import { App as AntApp, Button, Card, Collapse, Descriptions, Empty, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
+import { App as AntApp, Button, Card, Collapse, Descriptions, Grid, Progress, Statistic, Switch, Tabs, Tag, Timeline, theme } from 'antd'
 import { Link, useNavigate } from 'react-router'
 import { ArrowRight, CheckSquare, DownloadSimple, Flag, Notebook, Path } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS, STRATEGY, STRATEGY_N } from '@/data/decisions'
-import { stepsOf } from '@/data/registry'
+import { stepPath, stepsOf } from '@/data/registry'
 import { EXECUTION_DECISIONS, FOUNDATION_DECISIONS, STAGES, type StageKey } from '@/data/stages'
 import { CLUSTER_STATE_LABEL, clusterOf, clusterState } from '@/data/clusters'
 import { decisionLocked, gatePassed, effectiveOutcome, lastDecision, retriesLeft } from '@/engine/gate'
 import { LEVELS, effectiveTransition, lastTransition, transitionPassed } from '@/engine/readiness'
 import { stepApplies } from '@/engine/conditions'
 import { Callout } from '@/components/Callout'
+import { EmptyState } from '@/components/EmptyState'
 import { DecisionBadge, outcomeColor } from '@/components/DecisionBadge'
 import { planPosition } from '@/engine/position'
 import { BACKUP_DAYS, backupState } from '@/engine/backup'
@@ -30,6 +31,7 @@ import { palette } from '@/theme/tokens'
 import { useResolvedTheme } from '@/app/printMode'
 import { OUTCOME_LABEL, TRANSITION_LABEL, type Evidence, type PlanDoc, type Task } from '@/data/types'
 import type { StepDef } from '@/data/schema'
+import { hataMetni } from '@/platform/hataMetni'
 const two = (n: number) => String(n).padStart(2, '0')
 const today = () => new Date().toISOString().slice(0, 10)
 
@@ -112,7 +114,7 @@ export function OverviewScreen() {
     exportPlanFile(plan).then((data) => {
       downloadJson(`${safeFileName(plan.name)}.json`, data)
       markBackup(plan.id)
-    }, (err: unknown) => message.error(err instanceof Error ? err.message : 'Yedek alınamadı. Plan dışa aktarılamadı.'))
+    }, (err: unknown) => message.error(hataMetni(err, 'Yedek alınamadı. Planınız tarayıcıda duruyor. Yeniden deneyin.')))
   }
   const { level, strategyDone, strategyTotal } = position
   const foundationPassed = FOUNDATION_DECISIONS.filter((n) => gatePassed(plan, n)).length
@@ -252,9 +254,7 @@ export function OverviewScreen() {
       label: `Açık işler (${openTasks.length})`,
       children:
         openTasks.length === 0 ? (
-          <Empty description="Açık iş yok.">
-            <Link to="/isler">İş ekle</Link>
-          </Empty>
+          <EmptyState level={3} title="Açık iş yok" text="Bir iş ekleyince burada görünür." action={<Link to="/isler">İş ekle</Link>} />
         ) : (
           <>
             <ul className="overview-record-list" aria-label="Açık işler" role="list">
@@ -281,9 +281,7 @@ export function OverviewScreen() {
       label: `Son kanıtlar (${plan.evidence.length})`,
       children:
         recentEvidence.length === 0 ? (
-          <Empty description="Henüz kanıt yok.">
-            <Link to="/kanitlar">Kanıt ekle</Link>
-          </Empty>
+          <EmptyState level={3} title="Henüz kanıt yok" text="İlk görüşme notunuzu ekleyince kanıt burada görünür." action={<Link to="/kanitlar">Kanıt ekle</Link>} />
         ) : (
           <>
             <ul className="overview-record-list" aria-label="Son kanıtlar" role="list">
@@ -307,7 +305,7 @@ export function OverviewScreen() {
       label: `Değişiklik kaydı (${(plan.changes ?? []).length})`,
       children:
         changes.length === 0 ? (
-          <Empty description="Sınır ve eşik değişikliği yok." />
+          <EmptyState level={3} title="Değişiklik yok" text="Harcama sınırı, bitiş tarihi ya da deneme hakkı değişince kayıt burada görünür." action={<Link to={stepPath('02')}>Adım 2'yi aç</Link>} />
         ) : (
           <ul className="overview-record-list" aria-label="Değişiklik kaydı" role="list">
             {changes.map((c) => (
@@ -475,9 +473,7 @@ export function OverviewScreen() {
 
         <Card className="pano-card" title="Nakit akışı" extra={<Link to="/karar/5/adim/16">Adım 16</Link>}>
           {days.length === 0 ? (
-            <Empty description="Ödeme günleri henüz yazılmadı.">
-              <Link to="/karar/5/adim/16">Adım 16'da ödeme günlerini yazın</Link>
-            </Empty>
+            <EmptyState level={3} title="Ödeme günleri yazılmadı" text="Adım 16'da ödeme günlerini yazınca grafik burada çizilir." action={<Link to="/karar/5/adim/16">Adım 16'yı aç</Link>} />
           ) : (
             <ChartFrame frame="plain" title="Ödeme günlerinde kasada kalan" option={chartOption} table={cashFlowTable(days)} height={bp.sm ? 220 : 160} summary={`${days.length} ödeme günü. En düşük bakiye ${formatMoney(Math.min(...days.map((d) => d.balanceKurus)))}.`} />
           )}
@@ -495,7 +491,7 @@ export function OverviewScreen() {
               label: `Son kararlar (${timelineItems.length})`,
               children: (
                 <>
-                  {timelineItems.length === 0 ? <Empty description="Henüz karar kaydı yok. İlk kontrolde kararı kaydedince burada görünür." /> : <Timeline className="pano-timeline" items={timelineItems} />}
+                  {timelineItems.length === 0 ? <EmptyState level={3} title="Henüz karar kaydı yok" text="İlk kontrolde kararı kaydedince burada görünür." action={<Link to="/karar/1/kapi">Kontrol 1'i aç</Link>} /> : <Timeline className="pano-timeline" items={timelineItems} />}
                   <Link className="overview-record-actions" to="/gecmis">Hepsi</Link>
                 </>
               ),
