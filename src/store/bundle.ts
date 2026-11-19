@@ -79,7 +79,7 @@ export function replacesExistingExample(plan: PlanDoc): boolean {
 }
 
 /** Var olan örnek yeniden alınınca dosyadaki modül verisi alınmaz. Kişi bu uyarıyı görür. */
-export const EXAMPLE_MODULES_KEPT = 'Dosyadaki proje ve destek verisi alınmadı. Örneğin şimdiki verisi korundu.'
+export const EXAMPLE_MODULES_KEPT = 'Dosyadaki proje ve destek verisi alınmadı. Örneğin şimdiki verisi korundu. Dosyadaki veriyi almak için önce örnek planı silin. Sonra dosyayı yeniden içe alın.'
 
 /**
  * Çözülmüş dosyayı içe alır. Plan kopya olarak eklenir ve yeni kimlik alır.

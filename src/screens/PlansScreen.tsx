@@ -141,7 +141,7 @@ export function PlansScreen() {
           <p>“{name}” planı zaten var. Yeni örnek eski örneğin yerine geçer.</p>
           <p>Örnek planda yaptığınız değişiklikler silinir.</p>
           <p>Bu örneğe bağlı projeler ve destek başvuruları silinmez.</p>
-          {fileHasModules ? <p>Dosyadaki proje ve destek verisi alınmaz. Örneğin şimdiki verisi korunur.</p> : null}
+          {fileHasModules ? <p>Dosyadaki proje ve destek verisi alınmaz. Örneğin şimdiki verisi korunur. Dosyadaki veriyi almak için önce örnek planı silin.</p> : null}
         </>
       ),
       okText: 'Örneği yeniden aç',
