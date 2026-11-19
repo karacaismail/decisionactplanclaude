@@ -4,6 +4,9 @@
 
 .choice-buttons .ant-radio-button-wrapper { display: inline-flex; align-items: center; justify-content: center; height: auto; min-height: var(--target-touch); min-width: var(--target-touch); line-height: 1.3; padding-block: var(--space-2); white-space: normal; text-align: center; max-width: 100%; border-radius: var(--radius-control); border-inline-start-width: 1px; padding-inline: var(--space-3); font-size: var(--form-text-body); color: var(--color-text-primary); border-color: var(--color-border-input); box-shadow: 0 1px 2px var(--color-shadow); transition: background-color var(--motion-small) var(--motion-ease), border-color var(--motion-small) var(--motion-ease), color var(--motion-small) var(--motion-ease); }
 
+/* Odak çizgisi iki seçenek arasındaki boşluğun ortasında durur. Komşu seçeneğin kenarına değmez. */
+.choice-buttons .ant-radio-button-wrapper { --focus-field-marker-start: calc(-1 * (var(--space-2) - var(--space-1) / 2)); }
+
 .choice-buttons .ant-radio-button-wrapper::before { display: none; }
 
 .choice-buttons .ant-radio-button-wrapper > span:not(.ant-radio-button) { display: inline-block; line-height: 1.3; }

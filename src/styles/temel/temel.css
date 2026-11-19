@@ -242,6 +242,9 @@ body { letter-spacing: -0.006em; }
 
 h1.page-title { font-size: clamp(30px, 3.2vw, 44px); line-height: 1.08; font-weight: 600; letter-spacing: -0.045em; }
 
+/* Odaklanan kart gölgesini bırakır. Odak yalnız soldaki tek çizgiyle gösterilir, gölge halka gibi görünmez. */
+html:root :is(.ant-card, .surface-card, .panel, .meta-stack):focus-visible { box-shadow: none !important; }
+
 /* Kart zeminden kenarlıkla değil gölge ve yüzey tonuyla ayrılır. Saydam kenar seçili durumun yerini korur. */
 .panel, .meta-stack, .surface-card { background: var(--color-surface-work); border: 1px solid transparent; border-radius: var(--radius-panel); box-shadow: var(--shadow-card); }
 
