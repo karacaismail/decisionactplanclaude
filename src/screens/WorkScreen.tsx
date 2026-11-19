@@ -17,11 +17,13 @@ import { STRATEGY_N } from '@/data/decisions'
 import { decisionLocked, lockReason, lockTarget } from '@/engine/gate'
 import { EXECUTION_DECISIONS } from '@/data/stages'
 import { uid } from '@/engine/format'
+import { LIMITS_STEP } from '@/engine/changes'
 import { stepApplies } from '@/engine/conditions'
 import { FormRenderer, requiredKeys, sectionStats, type SectionStat } from '@/components/FormRenderer'
 import { isFilled } from '@/components/FieldControl'
 import { Callout } from '@/components/Callout'
 import { DraftReview } from '@/components/DraftReview'
+import { SupportHint, SupportSummary } from '@/components/SupportLinks'
 import { ModelChips } from '@/components/ModelChip'
 import { PageHeader } from '@/components/PageHeader'
 import { LoadingState } from '@/components/LoadingState'
@@ -275,7 +277,7 @@ export function WorkScreen() {
               </span>
             </Callout>
           ) : null}
-          <DraftReview planId={plan.id} kind="adim" step={step.id} />
+          <DraftReview planId={plan.id} kind="adim" step={step.id} locked={locked || rec?.status === 'atlandi'} />
           {step.id === PATHS_STEP ? (
             <Callout tone="ipucu" title="Bu adımda seçim yok">
               Bu adımda yol seçmeyin. Stratej bu adaylardan birini önerir. Karar sahibi seçer.
@@ -323,6 +325,8 @@ export function WorkScreen() {
               <fieldset className="work-lock" disabled aria-label="Kilitli form">{form}</fieldset>
             </ConfigProvider>
           ) : form}
+          {step.id === LIMITS_STEP ? <SupportHint plan={plan} /> : null}
+          {step.id === RESOURCES_STEP ? <SupportSummary planId={plan.id} /> : null}
           {chartData && step.chart ? (
             <ChartFrame title={step.chart.title} summary={step.chart.summary?.(values, plan)} option={chartData.option} table={chartData.table} />
           ) : null}

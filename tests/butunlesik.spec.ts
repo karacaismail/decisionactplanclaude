@@ -31,7 +31,9 @@ const APPROVE = `
     { _id: 'm-yunan', move: 'Yunanistan mağazalarıyla ilişkiyi güçlendir', serves: 'Toptan satışı korur.', capability: 'İhracat ekibi', have: 'var' },
   ] })
   plan.steps['20'] = done({ dossier1: 'Profil', dossier2: 'Problem', dossier3: 'Talep', dossier4: 'Yol', dossier5: 'Para', dossier6: 'Varsayım', dossier7: 'Risk', dossier8: 'Durdurma', dossier9: 'Teşhis', dossier11: 'İlk teslim', counterView: 'Alıcı fiyatı yüksek bulabilir.', qualityCheck: ['q1', 'q2', 'q3', 'q4', 'q5'], approvedBy: 'Patron' })
-  plan.steps['U32'] = done({ now: [{ _id: 'u-foto', action: '${SIMDI}', owner: 'Dijital ekip', dueDate: '2099-01-15' }] })`
+  plan.steps['U32'] = done({ now: [{ _id: 'u-foto', action: '${SIMDI}', owner: 'Dijital ekip', dueDate: '2099-01-15' }] })
+  plan.steps['U33'] = done({ resources: [{ _id: 'k-foto', item: 'Fotoğraf çekimi', budgetKurus: 500000, people: 'Dijital ekip, haftada 10 saat' }], resourceOwner: 'Patron' })
+  plan.profile.funding = 'dis'`
 
 async function openShoeDemo(page: Page, touch: boolean) {
   await page.goto('/')
@@ -169,6 +171,36 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   await card.scrollIntoViewIfNeeded()
   await shot(page, `${name}-uygulama-kart`)
 
+  /* Kaynak sınırı adımı "Dış para" seçilince olası desteklere bağlanır. */
+  await go(page, '/karar/1/adim/02')
+  const hint = page.locator('.support-links')
+  await expect(hint).toContainText('Destek parası kesin para sayılmaz.')
+  await expect(hint.getByRole('link', { name: 'Olası destekler' })).toHaveAttribute('href', '#/destek/eslesme')
+  await readable(hint, 'destek bağlantısı')
+
+  /* Destek başvurusu 3.3 adımında beklenen para olarak görünür. Bağlanan toplam para değişmez. */
+  await go(page, '/karar/6/adim/U33')
+  const total = page.locator('.field-cell').filter({ hasText: 'Bağlanan toplam para' })
+  await expect(total).toBeVisible()
+  const totalBefore = await total.innerText()
+  expect(totalBefore).toContain('Bağlanan toplam para 5.000,00 TL.')
+  await expect(page.locator('.support-links')).toHaveCount(0)
+  await go(page, '/destek/kosgebIsletmeGelistirme')
+  await activate(page, page.getByRole('main').getByRole('button', { name: 'Başvuru listeme ekle' }), hasTouch)
+  await activate(page, page.getByRole('main').getByRole('button', { name: 'Hayır', exact: true }), hasTouch)
+  await expect(page.getByRole('main').getByText('Program başvuru listenize eklendi.')).toBeVisible()
+  await go(page, '/karar/6/adim/U33')
+  const support = page.locator('.support-links')
+  await expect(support.getByRole('heading', { name: 'Destek başvuruları: 1' })).toBeVisible()
+  await expect(support).toContainText('1 başvuru hazırlanıyor.')
+  await expect(support.locator('.support-links-label')).toHaveText('Beklenen, kesin değil')
+  await expect(support).toContainText('Bağlanan toplam paraya eklenmez.')
+  expect(await total.innerText()).toBe(totalBefore)
+  await readable(support, 'destek satırı')
+  await noPageOverflow(page, '3.3 adımı')
+  await support.scrollIntoViewIfNeeded()
+  await shot(page, `${name}-u33-destek`)
+
   /* Modül verisi planı değiştirmez. */
   expect(await storedPlan(page)).toBe(before)
 
@@ -228,6 +260,7 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   expect(bundle.kind).toBe('decisionactplan-bundle')
   expect(bundle.plan.evidence.at(-1).title).toContain(`Proje: ${SIMDI}.`)
   expect(bundle.modules.proje.entries.map((e: [string, unknown]) => e[0].split('/')[0]).sort()).toEqual(['is', 'proje'])
+  expect(JSON.stringify(bundle.modules.destek)).toContain('kosgebIsletmeGelistirme')
 
   /* Plan silme onayı modül verisinin de silineceğini söyler. */
   await activate(page, page.getByRole('button', { name: `Sil: ${PLAN_NAME}` }), hasTouch)
@@ -245,15 +278,20 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   await expect(page.locator('.projects-summary')).toContainText('1 görev gecikti.')
   await go(page, '/karar/6/adim/U32')
   await expect(page.locator('.project-row-badge').filter({ hasText: 'Projede 1 görev açık.' })).toBeVisible()
+  await go(page, '/karar/6/adim/U33')
+  await expect(page.locator('.support-links').getByRole('heading', { name: 'Destek başvuruları: 1' })).toBeVisible()
+  expect(await page.locator('.field-cell').filter({ hasText: 'Bağlanan toplam para' }).innerText()).toBe(totalBefore)
 
-  /* Aynı örnek dosyası yeniden alınırsa ekran sorar. Proje verisi silinmez. */
+  /* Aynı örnek dosyası yeniden alınırsa ekran sorar. Şimdiki proje ve destek verisi korunur. Dosyadaki modül verisi alınmaz. */
   await go(page, '/')
   await page.locator('input[type="file"][aria-label="JSON dosyası seç"]').setInputFiles(file)
   const dialog = page.getByRole('dialog').filter({ hasText: 'Örnek plan yeniden açılsın mı?' })
   await expect(dialog).toContainText('Bu örneğe bağlı projeler ve destek başvuruları silinmez.')
+  await expect(dialog).toContainText('Dosyadaki proje ve destek verisi alınmaz.')
   await shot(page, `${name}-ornek-sorusu`)
   await activate(page, dialog.getByRole('button', { name: 'Örneği yeniden aç' }), hasTouch)
   await expect(page.getByText('Plan içe alındı.').first()).toBeVisible()
+  await expect(page.getByText('Dosyadaki proje ve destek verisi alınmadı.')).toBeVisible()
   await go(page, '/projeler')
   await expect(page.locator('.pj-projeler-kart')).toHaveCount(1)
   await expect(page.locator('.pj-projeler-kart')).toContainText('1 görevin son tarihi geçti.')
@@ -267,4 +305,31 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   await activate(page, again.getByRole('button', { name: 'Vazgeç' }), hasTouch)
   await expect(again).toHaveCount(0)
   expect(await storedPlan(page)).toBe(snapshot)
+
+  /* Onaylanınca örnek yenilenir. Proje ve destek verisi kalır. */
+  await activate(page, page.getByRole('button', { name: 'Daha fazla', exact: true }), hasTouch)
+  await activate(page, page.getByRole('menuitem', { name: 'Ayakkabı örneğini aç' }), hasTouch)
+  await activate(page, page.getByRole('dialog').getByRole('button', { name: 'Örneği yeniden aç' }), hasTouch)
+  await expect(page).toHaveURL(/#\/ozet$/)
+  await approveStrategy(page)
+  await go(page, '/projeler')
+  await expect(page.locator('.pj-projeler-kart')).toHaveCount(1)
+  await go(page, '/karar/6/adim/U33')
+  await expect(page.locator('.support-links').getByRole('heading', { name: 'Destek başvuruları: 1' })).toBeVisible()
+
+  /* Strateji yeniden açılırsa Projeler ekranı proje göstermez. Etiket ve kart bağlantı vermez. */
+  await go(page, '/uygulama')
+  await page.getByRole('radio', { name: 'Hayır, seçim artık doğru değil' }).check()
+  await page.getByRole('radio', { name: /^Yeniden aç\./ }).check()
+  await page.getByLabel('Gerekçe').fill('Amazon satışı üç ay boyunca hiç büyümedi.')
+  await page.getByLabel('Karar sahibi').fill('Patron')
+  await activate(page, page.getByRole('button', { name: 'Kararı kaydet' }), hasTouch)
+  await expect(page).toHaveURL(/#\/strateji$/)
+  await go(page, '/karar/6/adim/U32')
+  const closed = page.locator('.project-row-badge')
+  await expect(closed).toContainText('Projede 1 görev açık.')
+  await expect(closed.getByRole('link')).toHaveCount(0)
+  await go(page, '/uygulama')
+  await expect(page.locator('.projects-summary')).toContainText('Strateji yeniden onaylanınca projeleri açabilirsiniz.')
+  await expect(page.locator('.projects-summary').getByRole('link')).toHaveCount(0)
 })
