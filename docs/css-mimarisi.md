@@ -91,6 +91,20 @@ Her giriş dosyasının kuralları ayrıca kendi sorgusunun içinde durur. Örne
 
 Yazdırma kuralları yalnız rapor ekranlarında gerekir. Bu yüzden yalnız rapor ekranları bu dosyayı içe aktarır.
 
+## Modül CSS dosyaları
+
+Modüller numaralı aşamaların dışındaki bölümlerdir. Örneğin proje yönetimi bir modüldür. Ayrıntı [modül mimarisindedir](moduller/mimari.md).
+
+Modül CSS dosyası yalnız ekran ve bileşen katmanında durur. Dosya adı modülün önekiyle başlar. Örneğin proje modülünün dosyası `ekran/PjProjelerScreen.css` olabilir.
+
+Modül CSS dosyası için üç kural vardır:
+
+1. Dosyayı yalnız aynı adlı modül dosyası içe aktarır. Bu dosya kendi modülünün klasöründe durur.
+2. Dosyadaki her seçici modülün önekiyle başlar. Örneğin `.pj-bos-ekran` seçicisi geçerlidir. `.page` seçicisi geçersizdir.
+3. Modül ekranı desen ve yazdırma dosyalarını da içe aktarabilir.
+
+Önek modülün bildiriminden okunur. Yeni modül için kapı değişmez.
+
 ## Sıra kuralları
 
 CSS'te aynı güçteki iki kuraldan sonra gelen kazanır. Bu yüzden dosyaların yüklenme sırası önemlidir. Sıra iki kuralla sabitlenir:

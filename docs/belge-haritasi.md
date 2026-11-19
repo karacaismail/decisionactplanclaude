@@ -89,6 +89,7 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 | [Derin hizmet ve yetki modeli](<../reports/Derin hizmet ve yetki modeli.md>) | Önceki derin rapor | Tarihsel |
 | [Yazılım, hizmet ve rol modeli](<../reports/Yazılım hizmet ve rol modeli.md>) | Önceki hizmet ve rol raporu | Tarihsel |
 | [Arka yüz planı](arka-yuz-plani.md) | Bütünleşik rapora taşındı. | Yönlendirme |
+| [Modül mimarisi](moduller/mimari.md) | Proje ve destek modüllerinin çekirdeğe bağlanışı. Veri yeri, taslaklar, dosya biçimi ve kapılar. | Tek kaynak |
 
 ## Çekmece 5. Pazar, müşteri ve iş modeli
 

@@ -1,0 +1,5 @@
+/* Modül ekranının ilk sürüm iskeleti. Seçiciler "pj-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.pj-bos-ekran { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-4); min-inline-size: 0; }
+
+.pj-bos-ekran-govde { min-inline-size: 0; max-inline-size: 72ch; }

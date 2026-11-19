@@ -9,6 +9,8 @@ import { applyStrategyReview, reviewBlocked, validateReview, type ReviewDraft } 
 import { CHOICE_STEP, DIAGNOSIS_STEP, DOSSIER_STEP, GOALS_STEP, goalIssues, TASKS_STEP, taskIssues } from '@/engine/strategy'
 import { RENEWAL_LABEL } from '@/data/types'
 import { okrOf, sanitizeOkr, setOkrEnabled as setOkrEnabledIn } from '@/engine/okr'
+import { stampRowIds } from '@/engine/rowIds'
+import { notifyPlanDeleted } from '@/platform/lifecycle'
 
 export type SaveState = 'kaydedildi' | 'kaydediliyor' | 'kaydedilemedi' | 'cakisma'
 
@@ -116,14 +118,17 @@ export const usePlanStore = create<PlanState>()(
         set((s) => ({ plans: { ...s.plans, [id]: emptyPlan(id, name) }, currentId: id, saveState: 'kaydediliyor' }))
         return id
       },
-      deletePlan: (id) =>
+      deletePlan: (id) => {
         set((s) => {
           const plans = { ...s.plans }
           delete plans[id]
           const backups = { ...s.backups }
           delete backups[id]
           return { plans, backups, currentId: s.currentId === id ? undefined : s.currentId, saveState: 'kaydediliyor' }
-        }),
+        })
+        /* Modüllerin bu plana ait verisi de silinir. Modül hatası planın silinmesini durdurmaz. */
+        void notifyPlanDeleted(id)
+      },
       selectPlan: (id) => set({ currentId: id }),
       importPlan: (doc) => {
         if (get().loadFailed) throw new Error(LOAD_BLOCKED)
@@ -239,12 +244,8 @@ export const usePlanStore = create<PlanState>()(
     {
       name: STORAGE_KEY,
       storage,
-      version: 3,
-      migrate: (persisted) => {
-        const st = persisted as { plans?: Record<string, PlanDoc> }
-        for (const plan of Object.values(st?.plans ?? {})) migratePlan(plan)
-        return st as unknown as PlanState
-      },
+      version: 4,
+      migrate: (persisted, version) => migratePersisted(persisted, version) as unknown as PlanState,
       partialize: (s) => ({ plans: s.plans, currentId: s.currentId, theme: s.theme, backups: s.backups }) as unknown as PlanState,
       /* Okuma ya da taşıma hata verirse hata görünür olur ve kayıt korunur. Hata sessizce yutulmaz. */
       onRehydrateStorage: () => (_state, error) => {
@@ -324,9 +325,26 @@ export function migratePlanSteps(plan: PlanDoc): PlanDoc {
   return plan
 }
 
-/** Bütün taşımalar. İçe alınan dosya ve depodaki eski kayıt aynı yoldan geçer. İki kez çalışması veriyi bozmaz. */
+/**
+ * Depodaki eski kaydı taşır. Yalnız kaydın sürümünden sonraki taşımalar çalışır.
+ * Sürüm 3 kaydı yalnız satır kimliği alır. Hedef takibi kaydı da denetlenir. Böylece adım durumu ve strateji kilidi değişmez.
+ */
+export function migratePersisted(persisted: unknown, version: number): unknown {
+  const st = persisted as { plans?: Record<string, PlanDoc> } | undefined
+  for (const plan of Object.values(st?.plans ?? {})) {
+    if (version < 3) migratePlan(plan)
+    else stampRowIds(migrateOkr(plan))
+  }
+  return st
+}
+
+/**
+ * Bütün taşımalar. İçe alınan dosya ve depodaki eski kayıt aynı yoldan geçer. İki kez çalışması veriyi bozmaz.
+ * Sürüm 4 taşıması tekrarlı satırlara kalıcı kimlik yazar. Ayrıntı: src/engine/rowIds.ts
+ */
 export function migratePlan(plan: PlanDoc): PlanDoc {
-  return migrateOkr(migratePlanSteps(migrateChoiceFields(plan)))
+  /* Satır kimliği en son yazılır. Hedef takibinin iş bağları da yeni kimliğe taşınır. */
+  return stampRowIds(migrateOkr(migratePlanSteps(migrateChoiceFields(plan))))
 }
 
 /**

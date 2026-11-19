@@ -22,6 +22,8 @@ Yazılım üç ana kümeden oluşur. Kümeler bu sırayla açılır. Sıra hiçb
 
 Değerlendirme ve uygulamaya çevirme ayrı ana küme değildir. İçerikleri alt aşama olarak durur: 3.1, 3.2, 3.3 ve 3.5.
 
+**Numaralı aşamaların dışındaki bölümler.** Proje yönetimi ve destek ve teşvik iki ayrı bölümdür. Bu bölümler sıralı sürecin parçası değildir. Numarası yoktur ve hiçbir kontrolü açıp kapatmaz. Bu bölümler planı yalnız okur. Plana yazacakları şeyi taslak olarak önerirler. Taslağı bir kişi kaydeder. Ayrıntı [modül mimarisindedir](moduller/mimari.md).
+
 Süreç dört bölümle yürür. Bölümler kümelere şöyle bağlıdır:
 
 | Bölüm | Ana küme | Adımlar |

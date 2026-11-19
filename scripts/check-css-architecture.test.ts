@@ -75,4 +75,46 @@ describe('CSS mimari kapısı', () => {
     const errors = check({ ...valid, 'src/styles/ekran/EskiEkran.css': '.a {}' })
     expect(errors.join('\n')).toMatch(/ekran\/EskiEkran\.css.*kullanılmıyor/)
   })
+
+  describe('modül CSS kuralları', () => {
+    const modules = {
+      ...valid,
+      'src/modules/proje/manifest.ts': "const m = { id: 'proje', cssPrefix: 'pj-' }\nexport default m",
+      'src/modules/destek/manifest.ts': "const m = { id: 'destek', cssPrefix: 'dt-' }\nexport default m",
+      'src/modules/proje/screens/PjListeScreen.tsx': "import '@/styles/desen/pano-card.css'\nimport '@/styles/ekran/PjListeScreen.css'",
+      'src/modules/proje/components/PjKart.tsx': "import '@/styles/bilesen/PjKart.css'",
+      'src/styles/ekran/PjListeScreen.css': '.pj-liste { margin: 0; }\n@media (min-width: 600px) { .pj-liste, .pj-liste > .pj-satir { gap: 8px; } }',
+      'src/styles/bilesen/PjKart.css': '.pj-kart:hover { color: red; }',
+    }
+
+    it('düzenli modül CSS dosyasında hata bulmaz', () => {
+      expect(check(modules)).toEqual([])
+    })
+
+    it('modül CSS dosyasını çekirdek ekranın içe aktarmasını bulur', () => {
+      const errors = check({ ...modules, 'src/screens/PjListeScreen.tsx': "import '@/styles/ekran/PjListeScreen.css'" })
+      expect(errors.join('\n')).toMatch(/src\/screens\/PjListeScreen\.tsx.*PjListeScreen\.css/)
+    })
+
+    it('başka modülün CSS dosyasını içe aktarmayı bulur', () => {
+      const errors = check({ ...modules, 'src/modules/destek/screens/PjListeScreen.tsx': "import '@/styles/ekran/PjListeScreen.css'" })
+      expect(errors.join('\n')).toMatch(/destek\/screens\/PjListeScreen\.tsx.*PjListeScreen\.css/)
+    })
+
+    it('modülün öneksiz ekran CSS dosyası içe aktarmasını bulur', () => {
+      const errors = check({ ...modules, 'src/modules/proje/screens/WorkScreen.tsx': "import '@/styles/ekran/WorkScreen.css'" })
+      expect(errors.join('\n')).toMatch(/proje\/screens\/WorkScreen\.tsx.*ekran\/WorkScreen\.css/)
+    })
+
+    it('modül önekiyle başlamayan seçiciyi bulur', () => {
+      const errors = check({ ...modules, 'src/styles/ekran/PjListeScreen.css': '.pj-liste, .page { margin: 0; }\n@media (min-width: 600px) { body .pj-x { gap: 8px; } }' })
+      expect(errors.join('\n')).toMatch(/PjListeScreen\.css.*\.page.*pj-/)
+      expect(errors.join('\n')).toMatch(/PjListeScreen\.css.*body \.pj-x/)
+    })
+
+    it('bildirimi olmayan önekli CSS dosyasını bulur', () => {
+      const errors = check({ ...modules, 'src/styles/ekran/ZzEkran.css': '.zz-a {}', 'src/modules/zz/screens/ZzEkran.tsx': "import '@/styles/ekran/ZzEkran.css'" })
+      expect(errors.join('\n')).toMatch(/zz\/screens\/ZzEkran\.tsx.*ekran\/ZzEkran\.css/)
+    })
+  })
 })

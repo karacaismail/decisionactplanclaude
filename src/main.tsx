@@ -7,6 +7,8 @@ import { HashRouter } from 'react-router'
 import { buildTheme } from './theme/antdTheme'
 import { palette } from './theme/tokens'
 import { usePlanStore } from './store/planStore'
+/* Çekirdek modül altyapısına ekranlar çizilmeden bağlanır. */
+import './store/platformBridge'
 import { FocusMode } from './app/FocusMode'
 import { SyncGuard } from './app/SyncGuard'
 import { AppRoutes, preloadRoute } from './app/routes'

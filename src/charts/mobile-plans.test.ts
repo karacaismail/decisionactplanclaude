@@ -161,7 +161,8 @@ describe('PlansScreen ortak kart listesi', () => {
   it('karttan indirince geçmiş kayıtları korur ve yedeği işaretler', async () => {
     await renderScreen()
     await click(button(host.querySelector('article')!, 'JSON indir'))
-    expect(downloadJson).toHaveBeenCalledWith(expect.stringMatching(/\.json$/), plan)
+    /* Dışa aktarma modül verisini de toplar. Bu yüzden indirme bir an sonra başlar. Modül verisi yoksa dosya düz plandır. */
+    await vi.waitFor(() => expect(downloadJson).toHaveBeenCalledWith(expect.stringMatching(/\.json$/), plan))
     expect(usePlanStore.getState().backups[plan.id]).toBeDefined()
     expect(usePlanStore.getState().plans[plan.id]).toEqual(plan)
   })
