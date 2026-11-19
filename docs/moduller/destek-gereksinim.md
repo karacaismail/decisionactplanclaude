@@ -141,7 +141,7 @@ Program kartının bölümleri şunlardır:
 1. Kaynak adresi ve tarihi olmayan hiçbir tutar ekranda görünmez.
 2. Bilinmeyen bilgi "Belki" sonucunu verir. "Uygun" sonucunu vermez.
 3. 90 günden eski programda uyarı çıkar ve tutar gizlenir.
-4. Örnek profil 1 yaşında, 3 kişilik bir kafedir. Bu profilde KOSGEB Küresel Rekabetçilik "Uygun değil" çıkar. Ekran nedeni söyler.
+4. Örnek profil 1 yaşında, 3 kişilik bir kafedir. Bu profilde KOSGEB Küresel Rekabetçilik "Belki" çıkar. Ekran tutmayan koşulu söyler.
 5. Destek eklenince temel bütçe toplamı değişmez.
 6. Destek profili yazılınca hiçbir karar eskimez.
 7. Akış 320 piksel genişlikte yana kaydırmadan biter.
@@ -170,7 +170,7 @@ Uygulama 14 programda bazı koşulları denetler. Örneğin işletmenin yaşın�
 
 Uygulama bir programın bütün koşullarını denetleyemezse "Uygun" demez. Denetlenmeyen koşul bilinmeyen bilgi sayılır. Bu yüzden ilk sürümde "Uygun" grubu boş kalır. Sorulan koşulları tutan program "Belki" grubunda ayrı bir başlıkta görünür.
 
-KOSGEB Küresel Rekabetçilik için kurumun sayfası 19 Kasım 2026 Perşembe günü okundu. Sayfaya göre dört yoldan biri yeterlidir. İki yol ihracat artışı ister. Öteki iki yol ihracat istemez. Bu yüzden 1 yaşında, 3 kişilik kafe bu programda "Belki" sonucunu alır. Ekran tutmayan koşulu yazar. Kabul ölçütlerindeki 4. madde bu bilgiyle çelişir. Karar ürün sahibine bırakıldı.
+KOSGEB Küresel Rekabetçilik için kurumun sayfası 19 Kasım 2026 Perşembe günü okundu. Sayfaya göre dört yoldan biri yeterlidir. İki yol ihracat artışı ister. Öteki iki yol ihracat istemez. Bu yüzden 1 yaşında, 3 kişilik kafe bu programda "Belki" sonucunu alır. Ekran tutmayan koşulu yazar. Kabul ölçütlerindeki 4. madde bu bilgiye göre düzeltildi.
 
 ### Veri
 
