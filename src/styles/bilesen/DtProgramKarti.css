@@ -1,0 +1,19 @@
+/* Program listesindeki kart. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-program-karti { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); min-block-size: var(--target-touch); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); color: var(--color-text-primary); text-decoration: none; min-inline-size: 0; transition: background-color var(--motion-small) var(--motion-ease); }
+
+.dt-program-karti:active { background: var(--color-surface-context); }
+
+.dt-program-karti .dt-program-karti-kurum { font-size: var(--font-helper); font-weight: var(--weight-strong); color: var(--color-text-secondary); }
+
+.dt-program-karti .dt-program-karti-ad { margin: 0; font-size: var(--font-subsection-title); line-height: 1.3; font-weight: var(--weight-strong); color: var(--color-action-primary); overflow-wrap: break-word; }
+
+.dt-program-karti .dt-program-karti-ozet { font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); }
+
+.dt-program-karti .dt-program-karti-etiketler { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+
+.dt-program-karti .dt-program-karti-kontrol { font-size: var(--font-helper); color: var(--color-text-secondary); }
+
+@media (hover: hover) {
+  .dt-program-karti:hover { background: var(--color-surface-context); }
+}

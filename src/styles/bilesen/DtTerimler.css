@@ -1,0 +1,17 @@
+/* Terimlerin anlamı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-terimler { min-inline-size: 0; }
+
+.dt-terimler summary { display: flex; align-items: center; min-block-size: var(--target-touch); inline-size: fit-content; min-inline-size: var(--target-touch); cursor: pointer; font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-primary); }
+
+.dt-terimler dl { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); margin: var(--space-2) 0 0; }
+
+.dt-terimler .dt-terimler-satir { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+
+.dt-terimler dt { font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-primary); }
+
+.dt-terimler dd { margin: 0; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-secondary); }
+
+@media (min-width: 720px) {
+  .dt-terimler .dt-terimler-satir { grid-template-columns: 12rem minmax(0, 1fr); }
+}
