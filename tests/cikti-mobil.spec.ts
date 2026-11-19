@@ -207,6 +207,24 @@ test('varsayım süzgeci klavye ve dokunmayla çalışır', async ({ page, brows
   await expect(page.locator('html')).not.toHaveAttribute('data-focus-mode', 'keyboard')
 })
 
+test('varsayım süzgeci yedek yazı tipinde de tek satırda kalır', async ({ page }) => {
+  // Outfit inmezse yazı biraz genişler. Süzgeç yine de 320 pikselde tek satırda kalmalı.
+  await page.route(/\.woff2?$/, (route) => route.abort())
+  await page.setViewportSize({ width: 320, height: 720 })
+  await openDemo(page, 'varsayimlar')
+  await page.evaluate(() => document.fonts.ready)
+  const filter = page.getByRole('radiogroup', { name: 'Varsayımları duruma göre göster' })
+  const spread = await filter.locator('.ant-segmented-item-label').evaluateAll((labels) => {
+    const tops = labels.map((label) => label.getBoundingClientRect().top)
+    return Math.max(...tops) - Math.min(...tops)
+  })
+  expect(spread).toBeLessThanOrEqual(1)
+  // Süzgeç içeriği kadar geniştir. Pay, çevresindeki alandan ölçülür.
+  const room = await filter.evaluate((el) => el.parentElement!.getBoundingClientRect().width - el.getBoundingClientRect().width)
+  // Yazı tipi farkına karşı en az 8 piksel pay kalır.
+  expect(room).toBeGreaterThanOrEqual(8)
+})
+
 test('çıktı bölümü ve odak ekran döndüğünde korunur', async ({ page }) => {
   await page.setViewportSize({ width: 320, height: 720 })
   await openDemo(page, 'ciktilar')

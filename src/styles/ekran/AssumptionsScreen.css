@@ -95,7 +95,8 @@
 
 .page-assumptions .assumption-filter .ant-segmented-group { flex-wrap: wrap; }
 
-.page-assumptions .assumption-filter .ant-segmented-item-label { min-height: var(--target-touch); display: flex; align-items: center; }
+/* Dar ekranda üç seçenek tek satıra sığsın. Yazı tipi değişirse de pay kalır. */
+.page-assumptions .assumption-filter .ant-segmented-item-label { min-height: var(--target-touch); display: flex; align-items: center; padding-inline: var(--space-2); }
 
 @media (min-width: 768px) {
   .page-assumptions .assumption-filter { display: none; }
