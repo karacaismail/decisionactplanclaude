@@ -48,7 +48,7 @@
 
 .tabular { font-variant-numeric: tabular-nums; }
 
-html[data-focus-mode='keyboard'] .foundation-collapse .ant-collapse-header:focus-visible::before { left: var(--space-1);
+html[data-focus-mode='keyboard'] .aside-collapse .ant-collapse-header:focus-visible::before { left: var(--space-1);
   top: var(--space-2);
   bottom: var(--space-2); }
 
