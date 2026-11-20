@@ -17,3 +17,17 @@
 @media (hover: hover) {
   .dt-program-karti:hover { background: var(--color-surface-context); }
 }
+
+.dt-program-karti .dt-program-karti-ad a {
+  display: block;
+  min-block-size: var(--target-touch);
+  min-inline-size: var(--target-touch);
+  inline-size: fit-content;
+  padding-block: var(--space-2);
+  cursor: pointer;
+  color: var(--color-action-text);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dt-program-karti { transition: none; }
+}

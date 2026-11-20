@@ -8,16 +8,17 @@ import { PageHeader } from '@/components/PageHeader'
 import { DtBasvuruEkle } from '../components/DtBasvuruEkle'
 import { DtEskiBilgi } from '../components/DtEskiBilgi'
 import { DtEtiket } from '../components/DtEtiket'
-import { DtTerimBaglantisi } from '../components/DtTerimBaglantisi'
+import { DtFaydalar } from '../components/DtFaydalar'
+import { DtKurumSorulari } from '../components/DtKurumSorulari'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
 import { useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
-import { DURUM_ADI, farkliKayitMetni, KATEGORI_ADI, KOMBINASYON_METNI, SONUC_ADI, TAVAN_TURU_ADI, TUTARI_OKUYUN } from '../metinler'
+import { DURUM_ADI, KATEGORI_ADI, KOMBINASYON_METNI, SONUC_ADI, TAVAN_TURU_ADI } from '../metinler'
 import { eslestir } from '../motor/eslestir'
-import { programIliskileri } from '../motor/kombinasyon'
+import { BILINMEYEN_ILISKI, iliskiBul } from '../motor/kombinasyon'
 import { profilDoluMu } from '../motor/profil'
-import { gecerliDurum, tarihGectiMi, tarihYaz, tazelik, tutarlariGizle } from '../motor/tazelik'
+import { alanDurumu, alanMetni, eskiMetniGoster, gecerliDurum, tarihGectiMi, tarihYaz, tazelik } from '../motor/tazelik'
 
 const TL = new Intl.NumberFormat('tr-TR')
 
@@ -31,31 +32,43 @@ function Bolum({ no, baslik, children }: { no: number; baslik: string; children:
   )
 }
 
-function Liste({ maddeler, bos }: { maddeler: readonly string[]; bos: string }) {
+function Liste({ maddeler, bos, metin = (m) => m }: { maddeler: readonly string[]; bos: string; metin?: (m: string) => string }) {
   if (!maddeler.length) return <p>{bos}</p>
   return (
     <ul className="dt-program-liste">
-      {maddeler.map((m) => <li key={m}>{m}</li>)}
+      {maddeler.map((m) => <li key={m}>{metin(m)}</li>)}
     </ul>
   )
 }
 
-function Tutar({ program, eski }: { program: Program; eski: boolean }) {
+function Tutar({ program, bugun }: { program: Program; bugun: string }) {
   const { metin, tavanTL, tavanTuru } = program.tutar
-  if (eski) {
-    return (
-      <>
-        <p className="dt-program-vurgu">{TUTARI_OKUYUN}</p>
-        <p>Bu bilgi 90 günden eski. Tutar değişmiş olabilir. Bu yüzden tutarı gizledik.</p>
-      </>
-    )
-  }
-  if (metin.state !== 'kaynakli') return <p className="dt-program-vurgu">Tutar bilinmiyor. Kurumun sayfasına bakın.</p>
   return (
     <>
-      <p>{metin.value}</p>
-      {tavanTL.state === 'kaynakli' ? <p>{TAVAN_TURU_ADI[tavanTuru]}: {TL.format(tavanTL.value)} TL</p> : null}
-      <p className="dt-program-kaynak">Kaynak: {program.kaynak.ad}. Son kontrol: {tarihYaz(metin.asOf)}</p>
+      <p>{alanMetni(metin, bugun, (value) => value)}</p>
+      {tavanTuru !== 'yok' && tavanTuru !== 'oransal' ? (
+        <p>{TAVAN_TURU_ADI[tavanTuru]}: {alanMetni(tavanTL, bugun, (value) => `${TL.format(value)} TL`)}</p>
+      ) : null}
+      {alanDurumu(metin, bugun) === 'kaynakli' ? (
+        <p className="dt-program-kaynak">Kaynak: {program.kaynak.ad}. Son kontrol: {tarihYaz(metin.asOf)}</p>
+      ) : null}
+    </>
+  )
+}
+
+function Sureler({ program, bugun }: { program: Program; bugun: string }) {
+  const { degerlendirme, ilkOdeme } = program.sure
+  const bilinmiyor = 'Süre bilinmiyor. Kuruma sorun.'
+  const ayni = [degerlendirme, ilkOdeme].every((fact) => alanDurumu(fact, bugun) === 'bilinmiyor')
+  return (
+    <>
+      {ayni ? <p>{bilinmiyor}</p> : (
+        <>
+          <p>Değerlendirme: {alanMetni(degerlendirme, bugun, (value) => value, bilinmiyor)}</p>
+          <p>İlk ödeme: {alanMetni(ilkOdeme, bugun, (value) => value, bilinmiyor)}</p>
+        </>
+      )}
+      <p>Ödeme biçimi: {alanMetni(program.odemeBicimi, bugun, (value) => value)}</p>
     </>
   )
 }
@@ -85,31 +98,27 @@ function OnEslesme({ program, bugun }: { program: Program; bugun: string }) {
   )
 }
 
-/** Bu programla birlikte kullanma. Bilgi yalnız katalogdaki kayıtlardan gelir. */
 function BirlikteKullanma({ program, programlar }: { program: Program; programlar: readonly Program[] }) {
-  const gruplar = programIliskileri(program, programlar)
-  if (!gruplar.length) {
-    return <EmptyState level={3} announce={false} title="Bilgi yok" text="Kaynakta bu program için birlikte kullanma bilgisi yok. Kurumun sayfasını okuyun." actionless="Kurumun sayfasının bağlantısı 5. bölümde duruyor." />
-  }
   return (
-    <>
-      <p>Bu bilgi kaynaktaki kayıtlardan gelir. Kesin kararı kurumlar verir. Burada olmayan program için bilgi yok.</p>
-      {gruplar.map((g) => (
-        <div key={g.tur} className="dt-program-birlikte">
-          <h3>{KOMBINASYON_METNI[g.tur].baslik} ({g.programlar.length})</h3>
-          <p>{KOMBINASYON_METNI[g.tur].aciklama}</p>
-          {g.tur === 'ayri_gider' ? <DtTerimBaglantisi terim="ciftFinansman" /> : null}
-          <ul className="dt-program-birlikte-liste">
-            {g.programlar.map((x) => (
-              <li key={x.program.id}>
-                <Link className="dt-program-baglanti" to={`/destek/${x.program.id}`}>{x.program.ad}</Link>
-                {x.farkli ? <p>{farkliKayitMetni(x.farkli)}</p> : null}
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
-    </>
+    <details className="dt-program-ciftler">
+      <summary>Program çiftlerini görün</summary>
+      <ul className="dt-program-birlikte-liste">
+        {programlar.filter((p) => p.id !== program.id).map((diger) => {
+          const kural = iliskiBul(program, diger)
+          return (
+            <li key={diger.id}>
+              <Link className="dt-program-baglanti" to={`/destek/${diger.id}`}>{diger.ad}</Link>
+              {kural?.iliski.state === 'kaynakli' ? (
+                <>
+                  <p>{KOMBINASYON_METNI[kural.iliski.value].aciklama}</p>
+                  <a className="dt-program-baglanti" href={kural.iliski.sourceUrl} target="_blank" rel="noopener noreferrer">İlişkinin kaynağını açın</a>
+                </>
+              ) : <p>{BILINMEYEN_ILISKI}</p>}
+            </li>
+          )
+        })}
+      </ul>
+    </details>
   )
 }
 
@@ -132,8 +141,7 @@ export default function DtProgramScreen() {
   }
 
   const eski = tazelik(program.kaynak.asOf, bugun).eski
-  /* Eski bilgide bütün metinlerdeki tutarlar gizlenir. */
-  const metin = (m: string) => (eski ? tutarlariGizle(m) : m)
+  const metin = (m: string) => eskiMetniGoster(m, program.kaynak, bugun)
   const durum = gecerliDurum(program, bugun)
   return (
     <div className="page dt-program">
@@ -151,27 +159,28 @@ export default function DtProgramScreen() {
         </div>
         <p className="dt-program-kontrol">Son kontrol: {tarihYaz(program.kaynak.asOf)}</p>
       </div>
+      <DtFaydalar program={program} bugun={bugun} />
       <DtUyari />
       {eski ? <DtEskiBilgi asOf={program.kaynak.asOf} /> : null}
       <OnEslesme program={program} bugun={bugun} />
 
       <div className="dt-program-bolumler">
         <Bolum no={1} baslik="Kim alabilir?">
-          <Liste maddeler={program.kosullar.map(metin)} bos="Kaynakta koşul yazmıyor. Kurumun sayfasını okuyun." />
+          <Liste maddeler={program.kosullar} metin={metin} bos="Kaynakta koşul yazmıyor. Kurumun sayfasını okuyun." />
         </Bolum>
         <Bolum no={2} baslik="Neyi öder?">
           <p>Destek türü: {metin(program.destekTuru)}</p>
-          <Liste maddeler={program.uygunGider.map(metin)} bos="Kaynakta gider listesi yok. Kurumun sayfasını okuyun." />
+          <Liste maddeler={program.uygunGider} metin={metin} bos="Kaynakta gider listesi yok. Kurumun sayfasını okuyun." />
           <Link className="dt-program-baglanti" to="/destek/giderler">Giderden programa bakın</Link>
           {program.haricGider.length ? (
             <>
               <h3>Kapsamın dışında kalanlar</h3>
-              <Liste maddeler={program.haricGider.map(metin)} bos="" />
+              <Liste maddeler={program.haricGider} metin={metin} bos="" />
             </>
           ) : null}
         </Bolum>
         <Bolum no={3} baslik="Ne kadar?">
-          <Tutar program={program} eski={eski} />
+          <Tutar program={program} bugun={bugun} />
         </Bolum>
         <Bolum no={4} baslik="Son tarih ne zaman?">
           <p>Durum: {DURUM_ADI[durum]}.</p>
@@ -180,18 +189,19 @@ export default function DtProgramScreen() {
               {program.tarihler.map((t) => (
                 <li key={t.ad}>
                   {metin(t.ad)}:{' '}
-                  {t.tarih.state === 'kaynakli' ? (
+                  {t.tarih.state === 'kaynakli' && alanDurumu(t.tarih, bugun) === 'kaynakli' ? (
                     <>
                       {tarihYaz(t.tarih.value)}
                       {tarihGectiMi(t.tarih.value, bugun) ? <> <DtEtiket ton="kapali">Geçti</DtEtiket></> : null}
                     </>
-                  ) : 'Tarih bilinmiyor. Kurumun sayfasına bakın.'}
+                  ) : alanMetni(t.tarih, bugun, tarihYaz)}
                 </li>
               ))}
             </ul>
           ) : (
             <p>Kaynakta tarih yok. Güncel tarihi kurumun sayfasında okuyun.</p>
           )}
+          <Sureler program={program} bugun={bugun} />
         </Bolum>
         <Bolum no={5} baslik="Resmî sayfa nerede?">
           <p>Başvuru yolu: {metin(program.kanal)}</p>
@@ -203,7 +213,7 @@ export default function DtProgramScreen() {
           </a>
         </Bolum>
         <Bolum no={6} baslik="Hangi belgeler gerekir?">
-          <Liste maddeler={program.belgeler.map(metin)} bos="Kaynakta belge listesi yok. Kurumun sayfasını okuyun." />
+          <Liste maddeler={program.belgeler} metin={metin} bos="Kaynakta belge listesi yok. Kurumun sayfasını okuyun." />
           <Link className="dt-program-baglanti" to="/destek/belgeler">Belge ve kanıt listesini açın</Link>
         </Bolum>
         <Bolum no={7} baslik="Bu programla birlikte kullanma">
@@ -212,6 +222,7 @@ export default function DtProgramScreen() {
       </div>
 
       <DtBasvuruEkle key={program.id} program={program} />
+      <DtKurumSorulari />
       <DtTerimler />
     </div>
   )

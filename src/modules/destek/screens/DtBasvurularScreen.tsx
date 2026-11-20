@@ -2,22 +2,22 @@ import '@/styles/ekran/DtBasvurularScreen.css'
 import 'dayjs/locale/tr'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import { Button, Checkbox, DatePicker, Popconfirm, Select } from 'antd'
+import { Button, Checkbox, DatePicker, Input, Popconfirm, Select } from 'antd'
 import dayjs from 'dayjs'
-import { Info, Prohibit, Question, Warning } from '@phosphor-icons/react'
+import { Warning } from '@phosphor-icons/react'
 import { EmptyState } from '@/components/EmptyState'
 import { PageHeader } from '@/components/PageHeader'
 import { DtEtiket } from '../components/DtEtiket'
-import { DtTerimBaglantisi } from '../components/DtTerimBaglantisi'
+import { DtKurumSorulari } from '../components/DtKurumSorulari'
 import { DtUyari } from '../components/DtUyari'
 import { KANIT_GRUPLARI } from '../data/kanitlar'
 import type { Program } from '../data/tipler'
 import { basvuruGuncelle, basvuruSil } from '../depo'
 import { OKUMA_HATASI, useBasvurular, useBugun, useKatalog, usePlanYeri } from '../kancalar'
-import { BASVURU_DURUM_ADI, BILGI_YOK, BILGI_YOK_ACIKLAMA, DESTEKSIZ_ADI, farkliKayitMetni, KOMBINASYON_METNI } from '../metinler'
+import { BASVURU_DURUM_ADI, DESTEKSIZ_ADI, KOMBINASYON_METNI } from '../metinler'
 import { BASVURU_DURUMLARI, belgeAnahtari, type Basvuru, type BasvuruDegisikligi, type BasvuruDurumu } from '../motor/basvuru'
-import { basvuruCiftleri, uyariMi, type Iliski } from '../motor/kombinasyon'
-import { tarihGectiMi, tarihYaz } from '../motor/tazelik'
+import { basvuruCiftleri, BILINMEYEN_ILISKI } from '../motor/kombinasyon'
+import { alanDurumu, alanMetni, tarihGectiMi, tarihYaz } from '../motor/tazelik'
 
 const KANITLAR = KANIT_GRUPLARI.flatMap((g) => g.maddeler)
 /** Açılır listedeki uzun belge adları kesilmez, satıra sarılır. */
@@ -69,55 +69,39 @@ function BelgeEkle({ basvuru, id, degistir, bildir }: { basvuru: Basvuru; id: st
   )
 }
 
-const ILISKI_IKONU = { dislayici: Prohibit, ayri_gider: Warning } as const
-
-function IliskiSatiri({ iliski }: { iliski: Iliski | undefined }) {
-  const Ikon = iliski ? (ILISKI_IKONU[iliski.tur as keyof typeof ILISKI_IKONU] ?? Info) : Question
-  return (
-    <p className={`dt-cift-durum dt-cift-${iliski?.tur ?? 'bilinmiyor'}`}>
-      <Ikon aria-hidden className="dt-cift-ikon" />
-      <span>{iliski ? KOMBINASYON_METNI[iliski.tur].kisa : BILGI_YOK}</span>
-    </p>
-  )
-}
-
-/** Başvuru listesindeki programların birlikte kullanımı. Uyarı gereken çiftler önce gelir. */
 function BirlikteKullanma({ basvurular, programlar }: { basvurular: readonly Basvuru[]; programlar: readonly Program[] }) {
   const ciftler = basvuruCiftleri(basvurular, programlar)
-  const uyarilar = ciftler.filter((c) => uyariMi(c.iliski))
-  /* Bilgisi olmayan çiftler tek bir açılır bölümde durur. Böylece çok başvuruda liste uzamaz. */
-  const bilinen = ciftler.filter((c) => c.iliski)
-  const bilinmeyen = ciftler.filter((c) => !c.iliski)
-  const ayriGider = ciftler.some((c) => c.iliski && [c.iliski.tur, c.iliski.farkli].includes('ayri_gider'))
   return (
     <section className="dt-basvurular-birlikte" aria-labelledby="dt-birlikte-baslik">
       <h2 id="dt-birlikte-baslik">Programları birlikte kullanma</h2>
-      <p>Bu bilgi katalogdaki kayıtlardan gelir. Kesin kararı kurumlar verir.</p>
-      <p className="dt-basvurular-sayi">{uyarilar.length ? `${ciftler.length} program çiftinden ${uyarilar.length} tanesi için uyarı var.` : `${ciftler.length} program çifti için uyarı yok.`}</p>
-      {bilinen.length ? (
+      <p className="dt-cift-durum">
+        <Warning aria-hidden className="dt-cift-ikon" />
+        <span>Aynı gideri iki programa yazmadan önce iki kuruma da sorun.</span>
+      </p>
+      {ciftler.some((c) => c.ortakGider) ? (
+        <p className="dt-cift-durum" role="note">
+          <Warning aria-hidden className="dt-cift-ikon" />
+          <span>Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun.</span>
+        </p>
+      ) : null}
+      <details className="dt-ciftler-bilinmeyen">
+        <summary>Program çiftleri ({ciftler.length})</summary>
         <ul className="dt-ciftler">
-          {bilinen.map((c) => (
-            <li key={`${c.a.id}-${c.b.id}`} className={uyariMi(c.iliski) ? 'dt-cift dt-cift-uyari' : 'dt-cift'}>
+          {ciftler.map((c) => (
+            <li key={`${c.a.id}-${c.b.id}`} className="dt-cift">
               <p className="dt-cift-ad">{c.a.programAdi} ile {c.b.programAdi}</p>
-              <IliskiSatiri iliski={c.iliski} />
-              {c.iliski?.farkli ? <p>{farkliKayitMetni(c.iliski.farkli)}</p> : null}
+              <p className="dt-cift-durum">
+                {c.iliski?.iliski.state === 'kaynakli' ? (
+                  <a className="dt-basvuru-baglanti" href={c.iliski.iliski.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    {KOMBINASYON_METNI[c.iliski.iliski.value].kisa}
+                  </a>
+                ) : BILINMEYEN_ILISKI}
+              </p>
+              {c.ortakGider ? <p>Ortak gider var.</p> : null}
             </li>
           ))}
         </ul>
-      ) : null}
-      {bilinmeyen.length ? (
-        <details className="dt-ciftler-bilinmeyen" open={!bilinen.length}>
-          <summary>Bilgisi olmayan çiftler ({bilinmeyen.length})</summary>
-          <p className="dt-cift-durum dt-cift-bilinmiyor">
-            <Question aria-hidden className="dt-cift-ikon" />
-            <span>{BILGI_YOK} {BILGI_YOK_ACIKLAMA}</span>
-          </p>
-          <ul>
-            {bilinmeyen.map((c) => <li key={`${c.a.id}-${c.b.id}`}>{c.a.programAdi} ile {c.b.programAdi}</li>)}
-          </ul>
-        </details>
-      ) : null}
-      {ayriGider ? <DtTerimBaglantisi terim="ciftFinansman" /> : null}
+      </details>
     </section>
   )
 }
@@ -140,6 +124,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
     })
   }, [basvuru.belgeler])
   const belgeler = basvuru.belgeler.map((b) => ({ ...b, hazir: bekleyen[belgeAnahtar(b)] ?? b.hazir }))
+  const [giderMesaji, setGiderMesaji] = useState('')
   const [belgeMesaji, setBelgeMesaji] = useState('')
   const belgeBasligi = useRef<HTMLHeadingElement>(null)
   const hazir = belgeler.filter((b) => b.hazir).length
@@ -154,7 +139,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
         return false
       },
     )
-  const programTarihleri = program?.tarihler.filter((t) => t.kritik && t.tarih.state === 'kaynakli') ?? []
+  const programTarihleri = program?.tarihler.filter((t) => t.kritik) ?? []
   return (
     <article className="dt-basvuru" aria-labelledby={`${id}-ad`}>
       <h3 id={`${id}-ad`}>
@@ -173,8 +158,8 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
           <ul>
             {programTarihleri.map((t) => (
               <li key={t.ad}>
-                {t.ad}: {tarihYaz(t.tarih.value as string)}
-                {tarihGectiMi(t.tarih.value as string, bugun) ? <> <DtEtiket ton="kapali">Geçti</DtEtiket></> : null}
+                {t.ad}: {alanMetni(t.tarih, bugun, tarihYaz)}
+                {t.tarih.state === 'kaynakli' && alanDurumu(t.tarih, bugun) === 'kaynakli' && tarihGectiMi(t.tarih.value, bugun) ? <> <DtEtiket ton="kapali">Geçti</DtEtiket></> : null}
               </li>
             ))}
           </ul>
@@ -199,6 +184,35 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
           </p>
         ) : null}
       </section>
+
+      <details className="dt-ciftler-bilinmeyen">
+        <summary>Gider kodları</summary>
+        <form className="dt-basvuru-alan" onSubmit={async (e) => {
+          e.preventDefault()
+          const metin = new FormData(e.currentTarget).get('gider')
+          const giderKodlari = typeof metin === 'string' ? metin.toLowerCase().split(/\s+/).filter(Boolean) : []
+          if (giderKodlari.length > 40 || giderKodlari.some((kod) => !/^[a-z0-9_-]{1,48}$/.test(kod))) {
+            setGiderMesaji('Her kodda yalnız harf, rakam, kısa çizgi ya da alt çizgi kullanın. Kodları kısaltın ya da azaltın.')
+            return
+          }
+          if (await degistir({ giderKodlari })) setGiderMesaji('Gider kodları kaydedildi.')
+        }}>
+          <label htmlFor={`${id}-gider`}>Fatura veya çalışan gideri için kod</label>
+          <p id={`${id}-gider-aciklama`}>Aynı gider için her başvuruya aynı kodu yazın. Kodları boşlukla ayırın. Kişi adı yazmayın.</p>
+          <Input.TextArea
+            key={basvuru.giderKodlari?.join(' ')}
+            id={`${id}-gider`}
+            aria-describedby={`${id}-gider-aciklama`}
+            name="gider"
+            rows={2}
+            maxLength={1960}
+            defaultValue={basvuru.giderKodlari?.join(' ')}
+            onChange={() => setGiderMesaji('')}
+          />
+          <Button htmlType="submit">Gider kodlarını kaydedin</Button>
+          <span aria-live="polite">{giderMesaji}</span>
+        </form>
+      </details>
 
       <section className="dt-basvuru-bolum" aria-labelledby={`${id}-belge`}>
         <h4 id={`${id}-belge`} ref={belgeBasligi} tabIndex={-1}>Belgeler</h4>
@@ -271,6 +285,8 @@ export default function DtBasvurularScreen() {
         actions={<Button onClick={() => nav('/destek')}>Program ekleyin</Button>}
       />
       <DtUyari />
+      <DtKurumSorulari />
+      {!planId ? <p>Başvurularınızı görmek için bir plan açın.</p> : null}
       {okumaHatasi ? <p className="dt-basvurular-hata" role="alert">{OKUMA_HATASI}</p> : null}
       {hata ? <p className="dt-basvurular-hata" role="alert">{hata}</p> : null}
       {planId && basvurular && basvurular.length > 1 ? <BirlikteKullanma basvurular={basvurular} programlar={programlar} /> : null}

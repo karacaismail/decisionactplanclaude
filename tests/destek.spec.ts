@@ -89,6 +89,7 @@ test('program listesi plan olmadan açılır ve katalog ilk açılışta inmez',
   await expect(main.getByText(UYARI)).toBeVisible()
   await expect(main.getByRole('status')).toHaveText('46 programdan 46 tanesi görünüyor.')
   await expect(main.locator('.dt-program-karti')).toHaveCount(46)
+  await expect(main.locator('.dt-program-karti').first()).toContainText('Bilinmiyor. Bilgi eski.')
   await expect(main.getByText(SON_KONTROL)).toHaveCount(46)
   await expect(main.getByRole('heading', { name: 'Eski bilgi' })).toBeVisible()
   expect(istekler.some((u) => u.includes('modules/destek/data/programlar'))).toBe(true)
@@ -112,7 +113,7 @@ test('arama ve süzme çalışır, seçim kutusu markalı bileşendir', async ({
   await expect(main.getByRole('status')).toHaveText('46 programdan 46 tanesi görünüyor.')
 })
 
-test('program kartı numaralı bölümleri gösterir, eski tutarı gizler ve resmî sayfayı yeni sekmede açar', async ({ page }, info) => {
+test('program kartı numaralı bölümleri gösterir, eski tutar ve tarih yerine bilgi verir ve resmî sayfayı yeni sekmede açar', async ({ page }, info) => {
   await page.goto('/#/destek/tubitak1501')
   await ready(page)
   const main = page.getByRole('main')
@@ -122,7 +123,10 @@ test('program kartı numaralı bölümleri gösterir, eski tutarı gizler ve res
   ])
   await expect(main.getByText(SON_KONTROL)).toBeVisible()
   const tutar = main.locator('section', { has: page.getByRole('heading', { name: '3. Ne kadar?' }) })
-  await expect(tutar.getByText('Tutarı kurumun sayfasında okuyun.', { exact: true })).toBeVisible()
+  await expect(tutar.getByText('Bilinmiyor. Bilgi eski.', { exact: true }).first()).toBeVisible()
+  const tarih = main.locator('section', { has: page.getByRole('heading', { name: '4. Son tarih ne zaman?' }) })
+  await expect(tarih.getByText('Bilinmiyor. Bilgi eski.').first()).toBeVisible()
+  await expect(tarih.getByText('Süre bilinmiyor. Kuruma sorun.')).toBeVisible()
   await expect(main).not.toContainText('20.000.000')
   await expect(main.getByText('Kapandı').first()).toBeVisible()
   await expect(main.getByText(UYARI)).toBeVisible()
@@ -269,7 +273,6 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
 })
 
 /** Metni düzenli ifadede düz metin olarak kullanır. */
-const kacir = (m: string) => m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 
 /** Markalı seçim kutusunda bir seçenek seçer. Yerel açılır menü kullanılmaz. */
 async function secenekSec(page: Page, kutu: ReturnType<Page['locator']>, metin: string) {
@@ -299,7 +302,7 @@ test('belge ve kanıt listesi numaralı gruplarla açılır ve terim sözlüğe 
   await expect(page).toHaveURL(/#\/destek\/sozluk\?terim=naceKodu$/)
   await ready(page)
   await expect(main.locator('#dt-terim-naceKodu')).toBeFocused()
-  await expect(main.locator('.dt-sozluk-secili')).toContainText('İşletmenin iş kolunu gösteren resmî koddur.')
+  await expect(main.locator('.dt-sozluk-secili')).toContainText('İşletmenin faaliyet alanını gösteren resmî koddur.')
 })
 
 test('gider rehberi giderden programa götürür ve seçimi yenilemede korur', async ({ page }, info) => {
@@ -348,24 +351,58 @@ test('destek sözlüğü Türkçe abece sırasıyla dizilir', async ({ page }, i
   await kanit(page, info, 'sozluk')
 })
 
-test('program kartı birlikte kullanma bilgisini türlere göre gruplar', async ({ page }, info) => {
+test('program kartı her çiftin bilgisini bilinmiyor olarak gösterir', async ({ page }, info) => {
   await page.goto('/#/destek/kosgebGirisimciA')
   await ready(page)
   const main = page.getByRole('main')
   const bolum = main.locator('section', { has: page.getByRole('heading', { name: '7. Bu programla birlikte kullanma' }) })
-  await expect(bolum.getByRole('heading', { level: 3 }).first()).toHaveText(/^Birlikte kullanılamaz \(\d+\)$/)
-  await expect(bolum.getByText('Birini seçmeniz gerekir.', { exact: false })).toBeVisible()
-  const bks = bolum.locator('li', { has: page.getByRole('link', { name: 'Bireysel Katılım Sermayesi', exact: true }) })
-  await expect(bks).toContainText('Kaynaktaki iki kayıt farklı.')
-  await expect(bolum.getByRole('heading', { level: 3, name: /^Ayrı giderle birlikte kullanılabilir/ })).toBeVisible()
-  await expect(bolum.getByRole('heading', { level: 3, name: /^Biri ötekine bağlı/ })).toBeVisible()
+  await bolum.locator('summary').click()
+  await expect(bolum.locator('li')).toHaveCount(45)
+  await expect(bolum.getByText('Bilinmiyor. Kuruma sorun.', { exact: true })).toHaveCount(45)
+  await expect(bolum.getByRole('link', { name: 'Bireysel Katılım Sermayesi', exact: true })).toBeVisible()
+  await expect(bolum.getByText('Birlikte kullanılamaz', { exact: false })).toHaveCount(0)
   await denetle(page, 'birlikte kullanma')
   await kanit(page, info, 'program-birlikte')
+})
 
-  await page.goto('/#/destek/kosgebTekmer')
+test('fayda süzgeci ve karttaki sözlük tanımı dokunma ve klavyeyle çalışır', async ({ page, hasTouch }) => {
+  await page.goto('/#/destek')
   await ready(page)
-  const bos = main.locator('section', { has: page.getByRole('heading', { name: '7. Bu programla birlikte kullanma' }) })
-  await expect(bos.getByRole('heading', { name: 'Bilgi yok' })).toBeVisible()
+  const main = page.getByRole('main')
+  await secenekSec(page, main.locator('.ant-select').filter({ has: page.locator('#dt-fayda') }), 'Kefalet')
+  await expect(main.locator('.dt-program-karti')).toHaveCount(1)
+  const terim = main.locator('.dt-program-karti summary')
+  if (hasTouch) await terim.tap()
+  else {
+    await terim.focus()
+    await page.keyboard.press('Enter')
+  }
+  const tanim = await main.locator('.dt-fayda-terim p').innerText()
+  await expect(main.locator('.dt-fayda-terim').getByText(tanim, { exact: true })).toBeVisible()
+  await page.goto('/#/destek/sozluk')
+  await ready(page)
+  await expect(main.locator('dd').filter({ hasText: tanim })).toBeVisible()
+  await main.getByLabel('Sözlükte arayın').fill('CAPEX')
+  await expect(main.locator('dt')).toHaveText('Sabit yatırım')
+})
+
+test('kurum soruları plan olmadan açılır ve kopyalama sonucu gösterilir', async ({ page }) => {
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, 'clipboard', { value: {
+      writeText: async (text: string) => { sessionStorage.setItem('destek-kopya', text) },
+    } })
+  })
+  for (const yer of ['tubitak1501', 'basvurular']) {
+    await page.goto(`/#/destek/${yer}`)
+    await ready(page)
+    const sorular = page.getByRole('region', { name: 'Kuruma sorulacak sorular' })
+    await expect(sorular.locator('details')).toHaveCount(6)
+    await expect(sorular.locator('details[open]')).toHaveCount(0)
+    await sorular.getByText('Ödeme ve süre', { exact: true }).click()
+    await sorular.getByRole('button', { name: 'Soruları kopyalayın' }).click()
+    await expect(sorular.getByText('Ödeme ve süre soruları kopyalandı.')).toBeVisible()
+    expect(await page.evaluate(() => sessionStorage.getItem('destek-kopya'))).toContain('Değerlendirme ve ilk ödeme süresi hangi olayla başlıyor?')
+  }
 })
 
 test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve dışa aktarmada kalır', async ({ page, hasTouch }, info) => {
@@ -384,23 +421,25 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await ready(page)
   const birlikte = main.locator('section.dt-basvurular-birlikte')
   await expect(birlikte.getByRole('heading', { level: 2 })).toHaveText('Programları birlikte kullanma')
+  await expect(birlikte.getByText('Aynı gideri iki programa yazmadan önce iki kuruma da sorun.')).toBeVisible()
   const cift = birlikte.locator('li.dt-cift')
-  await expect(cift).toHaveCount(1)
-  // Saat testte sabittir. Bu yüzden başvuruların sırası kimliğe göre değişebilir.
-  const bigg = '1812 Yatırım Tabanlı Girişimcilik (BiGG Yatırım)'
-  const girisimci = 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği'
-  await expect(cift.locator('.dt-cift-ad')).toHaveText(new RegExp(`^(${kacir(bigg)} ile ${kacir(girisimci)}|${kacir(girisimci)} ile ${kacir(bigg)})$`))
-  await expect(cift.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılamaz.')
-  await expect(cift.locator('.dt-cift-durum svg')).toBeVisible()
-  await expect(birlikte).toContainText('3 program çiftinden 1 tanesi için uyarı var.')
-  // Kaynakta bilgisi olmayan çiftler ayrı bir açılır bölümde "Bilgi yok" der.
-  const bilinmeyen = birlikte.locator('details.dt-ciftler-bilinmeyen')
-  await expect(bilinmeyen.locator('summary')).toHaveText('Bilgisi olmayan çiftler (2)')
-  await bilinmeyen.locator('summary').click()
-  await expect(bilinmeyen).toContainText('Bilgi yok. Kaynakta bu iki program için kayıt yok.')
-  await expect(bilinmeyen.locator('li')).toHaveCount(2)
+  const ciftler = birlikte.locator('summary')
+  await expect(ciftler).toHaveText('Program çiftleri (3)')
+  await ciftler.click()
+  await expect(cift).toHaveCount(3)
+  await expect(cift.locator('.dt-cift-ad + .dt-cift-durum')).toHaveText(Array(3).fill('Bilinmiyor. Kuruma sorun.'))
+  await expect(cift.filter({ hasText: 'BiGG Yatırım' }).filter({ hasText: 'İş Geliştirme Desteği' })).toHaveCount(1)
 
   const kart = main.locator('.dt-basvuru', { hasText: 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği' })
+  const diger = main.locator('.dt-basvuru', { hasText: 'BiGG Yatırım' })
+  for (const basvuru of [kart, diger]) {
+    await basvuru.getByText('Gider kodları', { exact: true }).click()
+    await basvuru.getByLabel('Fatura veya çalışan gideri için kod').fill('Fatura23')
+    await basvuru.getByRole('button', { name: 'Gider kodlarını kaydedin' }).click()
+    await expect(basvuru.getByText('Gider kodları kaydedildi.')).toBeVisible()
+    await basvuru.getByText('Gider kodları', { exact: true }).click()
+  }
+  await expect(birlikte.getByText('Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun.')).toBeVisible()
   const belgeler = kart.locator('.dt-basvuru-belgeler .ant-checkbox-wrapper')
   await expect(belgeler).toHaveCount(5)
   // Düğme kapanmaz. Seçim yoksa ekran nedenini söyler. Odak düğmede kalır.
@@ -430,7 +469,9 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await expect(belgeler).toHaveCount(6)
   await expect(belgeler.last()).toContainText('İmza sirküleri')
   await expect(belgeler.last().locator('input')).toBeChecked()
-  await expect(cift.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılamaz.')
+  await ciftler.click()
+  await expect(cift.locator('.dt-cift-ad + .dt-cift-durum')).toHaveText(Array(3).fill('Bilinmiyor. Kuruma sorun.'))
+  await expect(birlikte.getByText('Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun.')).toBeVisible()
   expect(await planOku(page)).toEqual(once)
 
   // Dışa aktarma eklenen belgeyi taşır. Plan silinip dosya içe alınınca belge geri gelir.

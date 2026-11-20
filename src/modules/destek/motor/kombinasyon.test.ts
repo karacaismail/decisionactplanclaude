@@ -1,72 +1,59 @@
 import { describe, expect, it } from 'vitest'
+import { katalogHatalari } from '../data/denetim'
 import { PROGRAMLAR } from '../data/programlar'
-import { KOMBINASYONLAR } from '../data/tipler'
+import { KOMBINASYONLAR, type KombinasyonKurali } from '../data/tipler'
 import { KOMBINASYON_METNI } from '../metinler'
-import { basvuruCiftleri, iliskiBul, programIliskileri, uyariMi } from './kombinasyon'
+import { basvuruCiftleri, iliskiBul } from './kombinasyon'
 
-const p = (id: string) => PROGRAMLAR.find((x) => x.id === id)!
-const b = (id: string, programId: string) => ({ id, programId, programAdi: PROGRAMLAR.find((x) => x.id === programId)?.ad ?? programId })
+const [a, b] = PROGRAMLAR
+const kural: KombinasyonKurali = {
+  digerProgramId: b.id,
+  iliski: { state: 'kaynakli', value: 'ayri_gider', sourceUrl: 'https://ornek.gov.tr', asOf: '2026-11-20' },
+  yonlu: false,
+}
 
 describe('birlikte kullanma', () => {
-  it('katalogdaki her ilişki türünün yalın açıklaması vardır', () => {
-    const turler = new Set(PROGRAMLAR.flatMap((x) => Object.values(x.kombinasyon)))
-    expect([...turler].sort()).toEqual([...KOMBINASYONLAR].sort())
+  it('her ilişki türünün yalın açıklaması vardır', () => {
     for (const t of KOMBINASYONLAR) {
       expect(KOMBINASYON_METNI[t].baslik.length).toBeGreaterThan(0)
       expect(KOMBINASYON_METNI[t].aciklama).toMatch(/\.$/)
     }
-    expect(KOMBINASYON_METNI.ayri_gider.kisa).toBe('Aynı faturayı iki programa yazmayın.')
   })
 
-  it('ilişki iki yönden de okunur', () => {
-    expect(iliskiBul(p('kosgebIsKurma'), p('kosgebGirisimciA'))).toEqual({ tur: 'onkosul' })
-    expect(iliskiBul(p('kosgebGirisimciA'), p('kosgebIsKurma'))).toEqual({ tur: 'onkosul' })
-  })
-
-  it('iki kayıt farklıysa sıkı olan önce gelir ve fark söylenir', () => {
-    expect(iliskiBul(p('kosgebGirisimciA'), p('bks'))).toEqual({ tur: 'dislayici', farkli: 'ayri_gider' })
-    expect(iliskiBul(p('bks'), p('kosgebGirisimciA'))).toEqual({ tur: 'dislayici', farkli: 'ayri_gider' })
-    expect(iliskiBul(p('tubitak1711'), p('tubitak1505'))).toEqual({ tur: 'ayri_gider', farkli: 'onkosul' })
-  })
-
-  it('kayıt yoksa ilişki bilinmez', () => {
-    expect(iliskiBul(p('kgf'), p('turkpatent'))).toBeUndefined()
-    expect(iliskiBul(p('kgf'), undefined)).toBeUndefined()
-  })
-
-  it('program kartı ilişkileri türlere göre gruplar', () => {
-    const gruplar = programIliskileri(p('tubitak1501'), PROGRAMLAR)
-    expect(gruplar.map((g) => g.tur)).toEqual(['ayri_gider', 'uyumlu'])
-    const ayri = gruplar[0].programlar.map((x) => x.program.id)
-    expect(ayri).toContain('tubitak1507')
-    // 1702 yalnız kendi kaydında 1501 programını yazar. Ters yön de gruba girer.
-    expect(ayri).toContain('tubitak1702')
-    expect(gruplar[1].programlar.map((x) => x.program.id)).toEqual(expect.arrayContaining(['bks', 'bigg1812', 'kosgebIsletmeGelistirme']))
-    expect(programIliskileri(p('kosgebTekmer'), PROGRAMLAR)).toEqual([])
-  })
-
-  it('başvuru çiftlerinde uyarılar önce gelir, bilinmeyen çift "Bilgi yok" olur', () => {
-    const ciftler = basvuruCiftleri([b('b1', 'kgf'), b('b2', 'bigg1812'), b('b3', 'kosgebGirisimciA'), b('b4', 'tubitak1501')], PROGRAMLAR)
+  it('katalogda her çift bilinmiyor', () => {
+    for (const program of PROGRAMLAR) {
+      for (const diger of PROGRAMLAR) expect(iliskiBul(program, diger)).toBeUndefined()
+    }
+    const basvurular = PROGRAMLAR.slice(0, 4).map((p) => ({ id: p.id, programId: p.id, programAdi: p.ad }))
+    const ciftler = basvuruCiftleri(basvurular, PROGRAMLAR)
     expect(ciftler).toHaveLength(6)
-    expect(ciftler[0]).toMatchObject({ a: { id: 'b2' }, b: { id: 'b3' }, iliski: { tur: 'dislayici' } })
-    expect(uyariMi(ciftler[0].iliski)).toBe(true)
-    const ayri = ciftler.find((c) => c.a.id === 'b3' && c.b.id === 'b4')
-    expect(ayri?.iliski).toEqual({ tur: 'ayri_gider' })
-    expect(uyariMi(ayri?.iliski)).toBe(true)
-    const uyumlu = ciftler.find((c) => c.a.id === 'b2' && c.b.id === 'b4')
-    expect(uyumlu?.iliski).toEqual({ tur: 'uyumlu' })
-    expect(uyariMi(uyumlu?.iliski)).toBe(false)
-    expect(ciftler.at(-1)?.iliski).toBeUndefined()
-    expect(uyariMi(undefined)).toBe(false)
+    expect(ciftler.every((c) => !c.iliski)).toBe(true)
   })
 
-  it('katalogdan çıkmış programın çifti "Bilgi yok" olur', () => {
-    const [cift] = basvuruCiftleri([b('b1', 'silinmisProgram'), b('b2', 'kgf')], PROGRAMLAR)
+  it('kaynaklı simetrik kural iki yönde aynıdır, yönlü kural kendi yönünde okunur', () => {
+    const program = { ...a, kombinasyon: [kural] }
+    expect(iliskiBul(program, b)).toEqual(kural)
+    expect(iliskiBul(b, program)).toEqual(kural)
+    expect(iliskiBul(b, { ...program, kombinasyon: [{ ...kural, yonlu: true }] })).toBeUndefined()
+  })
+
+  it('kaynaksız kural denetimden ve eşleşmeden geçmez', () => {
+    const program = { ...a, kombinasyon: [{ ...kural, iliski: { ...kural.iliski, sourceUrl: '' } }] }
+    expect(katalogHatalari([program, b])).toContainEqual(expect.stringMatching(/kombinasyon.*kaynak/))
+    expect(iliskiBul(program, b)).toBeUndefined()
+  })
+
+  it('katalogdan çıkmış programın adı korunur', () => {
+    const basvurular = [{ id: 'eski', programId: 'silinmis', programAdi: 'Eski program' }, { id: b.id, programId: b.id, programAdi: b.ad }]
+    const [cift] = basvuruCiftleri(basvurular, PROGRAMLAR)
     expect(cift.iliski).toBeUndefined()
-    expect(cift.a.programAdi).toBe('silinmisProgram')
+    expect(cift.a.programAdi).toBe('Eski program')
   })
+})
 
-  it('farklı kayıtta öteki kayıt da uyarıysa çift uyarı sayılır', () => {
-    expect(uyariMi({ tur: 'onkosul', farkli: 'ayri_gider' })).toBe(true)
-  })
+it('aynı gider kodu iki başvuruda varsa ortak gideri bildirir', () => {
+  const ilk = { id: a.id, programId: a.id, programAdi: a.ad, giderKodlari: ['fatura23', 'calisan5'] }
+  const ikinci = { id: b.id, programId: b.id, programAdi: b.ad, giderKodlari: ['calisan5'] }
+  expect(basvuruCiftleri([ilk, ikinci], PROGRAMLAR)[0]).toMatchObject({ ortakGider: true })
+  expect(basvuruCiftleri([ilk, { ...ikinci, giderKodlari: ['fatura24'] }], PROGRAMLAR)[0]).toMatchObject({ ortakGider: false })
 })

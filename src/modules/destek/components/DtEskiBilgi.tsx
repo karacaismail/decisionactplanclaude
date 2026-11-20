@@ -1,7 +1,6 @@
 import '@/styles/bilesen/DtEskiBilgi.css'
 import { Warning } from '@phosphor-icons/react'
 import { ESKI_BILGI_GUN, tarihYaz } from '../motor/tazelik'
-import { TUTARI_OKUYUN } from '../metinler'
 
 /**
  * Eski bilgi uyarısı. Bilgi 90 günden eskiyse görünür.
@@ -15,7 +14,7 @@ export function DtEskiBilgi({ asOf }: { asOf: string }) {
         Eski bilgi
       </h2>
       <p>
-        Bu bilgiler en son {tarihYaz(asOf)} günü kontrol edildi. Bilgi {ESKI_BILGI_GUN} günden eski. Bu yüzden tutarları gizledik. {TUTARI_OKUYUN}
+        Bu bilgiler en son {tarihYaz(asOf)} günü kontrol edildi. Bilgi {ESKI_BILGI_GUN} günden eski. Eski bilgilerin güncel değerini kuruma sorun.
       </p>
     </section>
   )

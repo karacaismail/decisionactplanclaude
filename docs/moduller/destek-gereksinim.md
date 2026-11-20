@@ -49,7 +49,7 @@ Katalogdaki her program şu bilgileri taşır:
 9. Gereken belgeler ve sonraki yükümlülükler.
 10. Kaynak listesi ve son kontrol tarihi.
 
-Her sayı kaynağıyla birlikte saklanır. Kaynağı olmayan sayı derlemede reddedilir. Sayı bilinmiyorsa ekranda "Tutar bilinmiyor. Kurumun sayfasına bakın." yazar.
+Her sayı kaynağıyla birlikte saklanır. Kaynağı olmayan sayı derlemede reddedilir. Sayı bilinmiyorsa ekranda "Bilinmiyor." yazar.
 
 Katalog iki kaynaktan gelir:
 
@@ -76,7 +76,7 @@ Uygulama internetten veri çekmez. Katalog uygulamanın içinde gelir.
 
 - Her kartta "Son kontrol: 12 Ağustos 2026 Çarşamba" gibi bir satır vardır.
 - Bilgi 90 günden eskiyse kartta "Eski bilgi" uyarısı çıkar.
-- Eski bilgide tutarlar gizlenir. Kişi tutarı resmî sayfada okur.
+- Her alan kendi kontrol gününe göre eskir. Eski tutar, oran, süre ve tarih yerine “Bilinmiyor. Bilgi eski.” yazar.
 - Son başvuru tarihi geçen çağrı "Kapandı" diye görünür.
 - Kişi kendi bulduğu programı ekleyebilir. Bu program "Sizin eklediğiniz" diye görünür.
 
@@ -133,14 +133,14 @@ Program kartının bölümleri şunlardır:
 **Sonra eklenebilecekler:**
 
 - illere göre kalkınma ajansı çağrıları,
-- birlikte kullanılamayan desteklerin kesin denetimi. Bugün yalnız katalogdaki kayıtlara göre uyarı çıkar,
+- resmî kaynaklı birlikte kullanma kurallarının kataloğa eklenmesi,
 - uygulama dışında katalog güncelleme hattı.
 
 ## Kabul ölçütleri
 
 1. Kaynak adresi ve tarihi olmayan hiçbir tutar ekranda görünmez.
 2. Bilinmeyen bilgi "Belki" sonucunu verir. "Uygun" sonucunu vermez.
-3. 90 günden eski programda uyarı çıkar ve tutar gizlenir.
+3. Kaynaklı alan 90 günden eskiyse “Bilinmiyor. Bilgi eski.” yazar.
 4. Örnek profil 1 yaşında, 3 kişilik bir kafedir. Bu profilde KOSGEB Küresel Rekabetçilik "Belki" çıkar. Ekran tutmayan koşulu söyler.
 5. Destek eklenince temel bütçe toplamı değişmez.
 6. Destek profili yazılınca hiçbir karar eskimez.
@@ -205,20 +205,9 @@ Kaynak tek bir işletme için yazılmıştı. Bu yüzden o işletmeye ve sektör
 
 #### 3. Birlikte kullanma
 
-Program sayfasında 7. bölümün adı "Bu programla birlikte kullanma" olur. Bölüm katalogdaki kayıtları türe göre gruplar. Katalogda beş tür var:
+Program sayfasındaki “Bu programla birlikte kullanma” bölümü açılır. Katalog her çift için kaynak arar. Kaynak yoksa “Bilinmiyor. Kuruma sorun.” yazar.
 
-| Kayıttaki değer | Ekrandaki başlık | Anlamı |
-|---|---|---|
-| `dislayici` | Birlikte kullanılamaz | Kişi iki programdan birini seçer. |
-| `ayri_gider` | Ayrı giderle birlikte kullanılabilir | Her program başka bir gideri öder. Aynı fatura iki programa yazılmaz. |
-| `onkosul` | Biri ötekine bağlı | Bir programa girmek için ötekinden bir adım gerekebilir. Kayıtta sıra yazmaz. |
-| `red_alternatifi` | Ret alırsanız seçenek | Bir programdan ret gelirse öteki program seçenek olabilir. |
-| `uyumlu` | Birlikte kullanılabilir | Kaynağa göre iki program birlikte kullanılır. |
-
-- Uygulama kaydı iki yönden okur. Örneğin A programının kaydı B programını anabilir.
-- İki kayıt farklı olabilir. Bu durumda daha sıkı tür gösterilir. Ekran öteki kaydı da yazar. Katalogda böyle iki çift var.
-- "Başvurularım" ekranı başvurulardaki her program çiftine bakar. Birlikte kullanılamayan çift için uyarı çıkar. Ayrı gider isteyen çift için "Aynı faturayı iki programa yazmayın." uyarısı çıkar. Uyarı yazı ve ikonla görünür.
-- Kaynakta kaydı olmayan çift "Bilgi yok" der. Bu çiftler ayrı bir açılır bölümde durur.
+Denetim kaynaksız kuralı reddeder. Yönlü kural kendi yönünde geçerlidir. Diğer kural iki yönde geçerlidir.
 
 #### 4. Destek sözlüğü
 
@@ -262,3 +251,15 @@ Kaynaklar 19 Kasım 2026 Perşembe günü okundu.
 - Ticaret Bakanlığı ihracat destekleri: https://ticaret.gov.tr/destekler/ihracat-destekleri
 - Ticaret Bakanlığı devlet yardımları rehberi: https://ticaret.gov.tr/data/6583e5a413b8762630b861ca/Devlet%20Yard%C4%B1mlar%C4%B1%20Rehberi.pdf
 - İŞKUR işbaşı eğitim soruları: https://www.iskur.gov.tr/sikca-sorulan-sorular/aktif-isgucu-hizmetleri/isverenler-icin-isbasi-egitimi-programindan-faydalanma-sartlari-nelerdir/
+
+## Katalog onarımı
+
+Katalog her program çifti için kaynak arar. Kaynak yoksa “Bilinmiyor. Kuruma sorun.” yazar. Başvurular ekranı, aynı gideri yazmadan önce iki kuruma da sormanızı ister. İki başvuruda aynı gider kodu varsa ayrı bir uyarı çıkar. Gider kodu başvuru kaydında durur.
+
+Program kartı fayda türünü gösterir. Etiket, geri ödeme, para girişi ve hisse etkisini açıklar. İlk fayda türleri katalog kategorilerinden gelir. Üst sınır, bağlı olduğu faydanın altında görünür. Kişi programları fayda türüne göre süzer. Uygulama destek tutarlarını toplamaz.
+
+Sözlük kısa tanımlar gösterir. İngilizce adlar aramada çalışır. Karttaki terim sözlükteki tanımı açar. KOBİ gibi terimler sayısal sınırlar için kurumun resmî tanımına yönlendirir.
+
+Program ve başvuru ekranı kurum sorularını gösterir. Kişi plan ve profil olmadan soru gruplarını açar ve kopyalar.
+
+Katalog değerlendirme süresini, ilk ödeme süresini ve ödeme biçimini ayrı tutar. Kaynaksız süre için “Süre bilinmiyor. Kuruma sorun.” yazar. Katalog tutarı, oranı, süreyi ve tarihi ayrı denetler. Kaynaklı bilgi 90 günden eskiyse “Bilinmiyor. Bilgi eski.” yazar. Bölgesel program ve destek vermeyen kayıt ayrı etiket alır.

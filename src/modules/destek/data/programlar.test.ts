@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { katalogHatalari } from './denetim'
 import { PROGRAMLAR } from './programlar'
 import type { Program } from './tipler'
-import { tutarlariGizle, tutarVarMi } from '../motor/tazelik'
+import { eskiMetniGoster, tutarVarMi } from '../motor/tazelik'
 
 const temiz = (): Program => structuredClone(PROGRAMLAR.find((p) => p.id === 'tubitak1501')!) as Program
 
@@ -41,7 +41,7 @@ describe('katalog denetimi', () => {
     expect(hatalar((p) => { (p as { kategori: string }).kategori = 'bagis' })).toMatch(/kategori/)
     expect(hatalar((p) => { (p as { durum: string }).durum = 'belki' })).toMatch(/durum/)
     expect(hatalar((p) => { (p.tutar as { tavanTuru: string }).tavanTuru = 'cok' })).toMatch(/tavanTuru/)
-    expect(hatalar((p) => { (p as { kombinasyon: Record<string, string> }).kombinasyon = { tubitak1507: 'iyi' } })).toMatch(/kombinasyon/)
+    expect(hatalar((p) => { (p as { kombinasyon: unknown }).kombinasyon = [{ digerProgramId: 'tubitak1507', yonlu: false, iliski: { ...p.tutar.metin, value: 'iyi' } }] })).toMatch(/kombinasyon/)
     expect(hatalar((p) => { (p as { tutar: { tavanTL: { state: string } } }).tutar.tavanTL.state = 'tahmin' })).toMatch(/state/)
   })
 
@@ -61,8 +61,8 @@ describe('katalog denetimi', () => {
   })
 
   it('bilinmeyen kombinasyon kimliğini reddeder', () => {
-    expect(hatalar((p) => { (p as { kombinasyon: Record<string, string> }).kombinasyon = { yokProgram: 'uyumlu' } })).toMatch(/kombinasyon/)
-    expect(hatalar((p) => { (p as { kombinasyon: Record<string, string> }).kombinasyon = { tubitak1501: 'uyumlu' } })).toMatch(/kendini/)
+    expect(hatalar((p) => { p.kombinasyon = [{ digerProgramId: 'yokProgram', yonlu: false, iliski: { ...p.tutar.metin, state: 'kaynakli', value: 'uyumlu' } }] })).toMatch(/kombinasyon/)
+    expect(hatalar((p) => { p.kombinasyon = [{ digerProgramId: 'tubitak1501', yonlu: false, iliski: { ...p.tutar.metin, state: 'kaynakli', value: 'uyumlu' } }] })).toMatch(/kendini/)
   })
 
   it('yasak işaretleri ve tek işletmeye göre yazılmış sözleri reddeder', () => {
@@ -81,14 +81,15 @@ describe('katalog denetimi', () => {
     expect(hatalar((p) => { p.ozet = 'Bu özet bilerek çok uzun yazıldı ve on altı kelimeden fazla kelime taşıdığı için bu denetimden asla geçmemelidir.' })).toMatch(/özet/i)
   })
 
-  it('eski bilgide gizleme bütün metinlerdeki tutarları kaldırır', () => {
+  it('eski tutar, oran, süre ve tarih yerine bilgi verir', () => {
     for (const p of PROGRAMLAR) {
       const metinler = [p.ad, p.ozet, p.destekTuru, p.kanal, ...p.kosullar, ...p.uygunGider, ...p.haricGider, ...p.belgeler, p.tutar.metin.value ?? '']
-      for (const m of metinler) expect(tutarVarMi(tutarlariGizle(m)), `${p.id}: ${m}`).toBe(false)
+      for (const m of metinler) expect(tutarVarMi(eskiMetniGoster(m, p.kaynak, '2026-11-19')), `${p.id}: ${m}`).toBe(false)
     }
-    expect(tutarlariGizle("Sınır 100.000.000 TL'dir.")).toBe('Sınır (tutar gizlendi).')
-    expect(tutarlariGizle('Eşik 2 milyar TL dolayındadır.')).toBe('Eşik (tutar gizlendi) dolayındadır.')
-    expect(tutarlariGizle('Oran %75 olur.')).toBe('Oran %75 olur.')
+    for (const metin of ["Sınır 100.000.000 TL'dir.", 'Eşik 2 milyar TL dolayındadır.', 'Oran %75 olur.', 'Proje 24 ay sürer.', 'İki tam yıl sürer.', 'İki yılın sonunda biter.', 'Gider 24 ayda ödenir.', 'Başvuru 1 Ocak 2027 günü başlar.']) {
+      expect(eskiMetniGoster(metin, temiz().kaynak, '2026-11-19')).toBe('Bilinmiyor. Bilgi eski.')
+      expect(eskiMetniGoster(metin, temiz().kaynak, '2026-09-01')).toBe(metin)
+    }
     expect(tutarVarMi('1709 EUREKA ve Eurostars-3')).toBe(false)
   })
 })

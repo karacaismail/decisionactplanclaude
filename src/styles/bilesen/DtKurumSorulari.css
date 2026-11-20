@@ -1,0 +1,12 @@
+.dt-kurum-sorulari summary {
+  min-block-size: var(--target-touch);
+  padding-block: var(--space-2);
+  cursor: pointer;
+  color: var(--color-action-text);
+  font-size: var(--font-body);
+  font-weight: var(--weight-strong);
+}
+
+.dt-kurum-sorulari li { font-size: var(--font-body); }
+
+.dt-kurum-sorulari [aria-live]:empty { margin: 0; }

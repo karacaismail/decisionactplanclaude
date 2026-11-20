@@ -4,8 +4,8 @@
  * https olmayan adres ve ISO biçiminde olmayan tarih de reddedilir.
  */
 import { KANIT_KIMLIGI } from '../motor/basvuru'
-import { gecerliIsoTarih, tutarVarMi } from '../motor/tazelik'
-import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type GiderKalemi, type KanitGrubu, type Program, type Terim } from './tipler'
+import { gecerliIsoTarih, httpsAdresMi, tutarVarMi } from '../motor/tazelik'
+import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type GiderKalemi, type KurumSorusu, type KanitGrubu, type Program, type Terim } from './tipler'
 
 const KIMLIK = /^[a-zA-Z][a-zA-Z0-9]*$/
 /** Fikirleri birleştiren işaretler. Yalın yazım kuralı bunları yasaklar. */
@@ -17,16 +17,6 @@ const SEKTOR_SOZU = /taşınmaz|gayrimenkul|emlak|parsel|kadastro|arazi|\bTTBS\b
 /** Ek verideki bir cümlenin en çok kelime sayısı. */
 export const CUMLE_EN_COK_KELIME = 16
 export const OZET_EN_COK_KELIME = 16
-
-export function httpsAdresMi(value: unknown): boolean {
-  if (typeof value !== 'string') return false
-  try {
-    const u = new URL(value)
-    return u.protocol === 'https:' && u.hostname.includes('.')
-  } catch {
-    return false
-  }
-}
 
 function adresHatasi(value: unknown): string | undefined {
   if (typeof value !== 'string' || !value) return 'kaynak adresi yok'
@@ -88,6 +78,12 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     if (!TAVAN_TURLERI.includes(p.tutar?.tavanTuru)) hatalar.push(`${yer('tutar.tavanTuru')}: "${String(p.tutar?.tavanTuru)}" tanınmıyor.`)
     hatalar.push(...factHatalari(p.tutar?.metin, 'string', yer('tutar.metin')))
     hatalar.push(...factHatalari(p.tutar?.tavanTL, 'number', yer('tutar.tavanTL')))
+    if (!p.faydalar?.length) hatalar.push(`${yer('faydalar')}: en az bir fayda gerekir.`)
+    for (const [fayda, tavan] of Object.entries(p.faydaTavanlari ?? {})) {
+      const yol = yer(`faydaTavanlari.${fayda}`)
+      if (!p.faydalar?.some((f) => f === fayda)) hatalar.push(`${yol}: fayda programda yok.`)
+      hatalar.push(...factHatalari(tavan, 'number', yol))
+    }
     p.tarihler.forEach((t, i) => {
       hatalar.push(...metinHatalari(t.ad, yer(`tarihler[${i}].ad`)))
       hatalar.push(...factHatalari(t.tarih, 'tarih', yer(`tarihler[${i}].tarih`)))
@@ -98,7 +94,7 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     if (!gecerliIsoTarih(p.kaynak?.asOf)) hatalar.push(`${yer('kaynak.asOf')}: son kontrol tarihi ISO biçiminde değil.`)
     hatalar.push(...metinHatalari(p.kaynak?.ad, yer('kaynak.ad')))
     for (const alan of ['ad', 'kurum', 'destekTuru', 'ozet', 'kanal'] as const) hatalar.push(...metinHatalari(p[alan], yer(alan)))
-    /* Bu alanlar her ekranda görünür. Tutar bu alanlarda durmaz. Tutar yalnız tutar bölümünde ve gizlenebilen metinlerde durur. */
+    /* Bu alanlar her ekranda görünür. Tutar bu alanlarda durmaz. Tutar kendi alanında veya kaynak tarihiyle denetlenen metinde durur. */
     for (const [alan, m] of [['ad', p.ad], ['ozet', p.ozet], ['kanal', p.kanal], ['kurum', p.kurum], ['kaynak.ad', p.kaynak?.ad], ...p.tarihler.map((t, i) => [`tarihler[${i}].ad`, t.ad])] as [string, string][]) {
       if (typeof m === 'string' && tutarVarMi(m)) hatalar.push(`${yer(alan)}: bu alanda tutar olmamalı.`)
     }
@@ -109,10 +105,24 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     const ozet = typeof p.ozet === 'string' ? p.ozet.trim() : ''
     if (!ozet.endsWith('.') || /[.!?]\s/.test(ozet)) hatalar.push(`${yer('ozet')}: özet tek cümle olmalı ve noktayla bitmeli.`)
     if (ozet.split(/\s+/).length > OZET_EN_COK_KELIME) hatalar.push(`${yer('ozet')}: özet en çok ${OZET_EN_COK_KELIME} kelime olmalı.`)
-    for (const [k, v] of Object.entries(p.kombinasyon ?? {})) {
-      if (!kimlikler.has(k)) hatalar.push(`${yer('kombinasyon')}: "${k}" programı katalogda yok.`)
-      if (k === p.id) hatalar.push(`${yer('kombinasyon')}: program kendini anamaz.`)
-      if (!KOMBINASYONLAR.includes(v as (typeof KOMBINASYONLAR)[number])) hatalar.push(`${yer('kombinasyon')}: "${String(v)}" kombinasyon türü tanınmıyor.`)
+    for (const alan of ['degerlendirme', 'ilkOdeme'] as const) {
+      hatalar.push(...factHatalari(p.sure?.[alan], 'string', yer(`sure.${alan}`)))
+    }
+    hatalar.push(...factHatalari(p.odemeBicimi, 'string', yer('odemeBicimi')))
+    if (!Array.isArray(p.kombinasyon)) {
+      hatalar.push(`${yer('kombinasyon')}: kaynaklı kural listesi gerekir.`)
+    } else {
+      for (const kural of p.kombinasyon) {
+        const k = kural.digerProgramId
+        const yol = yer(`kombinasyon.${k}`)
+        if (!kimlikler.has(k)) hatalar.push(`${yol}: program katalogda yok.`)
+        if (k === p.id) hatalar.push(`${yol}: program kendini anamaz.`)
+        hatalar.push(...factHatalari(kural.iliski, 'string', yol))
+        if (kural.iliski?.state !== 'kaynakli' || !KOMBINASYONLAR.includes(kural.iliski.value)) {
+          hatalar.push(`${yol}: kaynaklı ilişki türü gerekir.`)
+        }
+        if (typeof kural.yonlu !== 'boolean') hatalar.push(`${yol}: yön bilgisi gerekir.`)
+      }
     }
     sayiHatalari(p, p.id, undefined, '', hatalar)
   }
@@ -184,10 +194,17 @@ export function ekVeriHatalari(v: { kanitlar: readonly KanitGrubu[]; giderler: r
     const yer = `sozluk.${t.id}`
     tek(sozlukKimlikleri, t.id, yer)
     hatalar.push(...ekMetinHatalari(t.ad, `${yer}.ad`), ...ekMetinHatalari(t.anlam, `${yer}.anlam`))
+    if (typeof t.anlam === 'string' && (/\p{N}/u.test(t.anlam) || t.anlam.trim().split(/\s+/).length > 15)) {
+      hatalar.push(`${yer}.anlam: tanım sayı içeremez ve en çok 15 kelime olabilir.`)
+    }
     if (typeof t.ad === 'string') {
       if (adlar.has(terimAnahtari(t.ad))) hatalar.push(`${yer}: aynı terim iki kez var.`)
       adlar.add(terimAnahtari(t.ad))
     }
   }
   return hatalar
+}
+
+export function kurumSorusuHatalari(sorular: readonly KurumSorusu[]): string[] {
+  return sorular.flatMap(({ id, soru }) => ekMetinHatalari(soru, `kurumSorusu.${id}`))
 }

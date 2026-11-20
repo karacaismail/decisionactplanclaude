@@ -9,7 +9,6 @@ import type { Alan, IhracatDurumu, KurucuDurumu } from './motor/profil'
 import type { GecerliDurum } from './motor/tazelik'
 
 export const UYARI_METNI = 'Bu bilgi resmî kaynak değildir. Tutar ve tarih değişebilir. Başvurmadan önce kurumun sayfasını okuyun. Bu uygulama destek vermez ve söz vermez.'
-export const TUTARI_OKUYUN = 'Tutarı kurumun sayfasında okuyun.'
 
 export const KATEGORI_ADI: Record<Kategori, string> = {
   hibe: 'Hibe',
@@ -92,12 +91,11 @@ export const KOMBINASYON_METNI: Record<Kombinasyon, { baslik: string; kisa: stri
   uyumlu: { baslik: 'Birlikte kullanılabilir', kisa: 'Bu iki program birlikte kullanılabilir.', aciklama: 'Kaynağa göre bu programlar birlikte kullanılabilir. Yine de aynı faturayı iki programa yazmayın.' },
 }
 
-export const BILGI_YOK = 'Bilgi yok.'
-export const BILGI_YOK_ACIKLAMA = 'Kaynakta bu iki program için kayıt yok. Kurumlara sorun.'
-
-/** İki yönün kayıtları farklıysa ekrandaki not. */
-export function farkliKayitMetni(tur: Kombinasyon): string {
-  return `Kaynaktaki iki kayıt farklı. Öteki kayıt “${KOMBINASYON_METNI[tur].baslik}” diyor. Kurumun sayfasını okuyun.`
+export function sozlukAra(sozluk: readonly Terim[], arama: string): readonly Terim[] {
+  const aranan = aramaMetni(arama.trim())
+  const esAnlam = arama.trim().toLowerCase()
+  return sozluk.filter((t) => aramaMetni(t.ad).includes(aranan)
+    || t.esAnlamlilar?.some((ad) => ad.toLowerCase().includes(esAnlam)))
 }
 
 const TR = new Intl.Collator('tr', { sensitivity: 'base' })

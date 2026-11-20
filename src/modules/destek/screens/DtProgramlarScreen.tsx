@@ -8,7 +8,8 @@ import { DtEskiBilgi } from '../components/DtEskiBilgi'
 import { DtProgramKarti } from '../components/DtProgramKarti'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
-import { KATEGORILER, type Kategori } from '../data/tipler'
+import { FAYDA_ADI } from '../data/faydalar'
+import { KATEGORILER, type FaydaTuru, type Kategori } from '../data/tipler'
 import { useBugun, useKatalog, usePlanYeri } from '../kancalar'
 import { aramaMetni, DURUM_ADI, KATEGORI_ADI } from '../metinler'
 import { gecerliDurum, tazelik, type GecerliDurum } from '../motor/tazelik'
@@ -25,6 +26,7 @@ export default function DtProgramlarScreen() {
   const aramaKutusu = useRef<InputRef>(null)
   const [kurum, setKurum] = useState<string>()
   const [tur, setTur] = useState<Kategori>()
+  const [fayda, setFayda] = useState<FaydaTuru>()
   const [durum, setDurum] = useState<GecerliDurum>()
 
   const kurumlar = useMemo(() => [...new Set(programlar.map((p) => p.kurum))].sort((a, b) => a.localeCompare(b, 'tr')), [programlar])
@@ -33,17 +35,19 @@ export default function DtProgramlarScreen() {
     return programlar.filter((p) => {
       if (kurum && p.kurum !== kurum) return false
       if (tur && p.kategori !== tur) return false
+      if (fayda && !p.faydalar.includes(fayda)) return false
       if (durum && gecerliDurum(p, bugun) !== durum) return false
       if (!aranan) return true
       return aramaMetni([p.ad, p.kurum, p.ozet, p.destekTuru].join(' ')).includes(aranan)
     })
-  }, [programlar, arama, kurum, tur, durum, bugun])
+  }, [programlar, arama, kurum, tur, fayda, durum, bugun])
   const enEskiKontrol = programlar.filter((p) => tazelik(p.kaynak.asOf, bugun).eski).map((p) => p.kaynak.asOf).sort()[0]
-  const suzuldu = Boolean(arama || kurum || tur || durum)
+  const suzuldu = Boolean(arama || kurum || tur || fayda || durum)
   const temizle = () => {
     setArama('')
     setKurum(undefined)
     setTur(undefined)
+    setFayda(undefined)
     setDurum(undefined)
     aramaKutusu.current?.focus()
   }
@@ -64,7 +68,7 @@ export default function DtProgramlarScreen() {
       <DtUyari />
       {enEskiKontrol ? <DtEskiBilgi asOf={enEskiKontrol} /> : null}
       <div className="dt-programlar-giris">
-        <p>Hibe, geri ödenmeyen paradır. Teşvik, vergi ya da prim indirimi gibi bir kolaylıktır.</p>
+        <p>Fayda etiketleri katalogdaki destek türünü açıklar.</p>
         <DtTerimler />
       </div>
 
@@ -82,6 +86,10 @@ export default function DtProgramlarScreen() {
           <div className="dt-programlar-alan">
             <label htmlFor="dt-tur">Destek türü</label>
             <Select<Kategori> id="dt-tur" value={tur} onChange={setTur} allowClear placeholder="Bütün türler" options={KATEGORILER.map((k) => ({ value: k, label: KATEGORI_ADI[k] }))} />
+          </div>
+          <div className="dt-programlar-alan">
+            <label htmlFor="dt-fayda">Fayda türü</label>
+            <Select<FaydaTuru> id="dt-fayda" value={fayda} onChange={setFayda} allowClear placeholder="Bütün faydalar" options={(Object.keys(FAYDA_ADI) as FaydaTuru[]).map((f) => ({ value: f, label: FAYDA_ADI[f] }))} />
           </div>
           <div className="dt-programlar-alan">
             <label htmlFor="dt-durum">Durum</label>

@@ -3,16 +3,17 @@ import { Link } from 'react-router'
 import type { Program } from '../data/tipler'
 import { DURUM_ADI, KATEGORI_ADI } from '../metinler'
 import { gecerliDurum, tarihYaz, tazelik } from '../motor/tazelik'
+import { DtFaydalar } from './DtFaydalar'
 import { DtEtiket } from './DtEtiket'
 
-/** Program listesindeki tek kart. Kartın tamamı programın sayfasını açar. */
+/** Programın bağlantısı ve fayda tanımları ayrı ayrı açılır. */
 export function DtProgramKarti({ program, bugun }: { program: Program; bugun: string }) {
   const durum = gecerliDurum(program, bugun)
   const eski = tazelik(program.kaynak.asOf, bugun).eski
   return (
-    <Link className="dt-program-karti" to={`/destek/${program.id}`}>
+    <article className="dt-program-karti">
       <span className="dt-program-karti-kurum">{program.kurum}</span>
-      <h3 className="dt-program-karti-ad">{program.ad}</h3>
+      <h3 className="dt-program-karti-ad"><Link to={`/destek/${program.id}`}>{program.ad}</Link></h3>
       <span className="dt-program-karti-ozet">{program.ozet}</span>
       <span className="dt-program-karti-etiketler">
         <DtEtiket>{KATEGORI_ADI[program.kategori]}</DtEtiket>
@@ -20,6 +21,7 @@ export function DtProgramKarti({ program, bugun }: { program: Program; bugun: st
         {eski ? <DtEtiket ton="uyari">Eski bilgi</DtEtiket> : null}
       </span>
       <span className="dt-program-karti-kontrol">Son kontrol: {tarihYaz(program.kaynak.asOf)}</span>
-    </Link>
+      <DtFaydalar program={program} bugun={bugun} />
+    </article>
   )
 }
