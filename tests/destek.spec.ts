@@ -523,6 +523,25 @@ test('kapanan, kaldırılan ve doğrulanmayan program ekranda açıkça görün�
   await expect(main.locator('.dt-program-karti', { hasText: 'KOSGEB Teknoloji Merkezi Destek Programı' })).toHaveCount(1)
 })
 
+test('doğrulanmış kaynak adı ve aynı adlı son günler doğru görünür', async ({ page }) => {
+  const main = page.getByRole('main')
+  const hatalar: string[] = []
+  page.on('console', (m) => { if (m.type() === 'error') hatalar.push(m.text()) })
+  // Kaynağın kendisi 20 Kasım 2026 günü doğrulandı. Kaynak adındaki tarih gizlenmez.
+  await page.goto('/#/destek/tb10962Atilim')
+  await ready(page)
+  await expect(main.getByText('Kaynak: 10962 sayılı Karar (Resmî Gazete, 27 Şubat 2026, sayı 33181)', { exact: false })).toHaveCount(2)
+  await expect(main.getByText('Kaynak: Bilinmiyor. Bilgi eski.', { exact: true })).toHaveCount(0)
+  // EIC programında dört son gün vardır. Her biri ayrı adla görünür.
+  await page.goto('/#/destek/eic')
+  await ready(page)
+  const gunler = main.getByRole('region', { name: /^4\. Son tarih/ }).locator('li')
+  const metinler = await gunler.allInnerTexts()
+  expect(metinler.length).toBeGreaterThanOrEqual(4)
+  expect(new Set(metinler.map((m) => m.split(':')[0])).size).toBe(metinler.length)
+  expect(hatalar.filter((h) => /same key/i.test(h))).toEqual([])
+})
+
 test('fayda süzgeci ve karttaki sözlük tanımı dokunma ve klavyeyle çalışır', async ({ page, hasTouch }) => {
   await page.goto('/#/destek')
   await ready(page)

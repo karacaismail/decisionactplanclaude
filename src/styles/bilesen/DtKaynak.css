@@ -5,3 +5,6 @@
 .dt-kaynak .dt-kaynak-baglanti { display: inline-flex; align-items: center; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }
 
 .dt-kaynak .dt-gizli { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* Blok bağlantının odak işareti kalın alt çizgidir. Sol çizgi ikinci işaret olurdu. */
+.dt-kaynak .dt-kaynak-baglanti:focus-visible::before { display: none; }

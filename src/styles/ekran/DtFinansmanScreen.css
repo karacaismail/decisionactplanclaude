@@ -68,3 +68,6 @@
 .dt-finansman .dt-finansman-beklenen-liste li { display: grid; grid-template-columns: minmax(0, 1fr); font-size: var(--font-body); min-inline-size: 0; }
 
 .dt-finansman .dt-finansman-baglanti { display: inline-flex; align-items: center; justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }
+
+/* Blok bağlantının odak işareti kalın alt çizgidir. Sol çizgi ikinci işaret olurdu. */
+.dt-finansman .dt-finansman-baglanti:focus-visible::before { display: none; }

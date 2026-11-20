@@ -18,9 +18,14 @@ export const SURESI_GECTI = 'Belgenin geçerlilik tarihi geçti. Belgeyi yeniley
  * İşaret başvurulara geçmez. Kişi her başvuruda "Bu belgeyi kullanacağım" der.
  */
 export function DtHavuzBelgesi({ belge, kayit, yer, bugun, hataGoster }: { belge: OrtakBelge; kayit: HavuzKaydi | undefined; yer: string; bugun: string; hataGoster: (m: string) => void }) {
-  /* İşaret hemen görünür. Depodaki yeni kayıt gelince ekran depodaki hâli gösterir. */
+  /*
+   * İşaret hemen görünür. Depodaki kayıt bekleyen hâle ulaşınca bekleyen hâl silinir.
+   * Sıradaki önceki bir yazma bitince bekleyen hâl kalır. Böylece seçilen tarih kaybolmaz.
+   */
   const [bekleyen, setBekleyen] = useState<HavuzKaydi>()
-  useEffect(() => setBekleyen(undefined), [kayit])
+  useEffect(() => {
+    setBekleyen((b) => (b && (kayit?.hazir ?? false) === b.hazir && kayit?.gecerlilik === b.gecerlilik ? undefined : b))
+  }, [kayit])
   const gorunen = bekleyen ?? kayit
   const durum = havuzDurumu(belge, gorunen, bugun)
   const id = `dt-havuz-${belge.id}`

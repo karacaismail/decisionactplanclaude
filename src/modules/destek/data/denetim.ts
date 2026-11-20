@@ -88,6 +88,8 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     }
     p.tarihler.forEach((t, i) => {
       hatalar.push(...metinHatalari(t.ad, yer(`tarihler[${i}].ad`)))
+      // Ekran tarihleri adlarıyla ayırır. Aynı ad iki tarihi karıştırır.
+      if (p.tarihler.findIndex((x) => x.ad === t.ad) < i) hatalar.push(`${yer(`tarihler[${i}].ad`)}: aynı ad başka bir tarihte de var.`)
       hatalar.push(...factHatalari(t.tarih, 'tarih', yer(`tarihler[${i}].tarih`)))
       if (typeof t.kritik !== 'boolean') hatalar.push(`${yer(`tarihler[${i}].kritik`)}: doğru ya da yanlış olmalı.`)
     })

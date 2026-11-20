@@ -104,6 +104,7 @@ function yeniKimlik(): string {
 export function basvuruEkle(planId: string, program: Program, desteksizYapar: DesteksizCevap, simdi: string): Promise<Basvuru> {
   return sirayla(async () => {
     if (!planId || planId === PLANSIZ) throw new Error('Başvuru listesi için bir plan açın.')
+    if (program.durum === 'kaldirildi') throw new Error('Bu program kaldırıldı. Yeni başvuru alınmaz.')
     if ((await basvurulariYukle(planId)).some((b) => b.programId === program.id)) throw new Error('Bu program başvuru listenizde zaten var.')
     const b: Basvuru = {
       id: yeniKimlik(),

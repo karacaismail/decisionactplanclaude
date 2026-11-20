@@ -195,3 +195,28 @@ test('tablo kutusu ve bağ kutuları klavyeyle çalışır, odakta halka yoktur'
   await expect(ilk).toBeFocused()
   expect(audit.findings).toEqual([])
 })
+
+test('blok bağlantılar klavye odağında tek işaret gösterir', async ({ page, hasTouch, browserName }, info) => {
+  const audit: Audit = { findings: [], samples: [], dialogName: 'not_run' }
+  await openDemo(page, hasTouch)
+  await kaynakYaz(page)
+  await page.goto('/#/destek/finansman')
+  await ready(page)
+  await installProbe(page)
+  const tus = `${browserName === 'webkit' ? 'Alt+' : ''}Tab`
+  await page.keyboard.press(tus)
+  await expect(page.locator('html')).toHaveAttribute('data-focus-mode', 'keyboard')
+  const baglanti = page.getByRole('main').locator('.dt-finansman-baglanti').first()
+  await baglanti.focus()
+  await auditFocus(page, info, audit, 'Finansman bağlantısı')
+
+  // Kaynak bağlantısı program kartında durur. Sayfa değişince ölçüm aracı yeniden kurulur.
+  await page.goto('/#/destek/tb10962Atilim')
+  await ready(page)
+  await installProbe(page)
+  await page.keyboard.press(tus)
+  const kaynak = page.getByRole('main').locator('.dt-kaynak-baglanti').first()
+  await kaynak.focus()
+  await auditFocus(page, info, audit, 'Kaynak bağlantısı')
+  expect(audit.findings).toEqual([])
+})

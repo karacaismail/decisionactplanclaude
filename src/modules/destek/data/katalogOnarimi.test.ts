@@ -44,3 +44,10 @@ it('altı kurum sorusu grubu genel ve yalın Türkçe kullanır', () => {
   expect(kurumSorusuHatalari(KURUM_SORULARI)).toEqual([])
   expect(kurumSorusuHatalari([{ id: 'ornek', grup: 'Giderler', soru: 'Şirketimiz gideri öder mi; bugün mü?' }])).toHaveLength(2)
 })
+
+it('bir programın iki tarihi aynı adı taşıyamaz', () => {
+  const p = PROGRAMLAR.find((x) => x.tarihler.length > 0)!
+  const tarihler = [p.tarihler[0], { ...p.tarihler[0] }]
+  expect(katalogHatalari([{ ...p, tarihler }])).toContainEqual(expect.stringMatching(/tarihler\[1\]\.ad.*aynı/))
+  expect(katalogHatalari(PROGRAMLAR)).toEqual([])
+})

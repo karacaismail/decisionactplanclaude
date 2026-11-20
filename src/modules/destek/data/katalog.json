@@ -3940,7 +3940,7 @@
     },
     "tarihler": [
       {
-        "ad": "Tam başvuruların toplandığı gün",
+        "ad": "Tam başvuruların toplandığı gün (1. tur)",
         "tarih": {
           "state": "kaynakli",
           "value": "2027-01-20",
@@ -3951,7 +3951,7 @@
         "kritik": true
       },
       {
-        "ad": "Tam başvuruların toplandığı gün",
+        "ad": "Tam başvuruların toplandığı gün (2. tur)",
         "tarih": {
           "state": "kaynakli",
           "value": "2027-03-17",
@@ -3962,7 +3962,7 @@
         "kritik": true
       },
       {
-        "ad": "Tam başvuruların toplandığı gün",
+        "ad": "Tam başvuruların toplandığı gün (3. tur)",
         "tarih": {
           "state": "kaynakli",
           "value": "2027-09-01",
@@ -3973,7 +3973,7 @@
         "kritik": true
       },
       {
-        "ad": "Tam başvuruların toplandığı gün",
+        "ad": "Tam başvuruların toplandığı gün (4. tur)",
         "tarih": {
           "state": "kaynakli",
           "value": "2027-11-04",

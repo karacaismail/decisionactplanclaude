@@ -19,7 +19,7 @@ import { BASVURU_DURUM_ADI, DESTEKSIZ_ADI, KOMBINASYON_METNI } from '../metinler
 import { BASVURU_DURUMLARI, belgeAnahtari, type Basvuru, type BasvuruDegisikligi, type BasvuruDurumu } from '../motor/basvuru'
 import { basvuruBelgeOnerisi, type BelgeHavuzu } from '../motor/belgeHavuzu'
 import { basvuruCiftleri, BILINMEYEN_ILISKI } from '../motor/kombinasyon'
-import { alanDurumu, alanMetni, tarihGectiMi, tarihYaz } from '../motor/tazelik'
+import { alanDurumu, alanMetni, gecerliDurum, tarihGectiMi, tarihYaz } from '../motor/tazelik'
 
 const KANITLAR = KANIT_GRUPLARI.flatMap((g) => g.maddeler)
 /** Açılır listedeki uzun belge adları kesilmez, satıra sarılır. */
@@ -148,6 +148,12 @@ function BasvuruKarti({ basvuru, program, planId, bugun, havuz, hataGoster, sili
         {program ? <Link to={`/destek/${program.id}`}>{basvuru.programAdi}</Link> : basvuru.programAdi}
       </h3>
       {program ? null : <p>Bu program artık listede yok. Kurumun sayfasından kontrol edin.</p>}
+      {program && gecerliDurum(program, bugun) === 'kaldirildi' ? (
+        <p className="dt-cift-durum" role="note">
+          <Warning aria-hidden className="dt-cift-ikon" />
+          <span>Bu program kaldırıldı. Kurum yeni başvuru almaz. Başvurunun durumunu güncelleyin.</span>
+        </p>
+      ) : null}
       <div className="dt-basvuru-alan">
         <label htmlFor={`${id}-durum`}>Başvurunun durumu</label>
         <Select<BasvuruDurumu> id={`${id}-durum`} value={basvuru.durum} virtual={false} options={BASVURU_DURUMLARI.map((d) => ({ value: d, label: BASVURU_DURUM_ADI[d] }))} onChange={(durum) => degistir({ durum })} />

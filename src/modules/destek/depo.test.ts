@@ -50,12 +50,17 @@ describe('destek profili', () => {
 
 describe('başvurular', () => {
   it('başvuru, programın belge listesiyle ve cevapla oluşur', async () => {
-    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'hayir', SIMDI)
+    const b = await basvuruEkle('plan-1', program('tubitak1507'), 'hayir', SIMDI)
     expect(b.durum).toBe('hazirlaniyor')
     expect(b.desteksizYapar).toBe('hayir')
-    expect(b.belgeler.map((x) => x.ad)).toEqual(program('kosgebIsletmeGelistirme').belgeler)
+    expect(b.belgeler.map((x) => x.ad)).toEqual(program('tubitak1507').belgeler)
     expect(b.belgeler.every((x) => !x.hazir)).toBe(true)
     expect(await basvurulariYukle('plan-1')).toEqual([b])
+  })
+
+  it('kaldırılan programa başvuru eklenmez', async () => {
+    await expect(basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'hayir', SIMDI)).rejects.toThrow(/kaldırıldı/)
+    expect(await basvurulariYukle('plan-1')).toEqual([])
   })
 
   it('plan olmadan başvuru eklenmez', async () => {
@@ -77,7 +82,7 @@ describe('başvurular', () => {
   })
 
   it('aynı anda gelen iki değişiklik birbirini silmez', async () => {
-    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'evet', SIMDI)
+    const b = await basvuruEkle('plan-1', program('tubitak1507'), 'evet', SIMDI)
     await Promise.all([
       basvuruGuncelle('plan-1', b.id, { belge: { sira: 0, hazir: true } }, SIMDI),
       basvuruGuncelle('plan-1', b.id, { belge: { sira: 1, hazir: true } }, SIMDI),
@@ -129,7 +134,7 @@ describe('başvurular', () => {
 
 describe('belge ve kanıt listesinden eklenen belgeler', () => {
   it('belge listesine eklenir ve programın belgelerinden ayrı işaretlenir', async () => {
-    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'evet', SIMDI)
+    const b = await basvuruEkle('plan-1', program('tubitak1507'), 'evet', SIMDI)
     const g = await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
     expect(g.belgeler).toHaveLength(5)
     expect(g.belgeler.at(-1)).toEqual({ ad: 'İmza sirküleri', hazir: false, kanit: 'k4' })
@@ -138,7 +143,7 @@ describe('belge ve kanıt listesinden eklenen belgeler', () => {
   })
 
   it('aynı adlı belge ikinci kez eklenmez', async () => {
-    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'evet', SIMDI)
+    const b = await basvuruEkle('plan-1', program('tubitak1507'), 'evet', SIMDI)
     // Programın kendi belgesinde "KOBİ beyannamesi" var. Büyük ve küçük harf ile boşluk farkı sayılmaz.
     await expect(basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: '  kobi   BEYANNAMESİ ', kanit: 'k10' } }, SIMDI)).rejects.toThrow(/zaten/)
     await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)

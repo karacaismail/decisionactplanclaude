@@ -231,7 +231,8 @@ export default function DtProgramScreen() {
         </Bolum>
         <Bolum no={5} baslik="Resmî sayfa nerede?">
           <p>Başvuru yolu: {metin(program.kanal)}</p>
-          <p className="dt-program-kaynak">Kaynak: {metin(program.kaynak.ad)}</p>
+          {/* Kaynağın adı kaynakla birlikte doğrulandı. Ad, kaynağın kendi kontrol gününe göre eskir. */}
+          <p className="dt-program-kaynak">Kaynak: {eskiMetniGoster(program.kaynak.ad, program.kaynak, bugun)}</p>
           <a className="dt-program-dis" href={program.kaynak.url} target="_blank" rel="noopener noreferrer">
             Kurumun sayfasını açın
             <ArrowSquareOut aria-hidden className="dt-program-ikon" />
