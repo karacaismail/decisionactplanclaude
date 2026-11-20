@@ -1,12 +1,12 @@
 import '@/styles/ekran/DtSozlukScreen.css'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router'
+import { Input } from 'antd'
 import { PageHeader } from '@/components/PageHeader'
 import { DtUyari } from '../components/DtUyari'
 import { SOZLUK } from '../data/sozluk'
-import { harfeGore } from '../metinler'
+import { harfeGore, sozlukAra } from '../metinler'
 
-const GRUPLAR = harfeGore(SOZLUK)
 const terimKimligi = (id: string) => `dt-terim-${id}`
 
 /**
@@ -14,6 +14,8 @@ const terimKimligi = (id: string) => `dt-terim-${id}`
  * Adreste "terim" varsa o terim seçili görünür ve odak o terime geçer.
  */
 export default function DtSozlukScreen() {
+  const [arama, setArama] = useState('')
+  const terimler = sozlukAra(SOZLUK, arama)
   const [params] = useSearchParams()
   const hedef = SOZLUK.find((t) => t.id === params.get('terim'))?.id
   useEffect(() => {
@@ -25,7 +27,10 @@ export default function DtSozlukScreen() {
       <PageHeader title="Destek sözlüğü" kicker="Destek ve teşvik" description="Destek ekranlarındaki terimlerin anlamı burada. Terimler abece sırasıyla dizilir." />
       <DtUyari />
       <p className="dt-sozluk-sayi">Sözlükte {SOZLUK.length} terim var.</p>
-      {GRUPLAR.map((g) => (
+      <label htmlFor="dt-sozluk-arama">Sözlükte arayın</label>
+      <Input id="dt-sozluk-arama" value={arama} onChange={(e) => setArama(e.target.value)} enterKeyHint="search" allowClear />
+      {terimler.length === 0 ? <p role="status">Aramanıza uyan terim yok.</p> : null}
+      {harfeGore(terimler).map((g) => (
         <section key={g.harf} className="dt-sozluk-harf" aria-labelledby={`dt-harf-${g.harf}`}>
           <h2 id={`dt-harf-${g.harf}`}>{g.harf}</h2>
           <dl>

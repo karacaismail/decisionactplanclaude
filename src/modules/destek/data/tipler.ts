@@ -28,6 +28,21 @@ export type TavanTuru = (typeof TAVAN_TURLERI)[number]
 export const KOMBINASYONLAR = ['ayri_gider', 'uyumlu', 'onkosul', 'red_alternatifi', 'dislayici'] as const
 export type Kombinasyon = (typeof KOMBINASYONLAR)[number]
 
+export interface KombinasyonKurali {
+  digerProgramId: string
+  iliski: Fact<Kombinasyon>
+  yonlu: boolean
+}
+
+export type FaydaTuru = 'hibe' | 'vergi_sgk' | 'faiz' | 'kredi' | 'ortaklik' | 'kefalet' | 'hizmet' | 'destek_degil'
+
+export interface KurumSorusu {
+  id: string
+  grup: string
+  soru: string
+  faydalar?: readonly FaydaTuru[]
+}
+
 export interface ProgramTarihi {
   ad: string
   tarih: Fact<IsoTarih>
@@ -45,7 +60,7 @@ export interface Program {
   ozet: string
   durum: Durum
   tutar: {
-    /** Tutarı anlatan metin. Metindeki tutarlar eski bilgide gizlenir. */
+    /** Tutarı ve oranı anlatan kaynaklı metin. */
     metin: Fact<string>
     /** Türk lirası olarak üst sınır. */
     tavanTL: Fact<number>
@@ -61,7 +76,11 @@ export interface Program {
   belgeler: readonly string[]
   kanal: string
   kaynak: { url: string; ad: string; asOf: IsoTarih }
-  kombinasyon: Readonly<Partial<Record<string, Kombinasyon>>>
+  kombinasyon: readonly KombinasyonKurali[]
+  faydalar: readonly FaydaTuru[]
+  faydaTavanlari?: Readonly<Partial<Record<FaydaTuru, Fact<number>>>>
+  sure: { degerlendirme: Fact<string>; ilkOdeme: Fact<string> }
+  odemeBicimi: Fact<string>
 }
 
 /** Belge ve kanıt listesindeki tek madde. */
@@ -104,6 +123,7 @@ export interface Terim {
   id: string
   ad: string
   anlam: string
+  esAnlamlilar?: readonly string[]
   /** Program ekranlarındaki kısa terim listesinde de görünür. */
   temel?: boolean
 }

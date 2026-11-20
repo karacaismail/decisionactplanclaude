@@ -37,6 +37,7 @@ export interface Basvuru {
   belgeler: BelgeMaddesi[]
   /** Kişinin kendi yazdığı son gün. */
   sonTarih?: IsoTarih
+  giderKodlari?: string[]
   olusturma: string
   guncelleme: string
 }
@@ -47,7 +48,7 @@ export interface Basvuru {
  * İşaret belgenin adını da taşıyabilir. Sıra kaymışsa belge adıyla bulunur. Örneğin araya bir çıkarma girmiş olabilir.
  * Belge ve kanıt listesinden belge eklenebilir. Yalnız böyle eklenen belge çıkarılabilir.
  */
-export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'sonTarih'>> & {
+export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'sonTarih' | 'giderKodlari'>> & {
   belge?: { sira: number; hazir: boolean; ad?: string }
   belgeEkle?: { ad: string; kanit: string }
   belgeCikar?: { kanit: string }
@@ -80,6 +81,9 @@ export function basvuruOku(value: unknown): Basvuru | undefined {
   if (typeof v.id !== 'string' || !BASVURU_KIMLIGI.test(v.id) || !metin(v.programId) || !metin(v.programAdi) || !metin(v.olusturma) || !metin(v.guncelleme)) return undefined
   if (!BASVURU_DURUMLARI.includes(v.durum as BasvuruDurumu) || !DESTEKSIZ_CEVAPLARI.includes(v.desteksizYapar as DesteksizCevap) || !belgeler) return undefined
   if (v.sonTarih !== undefined && !gecerliIsoTarih(v.sonTarih)) return undefined
+  const kodlar = v.giderKodlari
+  if (kodlar !== undefined && (!Array.isArray(kodlar) || kodlar.length > 40
+    || !Array.from(kodlar).every((k) => typeof k === 'string' && /^[a-z0-9_-]{1,48}$/.test(k)))) return undefined
   const b: Basvuru = {
     id: v.id,
     programId: v.programId,
@@ -91,6 +95,7 @@ export function basvuruOku(value: unknown): Basvuru | undefined {
     guncelleme: v.guncelleme,
   }
   if (v.sonTarih !== undefined) b.sonTarih = v.sonTarih as IsoTarih
+  if (Array.isArray(kodlar) && kodlar.length) b.giderKodlari = [...new Set(kodlar)]
   return b
 }
 

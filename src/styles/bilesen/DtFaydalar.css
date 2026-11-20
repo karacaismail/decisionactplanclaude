@@ -1,0 +1,8 @@
+.dt-fayda-terim summary {
+  min-block-size: var(--target-touch);
+  min-inline-size: var(--target-touch);
+  inline-size: fit-content;
+  padding-block: var(--space-2);
+  cursor: pointer;
+  color: var(--color-action-text);
+}

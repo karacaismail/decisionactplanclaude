@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { PROGRAMLAR } from '../data/programlar'
-import { bugunIso, ESKI_BILGI_GUN, gecerliDurum, gecerliIsoTarih, gunFarki, tarihGectiMi, tarihYaz, tazelik } from './tazelik'
+import { alanDurumu, bugunIso, ESKI_BILGI_GUN, gecerliDurum, gecerliIsoTarih, gunFarki, tarihGectiMi, tarihYaz, tazelik } from './tazelik'
 
 const program = (id: string) => PROGRAMLAR.find((p) => p.id === id)!
 
@@ -54,4 +54,11 @@ describe('program durumu', () => {
     expect(tarihGectiMi('2026-12-31', '2026-12-31')).toBe(false)
     expect(tarihGectiMi('2026-12-31', '2027-01-01')).toBe(true)
   })
+})
+
+it('her alan kendi kaynağının kontrol gününü kullanır', () => {
+  const kaynak = { state: 'kaynakli' as const, value: '%75', sourceUrl: 'https://ornek.gov.tr' }
+  expect(alanDurumu({ ...kaynak, asOf: '2026-08-12' }, '2026-11-11')).toBe('eski')
+  expect(alanDurumu({ ...kaynak, asOf: '2026-08-13' }, '2026-11-11')).toBe('kaynakli')
+  expect(alanDurumu({ ...kaynak, asOf: '2026-08-13', sourceUrl: '' }, '2026-11-11')).toBe('bilinmiyor')
 })

@@ -45,3 +45,11 @@
 .dt-program .dt-program-birlikte-liste p { color: var(--color-text-secondary); }
 
 .dt-program .dt-program-birlikte-liste .dt-program-baglanti { overflow-wrap: break-word; }
+
+.dt-program-ciftler summary {
+  min-block-size: var(--target-touch);
+  padding-block: var(--space-2);
+  cursor: pointer;
+  color: var(--color-action-text);
+  font-size: var(--font-body);
+}

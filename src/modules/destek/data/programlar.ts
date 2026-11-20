@@ -4,12 +4,17 @@
  * Veri kod çalıştırılmadan aktarıldı. Tek bir işletmeye göre yazılmış özetler, puanlar ve notlar alınmadı.
  * Programın yapılacaklar listesi de alınmadı. Bu listenin çoğu tek bir işletmenin bakışıyla yazılmıştı.
  * Yalnız bir işletmeye verilmiş bir yanıta dayanan koşul ve öneri niteliğindeki belgeler de alınmadı.
- * Her sayı kaynağı ve tarihiyle birlikte durur. Tutar metindeyse eski bilgide ekran tutarı gizler.
+ * Her sayı kaynağı ve tarihiyle birlikte durur. Eski tutar alanı güncel değer yerine uyarı gösterir.
  * Katalog denetimi: programlar.test.ts
  */
-import type { Program } from './tipler'
+import { FAYDALAR } from './faydalar'
+import type { Fact, Kombinasyon, Program } from './tipler'
 
-export const PROGRAMLAR: readonly Program[] = [
+type EskiProgram = Omit<Program, 'kombinasyon' | 'faydalar' | 'sure' | 'odemeBicimi'> & {
+  kombinasyon: Readonly<Partial<Record<string, Kombinasyon>>>
+}
+
+const KATALOG: readonly EskiProgram[] = [
   {
     id: 'tubitak1501',
     ad: '1501 Sanayi Ar-Ge Destek Programı',
@@ -1528,3 +1533,15 @@ export const PROGRAMLAR: readonly Program[] = [
     kombinasyon: { tb10962Atilim: 'onkosul' },
   },
 ]
+
+// Önceki birlikte kullanma kayıtlarının resmî dayanağı yoktur.
+export const PROGRAMLAR: readonly Program[] = KATALOG.map((p) => {
+  const bilinmiyor: Fact<string> = { state: 'bilinmiyor', sourceUrl: p.kaynak.url, asOf: p.kaynak.asOf }
+  return {
+    ...p,
+    kombinasyon: [],
+    faydalar: FAYDALAR[p.id],
+    sure: { degerlendirme: bilinmiyor, ilkOdeme: bilinmiyor },
+    odemeBicimi: bilinmiyor,
+  }
+})
