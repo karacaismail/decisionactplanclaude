@@ -1,0 +1,62 @@
+{
+ "agents": [
+  {
+   "name": "claude1",
+   "from": 1,
+   "to": 15,
+   "words": 5150,
+   "units": 233
+  },
+  {
+   "name": "claude2",
+   "from": 16,
+   "to": 29,
+   "words": 5179,
+   "units": 316
+  },
+  {
+   "name": "claude3",
+   "from": 30,
+   "to": 38,
+   "words": 5262,
+   "units": 217
+  },
+  {
+   "name": "claude4",
+   "from": 39,
+   "to": 47,
+   "words": 4853,
+   "units": 205
+  },
+  {
+   "name": "claude5",
+   "from": 48,
+   "to": 56,
+   "words": 4971,
+   "units": 226
+  },
+  {
+   "name": "claude6",
+   "from": 57,
+   "to": 65,
+   "words": 5404,
+   "units": 221
+  },
+  {
+   "name": "codex1",
+   "from": 66,
+   "to": 73,
+   "words": 4975,
+   "units": 202
+  },
+  {
+   "name": "codex2",
+   "from": 74,
+   "to": 82,
+   "words": 4643,
+   "units": 194
+  }
+ ],
+ "total_words": 40437,
+ "total_units": 1814
+}

@@ -1,6 +1,6 @@
 # Belge haritası
 
-Bu dosya Karar Atlası için yazılan bütün belgelerin haritasıdır. Bir belgeyi aramadan önce buraya bakın. Harita 16 Kasım 2026 Pazartesi günü kuruldu. Aynı gün derin raporlarla, sonra doğrulanmış raporlarla güncellendi.
+Bu dosya Karar Atlası için yazılan bütün belgelerin haritasıdır. Bir belgeyi aramadan önce buraya bakın. Harita 16 Kasım 2026 Pazartesi günü kuruldu. Aynı gün derin raporlarla, sonra doğrulanmış raporlarla güncellendi. Harita 20 Kasım 2026 Cuma günü OECD incelemesiyle de güncellendi.
 
 ## Bu harita nasıl çalışır?
 
@@ -155,6 +155,7 @@ Bu notlar raporların dayandığı ham bilgidir. Notlar İngilizce yazıldı. Ra
 | [Doğrulanmış planlama ihtiyacı sınıflaması](<../research_notes/Doğrulanmış planlama ihtiyacı sınıflaması/>) | Asıl kaynaklardan doğrulama turu |
 | [Doğrulanmış strateji ekibi ve vaka analizi](<../research_notes/Doğrulanmış strateji ekibi ve vaka analizi/>) | Asıl kaynaklardan doğrulama turu |
 | [Doğrulanmış rakip analizi](<../research_notes/Doğrulanmış rakip analizi/>) | Asıl kaynaklardan doğrulama turu |
+| [OECD KİT rehberi incelemesi](<../research_notes/OECD KİT rehberi incelemesi/>) | OECD rehberinin 1814 cümle birimlik defterleri, ajan belgeleri ve kapsama testleri |
 
 ## Çekmece 8. Kavramlar ve analizler
 
@@ -164,5 +165,8 @@ Bu konular önce sohbette cevaplandı. 16 Kasım 2026 Pazartesi günü dosyaya y
 |---|---|---|
 | [GAP analizi](gap-analizi.md) | Konuşulmayanlar, bekleyen kararlar ve öncelik sırası | Tek kaynak |
 | [Strateji kavramları](strateji-kavramlari.md) | OKR ve KPI, SMART, güncelleme sıklığı, bilinmeyen bilinmeyenler, kırmızı ekip | Tek kaynak |
+| [OECD bulgu belgesi](oecd-kit-rehberi-bulgulari.md) | OECD'nin 2024 tarihli kamu iktisadi teşebbüsü yönetişim rehberinden ürüne alınacak bulgular. Belge 82 sayfanın kelime kelime incelemesine dayanır. | Tek kaynak |
+| [OECD kaynak haritası](oecd-kaynak-haritasi.md) | OECD rehberinin andığı bütün belgeler, standartlar ve okuma önceliği | Tek kaynak |
+| [Kaynak haritası yaklaşım analizi](kaynak-haritasi-yaklasim-analizi.md) | 170 kaynaklık strateji kaynak haritasının ürüne nasıl yarayacağı. Sekiz öneri, ertelenenler ve alınmayanlar | Öneri, onay bekliyor |
 
 Big Four firmalarının hedef kitleleri için ayrı bir rapor yok. Bu firmaların sınıflama modelleri [Stratejik planlama ihtiyacı sınıflaması](<../reports/Derin planlama ihtiyacı sınıflaması.md>) raporundadır.
