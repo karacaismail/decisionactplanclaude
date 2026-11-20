@@ -1,0 +1,764 @@
+[
+  {
+    "id": "kosgebIsKurma",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Sabit TL tavanı yok. Performans desteği 8 brüt asgari ücret kadardır. Platform desteği kayıt ücreti kadardır.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "mükellefiyetinin devam etmesi şartıyla 8 brüt asgari ücret kadar geri ödemesiz destek sağlanır.",
+        "kaynakTarihi": "2026-11-06",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 100,
+        "metin": "Destek oranı yüzde 100 olur. Destek geri ödenmez.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "(2) İş kurma desteği kapsamında destek oranı %100 olarak uygulanır.",
+        "kaynakTarihi": "2026-11-06",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "16 Aralık 2024 ve sonrasında kurulan işletmelerin bir yıl şartı olmadan başvurabileceği son gün",
+          "tarih": "2026-12-31",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/1231/girisimci-destek-programi",
+          "alinti": "“kuruluş tarihinden itibaren 1 yıl içinde başvuru yapma” şartı aranmaksızın 31.12.2026 tarihine kadar iş kurma desteğine başvurabilirler."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "harcama sonrası. İşletme ödeme talebini belgeleriyle sistemden yapar.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İş kurma desteği kapsamında işletme, uygun bulunan desteklerle ilgili işlemleri tamamlayarak Ödeme Talep Formu ve Ödeme Belgeleri Tablosunda yer alan belgeler"
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+      },
+      {
+        "digerProgramId": "kosgebGirisimciB",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+      }
+    ],
+    "kataloglaFark": "Katalog kuruluş giderleri için hibe yazıyor. Yeni yönergede kuruluş giderleri desteği yok. Destek artık iki parçadır: platform giderleri desteği ve performans desteği. Başvurular sürekli alınıyor. Katalogdaki \"önkoşul\" ilişkisi yanlış. Resmî metin iki desteğin birlikte kullanılabildiğini yazıyor.",
+    "not": "Yönerge 6 Kasım 2026 tarihli 16. sürümdür. Destek süresi 24 aydır. Performans desteği yalnız girişimcisi genç, kadın, engelli, gazi ya da birinci derece şehit yakını olan işletmelere verilir. Reddedilen işletme bu desteğe yeniden başvuramaz."
+  },
+  {
+    "id": "kosgebGirisimciA",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 2250000,
+        "metin": "En çok 2.250.000 TL geri ödemeli destek. Öncelikli gruplarda 250.000 TL eklenir.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İş geliştirme desteği kapsamında toplamda 2.250.000.-TL’ye kadar geri ödemeli",
+        "kaynakTarihi": "2026-11-06",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 80,
+        "metin": "Destek oranı yüzde 80 olur.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "(2) İş geliştirme desteği kapsamında destek oranı %80 olarak uygulanır.",
+        "kaynakTarihi": "2026-11-06",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "2026 yılı 3. dönem başvurusunun başladığı gün",
+          "tarih": "2026-10-12",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+          "alinti": "Girişimci Destek Programı İş Geliştirme Desteği 2026 yılı 3. dönem başvuruları, 12 Ekim-31 Ekim 2026 tarihleri arasında alınacak."
+        },
+        {
+          "ad": "2026 yılı 3. dönem başvurusunun son günü",
+          "tarih": "2026-10-31",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+          "alinti": "Girişimci Destek Programı İş Geliştirme Desteği 2026 yılı 3. dönem başvuruları, 12 Ekim-31 Ekim 2026 tarihleri arasında alınacak."
+        }
+      ],
+      "sure": {
+        "degerlendirme": {
+          "metin": "Kurul karar formu evrak kaydına alınır. Sonuç 15 gün içinde işletmeye bildirilir.",
+          "baslangicOlayi": "Kurul Karar Formunun evrak kaydına alınması",
+          "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "alinti": "evrak kaydına alınır ve değerlendirme sonuçları 15 gün içerisinde işletmeye sistem üzerinden bildirilir."
+        },
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "harcama sonrası. Gider ödenir, sonra ödeme talep edilir. Para geri ödenir.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "vadeli işlemler dâhil olmak üzere ödemenin ya da katkı payının ödemesinin tamamlanmış olması gerekir."
+      }
+    },
+    "faydalar": [
+      "geri_odemeli_kredi"
+    ],
+    "faydaKaynak": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciB",
+        "iliski": "dislayici",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci iş geliştirme desteği ile iş geliştirme faiz/kar payı desteğinin sadece birinden yararlanabilir."
+      },
+      {
+        "digerProgramId": "kosgebIsKurma",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+      },
+      {
+        "digerProgramId": "kgf",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/dogrudan-krediler/kosgeb-geri-odemeli-destekleri",
+        "alinti": "KOSGEB Destek Programları kapsamında verilen destekler için KOBİ’ler lehine KGF A.Ş. tarafından doğrudan kefalet sağlanmaktadır."
+      }
+    ],
+    "kataloglaFark": "Katalogda tavan 1.500.000 TL, ek tutar 150.000 TL yazıyor. Güncel tavan 2.250.000 TL, ek tutar 250.000 TL oldu. Katalog para \"36 ay bitince geri ödenir\" diyor. Yönergeye göre proje 24 ay sürer. Geri ödeme proje bitiminden 12 ay sonra 4 eşit taksitle başlar. Teknogirişim Rozeti olan işletmede yaş şartı aranmaz.",
+    "not": "2026 yılının 3. başvuru dönemi 31 Ekim 2026 Cumartesi günü kapandı. Sonraki dönemin tarihi bulunamadı. KOSGEB takvim formu yılda üç başvuru dönemi gösteriyor. Kesin tarihi KOSGEB ilan eder. Katalogdaki 1501, BKS ve BİGG ilişkilerine resmî kaynak bulunamadı. Bu yüzden onlar listeye girmedi."
+  },
+  {
+    "id": "kosgebGirisimciB",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": {
+        "deger": 1000000,
+        "metin": "Kredi üst sınırı 1.000.000 TL. Bu tutar kredidir, hibe değildir.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "Bu destek kapsamında kullanılacak kredinin üst limiti 1.000.000.-TL ve kredi vadesi",
+        "kaynakTarihi": "2026-11-06",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 50,
+        "metin": "Faizin ya da kâr payının yüzde 50'si geri ödemesiz karşılanır.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+        "alinti": "Kredi finansman maliyetinin %50’si KOSGEB tarafından geri ödemesiz olarak karşılanırken, azami kredi vadesi 36 ay olarak uygulanıyor.",
+        "kaynakTarihi": "2026-10-12",
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "faiz desteği. İşletme taksiti bankaya öder, sonra ödeme talep eder.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İlgili döneme ait taksitin eksik ödenmesi halinde eksik kalan kısmın tamamlanmasına kadar o taksite ilişkin ödeme yapılmaz."
+      }
+    },
+    "faydalar": [
+      "faiz_destegi"
+    ],
+    "faydaKaynak": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": "dislayici",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci iş geliştirme desteği ile iş geliştirme faiz/kar payı desteğinin sadece birinden yararlanabilir."
+      },
+      {
+        "digerProgramId": "kosgebIsKurma",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+      }
+    ],
+    "kataloglaFark": "Tutar, oran ve süre katalogla aynıdır. Yeni bilgi şudur: İş geliştirme desteği kazanan kadın ya da genç girişimci 2 ay içinde yazılı talep verirse bu desteğe geçebilir.",
+    "not": "Başvuru hakkı, iş geliştirme desteği başvurusuna bağlıdır. 2026 yılının 1. ve 2. döneminde jüri puanı 50 ve üstü olmalıdır. Kredi vadesi 36 aydır."
+  },
+  {
+    "id": "kosgebYapayZekaKredisi",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 5000000,
+        "metin": "İşletme başına kredi üst sınırı 5.000.000 TL. Kredi faizsizdir ve geri ödenir.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+        "alinti": "(4) İşletme başına kredi üst limiti 5.000.000 TL ’dir. Kredi Türk Lirası cinsinden",
+        "kaynakTarihi": "2026-10-20",
+        "ikincil": false
+      },
+      "oran": null,
+      "tarihler": [
+        {
+          "ad": "Başvurunun başladığı gün",
+          "tarih": "2026-07-09",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9427/kosgebden-teknoloji-girisimlerine-yapay-zek-kredi-programi",
+          "alinti": "Yapay Zekâ Kredi Programı başvuruları 9 Temmuz – 31 Aralık 2026 tarihleri arasında gerçekleştirilecek."
+        },
+        {
+          "ad": "Başvurunun son günü",
+          "tarih": "2026-12-31",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9427/kosgebden-teknoloji-girisimlerine-yapay-zek-kredi-programi",
+          "alinti": "Yapay Zekâ Kredi Programı başvuruları 9 Temmuz – 31 Aralık 2026 tarihleri arasında gerçekleştirilecek."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "harcama sonrası. Fatura cüzdana yüklenir, uygun tutar blokeden çözülür.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9414/yapay-zek-kredisi",
+        "alinti": "Faturanın kredi kapsamına uygunluğu incelendikten sonra, uygun bulunan gider tutarı KDV hariç olarak GO Dijital Cüzdan hesabındaki blokeli tutardan serbest bırakılır."
+      }
+    },
+    "faydalar": [
+      "geri_odemeli_kredi"
+    ],
+    "faydaKaynak": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog en az 500.000 TL yazıyor. Kredi alt sınırı 20 Ekim 2026 tarihli değişiklikle kaldırıldı. Katalogdaki \"KGF önkoşul\" ilişkisi resmî metinde yok. Yönerge bankadan kesin teminat mektubu istiyor. Geri ödeme 12 ay ödemesiz dönemden sonra dörder aylık 4 eşit taksitle yapılır.",
+    "not": "Başvuru gününde geçerli Teknogirişim Rozeti gerekir. Bu bir başvuru şartıdır. Rozet programı bu grupta değil. Bu yüzden ilişki listeye girmedi. KOSGEB haberinde 12 eşit taksit yazıyor. Yönerge ve sık sorulan sorular 4 eşit taksit yazıyor. Yönerge esas alındı."
+  },
+  {
+    "id": "kosgebIsletmeGelistirme",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "kaldirildi",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [
+        {
+          "ad": "Programın başvuruya kapandığı gün",
+          "tarih": "2024-04-15",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekler/6530/yururlukten-kaldirilan-destekler",
+          "alinti": "\"Bu program 15.04.2024 tarihinde başvuruya kapatılmıştır.\""
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog bu programı \"sürekli\" açık gösteriyor. KOSGEB programı \"Yürürlükten Kaldırılan Destekler\" listesine almış. Program 15 Nisan 2024 tarihinde başvuruya kapandı. Katalogdaki tutarlar artık geçerli değil.",
+    "not": "Program sayfası hâlâ açılıyor. Sayfa \"Yürürlükten Kaldırılan Destekler\" başlığı altında durur. Kayıt katalogdan çıkarılmalı ya da kapalı gösterilmelidir."
+  },
+  {
+    "id": "kosgebKapasite",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 20000000,
+        "metin": "Kredi üst sınırı 20.000.000 TL. Savunma, havacılık ve uzay tedarikçisinde 30.000.000 TL olur. Alt sınır 1.000.000 TL.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "alinti": "Hızlı büyüyen ve teknogirişim rozetine sahip olan işletmelerde kredi üst limiti 20 milyon TL olup",
+        "kaynakTarihi": "2026-08-22",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 20,
+        "metin": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "alinti": "İşletmelerin finans kuruluşlarından kullandıkları krediler için geri ödemesiz 20 puan finansman desteği sağlanacak.",
+        "kaynakTarihi": "2026-08-22",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "2026 yılı 3. dönem başvurusunun başladığı gün",
+          "tarih": "2026-08-22",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "alinti": "Kapasite Geliştirme Destek Programı’nın 2026 yılı 3. dönem başvuruları, 22 Ağustos 2026 tarihi itibarıyla başladı."
+        },
+        {
+          "ad": "2026 yılı 3. dönem başvurusunun son günü",
+          "tarih": "2026-09-15",
+          "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "alinti": "Kapasite Geliştirme Destek Programı’nın 2026 yılı 3. Dönem başvuruları, 15 Eylül 2026 tarihinde sona erecek."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "faiz desteği. İşletme taksiti bankaya öder. Taksitler üçer aylık ve eşittir.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi",
+        "alinti": "Finansman kuruluşa ödenecek taksitler 3’er (üçer) aylık dönemler ve eşit tutarlı ödeme biçiminde olacaktır."
+      }
+    },
+    "faydalar": [
+      "faiz_destegi"
+    ],
+    "faydaKaynak": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kgf",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunuluyor."
+      }
+    ],
+    "kataloglaFark": "Alt ve üst sınır katalogla aynıdır. Yeni bilgi şudur: Savunma, havacılık ve uzay tedarikçisinde üst sınır EYDEP belgesine göre 25, 27,5 ya da 30 milyon TL olur. Teknogirişim Rozeti olan işletmede hızlı büyüme şartı aranmaz.",
+    "not": "Program yürürlüktedir. 2026 yılının 3. başvuru dönemi 15 Eylül 2026 Salı günü kapandı. Sonraki dönemin tarihi bulunamadı. Başvuranın sektörü imalat, 61, 62, 63 ya da 72 olmalıdır. Yönerge, kredi kullanılan gider için başka kurumdan ya da KOSGEB programından destek alınamayacağını yazar."
+  },
+  {
+    "id": "kosgebKuresel",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 75000000,
+        "metin": "Kredi üst sınırı 75.000.000 TL. Alt sınır 30.000.000 TL.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "alinti": "İşletme başına kredi üst limiti 75 milyon TL olarak belirlenmiştir. İşletme Başına Kredi Alt Limiti ise 30 Milyon TL’dir.",
+        "kaynakTarihi": "2026-09-07",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 20,
+        "metin": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "alinti": "İşletmelerin finans kuruluşlarından kullandıkları krediler için geri ödemesiz 20 puan finansman desteği sağlanacaktır.",
+        "kaynakTarihi": "2026-09-07",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "2026 yılı 1. dönem başvurusunun başladığı gün",
+          "tarih": "2026-09-07",
+          "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "alinti": "BAŞVURU BAŞLANGIÇ TARİHİ: 07 EYLÜL 2026"
+        },
+        {
+          "ad": "2026 yılı 1. dönem başvurusunun son günü",
+          "tarih": "2026-09-30",
+          "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "alinti": "SON BAŞVURU TARİHİ: 30 EYLÜL 2026"
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "faiz desteği. İşletme taksiti bankaya öder, sonra ödeme talep eder.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9206/kuresel-rekabetcilik-destek-programi",
+        "alinti": "kredi geri ödeme tablosunda yer alan taksitlere ilişkin ödemenin işletme tarafından finansal kuruluşa yapılmasının ardından sistem üzerinden ödeme talebinde bulunabilirsiniz."
+      }
+    },
+    "faydalar": [
+      "faiz_destegi"
+    ],
+    "faydaKaynak": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9206/kuresel-rekabetcilik-destek-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kgf",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunulmaktadır."
+      }
+    ],
+    "kataloglaFark": "Katalogda alt sınır 20.000.000 TL, üst sınır 50.000.000 TL yazıyor. Güncel alt sınır 30.000.000 TL, üst sınır 75.000.000 TL oldu. Turcorn 100 kapsamındaki işletme de başvurabilir.",
+    "not": "2026 yılının 1. başvuru dönemi 30 Eylül 2026 Çarşamba günü kapandı. Sonraki çağrının tarihi bulunamadı. İlk kredi proje başlangıcından sonra 9 ay içinde kullanılmalıdır. Yönerge, kredi kullanılan gider için başka kurumdan ya da KOSGEB programından destek alınamayacağını yazar."
+  },
+  {
+    "id": "kosgebDijitalDonusum",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": {
+        "deger": 20000000,
+        "metin": "Yatırım kredisi en az 1.000.000 TL, en çok 20.000.000 TL olur.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "alinti": "Yatırım Kredisi 1.000.000 TL 20.000.000 TL 36 Ay",
+        "kaynakTarihi": "2026-10-09",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 20,
+        "metin": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9144/kobi-dijital-donusum-destek-programi",
+        "alinti": null,
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "faiz desteği. Kredi taksitleri üçer aylık ve eşittir.",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "alinti": "kredilerin taksit ödemeleri eşit taksitler halinde 3’er aylık dönemlerde gerçekleştirilir."
+      }
+    },
+    "faydalar": [
+      "faiz_destegi"
+    ],
+    "faydaKaynak": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Alt sınır, üst sınır ve faiz puanı katalogla aynıdır. Yeni şartlar şunlardır: Son mali yılın öz kaynak toplamı artı olmalı. Son 3 mali yılın en az birinde faaliyet kârı olmalı. İşletme programdan bir kez yararlanır.",
+    "not": "Program sayfası 20 puanı tabloda gösteriyor. Bu tablo hücresi tek cümle değil. Bu yüzden oran alanının alıntısı boş bırakıldı. Başvuru dönemi ya da son tarih bulunamadı. Yönergede çağrı tarihi yok. Mikro işletmeler başvuramaz. Yalnız imalat sektörü başvurabilir."
+  },
+  {
+    "id": "kosgebTekmer",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 6506000,
+        "metin": "Her destek için 2026 yılı üst sınırı 6.506.000 TL. Sınır her yıl güncellenir.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9327/sektorel-gelisim-merkezi-segem-destek-programi",
+        "alinti": "yıllık destek üst limiti, SEGEM Destek Programı Uygulama Esaslarının yürürlüğe girdiği yıl (2026 yılı) için 6.506.000 TL’dir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 100,
+        "metin": "Destek oranı yüzde 100 olur.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9327/sektorel-gelisim-merkezi-segem-destek-programi",
+        "alinti": "Destek oranı %100 olarak uygulanır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "2026-01 COP31 Hızlandırma Çağrısı başvurusunun başladığı gün",
+          "tarih": "2026-08-09",
+          "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Haber/2026/2026-01_COP31_H%C4%B1zland%C4%B1rma_%C3%87a%C4%9Fr%C4%B1s%C4%B1_09_08_2026.pdf",
+          "alinti": "Başvuru 09 Ağustos 2026 – 30 Ağustos 2026"
+        },
+        {
+          "ad": "2026-01 COP31 Hızlandırma Çağrısı başvurusunun son günü",
+          "tarih": "2026-08-30",
+          "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Haber/2026/2026-01_COP31_H%C4%B1zland%C4%B1rma_%C3%87a%C4%9Fr%C4%B1s%C4%B1_09_08_2026.pdf",
+          "alinti": "Başvuru 09 Ağustos 2026 – 30 Ağustos 2026"
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "harcama sonrası. Hızlandırma desteğinde fatura, dekont ve teminat mektubu istenir.",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+        "alinti": "Ödeme talebinde programa ilişkin fatura, dekont ve teminat mektubu sunulur."
+      }
+    },
+    "faydalar": [
+      "hibe",
+      "geri_odemeli_kredi"
+    ],
+    "faydaKaynak": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalogdaki \"TEKMER Destek Programı\" adı KOSGEB'in kaldırılan destekler listesinde duruyor. Yerine \"Teknoloji Merkezi Destek Programı\" var. Kuruluş ve performans desteği geri ödemesizdir. Hızlandırma desteği geri ödemelidir. SEGEM programının yıllık üst sınırı da 6.506.000 TL'dir.",
+    "not": "Bu programa işletme doğrudan başvuramaz. Başvuruyu TEKMER işletici kuruluşu ya da TGB yönetici şirketi yapar. Tavan alıntısı SEGEM sayfasındandır. Teknoloji Merkezi sayfası da aynı tutarı tabloda yazar. Bu kaydı iki ayrı kayda bölmek önerilir."
+  },
+  {
+    "id": "kgf",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "kefalet. Banka krediyi verir, KGF kefil olur. İşletme komisyon öder.",
+        "kaynakUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+        "alinti": "Komisyon oranı: Yıllık %1,5"
+      }
+    },
+    "faydalar": [
+      "kefalet"
+    ],
+    "faydaKaynak": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebKapasite",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunuluyor."
+      },
+      {
+        "digerProgramId": "kosgebKuresel",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunulmaktadır."
+      },
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/dogrudan-krediler/kosgeb-geri-odemeli-destekleri",
+        "alinti": "KOSGEB Destek Programları kapsamında verilen destekler için KOBİ’ler lehine KGF A.Ş. tarafından doğrudan kefalet sağlanmaktadır."
+      }
+    ],
+    "kataloglaFark": "Sabit tutar olmadığı bilgisi doğrulandı. Yeni bilgi şudur: KGF Genel Destek Programında komisyon yıllık yüzde 1,5'tir. Başvuru ücreti 3 milyon TL altı kredide 5.000 TL, üstünde 10.000 TL'dir. Bu ücreti banka öder. Katalogdaki \"Yapay Zekâ Kredisi önkoşulu\" ilişkisi resmî metinde yok.",
+    "not": "KGF'nin çok sayıda paketi var. Bu kayıt genel kefaleti anlatır. KOSGEB geri ödemeli desteklerinde KGF kefalet sınırı en çok 3.000.000 TL'dir. KGF yönetim kurulu onayıyla bu sınır 5.000.000 TL olabilir. Kredi vadesi genel programda en çok 24 aydır."
+  },
+  {
+    "id": "eximbank",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "bulunamadi",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Sabit tutar yok. Limiti banka firma bazında belirler.",
+        "kaynakUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler/kisa-vadeli-ihracat-kredileri/ihracata-hazirlik-kredisi",
+        "alinti": "Firma limitleri Bankamızca yapılacak tahsis çalışması kapsamında firma bazında belirlenmektedir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "geri_odemeli_kredi"
+    ],
+    "faydaKaynak": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler/kisa-vadeli-ihracat-kredileri/ihracata-hazirlik-kredisi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Eximbank kredi listesinde \"Döviz Kazandırıcı Hizmetler Kredisi\" adında bir ürün bulunamadı. Döviz kazandıran hizmet firmaları başka kredilerden yararlanabiliyor. Örnek: İhracata Hazırlık Kredisi. Bu kredide taahhüt 24 ay içinde kapatılır. Teminat kesin teminat mektubu ya da İGE kefaletidir.",
+    "not": "Kayıt adı ürün adıyla eşleşmiyor. Ürün sahibi kaydın adını değiştirmeye karar vermelidir. Tavan alıntısı İhracata Hazırlık Kredisi sayfasındandır."
+  },
+  {
+    "id": "tkyb",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Fonun büyüklüğü 745 milyon TL. Girişim başına sabit tutar yazmıyor.",
+        "kaynakUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "alinti": "Fon Büyüklüğü 745 Milyon TL",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "ortaklık yatırımı. Fon başka fonlarla birlikte girişime ortak olur.",
+        "kaynakUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "alinti": "teknoloji odaklı girişimleri, girişimcilik ekosistemindeki diğer girişim sermayesi fonları ile ortak yatırım yoluyla(yatırım turu) desteklemektedir."
+      }
+    },
+    "faydalar": [
+      "ortaklik_yatirimi"
+    ],
+    "faydaKaynak": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Fonun yapısı katalogla aynıdır. Fon büyüklüğü 745 milyon TL olarak yazıyor. Katalogdaki BKS ile \"uyumlu\" ilişkisine resmî kaynak bulunamadı.",
+    "not": "Fon büyüklüğü girişime verilecek tutar değildir. Bu yüzden tavan sayısı boş bırakıldı. Sayfada son yatırım 2026 yılında görünüyor."
+  },
+  {
+    "id": "bks",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Yatırım üst sınırı yok. 2026 yılında en düşük yatırım 250.980 TL. Yatırımcının yıllık vergi indirimi en çok 2.500.000 TL.",
+        "kaynakUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "alinti": "Diğer taraftan yatırım üst limitine ilişkin herhangi bir sınırlama bulunmamaktadır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "Yatırımcı hisse tutarının yüzde 75'ini vergiden indirir. Bazı Ar-Ge destekli şirketlerde oran yüzde 100 olur.",
+        "kaynakUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "alinti": "hesapladıkları hisselerin tutarlarının %75’ini yıllık beyannamelerine konu kazanç ve iratlarından hisselerin iktisap edildiği dönemde indirebilirler.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "ortaklık yatırımı. Para şirkete girer, vergi indirimini yatırımcı alır.",
+        "kaynakUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "alinti": "nakdi sermayenin girişim şirketinin banka hesabına yatırılması, iktisap edilen hisselerin en az iki tam yıl elde tutulması"
+      }
+    },
+    "faydalar": [
+      "ortaklik_yatirimi"
+    ],
+    "faydaKaynak": "https://www.hmb.gov.tr/finansal-bks-sss",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Üst sınır olmadığı ve en düşük tutar bulunduğu doğrulandı. Yeni bilgi: 2026 yılında en düşük yatırım 250.980 TL. Katalogdaki \"en çok 10 yaşında\" şartı sık sorulan sorularda yok. Bu şart yönetmelikten ayrıca doğrulanmalıdır.",
+    "not": "Vergi avantajını şirket değil yatırımcı alır. Şirket anonim şirket olmalı, en çok 50 çalışanı olmalı ve halka açık olmamalı. Katalogdaki KOSGEB, 1501 ve BİGG ilişkilerine resmî kaynak bulunamadı."
+  },
+  {
+    "id": "istka",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 20000000,
+        "metin": "2026 Yaratıcı Ekonomi programında proje başına en az 5.000.000 TL, en çok 20.000.000 TL.",
+        "kaynakUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "alinti": null,
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "Azami destek oranı yüzde 75.",
+        "kaynakUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "alinti": null,
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "2026 Yaratıcı Ekonominin Güçlendirilmesi Mali Destek Programı son başvuru günü (saat 23.59)",
+          "tarih": "2026-12-04",
+          "kaynakUrl": "https://www.istka.org.tr/acik-destek-programlari",
+          "alinti": null
+        }
+      ],
+      "sure": {
+        "degerlendirme": {
+          "metin": "Ajansın planladığı sonuç tarihi 18 Mart 2027. Tarih kesin değildir.",
+          "baslangicOlayi": "Son başvuru tarihi",
+          "kaynakUrl": "https://istka.org.tr/Archive/Content/f77c5ed3f36892a6e109b6c26e22e6a9f767d35d.pdf",
+          "alinti": "Değerlendirme sonuçları hakkında Başvuru Sahiplerini bilgilendirmek için Ajansın planladığı tarih 18/03/2027’dir."
+        },
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "avans. Desteğin yüzde 60'ı teminatla ön ödeme olarak verilir. Kalanı hak edişle ödenir.",
+        "kaynakUrl": "https://istka.org.tr/Archive/Content/f77c5ed3f36892a6e109b6c26e22e6a9f767d35d.pdf",
+        "alinti": null
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://www.istka.org.tr/acik-destek-programlari",
+    "bolge": "İstanbul",
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog \"çağrı bekleniyor\" diyor. Şu an açık bir çağrı var. Bütçesi 300 milyon TL'dir. Ancak bu çağrıya şirketler başvuramaz. Başvuru sahipleri kamu kurumları, belediyeler, odalar, dernekler, vakıflar, üniversiteler ve TGB yönetici şirketleridir.",
+    "not": "Tutar, oran ve son tarih sayfadaki tablodadır. Tablo hücreleri tam cümle değil. Bu yüzden bu alanların alıntısı boş bırakıldı. Ön ödeme bilgisi rehberde birkaç satıra bölünmüş. Bu yüzden onun alıntısı da boştur. Güdümlü proje desteği için başvuru fikri sürekli iletilebilir."
+  },
+  {
+    "id": "techIstanbul",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "hizmet ve deneme. İBB ile kavram kanıtlama denemesi yapılır.",
+        "kaynakUrl": "https://tech.istanbul/growth",
+        "alinti": null
+      }
+    },
+    "faydalar": [
+      "hizmet_ayni"
+    ],
+    "faydaKaynak": "https://tech.istanbul/growth",
+    "bolge": "İstanbul",
+    "ozelKurum": true,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog programı \"açık\" gösteriyor. Sayfada \"Başvur, Seçil 30 Eylül\" ve \"PoC için Seçil Ekim 2026\" yazıyor. Bu yüzden başvuru dönemi geçmiş görünüyor. Sayfa \"PoC Destek Ar-Ge Bütçesi\" de yazıyor. Bu bütçenin tutarı yazmıyor.",
+    "not": "Tarihler JavaScript ile açılan sayfadan okundu. \"30 Eylül\" yanında yıl yazmıyor. Bu yüzden tarih listeye girmedi. Başvuru Türkiye'nin her yerinden yapılabilir. Deneme İstanbul'da İBB ile yapılır. Program tek kuruma bağlıdır."
+  },
+  {
+    "id": "ekip",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "hizmet ve deneme. Ürün Emlak Konut projelerinde denenir.",
+        "kaynakUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+        "alinti": "Bu program sayesinde girişimler; geliştirdikleri ürünü Emlak Konut projelerinde uygulama fırsatı bulur"
+      }
+    },
+    "faydalar": [
+      "hizmet_ayni"
+    ],
+    "faydaKaynak": "https://ekip.emlakkonut.com.tr/programlar/poc",
+    "bolge": null,
+    "ozelKurum": true,
+    "kombinasyon": [],
+    "kataloglaFark": "Para desteği olmadığı doğrulandı. Program sayfası şartı biraz farklı yazıyor: Ürün MVP ya da sonraki aşamada olmalı. Katalogdaki \"en az iki kişilik ekip\" şartı bu sayfada bulunamadı. Fikir aşamasındaki projeler Ideathon programına yönlendirilir.",
+    "not": "Sayfa düz indirmede engellendi. İzole tarayıcıyla okundu. Program yalnız PropTech ve ConTech alanındaki girişimler içindir. Katalogdaki 1707 ilişkisine resmî kaynak bulunamadı."
+  }
+]
