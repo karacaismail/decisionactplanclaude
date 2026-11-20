@@ -4,13 +4,17 @@
  * https olmayan adres ve ISO biçiminde olmayan tarih de reddedilir.
  */
 import { gecerliIsoTarih, tutarVarMi } from '../motor/tazelik'
-import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type Program } from './tipler'
+import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type GiderKalemi, type KanitGrubu, type Program, type Terim } from './tipler'
 
 const KIMLIK = /^[a-zA-Z][a-zA-Z0-9]*$/
 /** Fikirleri birleştiren işaretler. Yalın yazım kuralı bunları yasaklar. */
 const YASAK_ISARET = /[;—–→×]|\s\+\s|[\p{L}]\s?\/\s?[\p{L}]/u
 /** Tek bir işletmenin bakışıyla yazılmış sözler. */
-const TEK_ISLETME_SOZU = /bugün sağlanmıyor|kapsam dışıdır|\bbizim\b|şirketimiz|firmamız|\bbizde\b|bugünden/iu
+const TEK_ISLETME_SOZU = /bugün sağlanmıyor|kapsam dışıdır|\bbizim\b|şirketimiz|firmamız|\bbizde\b|bugünden|\bbiz\b|\bbize\b|\bbizi\b|elimizde|bildiğimiz|sormadığımız|yapılacaktır|yapılmayacaktır|ilk 24 ay/iu
+/** Kaynağın yazıldığı işletmenin sektörüne özel sözler. Ek veri bu sözleri taşımaz. */
+const SEKTOR_SOZU = /taşınmaz|gayrimenkul|emlak|parsel|kadastro|arazi|\bTTBS\b|EİDS|aracılık kodu/iu
+/** Ek verideki bir cümlenin en çok kelime sayısı. */
+export const CUMLE_EN_COK_KELIME = 16
 export const OZET_EN_COK_KELIME = 16
 
 export function httpsAdresMi(value: unknown): boolean {
@@ -109,6 +113,78 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
       if (!KOMBINASYONLAR.includes(v as (typeof KOMBINASYONLAR)[number])) hatalar.push(`${yer('kombinasyon')}: "${String(v)}" kombinasyon türü tanınmıyor.`)
     }
     sayiHatalari(p, p.id, undefined, '', hatalar)
+  }
+  return hatalar
+}
+
+/** Ek verideki metni denetler: boş metin, yasak işaret, tek işletme bakışı, sektör sözü ve uzun cümle. */
+function ekMetinHatalari(metin: unknown, yer: string): string[] {
+  const e = metinHatalari(metin, yer)
+  if (typeof metin !== 'string' || !metin.trim()) return e
+  if (SEKTOR_SOZU.test(metin)) e.push(`${yer}: tek bir sektöre özel söz var.`)
+  for (const cumle of metin.trim().split(/(?<=[.!?])\s+/)) {
+    if (cumle.split(/\s+/).length > CUMLE_EN_COK_KELIME) e.push(`${yer}: bir cümle en çok ${CUMLE_EN_COK_KELIME} kelime olmalı.`)
+  }
+  return e
+}
+
+const tekCumleMi = (m: string) => m.trim().endsWith('.') && !/[.!?]\s/.test(m.trim())
+const terimAnahtari = (m: string) => m.toLocaleLowerCase('tr-TR').normalize('NFC').trim()
+
+/**
+ * Belge listesi, gider listesi ve sözlük denetimi. Saf işlevdir.
+ * Kimlikler tektir. Program ve terim bağlantıları geçerlidir. Metinler yalın yazım kurallarına uyar.
+ */
+export function ekVeriHatalari(v: { kanitlar: readonly KanitGrubu[]; giderler: readonly GiderKalemi[]; sozluk: readonly Terim[]; programlar: readonly Program[] }): string[] {
+  const hatalar: string[] = []
+  const programlar = new Set(v.programlar.map((p) => p.id))
+  const terimler = new Set(v.sozluk.map((t) => t.id))
+  const tek = (kume: Set<string>, id: unknown, yer: string) => {
+    if (typeof id !== 'string' || !KIMLIK.test(id)) hatalar.push(`${yer}: kimlik yalnız harf ve rakamdan oluşmalı.`)
+    else if (kume.has(id)) hatalar.push(`${yer}: aynı kimlik iki kez var.`)
+    kume.add(String(id))
+  }
+  const terimVar = (terim: string | undefined, yer: string) => {
+    if (terim !== undefined && !terimler.has(terim)) hatalar.push(`${yer}: "${terim}" terimi sözlükte yok.`)
+  }
+
+  const grupKimlikleri = new Set<string>()
+  const maddeKimlikleri = new Set<string>()
+  for (const g of v.kanitlar) {
+    tek(grupKimlikleri, g.id, `kanit.${g.id}`)
+    hatalar.push(...ekMetinHatalari(g.ad, `kanit.${g.id}.ad`))
+    if (!g.maddeler.length) hatalar.push(`kanit.${g.id}: grupta madde yok.`)
+    for (const m of g.maddeler) {
+      const yer = `kanit.${g.id}.${m.id}`
+      tek(maddeKimlikleri, m.id, yer)
+      hatalar.push(...ekMetinHatalari(m.ad, `${yer}.ad`), ...ekMetinHatalari(m.neden, `${yer}.neden`))
+      if (typeof m.neden === 'string' && !tekCumleMi(m.neden)) hatalar.push(`${yer}.neden: neden tek cümle olmalı ve noktayla bitmeli.`)
+      terimVar(m.terim, yer)
+    }
+  }
+
+  const giderKimlikleri = new Set<string>()
+  for (const g of v.giderler) {
+    const yer = `gider.${g.id}`
+    tek(giderKimlikleri, g.id, yer)
+    hatalar.push(...ekMetinHatalari(g.ad, `${yer}.ad`))
+    if (g.not !== undefined) hatalar.push(...ekMetinHatalari(g.not, `${yer}.not`))
+    if (!g.programlar.length) hatalar.push(`${yer}: program listesi boş.`)
+    if (new Set(g.programlar).size !== g.programlar.length) hatalar.push(`${yer}: aynı program iki kez var.`)
+    for (const p of g.programlar) if (!programlar.has(p)) hatalar.push(`${yer}: "${p}" programı katalogda yok.`)
+    terimVar(g.terim, yer)
+  }
+
+  const sozlukKimlikleri = new Set<string>()
+  const adlar = new Set<string>()
+  for (const t of v.sozluk) {
+    const yer = `sozluk.${t.id}`
+    tek(sozlukKimlikleri, t.id, yer)
+    hatalar.push(...ekMetinHatalari(t.ad, `${yer}.ad`), ...ekMetinHatalari(t.anlam, `${yer}.anlam`))
+    if (typeof t.ad === 'string') {
+      if (adlar.has(terimAnahtari(t.ad))) hatalar.push(`${yer}: aynı terim iki kez var.`)
+      adlar.add(terimAnahtari(t.ad))
+    }
   }
   return hatalar
 }
