@@ -21,7 +21,7 @@ export interface ModuleRoute {
 }
 
 /** Kabuğun tanıdığı ikon adları. Bilinmeyen ad genel bir ikonla çizilir. */
-export type ModuleIcon = 'kanban' | 'handCoins' | 'target' | 'files' | 'folder' | 'listChecks' | 'wallet' | 'book'
+export type ModuleIcon = 'kanban' | 'handCoins' | 'target' | 'files' | 'folder' | 'clipboard' | 'receipt' | 'bookBookmark'
 
 export interface ModuleNavEntry {
   to: string

@@ -16,9 +16,9 @@ const manifest: ModuleManifest = {
     { to: '/destek', label: 'Destek programları', icon: 'handCoins', requiresPlan: false, group: GROUP },
     { to: '/destek/eslesme', label: 'Size uygun destekler', icon: 'target', requiresPlan: false, group: GROUP },
     { to: '/destek/basvurular', label: 'Başvurularım', icon: 'files', requiresPlan: true, group: GROUP },
-    { to: '/destek/belgeler', label: 'Belge ve kanıt listesi', icon: 'listChecks', requiresPlan: false, group: GROUP },
-    { to: '/destek/giderler', label: 'Gider rehberi', icon: 'wallet', requiresPlan: false, group: GROUP },
-    { to: '/destek/sozluk', label: 'Destek sözlüğü', icon: 'book', requiresPlan: false, group: GROUP },
+    { to: '/destek/belgeler', label: 'Belge ve kanıt listesi', icon: 'clipboard', requiresPlan: false, group: GROUP },
+    { to: '/destek/giderler', label: 'Gider rehberi', icon: 'receipt', requiresPlan: false, group: GROUP },
+    { to: '/destek/sozluk', label: 'Destek sözlüğü', icon: 'bookBookmark', requiresPlan: false, group: GROUP },
   ],
   routes: [
     { path: '/destek', title: 'Destek ve teşvik programları', requiresPlan: false, load: () => import('./screens/DtProgramlarScreen') },

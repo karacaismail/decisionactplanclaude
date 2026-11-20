@@ -62,8 +62,9 @@ function belgelerOku(v: unknown): BelgeMaddesi[] | undefined {
     if (!b || typeof b !== 'object') return undefined
     const x = b as Record<string, unknown>
     if (!metin(x.ad) || typeof x.hazir !== 'boolean') return undefined
-    if (x.kanit !== undefined && (typeof x.kanit !== 'string' || !KANIT_KIMLIGI.test(x.kanit))) return undefined
-    out.push(x.kanit === undefined ? { ad: x.ad, hazir: x.hazir } : { ad: x.ad, hazir: x.hazir, kanit: x.kanit })
+    /* Bozuk belge kimliği kaydı gizlemez. Belge yine okunur, yalnız kimliği atılır. */
+    const kanit = typeof x.kanit === 'string' && KANIT_KIMLIGI.test(x.kanit) ? x.kanit : undefined
+    out.push(kanit === undefined ? { ad: x.ad, hazir: x.hazir } : { ad: x.ad, hazir: x.hazir, kanit })
   }
   return out
 }
@@ -99,10 +100,8 @@ export function basvuruDegistir(b: Basvuru, degisiklik: BasvuruDegisikligi, simd
   const sonraki: Basvuru = { ...b, ...alanlar, guncelleme: simdi }
   if ('sonTarih' in degisiklik && degisiklik.sonTarih === undefined) delete sonraki.sonTarih
   let belgeler = b.belgeler
-  if (belgeCikar) {
-    if (!belgeler.some((x) => x.kanit === belgeCikar.kanit)) throw new Error('Belge bulunamadı.')
-    belgeler = belgeler.filter((x) => x.kanit !== belgeCikar.kanit)
-  }
+  /* Çıkarma iki kez gelebilir. Örneğin düğmeye iki kez basılır. Belge zaten yoksa kayıt değişmez. */
+  if (belgeCikar) belgeler = belgeler.filter((x) => x.kanit !== belgeCikar.kanit)
   if (belgeEkle) {
     const ad = typeof belgeEkle.ad === 'string' ? belgeEkle.ad.trim() : ''
     if (!ad || !KANIT_KIMLIGI.test(belgeEkle.kanit)) throw new Error('Belge geçersiz.')

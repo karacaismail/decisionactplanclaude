@@ -1,5 +1,4 @@
 import '@/styles/ekran/DtGiderlerScreen.css'
-import { useEffect, useRef } from 'react'
 import { Link, useSearchParams } from 'react-router'
 import { Select } from 'antd'
 import { EmptyState } from '@/components/EmptyState'
@@ -16,6 +15,7 @@ const ACILIR = { popup: { root: 'dt-giderler-acilir' } }
 
 /**
  * Gider rehberi. Kişi bir gider seçer. Ekran bu gideri ödeyebilecek programları gösterir.
+ * Seçimden sonra odak seçim kutusunda kalır. Sonuç sayısı canlı bölgede duyurulur.
  * Seçim adreste durur. Bu yüzden sayfa yenilenince seçim kalır. Liste ilk rehberdir, söz değildir.
  */
 export default function DtGiderlerScreen() {
@@ -23,12 +23,6 @@ export default function DtGiderlerScreen() {
   const bugun = useBugun()
   const [params, setParams] = useSearchParams()
   const secili = GIDER_KALEMLERI.find((g) => g.id === params.get('kalem'))
-  const baslik = useRef<HTMLHeadingElement>(null)
-  const secildi = useRef(false)
-  useEffect(() => {
-    if (secildi.current && secili) baslik.current?.focus()
-    secildi.current = false
-  }, [secili])
   const bulunan = (secili?.programlar ?? []).map((id) => programlar.find((p) => p.id === id)).filter((p): p is Program => Boolean(p))
 
   return (
@@ -53,15 +47,14 @@ export default function DtGiderlerScreen() {
           optionFilterProp="label"
           notFoundContent="Eşleşen gider yok."
           options={GIDER_KALEMLERI.map((g) => ({ value: g.id, label: g.ad }))}
-          onChange={(id) => {
-            secildi.current = Boolean(id)
-            setParams(id ? { kalem: id } : {}, { replace: true })
-          }}
+          onChange={(id) => setParams(id ? { kalem: id } : {}, { replace: true })}
         />
+        {/* Odak seçim kutusunda kalır. Sonuç bu satırda duyurulur. */}
+        <p className="dt-giderler-durum" aria-live="polite">{secili ? `Bu gider için ${bulunan.length} program bulundu. Programlar aşağıda.` : 'Gider seçince programlar aşağıda görünür.'}</p>
       </div>
       {secili ? (
         <section className="dt-giderler-sonuc" aria-labelledby="dt-gider-baslik">
-          <h2 id="dt-gider-baslik" ref={baslik} tabIndex={-1}>{secili.ad}</h2>
+          <h2 id="dt-gider-baslik">{secili.ad}</h2>
           {secili.not ? <p>{secili.not}</p> : null}
           <DtTerimBaglantisi terim={secili.terim} />
           <h3>Bu gideri ödeyebilecek programlar ({bulunan.length})</h3>

@@ -268,6 +268,9 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   expect(await planOku(page)).toEqual(once)
 })
 
+/** Metni düzenli ifadede düz metin olarak kullanır. */
+const kacir = (m: string) => m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
 /** Markalı seçim kutusunda bir seçenek seçer. Yerel açılır menü kullanılmaz. */
 async function secenekSec(page: Page, kutu: ReturnType<Page['locator']>, metin: string) {
   await kutu.click()
@@ -312,7 +315,8 @@ test('gider rehberi giderden programa götürür ve seçimi yenilemede korur', a
 
   await secenekSec(page, main.locator('.dt-giderler-alan .ant-select'), 'Yazılım lisansları')
   await expect(page).toHaveURL(/kalem=yazilimLisansi/)
-  await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeFocused()
+  await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeVisible()
+  await expect(main.getByText('Bu gider için 4 program bulundu. Programlar aşağıda.')).toBeVisible()
   await expect(main.getByText('Aynı faturayı iki programa yazmayın.')).toBeVisible()
   await expect(main.getByRole('heading', { level: 3 })).toHaveText('Bu gideri ödeyebilecek programlar (4)')
   await expect(main.locator('.dt-giderler-program')).toHaveCount(4)
@@ -368,7 +372,7 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await openDemo(page, hasTouch)
   const once = await planOku(page)
   const main = page.getByRole('main')
-  for (const id of ['bigg1812', 'kosgebGirisimciA']) {
+  for (const id of ['bigg1812', 'kosgebGirisimciA', 'kgf']) {
     await page.goto(`/#/destek/${id}`)
     await ready(page)
     await main.getByRole('button', { name: 'Başvuru listeme ekle' }).click()
@@ -382,21 +386,38 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await expect(birlikte.getByRole('heading', { level: 2 })).toHaveText('Programları birlikte kullanma')
   const cift = birlikte.locator('li.dt-cift')
   await expect(cift).toHaveCount(1)
-  await expect(cift).toContainText('1812 Yatırım Tabanlı Girişimcilik (BiGG Yatırım) ile KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği')
+  // Saat testte sabittir. Bu yüzden başvuruların sırası kimliğe göre değişebilir.
+  const bigg = '1812 Yatırım Tabanlı Girişimcilik (BiGG Yatırım)'
+  const girisimci = 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği'
+  await expect(cift.locator('.dt-cift-ad')).toHaveText(new RegExp(`^(${kacir(bigg)} ile ${kacir(girisimci)}|${kacir(girisimci)} ile ${kacir(bigg)})$`))
   await expect(cift.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılamaz.')
   await expect(cift.locator('.dt-cift-durum svg')).toBeVisible()
-  await expect(birlikte).toContainText('1 tanesi için uyarı var.')
+  await expect(birlikte).toContainText('3 program çiftinden 1 tanesi için uyarı var.')
+  // Kaynakta bilgisi olmayan çiftler ayrı bir açılır bölümde "Bilgi yok" der.
+  const bilinmeyen = birlikte.locator('details.dt-ciftler-bilinmeyen')
+  await expect(bilinmeyen.locator('summary')).toHaveText('Bilgisi olmayan çiftler (2)')
+  await bilinmeyen.locator('summary').click()
+  await expect(bilinmeyen).toContainText('Bilgi yok. Kaynakta bu iki program için kayıt yok.')
+  await expect(bilinmeyen.locator('li')).toHaveCount(2)
 
   const kart = main.locator('.dt-basvuru', { hasText: 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği' })
   const belgeler = kart.locator('.dt-basvuru-belgeler .ant-checkbox-wrapper')
   await expect(belgeler).toHaveCount(5)
+  // Düğme kapanmaz. Seçim yoksa ekran nedenini söyler. Odak düğmede kalır.
+  const ekleDugmesi = kart.getByRole('button', { name: 'Belgeyi ekleyin' })
+  await ekleDugmesi.focus()
+  await page.keyboard.press('Enter')
+  await expect(kart.getByText('Önce listeden bir belge seçin.')).toBeVisible()
+  await expect(ekleDugmesi).toBeFocused()
   await kart.locator('.dt-basvuru-ekle-belge .ant-select').click()
   const acilir = page.locator('.ant-select-dropdown:visible')
   await expect(acilir.locator('.ant-select-item-option-disabled', { hasText: 'Ticaret Sicil Gazetesi (listede var)' })).toBeVisible()
   await acilir.locator('.ant-select-item-option').filter({ hasText: /^İmza sirküleri$/ }).click()
   await expect(acilir).toHaveCount(0)
-  await kart.getByRole('button', { name: 'Belgeyi ekleyin' }).click()
+  await ekleDugmesi.focus()
+  await page.keyboard.press('Enter')
   await expect(kart.getByText('“İmza sirküleri” belge listesine eklendi.')).toBeVisible()
+  await expect(ekleDugmesi).toBeFocused()
   await expect(belgeler).toHaveCount(6)
   await expect(kart.getByText('6 belgeden 0 tanesi hazır.')).toBeVisible()
   await belgeler.last().click()
@@ -436,6 +457,10 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
 
   // Eklenen belge çıkarılabilir. Programın kendi belgesinde çıkarma düğmesi yoktur.
   await expect(kart.getByRole('button', { name: /belgesini listeden çıkarın$/ })).toHaveCount(1)
-  await kart.getByRole('button', { name: '“İmza sirküleri” belgesini listeden çıkarın' }).click()
+  // Klavyeyle çıkarınca odak kaybolmaz. Odak belge başlığına geçer ve ekran sonucu söyler.
+  await kart.getByRole('button', { name: '“İmza sirküleri” belgesini listeden çıkarın' }).focus()
+  await page.keyboard.press('Enter')
   await expect(belgeler).toHaveCount(5)
+  await expect(kart.getByRole('heading', { level: 4, name: 'Belgeler' })).toBeFocused()
+  await expect(kart.getByText('“İmza sirküleri” listeden çıkarıldı.')).toBeVisible()
 })

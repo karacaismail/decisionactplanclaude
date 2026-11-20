@@ -24,7 +24,7 @@ export type Durum = (typeof DURUMLAR)[number]
 export const TAVAN_TURLERI = ['hibe_tavani', 'oransal', 'yok', 'kredi_anaparasi', 'program_butcesi'] as const
 export type TavanTuru = (typeof TAVAN_TURLERI)[number]
 
-/** İki programın birlikte kullanımı. Bu sürümde yalnız veri olarak saklanır. */
+/** İki programın birlikte kullanımı. Ekrandaki yalın açıklamalar metinler.ts dosyasındadır. */
 export const KOMBINASYONLAR = ['ayri_gider', 'uyumlu', 'onkosul', 'red_alternatifi', 'dislayici'] as const
 export type Kombinasyon = (typeof KOMBINASYONLAR)[number]
 

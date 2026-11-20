@@ -6,7 +6,7 @@ export function DtKontrolTarihi({ asOf, bugun }: { asOf: string; bugun: string }
   const eski = tazelik(asOf, bugun).eski
   return (
     <p className="dt-kontrol-tarihi">
-      Son kontrol: {tarihYaz(asOf)}.{eski ? ` Bu bilgi ${ESKI_BILGI_GUN} günden eski. Kurumun sayfasını okuyun.` : ''}
+      Son kontrol: {tarihYaz(asOf)}.{eski ? ` Bu bilgi ${ESKI_BILGI_GUN} günden eski. Programın sayfasını ve kurumun sayfasını okuyun.` : ''}
     </p>
   )
 }

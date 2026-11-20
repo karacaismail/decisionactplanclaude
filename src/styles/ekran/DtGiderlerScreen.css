@@ -27,3 +27,5 @@
 .dt-giderler .dt-giderler-program { display: inline-flex; align-items: center; justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }
 
 .dt-giderler-acilir .ant-select-item-option-content { white-space: normal; overflow-wrap: break-word; }
+
+.dt-giderler .dt-giderler-durum { color: var(--color-text-secondary); }

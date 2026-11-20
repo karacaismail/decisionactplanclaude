@@ -27,10 +27,9 @@ const BELGE_ACILIR = { popup: { root: 'dt-basvurular-belge-acilir' } }
  * Belge ve kanıt listesinden başvuruya belge ekler. Seçim kutusu markalı bileşendir.
  * Başvuruda aynı adlı belge varsa seçenek kapalıdır ve "listede var" yazar.
  */
-function BelgeEkle({ basvuru, id, degistir }: { basvuru: Basvuru; id: string; degistir: (d: BasvuruDegisikligi) => Promise<boolean> }) {
+function BelgeEkle({ basvuru, id, degistir, bildir }: { basvuru: Basvuru; id: string; degistir: (d: BasvuruDegisikligi) => Promise<boolean>; bildir: (m: string) => void }) {
   const [secim, setSecim] = useState<string>()
   const [calisiyor, setCalisiyor] = useState(false)
-  const [sonuc, setSonuc] = useState<string>()
   const varolan = new Set(basvuru.belgeler.map((b) => belgeAnahtari(b.ad)))
   const secenekler = KANIT_GRUPLARI.map((g, i) => ({
     label: `${i + 1}. ${g.ad}`,
@@ -40,15 +39,20 @@ function BelgeEkle({ basvuru, id, degistir }: { basvuru: Basvuru; id: string; de
       return { value: m.id, label: var_ ? `${m.ad} (listede var)` : m.ad, disabled: var_ }
     }),
   }))
+  /* Düğme kapanmaz. Kapanan düğme odağı kaybettirir. Seçim yoksa ekran nedenini söyler. */
   const ekle = async () => {
+    if (calisiyor) return
     const madde = KANITLAR.find((m) => m.id === secim)
-    if (!madde) return
+    if (!madde) {
+      bildir('Önce listeden bir belge seçin.')
+      return
+    }
     setCalisiyor(true)
     const tamam = await degistir({ belgeEkle: { ad: madde.ad, kanit: madde.id } })
     setCalisiyor(false)
     if (tamam) {
       setSecim(undefined)
-      setSonuc(`“${madde.ad}” belge listesine eklendi.`)
+      bildir(`“${madde.ad}” belge listesine eklendi.`)
     }
   }
   return (
@@ -58,10 +62,9 @@ function BelgeEkle({ basvuru, id, degistir }: { basvuru: Basvuru; id: string; de
         <Select<string> id={`${id}-kanit`} value={secim} onChange={setSecim} classNames={BELGE_ACILIR} placeholder="Bir belge seçin" showSearch optionFilterProp="label" virtual={false} notFoundContent="Eşleşen belge yok." options={secenekler} />
       </div>
       <div className="dt-basvuru-dugmeler">
-        <Button disabled={!secim || calisiyor} onClick={() => void ekle()}>Belgeyi ekleyin</Button>
+        <Button onClick={() => void ekle()}>Belgeyi ekleyin</Button>
         <Link className="dt-basvuru-baglanti" to="/destek/belgeler">Belgelerin nedenini okuyun</Link>
       </div>
-      <p className="dt-basvuru-sonuc" aria-live="polite">{sonuc}</p>
     </div>
   )
 }
@@ -82,22 +85,38 @@ function IliskiSatiri({ iliski }: { iliski: Iliski | undefined }) {
 function BirlikteKullanma({ basvurular, programlar }: { basvurular: readonly Basvuru[]; programlar: readonly Program[] }) {
   const ciftler = basvuruCiftleri(basvurular, programlar)
   const uyarilar = ciftler.filter((c) => uyariMi(c.iliski))
+  /* Bilgisi olmayan çiftler tek bir açılır bölümde durur. Böylece çok başvuruda liste uzamaz. */
+  const bilinen = ciftler.filter((c) => c.iliski)
+  const bilinmeyen = ciftler.filter((c) => !c.iliski)
   const ayriGider = ciftler.some((c) => c.iliski && [c.iliski.tur, c.iliski.farkli].includes('ayri_gider'))
   return (
     <section className="dt-basvurular-birlikte" aria-labelledby="dt-birlikte-baslik">
       <h2 id="dt-birlikte-baslik">Programları birlikte kullanma</h2>
       <p>Bu bilgi katalogdaki kayıtlardan gelir. Kesin kararı kurumlar verir.</p>
       <p className="dt-basvurular-sayi">{uyarilar.length ? `${ciftler.length} program çiftinden ${uyarilar.length} tanesi için uyarı var.` : `${ciftler.length} program çifti için uyarı yok.`}</p>
-      <ul className="dt-ciftler">
-        {ciftler.map((c) => (
-          <li key={`${c.a.id}-${c.b.id}`} className={uyariMi(c.iliski) ? 'dt-cift dt-cift-uyari' : 'dt-cift'}>
-            <p className="dt-cift-ad">{c.a.programAdi} ile {c.b.programAdi}</p>
-            <IliskiSatiri iliski={c.iliski} />
-            {c.iliski ? null : <p>{BILGI_YOK_ACIKLAMA}</p>}
-            {c.iliski?.farkli ? <p>{farkliKayitMetni(c.iliski.farkli)}</p> : null}
-          </li>
-        ))}
-      </ul>
+      {bilinen.length ? (
+        <ul className="dt-ciftler">
+          {bilinen.map((c) => (
+            <li key={`${c.a.id}-${c.b.id}`} className={uyariMi(c.iliski) ? 'dt-cift dt-cift-uyari' : 'dt-cift'}>
+              <p className="dt-cift-ad">{c.a.programAdi} ile {c.b.programAdi}</p>
+              <IliskiSatiri iliski={c.iliski} />
+              {c.iliski?.farkli ? <p>{farkliKayitMetni(c.iliski.farkli)}</p> : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
+      {bilinmeyen.length ? (
+        <details className="dt-ciftler-bilinmeyen" open={!bilinen.length}>
+          <summary>Bilgisi olmayan çiftler ({bilinmeyen.length})</summary>
+          <p className="dt-cift-durum dt-cift-bilinmiyor">
+            <Question aria-hidden className="dt-cift-ikon" />
+            <span>{BILGI_YOK} {BILGI_YOK_ACIKLAMA}</span>
+          </p>
+          <ul>
+            {bilinmeyen.map((c) => <li key={`${c.a.id}-${c.b.id}`}>{c.a.programAdi} ile {c.b.programAdi}</li>)}
+          </ul>
+        </details>
+      ) : null}
       {ayriGider ? <DtTerimBaglantisi terim="ciftFinansman" /> : null}
     </section>
   )
@@ -105,10 +124,24 @@ function BirlikteKullanma({ basvurular, programlar }: { basvurular: readonly Bas
 
 function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: { basvuru: Basvuru; program: Program | undefined; planId: string; bugun: string; hataGoster: (m: string) => void; silindi: () => void }) {
   const id = `dt-basvuru-${basvuru.id}`
-  /* İşaret hemen görünür. Kayıt bitince depodaki hal gelir ve bekleyen işaret temizlenir. */
-  const [bekleyen, setBekleyen] = useState<Record<number, boolean>>({})
-  useEffect(() => setBekleyen({}), [basvuru.guncelleme])
-  const belgeler = basvuru.belgeler.map((b, i) => ({ ...b, hazir: bekleyen[i] ?? b.hazir }))
+  /*
+   * İşaret hemen görünür. Bekleyen işaret belgenin adına ya da kimliğine bağlıdır. Sıra kaysa da doğru belgede kalır.
+   * Depodaki hal bekleyen işaretle aynı olunca işaret temizlenir. Sıradaki başka işaretler korunur.
+   */
+  const [bekleyen, setBekleyen] = useState<Record<string, boolean>>({})
+  const belgeAnahtar = (b: { ad: string; kanit?: string }) => b.kanit ?? b.ad
+  useEffect(() => {
+    setBekleyen((x) => {
+      const kalan = Object.entries(x).filter(([k, v]) => {
+        const kayitli = basvuru.belgeler.find((b) => belgeAnahtar(b) === k)
+        return kayitli !== undefined && kayitli.hazir !== v
+      })
+      return kalan.length === Object.keys(x).length ? x : Object.fromEntries(kalan)
+    })
+  }, [basvuru.belgeler])
+  const belgeler = basvuru.belgeler.map((b) => ({ ...b, hazir: bekleyen[belgeAnahtar(b)] ?? b.hazir }))
+  const [belgeMesaji, setBelgeMesaji] = useState('')
+  const belgeBasligi = useRef<HTMLHeadingElement>(null)
   const hazir = belgeler.filter((b) => b.hazir).length
   const degistir = (d: BasvuruDegisikligi): Promise<boolean> =>
     basvuruGuncelle(planId, basvuru.id, d, new Date().toISOString()).then(
@@ -168,7 +201,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
       </section>
 
       <section className="dt-basvuru-bolum" aria-labelledby={`${id}-belge`}>
-        <h4 id={`${id}-belge`}>Belgeler</h4>
+        <h4 id={`${id}-belge`} ref={belgeBasligi} tabIndex={-1}>Belgeler</h4>
         {basvuru.belgeler.length ? (
           <>
             <p>{belgeler.length} belgeden {hazir} tanesi hazır.</p>
@@ -178,14 +211,27 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
                   <Checkbox
                     checked={b.hazir}
                     onChange={(e) => {
-                      setBekleyen((x) => ({ ...x, [i]: e.target.checked }))
+                      setBekleyen((x) => ({ ...x, [belgeAnahtar(b)]: e.target.checked }))
                       void degistir({ belge: { sira: i, hazir: e.target.checked, ad: b.ad } })
                     }}
                   >
                     {b.ad}
                   </Checkbox>
                   {b.kanit ? (
-                    <Button className="dt-basvuru-belge-cikar" aria-label={`“${b.ad}” belgesini listeden çıkarın`} onClick={() => void degistir({ belgeCikar: { kanit: b.kanit! } })}>Çıkarın</Button>
+                    <Button
+                      className="dt-basvuru-belge-cikar"
+                      aria-label={`“${b.ad}” belgesini listeden çıkarın`}
+                      onClick={() => {
+                        /* Satır silinince odak kaybolmaz. Odak belge başlığına geçer ve ekran sonucu söyler. */
+                        void degistir({ belgeCikar: { kanit: b.kanit! } }).then((tamam) => {
+                          if (!tamam) return
+                          setBelgeMesaji(`“${b.ad}” listeden çıkarıldı.`)
+                          belgeBasligi.current?.focus()
+                        })
+                      }}
+                    >
+                      Çıkarın
+                    </Button>
                   ) : null}
                 </li>
               ))}
@@ -194,7 +240,8 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
         ) : (
           <p>Kaynakta belge listesi yok. Kurumun sayfasını okuyun.</p>
         )}
-        <BelgeEkle basvuru={basvuru} id={id} degistir={degistir} />
+        <BelgeEkle basvuru={basvuru} id={id} degistir={degistir} bildir={setBelgeMesaji} />
+        <p className="dt-basvuru-sonuc" aria-live="polite">{belgeMesaji}</p>
       </section>
 
       <Popconfirm title="Bu başvuru listeden çıkarılsın mı?" description="Belge işaretleri de silinir." okText="Çıkarın" cancelText="Vazgeçin" onConfirm={() => void basvuruSil(planId, basvuru.id).then(silindi, () => hataGoster('Başvuru silinemedi. Yeniden deneyin.'))}>

@@ -62,6 +62,7 @@ describe('katalog denetimi', () => {
 
   it('bilinmeyen kombinasyon kimliğini reddeder', () => {
     expect(hatalar((p) => { (p as { kombinasyon: Record<string, string> }).kombinasyon = { yokProgram: 'uyumlu' } })).toMatch(/kombinasyon/)
+    expect(hatalar((p) => { (p as { kombinasyon: Record<string, string> }).kombinasyon = { tubitak1501: 'uyumlu' } })).toMatch(/kendini/)
   })
 
   it('yasak işaretleri ve tek işletmeye göre yazılmış sözleri reddeder', () => {

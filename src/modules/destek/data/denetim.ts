@@ -3,6 +3,7 @@
  * Kaynağı ve tarihi olmayan sayı katalogda duramaz. Bilinmeyen sabit değer, tekrar eden kimlik,
  * https olmayan adres ve ISO biçiminde olmayan tarih de reddedilir.
  */
+import { KANIT_KIMLIGI } from '../motor/basvuru'
 import { gecerliIsoTarih, tutarVarMi } from '../motor/tazelik'
 import { DURUMLAR, KATEGORILER, KOMBINASYONLAR, TAVAN_TURLERI, type GiderKalemi, type KanitGrubu, type Program, type Terim } from './tipler'
 
@@ -110,6 +111,7 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     if (ozet.split(/\s+/).length > OZET_EN_COK_KELIME) hatalar.push(`${yer('ozet')}: özet en çok ${OZET_EN_COK_KELIME} kelime olmalı.`)
     for (const [k, v] of Object.entries(p.kombinasyon ?? {})) {
       if (!kimlikler.has(k)) hatalar.push(`${yer('kombinasyon')}: "${k}" programı katalogda yok.`)
+      if (k === p.id) hatalar.push(`${yer('kombinasyon')}: program kendini anamaz.`)
       if (!KOMBINASYONLAR.includes(v as (typeof KOMBINASYONLAR)[number])) hatalar.push(`${yer('kombinasyon')}: "${String(v)}" kombinasyon türü tanınmıyor.`)
     }
     sayiHatalari(p, p.id, undefined, '', hatalar)
@@ -157,6 +159,7 @@ export function ekVeriHatalari(v: { kanitlar: readonly KanitGrubu[]; giderler: r
     for (const m of g.maddeler) {
       const yer = `kanit.${g.id}.${m.id}`
       tek(maddeKimlikleri, m.id, yer)
+      if (!KANIT_KIMLIGI.test(m.id)) hatalar.push(`${yer}: kimlik başvuruda saklanamaz. En çok 41 harf ve rakam olmalı.`)
       hatalar.push(...ekMetinHatalari(m.ad, `${yer}.ad`), ...ekMetinHatalari(m.neden, `${yer}.neden`))
       if (typeof m.neden === 'string' && !tekCumleMi(m.neden)) hatalar.push(`${yer}.neden: neden tek cümle olmalı ve noktayla bitmeli.`)
       terimVar(m.terim, yer)

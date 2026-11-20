@@ -14,6 +14,9 @@
 
 .dt-sozluk .dt-sozluk-terim.dt-sozluk-secili { background: var(--color-selected-bg); }
 
+/* Odaklanan terim yapışkan üst şeridin altında kalmaz. */
+.dt-sozluk .dt-sozluk-terim { scroll-margin-block: calc(var(--shell-bar-height) + var(--space-4)); }
+
 .dt-sozluk dt { font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-text-primary); overflow-wrap: break-word; }
 
 .dt-sozluk dd { margin: 0; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-secondary); max-inline-size: 72ch; overflow-wrap: break-word; }

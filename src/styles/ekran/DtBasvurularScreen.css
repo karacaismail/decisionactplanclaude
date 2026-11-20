@@ -44,7 +44,6 @@
 
 .dt-basvurular .dt-basvuru-baglanti { display: inline-flex; align-items: center; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; }
 
-.dt-basvurular .dt-basvuru-sonuc:empty { display: none; }
 
 .dt-basvurular .dt-basvurular-birlikte { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
 
@@ -69,3 +68,9 @@
 .dt-basvurular .dt-cift-ayri_gider .dt-cift-ikon { color: var(--color-status-hold); }
 
 .dt-basvurular-belge-acilir .ant-select-item-option-content, .dt-basvurular-belge-acilir .ant-select-item-group { white-space: normal; overflow-wrap: break-word; }
+
+.dt-basvurular .dt-ciftler-bilinmeyen { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-basvurular .dt-ciftler-bilinmeyen summary { display: flex; align-items: center; min-block-size: var(--target-touch); inline-size: fit-content; cursor: pointer; font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); }
+
+.dt-basvurular .dt-ciftler-bilinmeyen ul { display: grid; gap: var(--space-1); margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); line-height: var(--line-body); overflow-wrap: break-word; }

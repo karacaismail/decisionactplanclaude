@@ -78,6 +78,10 @@ describe('ek veri denetimi', () => {
     expect(hatalar((v) => { v.sozluk[0].anlam = 'Bu cümle bilerek çok uzun yazıldı ve on altı kelimeden fazla kelime taşıdığı için bu denetimden asla geçmemelidir.' })).toMatch(/kelime/)
   })
 
+  it('başvuruda saklanamayacak belge kimliğini reddeder', () => {
+    expect(hatalar((v) => { v.kanitlar[0].maddeler[0].id = 'k'.repeat(50) })).toMatch(/saklanamaz/)
+  })
+
   it('boş metni reddeder', () => {
     expect(hatalar((v) => { v.kanitlar[0].ad = ' ' })).toMatch(/boş/)
   })

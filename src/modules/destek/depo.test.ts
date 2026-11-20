@@ -151,9 +151,12 @@ describe('belge ve kanıt listesinden eklenen belgeler', () => {
     const b = await basvuruEkle('plan-1', program('kgf'), 'evet', SIMDI)
     await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
     await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'Vergi levhası', kanit: 'k5' } }, SIMDI)
-    await expect(basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'yok' } }, SIMDI)).rejects.toThrow(/bulunamadı/)
+    // Olmayan belgeyi çıkarmak kaydı değiştirmez ve hata vermez.
+    expect((await basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'yok' } }, SIMDI)).belgeler).toHaveLength(4)
     // Ekran eski listeyi gösterirken çıkarma ile işaret arka arkaya gelir. İşaret adıyla doğru belgeyi bulur.
+    // Çıkarma düğmesine iki kez basılsa da ikinci çıkarma hata vermez.
     await Promise.all([
+      basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'k4' } }, SIMDI),
       basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'k4' } }, SIMDI),
       basvuruGuncelle('plan-1', b.id, { belge: { sira: 3, hazir: true, ad: 'Vergi levhası' } }, SIMDI),
     ])
@@ -162,10 +165,10 @@ describe('belge ve kanıt listesinden eklenen belgeler', () => {
     await expect(basvuruGuncelle('plan-1', b.id, { belge: { sira: 0, hazir: true, ad: 'İmza sirküleri' } }, SIMDI)).rejects.toThrow(/bulunamadı/)
   })
 
-  it('bozuk belge kimliği okunmaz, eski kayıt kimliksiz okunur', () => {
+  it('bozuk belge kimliği başvuruyu gizlemez, eski kayıt kimliksiz okunur', () => {
     const temel = { id: 'b-1', programId: 'kgf', programAdi: 'KGF', durum: 'hazirlaniyor', desteksizYapar: 'evet', olusturma: SIMDI, guncelleme: SIMDI }
     expect(basvuruOku({ ...temel, belgeler: [{ ad: 'Mali tablolar', hazir: false }] })?.belgeler).toEqual([{ ad: 'Mali tablolar', hazir: false }])
-    expect(basvuruOku({ ...temel, belgeler: [{ ad: 'X', hazir: false, kanit: 'boşluk var' }] })).toBeUndefined()
+    expect(basvuruOku({ ...temel, belgeler: [{ ad: 'X', hazir: true, kanit: 'boşluk var' }] })?.belgeler).toEqual([{ ad: 'X', hazir: true }])
   })
 
   it('dışa aktarma ve içe alma eklenen belgeyi korur', async () => {
