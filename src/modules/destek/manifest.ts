@@ -2,6 +2,7 @@
  * Destek ve teşvik modülü. Bu modül numaralı üç aşamanın dışında durur.
  * Menüde ayrı ve numarasız bir grup olarak görünür.
  * Program listesi, eşleşme, belge listesi, gider rehberi ve sözlük plan istemez. Başvuru ekranında kurum soruları plansız açılır. Kayıtlar açık plan ister.
+ * Finansman görünümü açık plan ister. Görünüm planı yalnız okur.
  */
 import type { ModuleManifest } from '@/platform/types'
 
@@ -18,6 +19,7 @@ const manifest: ModuleManifest = {
     { to: '/destek/basvurular', label: 'Başvurularım', icon: 'files', requiresPlan: false, group: GROUP },
     { to: '/destek/belgeler', label: 'Belge ve kanıt listesi', icon: 'clipboard', requiresPlan: false, group: GROUP },
     { to: '/destek/giderler', label: 'Gider rehberi', icon: 'receipt', requiresPlan: false, group: GROUP },
+    { to: '/destek/finansman', label: 'Finansman görünümü', icon: 'chartBar', requiresPlan: true, group: GROUP },
     { to: '/destek/sozluk', label: 'Destek sözlüğü', icon: 'bookBookmark', requiresPlan: false, group: GROUP },
   ],
   routes: [
@@ -26,6 +28,7 @@ const manifest: ModuleManifest = {
     { path: '/destek/basvurular', title: 'Başvurularım', requiresPlan: false, load: () => import('./screens/DtBasvurularScreen') },
     { path: '/destek/belgeler', title: 'Belge ve kanıt listesi', requiresPlan: false, load: () => import('./screens/DtBelgelerScreen') },
     { path: '/destek/giderler', title: 'Gider rehberi', requiresPlan: false, load: () => import('./screens/DtGiderlerScreen') },
+    { path: '/destek/finansman', title: 'Finansman görünümü', requiresPlan: true, load: () => import('./screens/DtFinansmanScreen') },
     { path: '/destek/sozluk', title: 'Destek sözlüğü', requiresPlan: false, load: () => import('./screens/DtSozlukScreen') },
     { path: '/destek/:programId', title: 'Destek programı', requiresPlan: false, example: '/destek/ornek-program', load: () => import('./screens/DtProgramScreen') },
   ],

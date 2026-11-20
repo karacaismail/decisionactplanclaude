@@ -97,6 +97,30 @@ export function selectExecutionTasks(plan: ReadonlyPlan): ExecutionTaskDto[] {
   return horizons.flatMap((horizon) => tasksOf(asPlan(plan), horizon).map((t) => ({ rowId: t.id, horizon, action: t.action, owner: t.owner, dueDate: t.dueDate })))
 }
 
+/* Kuruş sıfır ya da pozitif tam sayıdır. Öteki değerler bilinmiyor sayılır. Örneğin içe alınan dosyada eksi tutar olabilir. */
+const kurusOrNull = (v: unknown): number | null => (typeof v === 'number' && Number.isSafeInteger(v) && v >= 0 ? v : null)
+
+/** Kaynak satırları. Bozuk tutar null olur. Sıfır tutar geçerlidir. */
 export function selectResources(plan: ReadonlyPlan): ResourceDto[] {
-  return resourcesOf(asPlan(plan)).map((r) => ({ rowId: r.id, item: r.item, budgetKurus: r.budgetKurus, people: r.people }))
+  return resourcesOf(asPlan(plan)).map((r) => ({ rowId: r.id, item: r.item, budgetKurus: kurusOrNull(r.budgetKurus), people: r.people }))
+}
+
+/**
+ * Planın para sınırları. Değerler kişinin Adım 02'de yazdığı tutarlardır. Yazılmayan ya da bozuk değer null olur.
+ * Sıfır sınır da null olur. Çekirdek ekranlar sıfır sınırı "Yazılmadı" diye gösterir. Sözleşme bu anlamı korur.
+ */
+export interface LimitsDto {
+  /** Harcama sınırı, kuruş. */
+  budgetKurus: number | null
+  /** Eldeki nakit, kuruş. */
+  cashKurus: number | null
+  /** Aylık sabit gider, kuruş. */
+  monthlyBurnKurus: number | null
+}
+
+/** Plan sınırlarındaki tutarları okur. Hesap yapmaz ve değer uydurmaz. Dönen nesne plana bağlı değildir. */
+export function selectLimits(plan: ReadonlyPlan): LimitsDto {
+  const limits: Partial<Record<keyof LimitsDto, unknown>> = plan.limits && typeof plan.limits === 'object' ? plan.limits : {}
+  const sinir = (v: unknown) => (kurusOrNull(v) || null)
+  return { budgetKurus: sinir(limits.budgetKurus), cashKurus: sinir(limits.cashKurus), monthlyBurnKurus: sinir(limits.monthlyBurnKurus) }
 }

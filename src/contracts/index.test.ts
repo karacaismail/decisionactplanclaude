@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { emptyPlan, type PlanDoc } from '@/data/types'
 import { buildShoeDemoPlan } from '@/data/demoAyakkabi'
 import { stampRowIds } from '@/engine/rowIds'
-import { isStrategyApproved, selectExecutionTasks, selectGoal, selectPlanSummary, selectResources, selectStrategyMoves } from './index'
+import { isStrategyApproved, selectExecutionTasks, selectGoal, selectLimits, selectPlanSummary, selectResources, selectStrategyMoves } from './index'
 
 function plan(): PlanDoc {
   const p = emptyPlan('p', 'Kafe')
@@ -46,5 +46,49 @@ describe('okuma sözleşmesi', () => {
     expect(isStrategyApproved(plan())).toBe(false)
     const demo = buildShoeDemoPlan()
     expect(selectPlanSummary(demo).strategyApproved).toBe(isStrategyApproved(demo))
+  })
+
+  it('sınırlar kişinin yazdığı tutarları olduğu gibi verir', () => {
+    const p = plan()
+    p.limits = { budgetKurus: 15000000, cashKurus: 24000000, monthlyBurnKurus: 3000000, deadline: '2027-02-17', successSentence: 'Başarı' }
+    expect(selectLimits(p)).toEqual({ budgetKurus: 15000000, cashKurus: 24000000, monthlyBurnKurus: 3000000 })
+  })
+
+  it('yazılmayan ya da bozuk sınır bilinmiyor olur', () => {
+    const p = plan()
+    expect(selectLimits(p)).toEqual({ budgetKurus: null, cashKurus: null, monthlyBurnKurus: null })
+    p.limits = { budgetKurus: Number.NaN, cashKurus: -5, monthlyBurnKurus: Number.POSITIVE_INFINITY }
+    expect(selectLimits(p)).toEqual({ budgetKurus: null, cashKurus: null, monthlyBurnKurus: null })
+    ;(p as { limits: unknown }).limits = { budgetKurus: '1500', cashKurus: 1.5 }
+    expect(selectLimits(p)).toEqual({ budgetKurus: null, cashKurus: null, monthlyBurnKurus: null })
+    ;(p as { limits: unknown }).limits = undefined
+    expect(selectLimits(p)).toEqual({ budgetKurus: null, cashKurus: null, monthlyBurnKurus: null })
+  })
+
+  it('sıfır sınır yazılmamış sayılır, çekirdek ekranlar da "Yazılmadı" gösterir', () => {
+    const p = plan()
+    p.limits = { budgetKurus: 0, cashKurus: 0, monthlyBurnKurus: 0 }
+    expect(selectLimits(p)).toEqual({ budgetKurus: null, cashKurus: null, monthlyBurnKurus: null })
+  })
+
+  it('kaynak satırındaki bozuk tutar bilinmiyor olur, sıfır tutar kalır', () => {
+    const p = plan()
+    p.steps['U33'].values.resources = [
+      { _id: 'a', item: 'Eksi', budgetKurus: -5 },
+      { _id: 'b', item: 'Kesirli', budgetKurus: 1.5 },
+      { _id: 'c', item: 'Metin', budgetKurus: '1500' },
+      { _id: 'd', item: 'Sıfır', budgetKurus: 0 },
+    ]
+    expect(selectResources(p).map((r) => [r.rowId, r.budgetKurus])).toEqual([['a', null], ['b', null], ['c', null], ['d', 0]])
+  })
+
+  it('sınırları okumak planı değiştirmez', () => {
+    const p = plan()
+    p.limits = { budgetKurus: 100 }
+    const before = JSON.stringify(p)
+    const l = selectLimits(p)
+    l.budgetKurus = 5
+    expect(JSON.stringify(p)).toBe(before)
+    expect(p.limits.budgetKurus).toBe(100)
   })
 })

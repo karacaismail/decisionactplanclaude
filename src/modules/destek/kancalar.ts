@@ -7,8 +7,9 @@ import { use, useCallback, useEffect, useState } from 'react'
 import { subscribeModuleChanges } from '@/platform/broadcast'
 import { useCurrentPlanView } from '@/platform/planSource'
 import type { Program } from './data/tipler'
-import { basvurulariYukle, MODUL_ID, PLANSIZ, profilYukle } from './depo'
+import { basvurulariYukle, giderBaglariYukle, MODUL_ID, PLANSIZ, profilYukle } from './depo'
 import type { Basvuru } from './motor/basvuru'
+import type { GiderBagi } from './motor/finansman'
 import type { DestekProfili } from './motor/profil'
 import { bugunIso } from './motor/tazelik'
 
@@ -79,6 +80,12 @@ export function useProfil(yer: string) {
 export function useBasvurular(planId: string | undefined) {
   const { veri, hata, yenile } = useModulVerisi<Basvuru[]>(planId, basvurulariYukle)
   return { basvurular: planId ? veri : [], hata, yenile }
+}
+
+/** Planın gider bağları. Plan yoksa liste boştur. */
+export function useGiderBaglari(planId: string | undefined) {
+  const { veri, hata, yenile } = useModulVerisi<GiderBagi[]>(planId, giderBaglariYukle)
+  return { baglar: planId ? veri : [], hata, yenile }
 }
 
 export const OKUMA_HATASI = 'Kayıtlı bilgiler okunamadı. Bilgileriniz silinmedi. Sayfayı yenileyin. Sorun sürerse tarayıcının depolama iznini kontrol edin.'

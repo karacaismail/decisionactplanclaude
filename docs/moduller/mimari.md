@@ -228,6 +228,61 @@ Bu bölümü Claude 20 Kasım 2026 Cuma günü yazdı. Başvuru kaydının belge
 - Bozuk `kanit` değeri başvuruyu gizlemez. Belge yine okunur, yalnız alan atılır.
 - Eski sürüm bu alanı okumaz. Eski sürümde eklenen belge, programın belgesi gibi görünür ve çıkarılamaz.
 
+## Finansman görünümü
+
+Bu bölümü Claude 20 Kasım 2026 Cuma günü yazdı. Ekranın adresi `/destek/finansman` adresidir. Ekran açık plan ister. Menüde "Destek ve teşvik" grubunda durur. Ekran kodu geç yüklenir.
+
+Ekran planı yalnız okur. Ekran şu bölümleri gösterir:
+
+1. Planın kaynak satırları çubukta görünür. Satırlar 3.3 adımından gelir. Tutarları kişi yazdı.
+2. Aynı satırlar bir tabloda da durur. Grafik kütüphanesi kullanılmaz.
+3. Planın para sınırları kişinin yazdığı gibi görünür.
+4. Kişi her gider satırını başvurulara bağlayabilir.
+5. Beklenen destekler "Beklenen, kesin değil" kutusunda durur. Kutuda tutar yazmaz.
+
+Uygulama yeni tutar hesaplamaz. Uygulama kalemleri toplamaz. Destek çubuğa girmez. En uzun çubuk en büyük tutarı gösterir. Öteki çubuklar bu tutara göre kısalır. Tutar yazılmayan satırda çubuk boştur ve "Bilinmiyor" yazar.
+
+Aynı gider satırına iki başvuru bağlanabilir. O zaman satırın altında bir uyarı çıkar: "Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun." Uyarı kesin kural değildir.
+
+Ret alan ve vazgeçilen başvuru "Beklenen, kesin değil" kutusunda görünmez.
+
+### Gider bağı nerede durur?
+
+Bağ destek deposunda durur. Bağ plana yazılmaz. Bu yüzden bağ hiçbir kararı eskitmez. Plan sürümü de değişmez.
+
+- Anahtar `<plan>/gider-bag/<satır>` biçimindedir. Örneğin `plan-1/gider-bag/r-u33-resources-0`.
+- Kayıt satırın kalıcı kimliğini ve başvuru kimliklerini taşır.
+- Kişi bir kutuyu işaretleyince tek bir değişiklik yazılır. Depo değişikliği son kayda uygular. Böylece arka arkaya iki işaret birbirini silmez.
+- Liste boşalınca kayıt silinir.
+- Silinmiş başvurunun bağı sayılmaz. Bu bağ sonraki yazmada atılır.
+- Planda olmayan başvuruya bağ kurulmaz.
+- Bağ yazımı destek özetini değiştirmez.
+- Bağ plan yedeğiyle dışa aktarılır. Plan silinince bağ da silinir.
+
+### Sınır seçicisi: `selectLimits`
+
+Ekran plan sınırlarını `selectLimits` seçicisiyle okur. Seçici `src/contracts/index.ts` dosyasındadır. Bu bir ortak sözleşme değişikliğidir.
+
+Seçici üç tutar döndürür:
+
+| Alan | Anlamı |
+|---|---|
+| `budgetKurus` | Harcama sınırı |
+| `cashKurus` | Eldeki nakit |
+| `monthlyBurnKurus` | Aylık sabit gider |
+
+Tutarlar kuruş cinsindendir. Kişi bu tutarları Adım 02'de yazar.
+
+Seçicinin kuralları şunlardır:
+
+1. Seçici hesap yapmaz ve değer uydurmaz.
+2. Yazılmayan tutar `null` olur. Ekran bu tutara "Bilinmiyor" yazar.
+3. Bozuk tutar da `null` olur. Örneğin eksi sayı, kesirli kuruş ve metin bozuktur.
+4. Sıfır sınır da `null` olur. Çekirdek ekranlar sıfır sınırı "Yazılmadı" diye gösterir. Sözleşme bu anlamı korur.
+5. Dönen nesne yenidir. Bu nesneyi değiştirmek planı değiştirmez.
+
+`selectResources` seçicisi de bozuk tutarı `null` yapar. Örneğin içe alınan dosyada eksi tutar olabilir. Kaynak satırında sıfır tutar geçerlidir.
+
 ## Yedek
 
 Her yedek modül verisini de taşır. Planlar ekranındaki "JSON indir" düğmesi paket yazar. Pano ekranındaki yedek düğmesi de paket yazar. Çıktılar ekranında güncel taslağın JSON dosyası da paket olur. Eski sürümün JSON dosyası yalnız donmuş planı taşır. Bu dosya yedek sayılmaz.
@@ -238,4 +293,6 @@ Bütün planları tek dosyaya yazan bir dışa aktarma yoktur. Her plan kendi do
 
 - Proje ve destek modüllerinin ekranları çalışır.
 - Plan silinirken modül verisi silinemezse uyarı yalnız konsola yazılır. Kalan veriyi sonradan temizleyen bir iş henüz yoktur.
+- Kaynak satırı plandan silinince gider bağı depoda kalır. Ekran bu bağı göstermez. Bağı temizleyen bir iş henüz yoktur.
+- İçe alma bağları olduğu gibi yazar. Bazen bir satır içe almada yeni kimlik alır. O zaman bağı eski kimlikte kalır. Örneğin eski dosyada iki satır aynı kimliği taşıyabilir.
 - Çekirdek yolların listesi iki yerde durur. Liste `src/platform/manifest.ts` ve `src/app/routes.tsx` dosyalarındadır. Yeni çekirdek yol eklenince iki liste de güncellenir.
