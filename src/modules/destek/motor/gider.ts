@@ -2,6 +2,7 @@
  * Gider eşleşmesi. Saf TypeScript kodudur.
  * Bir gideri ödeyebilecek programlar yalnız katalog metnine dayanan bağlardan gelir.
  * Hariç tutan program aday listesine girmez. Aynı program için uygun bağ olsa da girmez.
+ * Kaldırılan program hiçbir listeye girmez.
  */
 import type { GiderEslesme, GiderKalemi, Program } from '../data/tipler'
 
@@ -18,6 +19,8 @@ export function giderAdaylari(giderId: string, eslesmeler: readonly GiderEslesme
   const adaylar: GiderAdayi[] = []
   const haric: GiderAdayi[] = []
   for (const program of programlar) {
+    /* Kaldırılan program gideri ödemez. Bu yüzden iki listeye de girmez. */
+    if (program.durum === 'kaldirildi') continue
     const disarida = kanitlar(program.id, 'haric')
     if (disarida.length) haric.push({ program, kanitlar: disarida })
     else {

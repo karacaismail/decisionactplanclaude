@@ -22,4 +22,6 @@
 
 .dt-belgeler .dt-belgeler-ad { font-weight: var(--weight-strong); color: var(--color-text-primary); }
 
-.dt-belgeler .dt-belgeler-liste li p:not(.dt-belgeler-ad) { color: var(--color-text-secondary); }
+.dt-belgeler .dt-belgeler-liste li > p:not(.dt-belgeler-ad) { color: var(--color-text-secondary); }
+
+.dt-belgeler .dt-belgeler-hata { margin: 0; font-size: var(--font-body); color: var(--color-status-harm); }

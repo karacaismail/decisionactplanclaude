@@ -1,0 +1,19 @@
+/* Ortak belge havuzundaki tek belge. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-havuz-belgesi { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-2); justify-items: start; min-inline-size: 0; }
+
+.dt-havuz-belgesi p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); color: var(--color-text-primary); max-inline-size: 72ch; }
+
+.dt-havuz-belgesi .ant-checkbox-wrapper { min-block-size: var(--target-touch); align-items: center; font-size: var(--font-body); }
+
+.dt-havuz-alan { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-label); inline-size: 100%; max-inline-size: 22rem; min-inline-size: 0; }
+
+.dt-havuz-alan label { font-size: var(--font-body); font-weight: var(--weight-strong); }
+
+.dt-havuz-alan .ant-picker { min-block-size: var(--target-touch); inline-size: 100%; }
+
+.dt-havuz-belgesi .dt-havuz-uyari { display: inline-flex; align-items: flex-start; gap: var(--gap-icon); padding: var(--space-2) var(--space-3); background: var(--color-status-hold-bg); border-radius: var(--radius-panel); color: var(--color-status-hold); font-weight: var(--weight-strong); }
+
+.dt-havuz-belgesi .dt-havuz-ikon { inline-size: var(--icon-control); block-size: var(--icon-control); flex-shrink: 0; }
+
+.dt-havuz-belgesi .dt-gizli { position: absolute; inline-size: 1px; block-size: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

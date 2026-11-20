@@ -4,12 +4,17 @@ import { mkdir } from 'node:fs/promises'
 import { activate, openDemo, ready } from './uyarlanir/audit'
 
 /*
- * Destek ve teşvik modülü. Bugün 19 Kasım 2026 Perşembe günü olarak sabitlenir.
- * Katalog 12 Ağustos 2026 günü kontrol edildi. Bu yüzden bütün bilgi eskidir. Bu doğru ve dürüst davranıştır.
+ * Destek ve teşvik modülü. Bugün 20 Kasım 2026 Cuma günü olarak sabitlenir.
+ * 44 program bu gün resmî kaynaklardan yeniden doğrulandı. İki programın kaynağı bulunamadı.
+ * Bu iki programın son kontrolü 12 Ağustos 2026 Çarşamba günüdür. Bu yüzden bilgileri eskidir.
+ * Koşul, gider ve belge metinleri alan alan doğrulanmadı. Bu metinler de 12 Ağustos 2026 gününe göre eskir.
  */
 
-const BUGUN = new Date('2026-11-19T10:00:00')
-const SON_KONTROL = 'Son kontrol: 12 Ağustos 2026 Çarşamba'
+const BUGUN = new Date('2026-11-20T10:00:00')
+const SON_KONTROL = 'Son kontrol: 20 Kasım 2026 Cuma'
+const ESKI_KONTROL = 'Son kontrol: 12 Ağustos 2026 Çarşamba'
+/** Katalog JSON dosyasını indiren istek. Geliştirme sunucusundaki "?url" modülü bu istek değildir. */
+const katalogIstegi = (r: { url: () => string; resourceType: () => string }) => r.resourceType() === 'fetch' && /\/katalog[^/]*\.json(?:$|\?)/.test(r.url())
 const UYARI = 'Bu bilgi resmî kaynak değildir. Tutar ve tarih değişebilir. Başvurmadan önce kurumun sayfasını okuyun. Bu uygulama destek vermez ve söz vermez.'
 const PLAN_KEY = 'decisionactplan-v1'
 const DEMO_ID = 'ornek-mahalle-kafesi'
@@ -75,12 +80,17 @@ async function planOku(page: Page) {
   }, [PLAN_KEY, DEMO_ID] as const)
 }
 
-test('program listesi plan olmadan açılır ve katalog ilk açılışta inmez', async ({ page }, info) => {
+test('program listesi plan olmadan açılır, katalog JSON dosyası yalnız destek ekranında bir kez iner', async ({ page }, info) => {
   const istekler: string[] = []
-  page.on('request', (r) => istekler.push(r.url()))
+  let katalog = 0
+  page.on('request', (r) => {
+    istekler.push(r.url())
+    if (katalogIstegi(r)) katalog += 1
+  })
   await page.goto('/')
   await ready(page)
-  expect(istekler.filter((u) => /modules\/destek\/(data|screens|motor)\//.test(u)), 'katalog ilk açılışta inmemeli').toEqual([])
+  expect(istekler.filter((u) => /modules\/destek\/(data|screens|motor)\//.test(u) || /katalog[^/]*\.json/.test(u)), 'katalog ilk açılışta inmemeli').toEqual([])
+  expect(katalog).toBe(0)
 
   await page.goto('/#/destek')
   await ready(page)
@@ -89,12 +99,23 @@ test('program listesi plan olmadan açılır ve katalog ilk açılışta inmez',
   await expect(main.getByText(UYARI)).toBeVisible()
   await expect(main.getByRole('status')).toHaveText('46 programdan 46 tanesi görünüyor.')
   await expect(main.locator('.dt-program-karti')).toHaveCount(46)
-  await expect(main.locator('.dt-program-karti').first()).toContainText('Bilinmiyor. Bilgi eski.')
-  await expect(main.getByText(SON_KONTROL)).toHaveCount(46)
+  await expect(main.locator('.dt-program-karti').first()).toContainText('Üst sınır: 20.000.000 TL')
+  await expect(main.getByText(SON_KONTROL)).toHaveCount(44)
+  await expect(main.getByText(ESKI_KONTROL)).toHaveCount(2)
+  await expect(main.locator('.dt-program-karti', { hasText: ESKI_KONTROL }).filter({ hasText: 'Eski bilgi' })).toHaveCount(2)
   await expect(main.getByRole('heading', { name: 'Eski bilgi' })).toBeVisible()
-  expect(istekler.some((u) => u.includes('modules/destek/data/programlar'))).toBe(true)
+  // Katalog JavaScript parçası değildir. Aynı kökenden tek bir JSON isteğiyle iner.
+  expect(katalog).toBe(1)
+  expect(istekler.some((u) => u.includes('modules/destek/data/programlar'))).toBe(false)
+  expect(istekler.filter((u) => !u.startsWith('http://127.0.0.1:') && !u.startsWith('data:'))).toEqual([])
   await denetle(page, '/destek')
   await kanit(page, info, 'katalog')
+
+  // Başka bir destek ekranı aynı kataloğu kullanır. Dosya ikinci kez inmez.
+  await main.getByRole('link', { name: '1501 Sanayi Ar-Ge Destek Programı' }).click()
+  await ready(page)
+  await expect(main.getByRole('heading', { level: 1 })).toHaveText('1501 Sanayi Ar-Ge Destek Programı')
+  expect(katalog).toBe(1)
 })
 
 test('arama ve süzme çalışır, seçim kutusu markalı bileşendir', async ({ page }) => {
@@ -113,7 +134,7 @@ test('arama ve süzme çalışır, seçim kutusu markalı bileşendir', async ({
   await expect(main.getByRole('status')).toHaveText('46 programdan 46 tanesi görünüyor.')
 })
 
-test('program kartı numaralı bölümleri gösterir, eski tutar ve tarih yerine bilgi verir ve resmî sayfayı yeni sekmede açar', async ({ page }, info) => {
+test('program kartı numaralı bölümleri ve doğrulanan değerleri kaynağıyla gösterir, eski metin yerine bilgi verir', async ({ page }, info) => {
   await page.goto('/#/destek/tubitak1501')
   await ready(page)
   const main = page.getByRole('main')
@@ -121,14 +142,24 @@ test('program kartı numaralı bölümleri gösterir, eski tutar ve tarih yerine
   await expect(main.getByRole('heading', { level: 2 }).filter({ hasText: /^\d\. / })).toHaveText([
     '1. Kim alabilir?', '2. Neyi öder?', '3. Ne kadar?', '4. Son tarih ne zaman?', '5. Resmî sayfa nerede?', '6. Hangi belgeler gerekir?', '7. Bu programla birlikte kullanma',
   ])
-  await expect(main.getByText(SON_KONTROL)).toBeVisible()
+  await expect(main.locator('.dt-program-kontrol')).toHaveText(SON_KONTROL)
   const tutar = main.locator('section', { has: page.getByRole('heading', { name: '3. Ne kadar?' }) })
-  await expect(tutar.getByText('Bilinmiyor. Bilgi eski.', { exact: true }).first()).toBeVisible()
+  await expect(tutar.getByText('Proje başına TÜBİTAK katkısı en çok 20.000.000 TL olur.', { exact: true })).toBeVisible()
+  await expect(tutar.getByText('Hibe üst sınırı: 20.000.000 TL')).toBeVisible()
+  await expect(tutar.getByText(/^Oran: İlk 5 projede oran %75 olur\./)).toBeVisible()
+  const tutarKaynagi = tutar.getByRole('link', { name: /^Tutar bilgisinin kaynağını açın/ })
+  await expect(tutarKaynagi).toHaveAttribute('href', /^https:\/\/tubitak\.gov\.tr\/sites\/default\/files\/2026-07\/1501_/)
+  await expect(tutarKaynagi).toHaveAttribute('target', '_blank')
   const tarih = main.locator('section', { has: page.getByRole('heading', { name: '4. Son tarih ne zaman?' }) })
-  await expect(tarih.getByText('Bilinmiyor. Bilgi eski.').first()).toBeVisible()
+  await expect(tarih.getByText('Çağrının kapandığı gün: 26 Ekim 2026 Pazartesi')).toBeVisible()
   await expect(tarih.getByText('Süre bilinmiyor. Kuruma sorun.')).toBeVisible()
-  await expect(main).not.toContainText('20.000.000')
+  await expect(tarih.getByText(/^Ödeme biçimi: Harcama sonrası\./)).toBeVisible()
   await expect(main.getByText('Kapandı').first()).toBeVisible()
+  // Koşul metinleri alan alan doğrulanmadı. Sayı taşıyan koşul eski bilgi uyarısı gösterir.
+  const kim = main.locator('section', { has: page.getByRole('heading', { name: '1. Kim alabilir?' }) })
+  await expect(kim.getByText("Türkiye'de yerleşik ve KOBİ ölçeğinde bir sermaye şirketi olmalı.")).toBeVisible()
+  await expect(kim.getByText('Bilinmiyor. Bilgi eski.').first()).toBeVisible()
+  await expect(main.getByText('Koşul, gider ve belge metinleri en son 12 Ağustos 2026 Çarşamba günü kontrol edildi.', { exact: false })).toBeVisible()
   await expect(main.getByText(UYARI)).toBeVisible()
   const link = main.getByRole('link', { name: /Kurumun sayfasını açın/ })
   await expect(link).toHaveAttribute('target', '_blank')
@@ -154,11 +185,13 @@ test('sihirbazda hep Bilmiyorum diyen kişi Uygun sonucu almaz', async ({ page }
     await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
   }
   await expect(main.getByRole('heading', { level: 2, name: 'Uygun (0)' })).toBeVisible()
-  await expect(main.getByRole('heading', { level: 2, name: 'Belki (46)' })).toBeVisible()
-  await expect(main.getByRole('heading', { level: 2, name: 'Uygun değil (0)' })).toBeVisible()
+  // Kaldırılan program bilgiden bağımsız olarak "Uygun değil" olur. Öteki programlar "Belki" olur.
+  await expect(main.getByRole('heading', { level: 2, name: 'Belki (45)' })).toBeVisible()
+  await expect(main.getByRole('heading', { level: 2, name: 'Uygun değil (1)' })).toBeVisible()
+  await expect(main.locator('section.dt-sonuc-uygun-degil li', { hasText: 'KOSGEB İşletme Geliştirme Destek Programı' })).toContainText('Bu program kaldırıldı. Yeni başvuru alınmaz.')
   // Son cevaptan sonra odak sonuç başlığına geçer. Durum satırı sayıları söyler.
   await expect(main.getByRole('heading', { level: 2, name: 'Sonuçlar' })).toBeFocused()
-  await expect(main.getByRole('status')).toHaveText('Uygun: 0. Belki: 46. Uygun değil: 0.')
+  await expect(main.getByRole('status')).toHaveText('Uygun: 0. Belki: 45. Uygun değil: 1.')
   // İş kolu seçilmedi. Bu yüzden "işe özel program yok" notu görünmez.
   await expect(main.getByText('Katalogda işinize özel program yok.', { exact: false })).toHaveCount(0)
   await denetle(page, 'sonuç')
@@ -280,7 +313,8 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   const once = await planOku(page)
   expect(once).not.toBeNull()
 
-  await page.goto('/#/destek/kosgebIsletmeGelistirme')
+  // İşletme Geliştirme programı kaldırıldı. Bu yüzden test dört belgeli başka bir program kullanır.
+  await page.goto('/#/destek/tubitak1507')
   await ready(page)
   const main = page.getByRole('main')
   await main.getByRole('button', { name: 'Başvuru listeme ekle' }).click()
@@ -291,7 +325,7 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   await expect(page).toHaveURL(/#\/destek\/basvurular$/)
   await ready(page)
 
-  const kart = main.locator('.dt-basvuru', { hasText: 'KOSGEB İşletme Geliştirme Destek Programı' })
+  const kart = main.locator('.dt-basvuru', { hasText: '1507 KOBİ Ar-Ge Başlangıç Destek Programı' })
   await expect(kart).toBeVisible()
   await expect(main.getByRole('status')).toHaveText('1 başvuru var. 1 tanesi hazırlanıyor.')
   await expect(kart).toContainText('Cevabınız: Hayır.')
@@ -437,18 +471,56 @@ test('destek sözlüğü Türkçe abece sırasıyla dizilir', async ({ page }, i
   await kanit(page, info, 'sozluk')
 })
 
-test('program kartı her çiftin bilgisini bilinmiyor olarak gösterir', async ({ page }, info) => {
-  await page.goto('/#/destek/kosgebGirisimciA')
+test('program kartı yalnız resmî alıntısı olan çifti gösterir, öteki çiftler bilinmiyor kalır', async ({ page }, info) => {
+  await page.goto('/#/destek/kanun5746')
   await ready(page)
   const main = page.getByRole('main')
   const bolum = main.locator('section', { has: page.getByRole('heading', { name: '7. Bu programla birlikte kullanma' }) })
   await bolum.locator('summary').click()
   await expect(bolum.locator('li')).toHaveCount(45)
-  await expect(bolum.getByText('Bilinmiyor. Kuruma sorun.', { exact: true })).toHaveCount(45)
+  await expect(bolum.getByText('Bilinmiyor. Kuruma sorun.', { exact: true })).toHaveCount(44)
   await expect(bolum.getByRole('link', { name: 'Bireysel Katılım Sermayesi', exact: true })).toBeVisible()
-  await expect(bolum.getByText('Birlikte kullanılamaz', { exact: false })).toHaveCount(0)
+  // 5746 sayılı Kanunun 3. maddesi 4691 sayılı Kanunun geçici 2. maddesiyle birlikte kullanmayı yasaklar.
+  const cift = bolum.locator('li', { has: page.getByRole('link', { name: /4691/ }) })
+  await expect(cift).toContainText('Kaynağa göre bu programlar birlikte kullanılamaz. Birini seçmeniz gerekir.')
+  await expect(cift.getByRole('link', { name: 'İlişkinin kaynağını açın' })).toHaveAttribute('href', 'https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf')
   await denetle(page, 'birlikte kullanma')
   await kanit(page, info, 'program-birlikte')
+})
+
+test('kapanan, kaldırılan ve doğrulanmayan program ekranda açıkça görünür', async ({ page }, info) => {
+  const main = page.getByRole('main')
+  await page.goto('/#/destek/kosgebIsletmeGelistirme')
+  await ready(page)
+  await expect(main.getByRole('heading', { level: 2, name: 'Program kaldırıldı' })).toBeVisible()
+  await expect(main.getByText('Bu program kaldırıldı. Yeni başvuru alınmaz.', { exact: false })).toBeVisible()
+  await expect(main.locator('.dt-program-etiketler')).toContainText('Kaldırıldı')
+  await expect(main.getByRole('button', { name: 'Başvuru listeme ekle' })).toHaveCount(0)
+  await expect(main.getByRole('heading', { name: /^Size uygun mu\?|^Ön eşleşme/ })).toHaveCount(0)
+  await denetle(page, 'kaldırılan program')
+  await kanit(page, info, 'program-kaldirildi')
+
+  await page.goto('/#/destek/tubitak1711')
+  await ready(page)
+  await expect(main.locator('.dt-program-etiketler')).toContainText('Kapandı')
+  await expect(main.getByText('Çağrının kapandığı gün: 2 Ekim 2026 Cuma')).toBeVisible()
+
+  // Eximbank kaydının kaynağı bulunamadı. Kart eski kalır ve eski tutarı göstermez.
+  await page.goto('/#/destek/eximbank')
+  await ready(page)
+  await expect(main.getByText(ESKI_KONTROL)).toBeVisible()
+  await expect(main.getByRole('heading', { name: 'Eski bilgi' })).toBeVisible()
+  await expect(main.locator('section', { has: page.getByRole('heading', { name: '3. Ne kadar?' }) })).toContainText('Bilinmiyor. Bilgi eski.')
+
+  // Liste "Kaldırıldı" süzgeciyle yalnız kaldırılan programı gösterir.
+  await page.goto('/#/destek')
+  await ready(page)
+  await secenekSec(page, main.locator('.dt-programlar-filtre .ant-select').filter({ has: page.locator('#dt-durum') }), 'Kaldırıldı')
+  await expect(main.locator('.dt-program-karti')).toHaveCount(1)
+  await expect(main.locator('.dt-program-karti')).toContainText('KOSGEB İşletme Geliştirme Destek Programı')
+  // TEKMER programının yerine Teknoloji Merkezi Destek Programı geldi.
+  await main.getByRole('button', { name: 'Süzmeyi temizleyin' }).click()
+  await expect(main.locator('.dt-program-karti', { hasText: 'KOSGEB Teknoloji Merkezi Destek Programı' })).toHaveCount(1)
 })
 
 test('fayda süzgeci ve karttaki sözlük tanımı dokunma ve klavyeyle çalışır', async ({ page, hasTouch }) => {
@@ -513,7 +585,12 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await expect(ciftler).toHaveText('Program çiftleri (3)')
   await ciftler.click()
   await expect(cift).toHaveCount(3)
-  await expect(cift.locator('.dt-cift-ad + .dt-cift-durum')).toHaveText(Array(3).fill('Bilinmiyor. Kuruma sorun.'))
+  // KGF, KOSGEB geri ödemeli desteklerine kefil olabilir. Bu ilişkinin resmî alıntısı vardır. Öteki iki çift bilinmiyor.
+  // Başvurular aynı anda eklendi. Bu yüzden çiftlerin sırası sabit değildir. Test sıraya bakmaz.
+  const ciftDurumu = () => cift.locator('.dt-cift-ad + .dt-cift-durum')
+  const kgfCifti = cift.filter({ hasText: 'Kredi Garanti Fonu' }).filter({ hasText: 'İş Geliştirme Desteği' })
+  await expect(ciftDurumu().filter({ hasText: /^Bilinmiyor\. Kuruma sorun\.$/ })).toHaveCount(2)
+  await expect(kgfCifti.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılabilir.')
   await expect(cift.filter({ hasText: 'BiGG Yatırım' }).filter({ hasText: 'İş Geliştirme Desteği' })).toHaveCount(1)
 
   const kart = main.locator('.dt-basvuru', { hasText: 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği' })
@@ -556,7 +633,8 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await expect(belgeler.last()).toContainText('İmza sirküleri')
   await expect(belgeler.last().locator('input')).toBeChecked()
   await ciftler.click()
-  await expect(cift.locator('.dt-cift-ad + .dt-cift-durum')).toHaveText(Array(3).fill('Bilinmiyor. Kuruma sorun.'))
+  await expect(ciftDurumu().filter({ hasText: /^Bilinmiyor\. Kuruma sorun\.$/ })).toHaveCount(2)
+  await expect(kgfCifti.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılabilir.')
   await expect(birlikte.getByText('Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun.')).toBeVisible()
   expect(await planOku(page)).toEqual(once)
 
@@ -590,4 +668,81 @@ test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve
   await expect(belgeler).toHaveCount(5)
   await expect(kart.getByRole('heading', { level: 4, name: 'Belgeler' })).toBeFocused()
   await expect(kart.getByText('“İmza sirküleri” listeden çıkarıldı.')).toBeVisible()
+})
+
+test('ortak belge havuzu başvurulara kendiliğinden geçmez, süreli belgede uyarı çıkar ve dışa aktarmada kalır', async ({ page, hasTouch }, info) => {
+  await openDemo(page, hasTouch)
+  const once = await planOku(page)
+  const main = page.getByRole('main')
+  for (const id of ['tubitak1507', 'kgf']) {
+    await page.goto(`/#/destek/${id}`)
+    await ready(page)
+    await main.getByRole('button', { name: 'Başvuru listeme ekle' }).click()
+    await main.getByRole('button', { name: 'Evet', exact: true }).click()
+    await expect(main.getByText('Program başvuru listenize eklendi.')).toBeVisible()
+  }
+
+  // Havuzda iki belge hazır işaretlenir. Vergi borcu yazısı süreli bir belgedir.
+  await page.goto('/#/destek/belgeler')
+  await ready(page)
+  await expect(main.getByRole('heading', { level: 2, name: 'Hazır belgelerinizi işaretleyin' })).toBeVisible()
+  const sicil = main.locator('.dt-belgeler-liste li', { has: page.getByText('Ticaret Sicil Gazetesi', { exact: true }) })
+  const vergi = main.locator('.dt-belgeler-liste li', { has: page.getByText('Vergi borcu yoktur yazısı', { exact: true }) })
+  await sicil.locator('.ant-checkbox-wrapper').click()
+  await expect(sicil.locator('.ant-checkbox-wrapper input')).toBeChecked()
+  await expect(sicil.locator('.ant-picker')).toHaveCount(0)
+  await vergi.locator('.ant-checkbox-wrapper').click()
+  await expect(vergi.getByText('Belgenin geçerlilik tarihini yazın. Tarihi belgenin üstünde okuyun.')).toBeVisible()
+  await vergi.locator('.ant-picker').click()
+  await page.locator('.ant-picker-dropdown:visible td[title="2026-11-05"]').click()
+  await expect(vergi.getByText('Belgenin geçerlilik tarihi geçti. Belgeyi yenileyin.')).toBeVisible()
+  await denetle(page, 'belge havuzu')
+  await kanit(page, info, 'belge-havuzu')
+
+  // Başvurulara havuzdaki belgeler eklenir. Havuzdaki işaret başvuruya geçmez.
+  await page.goto('/#/destek/basvurular')
+  await ready(page)
+  const a = main.locator('.dt-basvuru', { hasText: '1507 KOBİ Ar-Ge Başlangıç Destek Programı' })
+  const b = main.locator('.dt-basvuru', { hasText: 'Kredi Garanti Fonu' })
+  const ekle = async (kart: typeof a, ad: string) => {
+    await secenekSec(page, kart.locator('.dt-basvuru-ekle-belge .ant-select'), ad)
+    await kart.getByRole('button', { name: 'Belgeyi ekleyin' }).click()
+    await expect(kart.getByText(`“${ad}” belge listesine eklendi.`)).toBeVisible()
+  }
+  await ekle(a, 'Ticaret Sicil Gazetesi')
+  await ekle(a, 'Vergi borcu yoktur yazısı')
+  await ekle(b, 'Ticaret Sicil Gazetesi')
+  const aSicil = a.locator('.dt-basvuru-belgeler li', { hasText: 'Ticaret Sicil Gazetesi' })
+  const bSicil = b.locator('.dt-basvuru-belgeler li', { hasText: 'Ticaret Sicil Gazetesi' })
+  await expect(aSicil.locator('.ant-checkbox-wrapper input')).not.toBeChecked()
+  await expect(bSicil.locator('.ant-checkbox-wrapper input')).not.toBeChecked()
+  await expect(a.locator('.dt-basvuru-belgeler li', { hasText: 'Vergi borcu yoktur yazısı' })).toContainText('Belgenin geçerlilik tarihi geçti. Belgeyi yenileyin.')
+
+  // Kişi belgeyi yalnız bir başvuruda kullanacağını söyler. Öteki başvuru değişmez.
+  // Klavyeyle basılır. Düğme kaybolunca odak aynı satırdaki işaret kutusuna geçer.
+  await aSicil.getByRole('button', { name: 'Bu belgeyi kullanacağım (Ticaret Sicil Gazetesi)' }).focus()
+  await page.keyboard.press('Enter')
+  await expect(aSicil.locator('.ant-checkbox-wrapper input')).toBeChecked()
+  await expect(aSicil.locator('.ant-checkbox-wrapper input')).toBeFocused()
+  await expect(aSicil.getByRole('button', { name: /kullanacağım$/ })).toHaveCount(0)
+  await expect(bSicil.locator('.ant-checkbox-wrapper input')).not.toBeChecked()
+  await expect(bSicil.getByRole('button', { name: 'Bu belgeyi kullanacağım (Ticaret Sicil Gazetesi)' })).toBeVisible()
+  await denetle(page, 'havuz önerisi')
+  await kanit(page, info, 'havuz-onerisi')
+
+  await page.reload()
+  await ready(page)
+  await expect(aSicil.locator('.ant-checkbox-wrapper input')).toBeChecked()
+  await expect(bSicil.locator('.ant-checkbox-wrapper input')).not.toBeChecked()
+  expect(await planOku(page)).toEqual(once)
+
+  // Dışa aktarma havuzu taşır.
+  await page.goto('/#/')
+  await ready(page)
+  const indirme = page.waitForEvent('download')
+  await activate(page, page.getByRole('button', { name: `JSON indir: ${DEMO_ADI}` }), hasTouch)
+  const dosya = info.outputPath('plan.json')
+  await (await indirme).saveAs(dosya)
+  const paket = JSON.parse(readFileSync(dosya, 'utf8'))
+  expect((paket.modules.destek.entries as [string, unknown][]).find(([k]) => k === 'belgeHavuzu')?.[1]).toEqual({ v: 1, belgeler: { k1: { hazir: true }, k6: { hazir: true, gecerlilik: '2026-11-05' } } })
 })

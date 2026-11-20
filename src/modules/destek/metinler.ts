@@ -29,6 +29,7 @@ export const DURUM_ADI: Record<GecerliDurum, string> = {
   kapali: 'Kapalı',
   yururlukte: 'Yürürlükte',
   kapandi: 'Kapandı',
+  kaldirildi: 'Kaldırıldı',
 }
 
 export const TAVAN_TURU_ADI: Record<TavanTuru, string> = {

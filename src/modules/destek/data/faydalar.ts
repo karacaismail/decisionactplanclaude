@@ -1,6 +1,10 @@
 import type { FaydaTuru } from './tipler'
 
-// İlk eşleme katalog kategorilerinden gelir. Tescil kaydı destek değildir.
+/**
+ * Programların fayda türleri. Kaynak: 20 Kasım 2026 Cuma günkü doğrulama. Ayrıntı: docs/moduller/dogrulama.
+ * Doğrulamanın tür adları bu dosyadaki adlara çevrildi. Örneğin "vergi_prim" burada "vergi_sgk" olur.
+ * Kaynağı bulunamayan iki program eski eşlemesini korur.
+ */
 export const FAYDALAR: Readonly<Record<string, readonly FaydaTuru[]>> = {
   tubitak1501: ['hibe'],
   tubitak1507: ['hibe'],
@@ -13,22 +17,22 @@ export const FAYDALAR: Readonly<Record<string, readonly FaydaTuru[]>> = {
   bigg1812: ['ortaklik'],
   kosgebIsKurma: ['hibe'],
   kosgebGirisimciA: ['kredi'],
-  kosgebGirisimciB: ['kredi'],
+  kosgebGirisimciB: ['faiz'],
   kosgebYapayZekaKredisi: ['kredi'],
   kosgebIsletmeGelistirme: ['hibe'],
-  kosgebKapasite: ['kredi'],
-  kosgebKuresel: ['kredi'],
-  kosgebDijitalDonusum: ['kredi'],
-  kosgebTekmer: ['hibe'],
+  kosgebKapasite: ['faiz'],
+  kosgebKuresel: ['faiz'],
+  kosgebDijitalDonusum: ['faiz'],
+  kosgebTekmer: ['hibe', 'kredi'],
   tb10962Atilim: ['hibe'],
   tb10962Marka: ['hibe'],
   tb10962Surdurulebilirlik: ['hibe'],
   tbEIhracat: ['hibe'],
-  yatirimTesvik: ['vergi_sgk'],
-  hit30: ['vergi_sgk'],
+  yatirimTesvik: ['vergi_sgk', 'faiz', 'hibe', 'hizmet'],
+  hit30: ['vergi_sgk', 'hibe', 'faiz', 'kredi', 'ortaklik', 'hizmet'],
   argeMerkezi: ['vergi_sgk'],
   kanun4691: ['vergi_sgk'],
-  teknogirisimRozeti: ['hizmet'],
+  teknogirisimRozeti: ['destek_degil'],
   turcorn: ['hizmet'],
   kanun5746: ['vergi_sgk'],
   vergi11257: ['vergi_sgk'],
@@ -37,17 +41,17 @@ export const FAYDALAR: Readonly<Record<string, readonly FaydaTuru[]>> = {
   iskurIep: ['hizmet'],
   bks: ['ortaklik'],
   kgf: ['kefalet'],
-  eximbank: ['kredi'],
+  eximbank: ['kredi'], // Kaynak bulunamadı. Eski eşleme kaldı.
   tkyb: ['ortaklik'],
-  ttgv: ['kredi'],
+  ttgv: ['hizmet'],
   istka: ['hibe'],
   techIstanbul: ['hizmet'],
   ekip: ['hizmet'],
   adim: ['hizmet'],
   abProgramlari: ['hibe'],
-  eic: ['hibe'],
-  turkpatent: ['destek_degil'],
-  meslekOrgutleri: ['hizmet'],
+  eic: ['hibe', 'ortaklik'],
+  turkpatent: ['hizmet'], // KOBİ ücret indirimi hizmet ya da ayni destek sayılır.
+  meslekOrgutleri: ['hizmet'], // Kaynak bulunamadı. Eski eşleme kaldı.
 }
 
 export const FAYDA_ADI: Record<FaydaTuru, string> = {

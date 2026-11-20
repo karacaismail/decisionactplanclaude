@@ -1,14 +1,15 @@
 /**
  * Destek modülünün deposu. Veri plan dosyasına yazılmaz. Modül deposunda durur.
- * Anahtarlar: "<plan>/profil" ve "<plan>/basvuru/<kimlik>".
+ * Anahtarlar: "<plan>/profil", "<plan>/basvuru/<kimlik>" ve "<plan>/belgeHavuzu".
  * Plan açık değilse profil "_plansiz" yerinde durur. Bu yer bir plana bağlı değildir.
  * Yazmalar sırayla çalışır. Her yazma son kaydı okur, değişikliği uygular ve sonra yazar.
  * Böylece arka arkaya iki değişiklik birbirini silmez. Her başvuru yazımından sonra plan özeti yeniden hesaplanır.
  */
 import { moduleStore } from '@/platform/kv'
 import { writeRollup } from '@/platform/rollups'
-import type { IsoTarih, Program } from './data/tipler'
+import type { IsoTarih, OrtakBelge, Program } from './data/tipler'
 import { basvuruDegistir, basvuruOku, ozetHesapla, type Basvuru, type BasvuruDegisikligi, type DesteksizCevap } from './motor/basvuru'
+import { havuzDegistir, havuzOku, type BelgeHavuzu, type HavuzDegisikligi } from './motor/belgeHavuzu'
 import { profilOku, type Alan, type DestekProfili, type DestekTercihi } from './motor/profil'
 import { bugunIso } from './motor/tazelik'
 
@@ -21,6 +22,7 @@ export const PLANSIZ = '_plansiz'
 const depo = () => moduleStore(MODUL_ID)
 const profilAnahtari = (yer: string) => `${yer}/profil`
 const basvuruOnEki = (planId: string) => `${planId}/basvuru/`
+const havuzAnahtari = (yer: string) => `${yer}/belgeHavuzu`
 
 let kuyruk: Promise<unknown> = Promise.resolve()
 
@@ -133,5 +135,19 @@ export function basvuruSil(planId: string, id: string): Promise<void> {
   return sirayla(async () => {
     await depo().delete(`${basvuruOnEki(planId)}${id}`)
     await ozetDene(planId)
+  })
+}
+
+/** Ortak belge havuzu. Plan açıksa planın yerinde, plan yoksa "_plansiz" yerinde durur. */
+export async function havuzYukle(yer: string): Promise<BelgeHavuzu> {
+  return havuzOku(await depo().get(havuzAnahtari(yer)))
+}
+
+/** Tek belgenin havuz kaydını yazar. Öteki belgeler depodaki son halinden okunur. Başvurular değişmez. */
+export function havuzBelgeKaydet(yer: string, belge: OrtakBelge, degisiklik: HavuzDegisikligi): Promise<BelgeHavuzu> {
+  return sirayla(async () => {
+    const sonraki = havuzDegistir(await havuzYukle(yer), belge, degisiklik)
+    await depo().set(havuzAnahtari(yer), sonraki)
+    return sonraki
   })
 }

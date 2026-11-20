@@ -166,7 +166,7 @@ function Sihirbaz({ mod, profil, bugun, odakla, cevapla, geri }: { mod: Extract<
 
 function SonucSatiri({ program, eslesme, bugun, tercih }: { program: Program; eslesme: Eslesme; bugun: string; tercih?: DestekTercihi }) {
   const durum = gecerliDurum(program, bugun)
-  const kapali = durum === 'kapandi' || durum === 'kapali'
+  const kapali = durum === 'kapandi' || durum === 'kapali' || durum === 'kaldirildi'
   return (
     <li className="dt-sonuc-satir">
       <Link className="dt-sonuc-ad" to={`/destek/${program.id}`}>{program.ad}</Link>
@@ -180,7 +180,7 @@ function SonucSatiri({ program, eslesme, bugun, tercih }: { program: Program; es
             {eslesme.denetlenenKosullar.map((k) => <li key={k}>{k}</li>)}
           </ul>
         </>
-      ) : eslesme.kuralVar && eslesme.nedenler.length ? (
+      ) : (eslesme.kuralVar || eslesme.sonuc === 'uygun_degil') && eslesme.nedenler.length ? (
         <ul className="dt-sonuc-nedenler">
           {eslesme.nedenler.map((n) => <li key={n}>{n}</li>)}
         </ul>

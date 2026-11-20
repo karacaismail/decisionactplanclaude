@@ -185,7 +185,8 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   const totalBefore = await total.innerText()
   expect(totalBefore).toContain('Bağlanan toplam para 5.000,00 TL.')
   await expect(page.locator('.support-links')).toHaveCount(0)
-  await go(page, '/destek/kosgebIsletmeGelistirme')
+  /* KOSGEB İşletme Geliştirme programı kaldırıldı. Bu yüzden test açık bir programa başvurur. */
+  await go(page, '/destek/tubitak1507')
   await activate(page, page.getByRole('main').getByRole('button', { name: 'Başvuru listeme ekle' }), hasTouch)
   await activate(page, page.getByRole('main').getByRole('button', { name: 'Hayır', exact: true }), hasTouch)
   await expect(page.getByRole('main').getByText('Program başvuru listenize eklendi.')).toBeVisible()
@@ -260,7 +261,7 @@ test('satır etiketinden proje, görev, gecikme, kanıt taslağı ve paket dosya
   expect(bundle.kind).toBe('decisionactplan-bundle')
   expect(bundle.plan.evidence.at(-1).title).toContain(`Proje: ${SIMDI}.`)
   expect(bundle.modules.proje.entries.map((e: [string, unknown]) => e[0].split('/')[0]).sort()).toEqual(['is', 'proje'])
-  expect(JSON.stringify(bundle.modules.destek)).toContain('kosgebIsletmeGelistirme')
+  expect(JSON.stringify(bundle.modules.destek)).toContain('tubitak1507')
 
   /* Plan silme onayı modül verisinin de silineceğini söyler. */
   await activate(page, page.getByRole('button', { name: `Sil: ${PLAN_NAME}` }), hasTouch)

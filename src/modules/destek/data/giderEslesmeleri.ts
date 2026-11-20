@@ -56,7 +56,6 @@ export const GIDER_ESLESMELERI: readonly GiderEslesme[] = [
   uygun('capex', 'tubitak1501', 'Proje kapsamındaki alet, teçhizat, yazılım ve yayın alımları'),
   uygun('capex', 'tubitak1507', 'Proje ekipmanı ve yazılım'),
   uygun('capex', 'tubitak1707', 'Proje ekipmanı ve yazılım'),
-  uygun('capex', 'kosgebIsKurma', 'Kuruluş giderleri'),
   uygun('capex', 'kosgebGirisimciA', 'Makine, teçhizat ve kalıp'),
   uygun('capex', 'kosgebKapasite', 'Büyüme yatırımı ve altyapı'),
   uygun('capex', 'yatirimTesvik', 'Sabit yatırım giderleri'),

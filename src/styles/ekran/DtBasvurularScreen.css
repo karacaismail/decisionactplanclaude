@@ -79,3 +79,12 @@
   min-block-size: var(--target-touch);
   font-size: var(--font-body);
 }
+
+/* Ortak belge havuzunun önerisi. Öneri satırın altında tam genişlikte durur. */
+.dt-basvurular .dt-basvuru-havuz { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-control); flex-basis: 100%; min-inline-size: 0; }
+
+.dt-basvurular .dt-basvuru-havuz p { margin: 0; font-size: var(--font-body); color: var(--color-text-secondary); }
+
+.dt-basvurular .dt-basvuru-havuz-uyari { display: flex; align-items: flex-start; gap: var(--gap-icon); flex-basis: 100%; margin: 0; padding: var(--space-2) var(--space-3); background: var(--color-status-hold-bg); border-radius: var(--radius-panel); color: var(--color-status-hold); font-size: var(--font-body); font-weight: var(--weight-strong); }
+
+.dt-basvurular .dt-basvuru-havuz-uyari .dt-cift-ikon { color: var(--color-status-hold); }

@@ -363,10 +363,122 @@ Kaynaklar 19 Kasım 2026 Perşembe günü okundu.
 
 Katalog her program çifti için kaynak arar. Kaynak yoksa “Bilinmiyor. Kuruma sorun.” yazar. Başvurular ekranı, aynı gideri yazmadan önce iki kuruma da sormanızı ister. İki başvuruda aynı gider kodu varsa ayrı bir uyarı çıkar. Gider kodu başvuru kaydında durur.
 
-Program kartı fayda türünü gösterir. Etiket, geri ödeme, para girişi ve hisse etkisini açıklar. İlk fayda türleri katalog kategorilerinden gelir. Üst sınır, bağlı olduğu faydanın altında görünür. Kişi programları fayda türüne göre süzer. Uygulama destek tutarlarını toplamaz.
+Program kartı fayda türünü gösterir. Etiket, geri ödeme, para girişi ve hisse etkisini açıklar. Fayda türleri 20 Kasım 2026 doğrulamasından gelir. Üst sınır, bağlı olduğu faydanın altında görünür. Kişi programları fayda türüne göre süzer. Uygulama destek tutarlarını toplamaz.
 
 Sözlük kısa tanımlar gösterir. İngilizce adlar aramada çalışır. Karttaki terim sözlükteki tanımı açar. KOBİ gibi terimler sayısal sınırlar için kurumun resmî tanımına yönlendirir.
 
 Program ve başvuru ekranı kurum sorularını gösterir. Kişi plan ve profil olmadan soru gruplarını açar ve kopyalar.
 
 Katalog değerlendirme süresini, ilk ödeme süresini ve ödeme biçimini ayrı tutar. Kaynaksız süre için “Süre bilinmiyor. Kuruma sorun.” yazar. Katalog tutarı, oranı, süreyi ve tarihi ayrı denetler. Kaynaklı bilgi 90 günden eskiyse “Bilinmiyor. Bilgi eski.” yazar. Bölgesel program ve destek vermeyen kayıt ayrı etiket alır.
+
+## Doğrulama sonuçlarının kataloğa işlenmesi
+
+Bu bölüm 20 Kasım 2026 Cuma günü yapılan işi anlatır. Doğrulama sonuçları `docs/moduller/dogrulama` klasöründedir.
+
+### Katalog dosyası
+
+Katalog artık JavaScript paketinde durmaz. Katalog `src/modules/destek/data/katalog.json` dosyasındadır.
+
+- Uygulama dosyayı aynı kökenden indirir. Dış ağa istek gitmez.
+- Dosya yalnız bir destek ekranı açılınca iner. İlk açılışta inmez.
+- Dosya bir kez iner. Başka destek ekranı aynı kataloğu kullanır.
+- Katalog denetim testleri aynı JSON dosyasını okur.
+- Fayda türleri `faydalar.ts` dosyasında kalır. Uygulama bu türleri indirilen kataloğa ekler.
+
+Bu değişiklikten önce toplam JavaScript 1.126.915 bayttı. Sınır 1.125.000 bayttır. Değişiklikten sonra toplam 1.115.722 bayt oldu. Sınır değişmedi. Bu sayılar sıkıştırılmış boyuttur.
+
+### Doğrulanan bilgiler
+
+46 programın 44'ü resmî kaynaklardan yeniden doğrulandı. İki programın kaynağı bulunamadı. Bu iki program Eximbank kaydı ve meslek örgütleri kaydıdır.
+
+Doğrulanan her bilgi şu dört parçayı taşır:
+
+1. değer,
+2. kaynak adresi,
+3. kaynaktaki söz,
+4. kontrol günü.
+
+Kaynaktaki söze alıntı denir. Alıntı katalog verisinde durur. Ekran alıntıyı göstermez. Resmî sözde ekranın kullanmadığı işaretler olabilir. Örneğin orta çizgi ya da noktalı virgül olabilir. Ekran her bilginin yanında kaynağın bağlantısını gösterir.
+
+Yedi değer yalnız tablo hücresinde yazıyordu. Bu değerlerde alıntı yoktur. Test bu yedi değeri tek tek sayar.
+
+Kaynağı olmayan bilgi "Bilinmiyor" kalır. Uygulama hesapla bulunan tutarı yazmaz. Örneğin 1507 programının eski kaydı 2.625.000 TL yazıyordu. Kaynak bu tutarı yazmıyor. Bu yüzden tutar katalogdan çıktı. Ekran kaynaktaki bütçe sınırını ve oranı ayrı yazar.
+
+İkincil kaynaktan gelen değer "İkincil kaynak" etiketi alır. Bu doğrulamada ikincil kaynaktan değer alınmadı.
+
+### Son kontrol günü
+
+Doğrulanan programın kartında "Son kontrol: 20 Kasım 2026 Cuma" yazar. Doğrulanmayan program 12 Ağustos 2026 Çarşamba gününü korur. Bu programın kartında "Eski bilgi" yazar.
+
+Koşul, gider ve belge metinleri alan alan doğrulanmadı. Bu metinler 12 Ağustos 2026 gününü korur. Bu metinlerde sayı varsa ekran "Bilinmiyor. Bilgi eski." yazar. Program ekranı bunu ayrı bir notla da söyler.
+
+### Program durumu
+
+Durum bugünün tarihiyle hesaplanır. Bütün son günleri geçen çağrı "Kapandı" olur. Örneğin 1501, 1711 ve Eurostars çağrıları kapandı.
+
+KOSGEB İşletme Geliştirme programını kaldırdı. Bu program "Kaldırıldı" olur. Program ekranında "Program kaldırıldı" bölümü görünür. Kişi bu programı başvuru listesine ekleyemez. Eşleşme bu programı her zaman "Uygun değil" yapar. Gider rehberi bu programı göstermez.
+
+KOSGEB, TEKMER programını da kaldırdı. Yerine Teknoloji Merkezi Destek Programı geldi. Katalog kaydın adını ve kaynağını değiştirdi. Kaydın kimliği aynı kaldı. Böylece eski başvurular kaybolmaz. Bu programa işletme doğrudan başvuramaz. Başvuruyu merkezi işleten kuruluş yapar.
+
+Doğrulama başka metinleri de düzeltti:
+
+- 1501 programına yalnız KOBİ ölçeğindeki şirket başvurabilir. Eşleşme kuralı da bunu denetler.
+- KOSGEB İş Kurma Desteği artık kuruluş giderini ödemez. Destek platform giderini ve performansı öder.
+- İstanbul Kalkınma Ajansının açık çağrısına şirketler başvuramaz.
+- Türkiye Teknoloji Geliştirme Vakfı artık hizmet desteği verir.
+- Türk Patent ilk patent başvurusunda KOBİ için ücret indirimi uygular.
+
+### Fayda türleri ve etiketler
+
+Fayda türleri doğrulama sonucuna göre güncellendi. Türk Patent ücret indirimi "Hizmet ya da ayni destek" türüne girer. Teknogirişim Rozeti para desteği değildir. Bu kayıt "Destek değil" olur.
+
+Bölgesel programlar "Yalnız belli il veya bölge" etiketi alır. Etiket ili de yazar. Örneğin İstanbul Kalkınma Ajansı bu etiketi alır. Tek kuruma bağlı programlar "Tek kuruma bağlı özel program" etiketi alır. Örneğin Tech Istanbul bu etiketi alır.
+
+### Süre ve ödeme biçimi
+
+Resmî kaynak süreyi yazıyorsa katalog süreyi kaydeder. Süre kaydı sürenin hangi olayla başladığını da yazar. Yedi programda değerlendirme süresi bulundu. Hiçbir programda ilk ödeme süresi bulunamadı. Kaynak yoksa ekran "Süre bilinmiyor. Kuruma sorun." yazar.
+
+Ödeme biçimi kaynaktaki sözle yazılır. Örneğin "Harcama sonrası" ya da "Mahsup" yazar.
+
+### Birlikte kullanma
+
+Katalog yalnız resmî alıntısı olan çifti kural yapar. On bir çiftin resmî alıntısı vardır. Öteki çiftlerde "Bilinmiyor. Kuruma sorun." yazar.
+
+5746 sayılı Kanun ile 4691 sayılı Kanun geçici 2. madde "Birlikte kullanılamaz" olur. Dayanak 5746 sayılı Kanunun 3. maddesinin 5. fıkrasıdır. Kanun bu yasağın yalnız aynı iş için mi geçerli olduğunu söylemiyor. Bu soruyu kuruma sorun.
+
+Katalog alıntısız kuralı denetimde reddeder.
+
+### Belge havuzu
+
+Belge ve kanıt listesi artık bir belge havuzudur. Kişi elinde hazır olan belgeyi bir kez işaretler.
+
+- Havuz destek deposunda durur. Plan açıksa plan anahtarıyla durur. Plan yoksa plansız anahtarla durur.
+- Havuz plan dosyasına yazılmaz.
+- Havuzdaki işaret başvurulara kendiliğinden geçmez.
+- Başvuru ekranında havuzdaki belgenin yanında "Bu belgeyi kullanacağım" düğmesi çıkar. Kişi her başvuruda düğmeye ayrı basar.
+- Bazı belgelerin geçerlilik tarihi vardır. Kişi bu tarihi kendisi yazar. Tarih yoksa ekran tarihi ister. Tarih geçince ekran uyarı verir.
+- Uygulama kaynaksız gün sınırı koymaz.
+- Dışa aktarma havuzu taşır. İçe alma havuzu geri getirir.
+
+Her ortak belge şu bilgileri taşır:
+
+- kimlik, ad ve açıklama,
+- aşama, yani başvuru, ödeme ya da izleme,
+- belgenin kuruluştan sonra alınıp alınmadığı,
+- belgenin süreli olup olmadığı.
+
+### Tercih süzgeci
+
+Tercih süzgeci artık fayda türüne bakar. Eski süzgeç programın kategorisine bakıyordu.
+
+Programın bütün faydaları istenmeyen türdeyse program tercihe uymaz. Örneğin kredi istemeyen kişi için yalnız kredi veren program uymaz. Hibe de veren program uyar. Faiz desteği bir krediye bağlıdır. Bu yüzden kredi istemeyen kişiye uymaz. Kefalet ayrı bir türdür. Süzgeç sonucu değiştirmez. Süzgeç yalnız sırayı değiştirir.
+
+### Ürün sahibinin karar vermesi gereken konular
+
+1. Meslek örgütleri kaydının kaynağı yok. Bu kaydı tutmaya ya da kaldırmaya karar verin.
+2. Eximbank kaydının adı Eximbank listesinde yok. Kaydın adına karar verin.
+3. EIC ve Eurostars tavanları Avro ile yazılı. Katalogda para birimi alanı yok. Bu alanı eklemeye karar verin.
+4. TEKMER kaydını iki kayda bölmeye karar verin. Doğrulama bu bölmeyi öneriyor.
+5. 5746 ile 4691 yasağının kapsamına karar verin. Yasak yalnız aynı iş için mi geçerli, kanun bunu söylemiyor.
+6. Programlara ortak belge kimliği bağlanmadı. Bu bağı kurmaya karar verin.
+

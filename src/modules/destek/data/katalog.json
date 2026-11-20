@@ -1,0 +1,4160 @@
+[
+  {
+    "id": "tubitak1501",
+    "ad": "1501 Sanayi Ar-Ge Destek Programı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, Türkiye'deki sermaye şirketlerinin Ar-Ge projelerine hibe verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Proje başına TÜBİTAK katkısı en çok 20.000.000 TL olur.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "* Proje başına TÜBİTAK katkısı 20 milyon TL ile sınırlandırılmıştır."
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 20000000,
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "* Proje başına TÜBİTAK katkısı 20 milyon TL ile sınırlandırılmıştır."
+      },
+      "tavanTuru": "hibe_tavani",
+      "oran": {
+        "state": "kaynakli",
+        "value": "İlk 5 projede oran %75 olur. Altıncı projeden sonra oran %60 olur.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Destek oranı %75 ve hibe destek tutarı en fazla 20 Milyon TL*"
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kuruluş ön kaydının son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-22",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Kuruluş Bazlı Ön Kayıt Başvurusu Son Tarihi1, 2 22.10.2026 (Saat 23.59 )"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Çağrının kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-26",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrı Kapanış Tarihi3 26.10.2026 (Saat 23:59)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Sistem hatasında dilekçenin son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-02",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "02.11.2026 mesai bitimine kadar Başkanlığımıza dilekçe iletilmesi gerekmektedir."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Türkiye'de yerleşik ve KOBİ ölçeğinde bir sermaye şirketi olmalı.",
+      "KOBİ'lerde ilk beş projenin destek oranı %75'tir. Altıncı projeden sonra oran %60'tır.",
+      "1 Ocak 2020'den sonra sözleşmesi imzalanan projeler ilk beş projeye sayılır.",
+      "Proje en çok 24 ay sürer. Ticarileşme gerekirse süre bir kez uzatılabilir. Toplam süre 36 ayı geçemez.",
+      "Bir kuruluş en çok 2 proje önerebilir. Aynı anda açılan 1507 çağrısı da bu sınıra dahildir.",
+      "Proje, çözülmesi gereken bilimsel ya da teknolojik belirsizliği yazmalıdır. Denenen yollar ve başarısızlık riski de yazılmalıdır."
+    ],
+    "uygunGider": [
+      "Ar-Ge personelinin aylık giderleri",
+      "Proje kapsamındaki alet, teçhizat, yazılım ve yayın alımları",
+      "Ar-Ge için hizmet ve danışmanlık alımı. Bu gider sınırlıdır.",
+      "Ar-Ge için test, analiz ve altyapı hizmetleri"
+    ],
+    "haricGider": [
+      "Satış, pazarlama, çağrı merkezi ve genel yönetim personeli",
+      "Seri üretim ve olağan yazılım bakımı giderleri",
+      "Başvurudan önce büyük ölçüde bitmiş geliştirme"
+    ],
+    "belgeler": [
+      "Kuruluş ön kaydı ve etkin elektronik imza",
+      "KOBİ beyannamesi",
+      "Ar-Ge personelinin kişi, ay ve proje listesi",
+      "Teknik belirsizliğin ve iş paketlerinin tanımı",
+      "Proforma faturalar",
+      "Fikri haklar planı",
+      "1 Ocak 2020'den sonra desteklenen projelerin listesi"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi. Önce kuruluş ön kaydı ve elektronik imza gerekir.",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+      "ad": "TÜBİTAK 1501 program sayfası ve 2026/2 çağrı duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "tubitak1507",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "1507 çağrısı için 1 başvuru, 1501 çağrısı için 1 başvuru veya sadece 1507 çağrısı için 2 başvuru, 1501 çağrısı için 2 başvuru yapabilir."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Firma altı ayda bir gider raporu verir. TÜBİTAK sonra öder.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Firma projeyi yürütür ve altışar aylık dönemlerde proje giderlerini ve proje faaliyetlerini içeren dönem raporunu (Ar-Ge Yardımı İstek Formu) TÜBİTAK’a sunar."
+    }
+  },
+  {
+    "id": "tubitak1507",
+    "ad": "1507 KOBİ Ar-Ge Başlangıç Destek Programı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, KOBİ olan sermaye şirketlerinin Ar-Ge başlangıç projelerine hibe verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Proje bütçesi en çok 3.500.000 TL olur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "asOf": "2026-11-20",
+        "alinti": "Proje bütçesi en fazla 3.500.000 TL’dir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Destek oranı %75 olur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "asOf": "2026-11-20",
+        "alinti": "Programın destek oranı % 75 olarak uygulanır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kuruluş ön kaydının son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-23",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Kuruluş Bazlı Ön Kayıt Son Tarihi1 23.11.2026 (Saat 23:59)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Çağrının kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-25",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrı Kapanış Tarihi2 25.11.2026 (Saat 23:59)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Sistem hatasında dilekçenin son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-02",
+          "sourceUrl": "https://tubitak.gov.tr/tr/duyuru/1507-kobi-ar-ge-baslangic-destek-programi-ve-1707-siparise-dayali-ar-ge-projeleri-icin-kobi-destekleme-programi-2026-yili-cagrilarinin-suresi-uzatildi",
+          "asOf": "2026-11-20",
+          "alinti": "1507 Programı için en geç 2 Aralık 2026"
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "KOBİ olan bir sermaye şirketi olmalı.",
+      "Proje en çok 18 ay sürer.",
+      "Bir kuruluş 1501 ile birlikte en çok 2 proje önerebilir.",
+      "Aynı Ar-Ge işi hem 1501'e hem 1507'ye yazılamaz."
+    ],
+    "uygunGider": [
+      "Ar-Ge personelinin aylık giderleri",
+      "Proje ekipmanı ve yazılım",
+      "Ar-Ge hizmet alımı"
+    ],
+    "haricGider": [
+      "Pazarlama ve satış giderleri",
+      "1501'e yazılmış aynı iş"
+    ],
+    "belgeler": [
+      "Kuruluş ön kaydı ve elektronik imza",
+      "KOBİ beyannamesi",
+      "Dar kapsamlı iş paketi tanımı",
+      "Bütçenin kalem kalem dağılımı"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+      "ad": "TÜBİTAK 1507 program sayfası ve 2026/2 çağrı duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "tubitak1501",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "1507 çağrısı için 1 başvuru, 1501 çağrısı için 1 başvuru veya sadece 1507 çağrısı için 2 başvuru, 1501 çağrısı için 2 başvuru yapabilir."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Firma altı ayda bir gider raporu verir. TÜBİTAK sonra öder.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Firma projeyi yürütür ve altışar aylık dönemlerde proje giderlerini ve proje faaliyetlerini içeren dönem raporunu (Ar-Ge Yardımı İstek Formu) TÜBİTAK’a sunar."
+    }
+  },
+  {
+    "id": "tubitak1707",
+    "ad": "1707 Siparişe Dayalı Ar-Ge Projeleri için KOBİ Destekleme Çağrısı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, bir müşterinin siparişiyle KOBİ'nin yaptığı Ar-Ge projesine hibe verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Proje bütçesi en çok 10.000.000 TL olur.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Başvurulan projelerin bütçesi en fazla 10.000.000 TL ( on milyon Türk Lirası) olacaktır."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "TÜBİTAK kabul ettiği harcamanın %40 kadarını tedarikçiye öder. Müşteriye de kendi harcamasının %40 kadarını öder.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "“ Kabul Edilen Harcama Tutarının” %40’ını Tedarikçi Kuruluşa hibe destek olarak verecektir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Çağrının açıldığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-01",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "01 Eylül 2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Kuruluş ön kaydının son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-25",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Kuruluş Bazlı Ön Kayıt son tarihi 2, 3 25 Kasım 2026"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Çağrının kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-27",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrı kapanış tarihi4 27 Kasım 2026"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Sistem hatasında dilekçenin son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-04",
+          "sourceUrl": "https://tubitak.gov.tr/tr/duyuru/1507-kobi-ar-ge-baslangic-destek-programi-ve-1707-siparise-dayali-ar-ge-projeleri-icin-kobi-destekleme-programi-2026-yili-cagrilarinin-suresi-uzatildi",
+          "asOf": "2026-11-20",
+          "alinti": "1707 Programı için en geç 4 Aralık 2026 mesai bitimine kadar"
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Proje bütçesini üç taraf paylaşır. Müşteri kuruluş en az %40, TÜBİTAK %40, tedarikçi %20 öder.",
+      "Müşteri, bütçenin en az %40'ını kendi parasıyla ödeyeceğine söz verir.",
+      "Proje 24 ay sürer."
+    ],
+    "uygunGider": [
+      "Müşteri için yapılan Ar-Ge işinin personel giderleri",
+      "Proje ekipmanı ve yazılım",
+      "Ar-Ge hizmet alımı"
+    ],
+    "haricGider": [
+      "Standart ürün geliştirme",
+      "Satış ve pazarlama"
+    ],
+    "belgeler": [
+      "Şirketle bağı olmayan müşterinin imzalı niyet mektubu",
+      "Şirketle bağı olan tarafların listesi",
+      "Fikri hak paylaşım sözleşmesi",
+      "İş paketleri ve bütçe"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1707-siparise-dayali-ar-ge-projeleri-icin-kobi-destekleme-cagrisi",
+      "ad": "TÜBİTAK 1707 program sayfası ve 2026 üçüncü çağrı duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Müşteri önce giderin en az %40 kadarını tedarikçiye öder. TÜBİTAK sonra öder.",
+      "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "TÜBİTAK, Tedarikçi Kuruluş için Kabul Edilen Harcama Tutarının %40'ını Tedarikçi Kuruluşa öder."
+    }
+  },
+  {
+    "id": "tubitak1711",
+    "ad": "1711 Yapay Zekâ Ekosistem Çağrısı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, dört taraflı yapay zekâ projelerine hibe verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Proje bütçesi en çok 10.000.000 TL olur. Genel gider, ikramiye ve kurum hissesi bu tutara girmez.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "en fazla 10.000.000 TL (on milyon Türk Lirası) olacaktır."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Müşteri KOBİ ise TÜBİTAK teknoloji sağlayıcının kabul edilen harcamasının %70 kadarını öder. Müşteri büyük ise oran %60 olur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "asOf": "2026-11-20",
+        "alinti": "TÜBİTAK giderleri değerlendirdikten sonra “kabul edilen harcama tutarının” %70’ini Teknoloji Sağlayıcı Kuruluş(lar)a hibe destek olarak vermektedir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Çağrının açıldığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-06-15",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrının açılış tarihi 15 Haziran 2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Kuruluş ön kaydının son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-28",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "28 Eylül 2026, saat: 23:59"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Çağrının kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-02",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrı kapanış tarihi 5 2 Ekim 2026, saat 23:59"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Projede dört taraf olur. Bunlar müşteri kuruluş, en az bir KOBİ teknoloji sağlayıcı, üniversite ya da kamu araştırma merkezi ve yapay zekâ enstitüsüdür.",
+      "Niyet beyanları, işbirliği sözleşmesi ve fikri hak sözleşmesi zorunludur.",
+      "Çağrının öncelikli alanları akıllı üretim, akıllı tarım ve gıda, finans teknolojileri, iklim ve sürdürülebilirlik ile akıllı eğitimdir.",
+      "Proje 24 ay sürer."
+    ],
+    "uygunGider": [
+      "Yapay zekâ Ar-Ge personelinin aylık giderleri",
+      "Model geliştirme ve veri altyapısı"
+    ],
+    "haricGider": [
+      "Öncelikli alanların dışındaki geliştirme işleri"
+    ],
+    "belgeler": [
+      "Dört taraflı ortaklık sözleşmesi",
+      "Niyet beyanları",
+      "Fikri hak sözleşmesi",
+      "Projenin öncelikli alana neden uyduğunu anlatan yazı"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/sites/default/files/2026-06/1711_Yapay_Zeka_Ekosistem_Cagrisi_2026_Cagri_Metni_0.pdf",
+      "ad": "TÜBİTAK 1711 2026 çağrı metni",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. TÜBİTAK dönem raporundaki giderleri inceler. Sonra öder.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+      "asOf": "2026-11-20",
+      "alinti": "TÜBİTAK giderleri değerlendirdikten sonra “kabul edilen harcama tutarının” %70’ini Teknoloji Sağlayıcı Kuruluş(lar)a hibe destek olarak vermektedir."
+    }
+  },
+  {
+    "id": "tubitak1505",
+    "ad": "1505 Üniversite-Sanayi İşbirliği Destek Programı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, üniversitenin bir şirket için yürüttüğü Ar-Ge projelerine hibe verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "TÜBİTAK proje bütçesinin en çok 2.300.000 TL kadarını karşılar.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2024-03/teydeb_destek_programlari_ve_cagrilari_ust_limitleri%20%282%29.xlsx",
+        "asOf": "2026-11-20",
+        "alinti": "PROJE BÜTÇESİNİN TÜBİTAK TARAFINDAN KARŞILANACAK KISMI:2.300.000 TL"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 2300000,
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2024-03/teydeb_destek_programlari_ve_cagrilari_ust_limitleri%20%282%29.xlsx",
+        "asOf": "2026-11-20",
+        "alinti": "PROJE BÜTÇESİNİN TÜBİTAK TARAFINDAN KARŞILANACAK KISMI:2.300.000 TL"
+      },
+      "tavanTuru": "hibe_tavani",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Müşteri KOBİ ise TÜBİTAK %75, müşteri %25 öder. Müşteri büyük ise TÜBİTAK %60, müşteri %40 öder.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-04/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "destek kapsamına alınan proje bütçesinin %75'i TÜBİTAK, kalan %25'i müşteri kuruluş tarafından karşılanır."
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Müşteri kuruluş KOBİ ise bütçenin %75'ini TÜBİTAK, %25'ini müşteri öder. Müşteri büyük ölçekliyse TÜBİTAK %60, müşteri %40 öder.",
+      "Oran, müşterinin başvuru günündeki büyüklüğüne göre belirlenir. Oran proje boyunca değişmez.",
+      "Proje en çok 24 ay sürer.",
+      "Projeyi bir üniversite ya da araştırma merkezi yürütür."
+    ],
+    "uygunGider": [
+      "Üniversitenin yürüttüğü Ar-Ge giderleri"
+    ],
+    "haricGider": [
+      "1501'e yazılmış aynı giderler"
+    ],
+    "belgeler": [
+      "Üniversitenin ya da araştırma kuruluşunun niyet beyanı",
+      "Proje önerisi",
+      "Güncel çağrı ve bütçe üst sınırı duyurusu"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/sites/default/files/2026-03/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+      "ad": "TÜBİTAK 1505 Uygulama Esasları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-04/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-04/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Dönemlik taksit. Müşteri ve TÜBİTAK parayı üniversitenin proje hesabına yatırır.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1505-universite-sanayi-isbirligi-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "proje başlangıç tarihinden başlayacak şekilde tanımlanan 6’şar aylık dönemlerdeki proje giderlerine orantılı olarak ve taksitler halinde yapılacaktır."
+    }
+  },
+  {
+    "id": "tubitak1702",
+    "ad": "1702 Patent Tabanlı Teknoloji Transferi Destekleme Çağrısı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, lisansla alınan patenti ürüne çeviren projelere hibe verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Proje bütçesi en çok 4.000.000 TL olur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "asOf": "2026-11-20",
+        "alinti": "Proje bütçesi üst sınırı 4.000.000 TL’dir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Oranın üst sınırı KOBİ için %75, büyük şirket için %60 olur. Patent alımında oran %25 ile başlar ve koşullara göre artar.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "asOf": "2026-11-20",
+        "alinti": "Destek oranı üst sınırı büyük ölçekli Müşteri Kuruluşlar için %60, KOBİ ölçeğindeki Müşteri Kuruluşlar için %75’tir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Sürekli başvurunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2022-10-10",
+          "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+          "asOf": "2026-11-20",
+          "alinti": "10 Ekim 2022 tarihinden itibaren TÜBİTAK tarafından ayrıca bir duyuru yapılana kadar Çağrı sürekli başvuruya açıktır."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Patent üniversiteden, araştırma kurumundan ya da teknoloji geliştirme bölgesinden gelmelidir. Patent lisansla ya da devirle alınır.",
+      "Müşteri kuruluş KOBİ ise destek oranı %75'tir.",
+      "Proje en çok 60 ay sürer."
+    ],
+    "uygunGider": [
+      "Patenti ürüne çevirmek için yapılan Ar-Ge giderleri"
+    ],
+    "haricGider": [
+      "Patentle ilgisiz geliştirme"
+    ],
+    "belgeler": [
+      "Patent lisans veya devir sözleşmesi",
+      "Teknoloji transfer ofisiyle yapılan görüşmenin kaydı"
+    ],
+    "kanal": "TÜBİTAK proje başvuru sistemi",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+      "ad": "TÜBİTAK 1702 program sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "tubitak1509",
+    "ad": "1509 Uluslararası Sanayi Ar-Ge Projeleri Destekleme Programı",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, yabancı ortaklı Ar-Ge projelerinde Türk ortağa hibe verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Tek ortaklı projede bütçe en çok 25.000.000 TL olur. Ortaklı projede bütçe en çok 80.000.000 TL olur. Her ortak en çok 25.000.000 TL ile başvurur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20",
+        "alinti": "tek ortaklı projelerde 25 M TL, ortaklı projelerde 80 M TL (Her ortak en fazla 25 M TL bütçe limiti ile başvuru yapabilir)"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "İlk 5 projede KOBİ için %75, büyük şirket için %60 olur. Sonraki projelerde KOBİ için %60, büyük şirket için %40 olur.",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20",
+        "alinti": "KOBİ destek oranı %75, Büyük Ölçekli Firma destek oranı %60*"
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Uluslararası bir çağrı, yabancı bir ortak ve ortaklık sözleşmesi gerekir.",
+      "Değerlendirme iki aşamalıdır ve uzun sürer."
+    ],
+    "uygunGider": [
+      "Uluslararası projenin Ar-Ge giderleri"
+    ],
+    "haricGider": [
+      "Yalnız Türkiye pazarı için yapılan geliştirme"
+    ],
+    "belgeler": [
+      "Yabancı ortak niyet beyanı",
+      "Ortaklık sözleşmesi taslağı",
+      "İngilizce teknik dosya"
+    ],
+    "kanal": "TÜBİTAK uluslararası programlar başvuru süreci",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+      "ad": "TÜBİTAK 1509 program sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Firma altı ayda bir gider formu verir. İzleyici inceler, sonra ödeme olur.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Desteklenmeye hak kazanan projeler için altı aylık dönemler halinde PRODİS üzerindeki Ar-Ge Yardım İstek Formu doldurularak elektronik ortamda Başkanlığımıza sunulur."
+    }
+  },
+  {
+    "id": "eureka1709",
+    "ad": "1709 EUREKA ve Eurostars-3",
+    "kurum": "TÜBİTAK",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "TÜBİTAK, yabancı KOBİ ortaklı projelerde Türk ortağın Ar-Ge giderini öder.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Türk ortağın proje bütçesi en çok 600.000 Avro olur. Türk kuruluşlar ortaklı başvurursa bütçe en çok 850.000 Avro olur.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İlgili çağrıya başvuru yapacak projeler için (Türk proje ortakların) proje bütçesi 600.000 Avroyu geçemez."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "KOBİ için %75, büyük şirket için %60 olur. Kamu kurumu ve üniversite için %100 olur.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Çağrı kapsamında uygulanacak destek oranı büyük ölçekli kuruluşlar için %60, KOBİ ölçeğindeki kuruluşlar için %75"
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Uluslararası başvurunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-10",
+          "sourceUrl": "https://tubitak.gov.tr/tr/duyuru/1709-eureka-eurostars-2026-yili-2-cagrisi-acildi",
+          "asOf": "2026-11-20",
+          "alinti": "Uluslararası çağrı için son başvuru tarihi: 10 Eylül 2026 (14:00, CEST)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Kuruluş ön kaydının son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-21",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Kuruluş bazlı ön kayıt için son tarih* 21 Eylül 2026 (23:59 Türkiye saati)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Ulusal ön başvurunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-24",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Ön Proje Başvuruları için son tarih** 24 Eylül 2026 (23:59 Türkiye Saati)"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Kabul alan projelerin ikinci aşama başvurusunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-01-08",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "08 Ocak 2027 – 10 Mayıs 2027"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Kabul alan projelerin ikinci aşama başvurusunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-05-10",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "08 Ocak 2027 – 10 Mayıs 2027"
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Yabancı bir KOBİ ortak gerekir.",
+      "Ortaklık sözleşmesi ve İngilizce teknik dosya gerekir."
+    ],
+    "uygunGider": [
+      "Türk ortağın Ar-Ge giderleri"
+    ],
+    "haricGider": [
+      "Ortaklığın dışındaki işler"
+    ],
+    "belgeler": [
+      "Yabancı ortak niyet beyanı",
+      "Ortaklık sözleşmesi taslağı"
+    ],
+    "kanal": "TÜBİTAK uluslararası programlar başvuru süreci",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/en/announcement/1709-eureka-eurostars-20262-call-open-application",
+      "ad": "TÜBİTAK 1709 Eurostars 2026/2 çağrı duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Uluslararası sonuçlar 26 Kasım 2026 ile 10 Aralık 2026 arasında duyurulur. Süre şu olayla başlar: Uluslararası başvurunun 10 Eylül 2026 Perşembe günü kapanması.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "26 Kasım – 10 Aralık 2026"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "bigg1812",
+    "ad": "1812 Yatırım Tabanlı Girişimcilik (BiGG Yatırım)",
+    "kurum": "TÜBİTAK",
+    "kategori": "ozsermaye",
+    "destekTuru": "Ortaklık yatırımı. Yatırımcı para verir ve şirketten pay alır.",
+    "ozet": "Bu programda erken aşamadaki girişime pay karşılığında para yatırılır.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "TÜBİTAK BİGG Fonu şirketin %3 payı karşılığında 1.350.000 TL yatırır. Şirket sonra en çok 1.350.000 TL devam yatırımı isteyebilir.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "kuruluşun %3 payı karşılığında TÜBİTAK BİGG Fonu kuruluşa 1.350.000 TL yatırım yapacaktır."
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 1350000,
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "kuruluşun %3 payı karşılığında TÜBİTAK BİGG Fonu kuruluşa 1.350.000 TL yatırım yapacaktır."
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [
+      {
+        "ad": "Tohum öncesi başvurunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-30",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "31 Ağustos 2026 –30 Eylül 2026"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Şirket kurulumu ve sözleşmenin son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Şirket kurulumu ve sözleşme imzalanması için son tarih 31 Aralık 2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Destek başlangıç günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-01-01",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Destek başlangıç tarihi 1 Ocak 2027"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "BİGG+ tohum yatırım çağrısının kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-20",
+          "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-10/2026_1_BIGG_Tohum_Yatirim_Cagri_Duyuru_Metni.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Çağrı kapanış tarihi3 20.11.2026"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Erken aşamadaki girişim, programı yürüten kuruluş üzerinden başvurur.",
+      "Yatırım karşılığında şirketin ortaklık yapısı değişir."
+    ],
+    "uygunGider": [
+      "Genel işletme giderleri"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Başvuru dosyası"
+    ],
+    "kanal": "TÜBİTAK uygulayıcı kuruluş süreci",
+    "kaynak": {
+      "url": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1812-yatirim-tabanli-girisimcilik-destek-programi-bigg-yatirim",
+      "ad": "TÜBİTAK 1812 program sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Değerlendirme 12 Ekim 2026 ile 4 Aralık 2026 arasında yapılır. Süre şu olayla başlar: Başvuruların 30 Eylül 2026 Çarşamba günü kapanması.",
+        "sourceUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "12 Ekim 2026 – 4 Aralık 2026"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1812-yatirim-tabanli-girisimcilik-destek-programi-bigg-yatirim",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Ortaklık yatırımı. Fon pay alır ya da paya dönüşen borç verir.",
+      "sourceUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1812-yatirim-tabanli-girisimcilik-destek-programi-bigg-yatirim",
+      "asOf": "2026-11-20",
+      "alinti": "Fonun yapacağı yatırım, hisse ortaklığı, hisseye dönüştürülebilir borç veya bunların her ikisinden oluşabilir."
+    }
+  },
+  {
+    "id": "kosgebIsKurma",
+    "ad": "KOSGEB Girişimci Destek Programı, İş Kurma Desteği",
+    "kurum": "KOSGEB",
+    "kategori": "hibe",
+    "destekTuru": "Hibe. Platform giderleri desteği ve performans desteği olarak verilir.",
+    "ozet": "KOSGEB, yeni işletmenin platform giderlerine ve performansına hibe verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Sabit TL tavanı yok. Performans desteği 8 brüt asgari ücret kadardır. Platform desteği kayıt ücreti kadardır.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "mükellefiyetinin devam etmesi şartıyla 8 brüt asgari ücret kadar geri ödemesiz destek sağlanır."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Destek oranı yüzde 100 olur. Destek geri ödenmez.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "(2) İş kurma desteği kapsamında destek oranı %100 olarak uygulanır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "16 Aralık 2024 ve sonrasında kurulan işletmelerin bir yıl şartı olmadan başvurabileceği son gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/1231/girisimci-destek-programi",
+          "asOf": "2026-11-20",
+          "alinti": "“kuruluş tarihinden itibaren 1 yıl içinde başvuru yapma” şartı aranmaksızın 31.12.2026 tarihine kadar iş kurma desteğine başvurabilirler."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Girişimci son üç yılda şahıs işletmesi sahibi olmamalı. Başka bir şirkette belli bir oranın üzerinde payı da olmamalı.",
+      "Girişimci, girişimcilik eğitimini bitirmiş olmalı.",
+      "İşletmenin yaşı ve iş kolu için ayrıca koşullar vardır.",
+      "Performans desteği yalnız girişimcisi genç, kadın, engelli, gazi ya da birinci derece şehit yakını olan işletmelere verilir."
+    ],
+    "uygunGider": [
+      "Platform giderleri"
+    ],
+    "haricGider": [
+      "Kuruluş giderleri. Yeni yönergede bu destek yok."
+    ],
+    "belgeler": [
+      "Girişimcilik eğitim belgesi",
+      "Ticaret Sicil Gazetesi",
+      "Ortaklık yapısını gösteren belge"
+    ],
+    "kanal": "KOSGEB veri tabanı ve çağrı başvurusu",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/1231/girisimci-destek-program",
+      "ad": "KOSGEB Girişimci Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kosgebGirisimciB",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. İşletme ödeme talebini belgeleriyle sistemden yapar.",
+      "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+      "asOf": "2026-11-20",
+      "alinti": "İş kurma desteği kapsamında işletme, uygun bulunan desteklerle ilgili işlemleri tamamlayarak Ödeme Talep Formu ve Ödeme Belgeleri Tablosunda yer alan belgeler"
+    }
+  },
+  {
+    "id": "kosgebGirisimciA",
+    "ad": "KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği",
+    "kurum": "KOSGEB",
+    "kategori": "geri_odemeli",
+    "destekTuru": "Geri ödemeli destek. Faiz ve komisyon yoktur.",
+    "ozet": "KOSGEB, genç işletmelerin iş geliştirme projelerine geri ödemeli destek verir.",
+    "durum": "cagri_bekleniyor",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "En çok 2.250.000 TL geri ödemeli destek. Öncelikli gruplarda 250.000 TL eklenir.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İş geliştirme desteği kapsamında toplamda 2.250.000.-TL’ye kadar geri ödemeli"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 2250000,
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İş geliştirme desteği kapsamında toplamda 2.250.000.-TL’ye kadar geri ödemeli"
+      },
+      "tavanTuru": "kredi_anaparasi",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Destek oranı yüzde 80 olur.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "(2) İş geliştirme desteği kapsamında destek oranı %80 olarak uygulanır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "2026 yılı 3. dönem başvurusunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-12",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+          "asOf": "2026-11-20",
+          "alinti": "Girişimci Destek Programı İş Geliştirme Desteği 2026 yılı 3. dönem başvuruları, 12 Ekim-31 Ekim 2026 tarihleri arasında alınacak."
+        },
+        "kritik": false
+      },
+      {
+        "ad": "2026 yılı 3. dönem başvurusunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-31",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+          "asOf": "2026-11-20",
+          "alinti": "Girişimci Destek Programı İş Geliştirme Desteği 2026 yılı 3. dönem başvuruları, 12 Ekim-31 Ekim 2026 tarihleri arasında alınacak."
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "İşletmenin NACE kodu 61, 62, 63, 72 ya da bir imalat kodu olmalı.",
+      "İşletme en çok 3 yaşında olmalı.",
+      "Girişimcinin payı ya da yetkisi en az %50 olmalı. Bu oran program boyunca düşmemeli.",
+      "Para, programın 36 aylık süresi bitince geri ödenir.",
+      "Bu destek, faiz ve kâr payı desteğiyle aynı anda kullanılamaz."
+    ],
+    "uygunGider": [
+      "Personel",
+      "Makine, teçhizat ve kalıp",
+      "Yazılım",
+      "Eğitim, danışmanlık ve rehberlik",
+      "Belgelendirme ve test",
+      "Pazarlama ve tasarım",
+      "Fikri mülkiyet"
+    ],
+    "haricGider": [
+      "Aynı personelin Ar-Ge hibesine yazılmış ayları",
+      "Aynı faturanın başka programda kullanılan kısmı"
+    ],
+    "belgeler": [
+      "Ticaret Sicil Gazetesi",
+      "Pay defteri",
+      "KOBİ beyannamesi",
+      "KOSGEB veri tabanı kaydı",
+      "Proje bütçesi"
+    ],
+    "kanal": "KOSGEB veri tabanı üzerinden çağrı başvurusu",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/1231/girisimci-destek-program",
+      "ad": "KOSGEB Girişimci Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciB",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci iş geliştirme desteği ile iş geliştirme faiz/kar payı desteğinin sadece birinden yararlanabilir."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kosgebIsKurma",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kgf",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/dogrudan-krediler/kosgeb-geri-odemeli-destekleri",
+          "asOf": "2026-11-20",
+          "alinti": "KOSGEB Destek Programları kapsamında verilen destekler için KOBİ’ler lehine KGF A.Ş. tarafından doğrudan kefalet sağlanmaktadır."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Kurul karar formu evrak kaydına alınır. Sonuç 15 gün içinde işletmeye bildirilir. Süre şu olayla başlar: Kurul Karar Formunun evrak kaydına alınması.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "evrak kaydına alınır ve değerlendirme sonuçları 15 gün içerisinde işletmeye sistem üzerinden bildirilir."
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Gider ödenir, sonra ödeme talep edilir. Para geri ödenir.",
+      "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+      "asOf": "2026-11-20",
+      "alinti": "vadeli işlemler dâhil olmak üzere ödemenin ya da katkı payının ödemesinin tamamlanmış olması gerekir."
+    }
+  },
+  {
+    "id": "kosgebGirisimciB",
+    "ad": "KOSGEB Girişimci Destek Programı, Faiz ve Kâr Payı Desteği",
+    "kurum": "KOSGEB",
+    "kategori": "kredi",
+    "destekTuru": "Kredi ile faiz ya da kâr payı desteği",
+    "ozet": "KOSGEB, kadın ve genç girişimcilerin kredisinde faizin bir kısmını öder.",
+    "durum": "cagri_bekleniyor",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Kredi üst sınırı 1.000.000 TL. Bu tutar kredidir, hibe değildir.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Bu destek kapsamında kullanılacak kredinin üst limiti 1.000.000.-TL ve kredi vadesi"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 1000000,
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Bu destek kapsamında kullanılacak kredinin üst limiti 1.000.000.-TL ve kredi vadesi"
+      },
+      "tavanTuru": "kredi_anaparasi",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Faizin ya da kâr payının yüzde 50'si geri ödemesiz karşılanır.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9499/girisimci-destek-programi-yenilendi-girisimcilere-yeni-destek-modeli",
+        "asOf": "2026-11-20",
+        "alinti": "Kredi finansman maliyetinin %50’si KOSGEB tarafından geri ödemesiz olarak karşılanırken, azami kredi vadesi 36 ay olarak uygulanıyor."
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Yalnız kadın ya da genç girişimcilerin işletmeleri başvurabilir. İşletme, iş geliştirme jürisinden en az 50 puan almalıdır.",
+      "Kredi ve destek 36 ay sürer.",
+      "Bu destek, iş geliştirme desteğiyle aynı anda kullanılamaz."
+    ],
+    "uygunGider": [
+      "İşletmenin günlük işleri için gereken para"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Kadın ya da genç girişimci olduğunu gösteren belge",
+      "Jüri puanı"
+    ],
+    "kanal": "KOSGEB ve anlaşmalı banka",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/1231/girisimci-destek-program",
+      "ad": "KOSGEB Girişimci Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci iş geliştirme desteği ile iş geliştirme faiz/kar payı desteğinin sadece birinden yararlanabilir."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kosgebIsKurma",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+          "asOf": "2026-11-20",
+          "alinti": "İşletme/girişimci, iş kurma desteği ile birlikte iş geliştirme desteğinden veya iş geliştirme faiz/kar payı desteğinden yararlanabilir."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Faiz desteği. İşletme taksiti bankaya öder, sonra ödeme talep eder.",
+      "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Giri%C5%9Fimcilik/2026/2026.10.06/GDP_Yo%CC%88nergesi_(16)_(1).pdf",
+      "asOf": "2026-11-20",
+      "alinti": "İlgili döneme ait taksitin eksik ödenmesi halinde eksik kalan kısmın tamamlanmasına kadar o taksite ilişkin ödeme yapılmaz."
+    }
+  },
+  {
+    "id": "kosgebYapayZekaKredisi",
+    "ad": "KOSGEB Yapay Zekâ Kredi Programı",
+    "kurum": "KOSGEB",
+    "kategori": "kredi",
+    "destekTuru": "Kredi. Faiz ve komisyon alınmaz.",
+    "ozet": "KOSGEB, Teknogirişim Rozeti olan işletmelere yapay zekâ hizmetleri için faizsiz kredi verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "İşletme başına kredi üst sınırı 5.000.000 TL. Kredi faizsizdir ve geri ödenir.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "(4) İşletme başına kredi üst limiti 5.000.000 TL ’dir. Kredi Türk Lirası cinsinden"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 5000000,
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "(4) İşletme başına kredi üst limiti 5.000.000 TL ’dir. Kredi Türk Lirası cinsinden"
+      },
+      "tavanTuru": "kredi_anaparasi"
+    },
+    "tarihler": [
+      {
+        "ad": "Başvurunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-07-09",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9427/kosgebden-teknoloji-girisimlerine-yapay-zek-kredi-programi",
+          "asOf": "2026-11-20",
+          "alinti": "Yapay Zekâ Kredi Programı başvuruları 9 Temmuz – 31 Aralık 2026 tarihleri arasında gerçekleştirilecek."
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Başvurunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9427/kosgebden-teknoloji-girisimlerine-yapay-zek-kredi-programi",
+          "asOf": "2026-11-20",
+          "alinti": "Yapay Zekâ Kredi Programı başvuruları 9 Temmuz – 31 Aralık 2026 tarihleri arasında gerçekleştirilecek."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Başvuru gününde geçerli bir Teknogirişim Rozeti olmalı.",
+      "İşletme KOSGEB veri tabanına kayıtlı olmalı. İşletme beyanı güncel ve etkin olmalı.",
+      "İşletmenin dijital cüzdan hesabı olmalı.",
+      "Bankadaki blokenin kalkması için kesin teminat mektubu verilmeli.",
+      "Kredi 24 ayda ödenir. İlk 12 ay ödeme yoktur.",
+      "12 ay içinde kullanılmayan bloke para iptal edilir."
+    ],
+    "uygunGider": [
+      "Yüksek güçlü bilgi işlem hizmeti",
+      "Güvenli veri depolama",
+      "Yapay zekâ veri merkezi hizmetleri",
+      "Yapay zekâ araç ve platform hizmetleri"
+    ],
+    "haricGider": [
+      "Anlaşmalı olmayan sağlayıcılardan alınan hizmetler",
+      "Personel ve pazarlama giderleri"
+    ],
+    "belgeler": [
+      "Teknogirişim Rozeti",
+      "KOSGEB veri tabanı kaydı",
+      "Banka kesin teminat mektubu"
+    ],
+    "kanal": "KOSGEB veri tabanı ve anlaşmalı banka",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9427/kosgebden-teknoloji-girisimlerine-yapay-zek-kredi-programi",
+      "ad": "KOSGEB Yapay Zekâ Kredi Programı duyurusu ve Yapay Zeka Kredi Yönergesi",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Yapay%20Zeka%20Kredi%20Programi/2026/2026.09.28/Yapay_Zeka_Kredi_Yo%CC%88nergesi_Rev.02.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Fatura cüzdana yüklenir, uygun tutar blokeden çözülür.",
+      "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9414/yapay-zek-kredisi",
+      "asOf": "2026-11-20",
+      "alinti": "Faturanın kredi kapsamına uygunluğu incelendikten sonra, uygun bulunan gider tutarı KDV hariç olarak GO Dijital Cüzdan hesabındaki blokeli tutardan serbest bırakılır."
+    }
+  },
+  {
+    "id": "kosgebIsletmeGelistirme",
+    "ad": "KOSGEB İşletme Geliştirme Destek Programı",
+    "kurum": "KOSGEB",
+    "kategori": "hibe",
+    "destekTuru": "Hibe. Her gider kalemi için ayrı verilir.",
+    "ozet": "KOSGEB bu programı kaldırdı ve yeni başvuru almıyor.",
+    "durum": "kaldirildi",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [
+      {
+        "ad": "Programın başvuruya kapandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2024-04-15",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekler/6530/yururlukten-kaldirilan-destekler",
+          "asOf": "2026-11-20",
+          "alinti": "\"Bu program 15.04.2024 tarihinde başvuruya kapatılmıştır.\""
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "İşletme KOSGEB veri tabanına kayıtlı olmalı.",
+      "Destek oranı çoğunlukla %60'tır. Tescil işlerinde oran %80, dijital dönüşüm danışmanlığında %100 olur.",
+      "Her gider kaleminin kendi koşulu ve üst sınırı vardır. Bunları başvuru gününde yeniden okuyun."
+    ],
+    "uygunGider": [
+      "Marka ve patent tescil ücretleri",
+      "Belgelendirme ve sertifikasyon",
+      "Test ve analiz",
+      "Nitelikli eleman istihdamı",
+      "Tasarım",
+      "Teknik ve dijital dönüşüm danışmanlığı",
+      "Yurt içi fuar katılımı"
+    ],
+    "haricGider": [
+      "Başka programa yazılmış aynı fatura"
+    ],
+    "belgeler": [
+      "KOSGEB veri tabanı kaydı",
+      "KOBİ beyannamesi",
+      "Tescilli NACE kodu",
+      "Her gider kalemi için fatura ve ödeme belgesi"
+    ],
+    "kanal": "KOSGEB veri tabanı",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekler/6530/yururlukten-kaldirilan-destekler",
+      "ad": "KOSGEB yürürlükten kaldırılan destekler sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/6798/isletme-gelistirmedestekprogrami",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "kosgebKapasite",
+    "ad": "KOSGEB Kapasite Geliştirme Destek Programı",
+    "kurum": "KOSGEB",
+    "kategori": "kredi",
+    "destekTuru": "Kredi ile faiz ya da kâr payı desteği",
+    "ozet": "KOSGEB, hızlı büyüyen küçük ve orta ölçekli işletmelere kredi desteği verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Kredi üst sınırı 20.000.000 TL. Savunma, havacılık ve uzay tedarikçisinde 30.000.000 TL olur. Alt sınır 1.000.000 TL.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "asOf": "2026-11-20",
+        "alinti": "Hızlı büyüyen ve teknogirişim rozetine sahip olan işletmelerde kredi üst limiti 20 milyon TL olup"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 20000000,
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "asOf": "2026-11-20",
+        "alinti": "Hızlı büyüyen ve teknogirişim rozetine sahip olan işletmelerde kredi üst limiti 20 milyon TL olup"
+      },
+      "tavanTuru": "kredi_anaparasi",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+        "asOf": "2026-11-20",
+        "alinti": "İşletmelerin finans kuruluşlarından kullandıkları krediler için geri ödemesiz 20 puan finansman desteği sağlanacak."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "2026 yılı 3. dönem başvurusunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-08-22",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "asOf": "2026-11-20",
+          "alinti": "Kapasite Geliştirme Destek Programı’nın 2026 yılı 3. dönem başvuruları, 22 Ağustos 2026 tarihi itibarıyla başladı."
+        },
+        "kritik": false
+      },
+      {
+        "ad": "2026 yılı 3. dönem başvurusunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-15",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "asOf": "2026-11-20",
+          "alinti": "Kapasite Geliştirme Destek Programı’nın 2026 yılı 3. Dönem başvuruları, 15 Eylül 2026 tarihinde sona erecek."
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Hızlı büyüyen küçük ya da orta ölçekli işletmeler başvurabilir.",
+      "Proje 24 ay, kredi 36 ay sürer.",
+      "Kefalet kurumundan teminat alınabilir."
+    ],
+    "uygunGider": [
+      "Büyüme yatırımı ve altyapı"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "KOBİ beyannamesi",
+      "Hızlı büyümeyi gösteren belge",
+      "Mali tablolar"
+    ],
+    "kanal": "KOSGEB veri tabanı ve anlaşmalı banka",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi%C2%A0",
+      "ad": "KOSGEB Kapasite Geliştirme Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kgf",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "asOf": "2026-11-20",
+          "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunuluyor."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Faiz desteği. İşletme taksiti bankaya öder. Taksitler üçer aylık ve eşittir.",
+      "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9200/kapasite-gelistirme-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Finansman kuruluşa ödenecek taksitler 3’er (üçer) aylık dönemler ve eşit tutarlı ödeme biçiminde olacaktır."
+    }
+  },
+  {
+    "id": "kosgebKuresel",
+    "ad": "KOSGEB Küresel Rekabetçilik Destek Programı",
+    "kurum": "KOSGEB",
+    "kategori": "kredi",
+    "destekTuru": "Kredi ile faiz ya da kâr payı desteği",
+    "ozet": "KOSGEB, yurt dışına açılan ve büyüyen işletmelere kredi desteği verir.",
+    "durum": "cagri_bekleniyor",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Kredi üst sınırı 75.000.000 TL. Alt sınır 30.000.000 TL.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İşletme başına kredi üst limiti 75 milyon TL olarak belirlenmiştir. İşletme Başına Kredi Alt Limiti ise 30 Milyon TL’dir."
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 75000000,
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İşletme başına kredi üst limiti 75 milyon TL olarak belirlenmiştir. İşletme Başına Kredi Alt Limiti ise 30 Milyon TL’dir."
+      },
+      "tavanTuru": "kredi_anaparasi",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "İşletmelerin finans kuruluşlarından kullandıkları krediler için geri ödemesiz 20 puan finansman desteği sağlanacaktır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "2026 yılı 1. dönem başvurusunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-07",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "BAŞVURU BAŞLANGIÇ TARİHİ: 07 EYLÜL 2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "2026 yılı 1. dönem başvurusunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-09-30",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "SON BAŞVURU TARİHİ: 30 EYLÜL 2026"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Program hızlı büyüme, yüksek teknoloji, ihracat ya da Ar-Ge büyümesi şartı arar."
+    ],
+    "uygunGider": [
+      "Yurt dışına açılma yatırımı"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Büyümeyi ve ihracatı gösteren belge"
+    ],
+    "kanal": "KOSGEB veri tabanı ve anlaşmalı banka",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9206/kuresel-rekabetcilik-destek-programi",
+      "ad": "KOSGEB Küresel Rekabetçilik Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kgf",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunulmaktadır."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9206/kuresel-rekabetcilik-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9206/kuresel-rekabetcilik-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Faiz desteği. İşletme taksiti bankaya öder, sonra ödeme talep eder.",
+      "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9206/kuresel-rekabetcilik-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "kredi geri ödeme tablosunda yer alan taksitlere ilişkin ödemenin işletme tarafından finansal kuruluşa yapılmasının ardından sistem üzerinden ödeme talebinde bulunabilirsiniz."
+    }
+  },
+  {
+    "id": "kosgebDijitalDonusum",
+    "ad": "KOSGEB KOBİ Dijital Dönüşüm Destek Programı",
+    "kurum": "KOSGEB",
+    "kategori": "kredi",
+    "destekTuru": "Kredi ile 20 puanlık faiz ya da kâr payı desteği",
+    "ozet": "KOSGEB, imalat işletmelerinin dijital dönüşüm yatırımına kredi desteği verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Yatırım kredisi en az 1.000.000 TL, en çok 20.000.000 TL olur.",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Yatırım Kredisi 1.000.000 TL 20.000.000 TL 36 Ay"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 20000000,
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Yatırım Kredisi 1.000.000 TL 20.000.000 TL 36 Ay"
+      },
+      "tavanTuru": "kredi_anaparasi",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Faizin 20 puanı geri ödemesiz karşılanır.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9144/kobi-dijital-donusum-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Yalnız imalat sektöründeki işletmeler başvurabilir.",
+      "Mikro işletmeler başvuramaz.",
+      "Yetkili bir danışmandan onaylı olgunluk değerlendirme raporu alınmalıdır."
+    ],
+    "uygunGider": [
+      "Üretimde dijital dönüşüm yatırımı"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Olgunluk değerlendirme raporu"
+    ],
+    "kanal": "KOSGEB veri tabanı",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9144/kobi-dijital-donusum-destek-programi",
+      "ad": "KOSGEB KOBİ Dijital Dönüşüm Destek Programı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Faiz desteği. Kredi taksitleri üçer aylık ve eşittir.",
+      "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KOB%C4%B0%20Dijital%20Donusum%20DP/2026/2026.10.09/KOBI%CC%87DijitalDo%CC%88nu%CC%88s%CC%A7u%CC%88mDestekProgram%C4%B1Yo%CC%88nergesi.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "kredilerin taksit ödemeleri eşit taksitler halinde 3’er aylık dönemlerde gerçekleştirilir."
+    }
+  },
+  {
+    "id": "kosgebTekmer",
+    "ad": "KOSGEB Teknoloji Merkezi Destek Programı",
+    "kurum": "KOSGEB",
+    "kategori": "hibe",
+    "destekTuru": "Merkezi işleten kuruluşa hibe ve geri ödemeli destek",
+    "ozet": "KOSGEB, teknoloji merkezlerini işleten kuruluşlara destek verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Her destek için 2026 yılı üst sınırı 6.506.000 TL. Sınır her yıl güncellenir.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9327/sektorel-gelisim-merkezi-segem-destek-programi",
+        "asOf": "2026-11-20",
+        "alinti": "yıllık destek üst limiti, SEGEM Destek Programı Uygulama Esaslarının yürürlüğe girdiği yıl (2026 yılı) için 6.506.000 TL’dir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Destek oranı yüzde 100 olur.",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9327/sektorel-gelisim-merkezi-segem-destek-programi",
+        "asOf": "2026-11-20",
+        "alinti": "Destek oranı %100 olarak uygulanır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "2026-01 COP31 Hızlandırma Çağrısı başvurusunun başladığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-08-09",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Haber/2026/2026-01_COP31_H%C4%B1zland%C4%B1rma_%C3%87a%C4%9Fr%C4%B1s%C4%B1_09_08_2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Başvuru 09 Ağustos 2026 – 30 Ağustos 2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "2026-01 COP31 Hızlandırma Çağrısı başvurusunun son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-08-30",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/Haber/2026/2026-01_COP31_H%C4%B1zland%C4%B1rma_%C3%87a%C4%9Fr%C4%B1s%C4%B1_09_08_2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Başvuru 09 Ağustos 2026 – 30 Ağustos 2026"
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Bu programa işletme doğrudan başvuramaz.",
+      "Başvuruyu TEKMER işletici kuruluşu ya da teknoloji geliştirme bölgesi yönetici şirketi yapar."
+    ],
+    "uygunGider": [
+      "Merkez altyapısı"
+    ],
+    "haricGider": [
+      "Merkezdeki işletmenin kendi giderleri"
+    ],
+    "belgeler": [],
+    "kanal": "İlgili merkez kuruluşu",
+    "kaynak": {
+      "url": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+      "ad": "KOSGEB Teknoloji Merkezi Destek Programı ve SEGEM sayfaları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. Hızlandırma desteğinde fatura, dekont ve teminat mektubu istenir.",
+      "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/destekdetay/9297/teknoloji-merkezi-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Ödeme talebinde programa ilişkin fatura, dekont ve teminat mektubu sunulur."
+    }
+  },
+  {
+    "id": "tb10962Atilim",
+    "ad": "Hizmet Sektörleri Atılım Programı (10962 sayılı Karar)",
+    "kurum": "Ticaret Bakanlığı",
+    "kategori": "hibe",
+    "destekTuru": "Hibe. Harcamadan sonra ödenir.",
+    "ozet": "Ticaret Bakanlığı, hizmet işletmelerinin yurt dışına yönelik giderlerine hibe verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Her gider kaleminin ayrı yıllık üst sınırı vardır. Reklam ve tanıtım 25.000.000 TL olur. Dijital ürün tanıtımı 50.000.000 TL olur. Platform komisyonu 20.000.000 TL olur. Barındırma 5.000.000 TL olur. Yazılım lisansı 2.500.000 TL olur. Yurt dışı tescil 2.500.000 TL olur. Belgelendirme 4.000.000 TL olur.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Yararlanıcının yurt dışına yönelik reklam, tanıtım ve pazarlama faaliyetlerine ilişkin giderleri %50 oranında ve yıllık en fazla 25.000.000 TL tutarında desteklenir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Çoğu gider kaleminde oran yüzde 50 olur. Bakanlığın hedef ülkelerinde bazı kalemlerin oranı en çok 20 puan artabilir.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Yararlanıcının yurt dışına yönelik reklam, tanıtım ve pazarlama faaliyetlerine ilişkin giderleri %50 oranında ve yıllık en fazla 25.000.000 TL tutarında desteklenir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kararın geçerlilik başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar 1/1/2026 tarihinden itibaren geçerli olmak üzere yayımı tarihinde yürürlüğe girer."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "İşletmenin hangi hizmet sınıfında olduğu önemlidir. Sınıf bilişim, dijital aracılık ya da kapsam dışı olabilir.",
+      "Dijital aracılık sınıfı için iki koşul vardır. Son iki yılın gelirinin ortalama en az %51'i dijital aracılıktan gelmelidir. Yabancı dilde, yurt dışındaki tüketiciye yönelik bir platform da olmalıdır.",
+      "Dijital ürün tanıtımı ve platform komisyonu yalnız bilişim sınıfına açıktır. Dijital aracılık sınıfında yalnız barındırma gideri desteklenir.",
+      "Destek, kapsama alındıktan sonraki harcamaları öder. Önceki harcamalar desteklenmez.",
+      "Bir harcama için yalnız bir destek programı kullanılır.",
+      "Başka bir istihdam teşvikinden yararlanan çalışanın gideri desteklenmez. Asgari ücret desteği ve genel prim indirimi bu kuralın dışındadır.",
+      "Üst sınırlar her yılın başında yeniden değerleme oranıyla güncellenir."
+    ],
+    "uygunGider": [
+      "Yurt dışına yönelik reklam, tanıtım ve pazarlama",
+      "Sunucu barındırma",
+      "Yurt dışında marka ve patent tescili ve koruması",
+      "Belge, sertifika ve akreditasyon",
+      "Yurt dışındaki etkinliklere katılım",
+      "Rapor ve veri tabanı üyeliği",
+      "Yazılım lisansı (hizmet sınıfına bağlıdır)"
+    ],
+    "haricGider": [
+      "Türkiye'deki pazarlama giderleri",
+      "Kapsama alınmadan önceki bütün harcamalar",
+      "Başka teşvikten yararlanan çalışanın gideri"
+    ],
+    "belgeler": [
+      "Kurumdan alınmış yazılı ön sınıflandırma görüşü",
+      "Destek Yönetim Sistemi kaydı ve kullanıcı yetkilendirmesi",
+      "Yabancı müşteri sözleşmesi, faturası ve tahsilat kaydı",
+      "Yabancı dildeki platformun çalışan adresi",
+      "Gelirin dağılımı ve mali müşavir raporu",
+      "Kapsama alınma tarihini ve harcama tarihlerini gösteren tablo"
+    ],
+    "kanal": "Destek Yönetim Sistemi (elektronik başvuru)",
+    "kaynak": {
+      "url": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+      "ad": "10962 sayılı Karar (Resmî Gazete, 27 Şubat 2026, sayı 33181) ve Hizmet Sektörlerinin Desteklenmesine İlişkin Genelge",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "tb10962Marka",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Markalaşma Programına alınan yararlanıcı, bu madde kapsamında desteklendiği süre boyunca işbirliği kuruluşunu muhatap destek unsurları hariç olmak üzere Hizmet Sektörleri Atılım Programından faydalanamaz."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "tb10962Surdurulebilirlik",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "ayri_gider",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar kapsamında aynı harcama için sadece bir destek programından faydalanılır."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. İşletme önce ödemeyi yapar, sonra destek başvurusu yapar. Destek Türk lirası olarak ödenir.",
+      "sourceUrl": "https://ticaret.gov.tr/data/69abe397269de14590bea074/0.%20Hizmet%20Sekt%C3%B6rlerinin%20Desteklenmesine%20%C4%B0li%C5%9Fkin%20Genelge.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "Destek başvurusu, ödemenin gerçekleştirilmesini müteakip yararlanıcı tarafından yapılır."
+    }
+  },
+  {
+    "id": "tb10962Marka",
+    "ad": "Markalaşma Programı ve E-TURQUALITY® (10962 sayılı Karar)",
+    "kurum": "Ticaret Bakanlığı",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "Ticaret Bakanlığı, markasını yurt dışında tanıtan hizmet işletmelerine hibe verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Bütün markaları Marka programındaysa işletme yılda en çok 250.000.000 TL alır. En az bir markası TURQUALITY ya da E-TURQUALITY programındaysa sınır yılda 500.000.000 TL olur.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "bir yararlanıcı, destek kapsamındaki tüm markalarının marka destek programında olması hâlinde yıllık en fazla 250.000.000 TL"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Giderin yüzde 50'si desteklenir.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "katılım ve yurt içi etkinlik katılım giderleri %50 oranında desteklenir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kararın geçerlilik başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar 1/1/2026 tarihinden itibaren geçerli olmak üzere yayımı tarihinde yürürlüğe girer."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "İşletme, başvurudan en az üç yıl önce kurulmuş olmalı.",
+      "Son üç yılın her birinde hizmet ihracatı ya da yurt dışından gelir olmalı. Üç yılın ortalaması en az 1.500.000 ABD doları olmalı.",
+      "Marka Türkiye'de işletmenin adına tescilli olmalı. Marka, uluslararası tescil sistemindeki en az bir ülkede de tescilli olmalı.",
+      "Markalaşma Programındaki işletme, destek süresince Atılım Programını kullanamaz."
+    ],
+    "uygunGider": [
+      "Markayı yurt dışında tanıtma giderleri"
+    ],
+    "haricGider": [
+      "Atılım Programına yazılan aynı harcama"
+    ],
+    "belgeler": [
+      "İşletmenin kuruluş tarihini gösteren belge",
+      "Üç yıllık hizmet ihracatı kaydı",
+      "Marka tescil belgeleri"
+    ],
+    "kanal": "Destek Yönetim Sistemi",
+    "kaynak": {
+      "url": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+      "ad": "10962 sayılı Karar ve ilgili Genelge",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "tb10962Atilim",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Markalaşma Programına alınan yararlanıcı, bu madde kapsamında desteklendiği süre boyunca işbirliği kuruluşunu muhatap destek unsurları hariç olmak üzere Hizmet Sektörleri Atılım Programından faydalanamaz."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. İşletme önce ödemeyi yapar, sonra destek başvurusu yapar. Destek Türk lirası olarak ödenir.",
+      "sourceUrl": "https://ticaret.gov.tr/data/69abe397269de14590bea074/0.%20Hizmet%20Sekt%C3%B6rlerinin%20Desteklenmesine%20%C4%B0li%C5%9Fkin%20Genelge.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "Destek başvurusu, ödemenin gerçekleştirilmesini müteakip yararlanıcı tarafından yapılır."
+    }
+  },
+  {
+    "id": "tb10962Surdurulebilirlik",
+    "ad": "Sürdürülebilirlik Programı (10962 sayılı Karar)",
+    "kurum": "Ticaret Bakanlığı",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "Ticaret Bakanlığı, hizmet işletmelerinin sürdürülebilirlik giderlerine hibe verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "İşletme başına toplam 20.000.000 TL verilir. Yol haritası danışmanlığı için bir kez en çok 500.000 TL verilir.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "sürdürülebilirlik yol haritasının oluşturulmasına ilişkin giderleri %50 oranında ve yararlanıcı başına en fazla 20.000.000 TL tutarında desteklenir."
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 20000000,
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "sürdürülebilirlik yol haritasının oluşturulmasına ilişkin giderleri %50 oranında ve yararlanıcı başına en fazla 20.000.000 TL tutarında desteklenir."
+      },
+      "tavanTuru": "hibe_tavani",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Giderin yüzde 50'si desteklenir.",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "sürdürülebilirlik yol haritasının oluşturulmasına ilişkin giderleri %50 oranında ve yararlanıcı başına en fazla 20.000.000 TL tutarında desteklenir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kararın geçerlilik başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar 1/1/2026 tarihinden itibaren geçerli olmak üzere yayımı tarihinde yürürlüğe girer."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Bu programda da işletmenin hizmet sınıfı önemlidir.",
+      "Sürdürülebilirlik projesi onaylanmalı ve yol haritası hazırlanmalıdır. Yol haritası, proje onayından sonra en geç iki ay içinde verilir."
+    ],
+    "uygunGider": [
+      "Belge, sertifika, akreditasyon",
+      "Danışmanlık ve denetim",
+      "Eğitim",
+      "Sürdürülebilirlik raporu ve yol haritası"
+    ],
+    "haricGider": [
+      "Onaydan önceki harcamalar"
+    ],
+    "belgeler": [
+      "Hizmet sınıfını gösteren kurum görüşü",
+      "Onaylanmış sürdürülebilirlik projesi ve yol haritası"
+    ],
+    "kanal": "Destek Yönetim Sistemi",
+    "kaynak": {
+      "url": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+      "ad": "10962 sayılı Karar ve ilgili Genelge",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "tb10962Atilim",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "ayri_gider",
+          "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar kapsamında aynı harcama için sadece bir destek programından faydalanılır."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/69a9d756269de18b843851b7/%C3%87er%C3%A7eve%20Karar.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. İşletme önce ödemeyi yapar, sonra destek başvurusu yapar. Destek Türk lirası olarak ödenir.",
+      "sourceUrl": "https://ticaret.gov.tr/data/69abe397269de14590bea074/0.%20Hizmet%20Sekt%C3%B6rlerinin%20Desteklenmesine%20%C4%B0li%C5%9Fkin%20Genelge.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "Destek başvurusu, ödemenin gerçekleştirilmesini müteakip yararlanıcı tarafından yapılır."
+    }
+  },
+  {
+    "id": "tbEIhracat",
+    "ad": "Mal ihracatı ve e-ihracat destekleri",
+    "kurum": "Ticaret Bakanlığı",
+    "kategori": "hibe",
+    "destekTuru": "Hibe",
+    "ozet": "Ticaret Bakanlığı, mal ihracatı ve e-ihracat yapan işletmelerin giderlerine destek verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Yıllık üst sınır işletmenin türüne göre değişir. 2026 yılında şirketler için yıllık toplam sınır 73.990.019 TL olur. Perakende e-ticaret siteleri, pazaryerleri ve e-ihracat konsorsiyumları için sınır 221.970.061 TL olur. B2B platformları için sınır 19.728.673 TL olur.",
+        "sourceUrl": "https://ticaret.gov.tr/data/632b145a13b8767974670b9a/2026%20Y%C4%B1l%C4%B1na%20%C4%B0li%C5%9Fkin%20E-%C4%B0hracat%20Destekleri%20%C3%9Cst%20Limitleri.xlsx",
+        "asOf": "2026-11-20",
+        "alinti": "2026 YILINA GÖRE DESTEKLERDEN YARARLANMA ÜST LİMİTLERİ (YILLIK-TL) Şirketler 73990019"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/632b13e013b8767974670b91/E-ihracat%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "E-ihracat giderlerinin çoğu yüzde 50 oranında desteklenir. Hedef ülkelerde oran 20 puana kadar artabilir. Ödenecek destek giderin yüzde 75'ini hiçbir durumda aşamaz.",
+        "sourceUrl": "https://ticaret.gov.tr/data/632b13e013b8767974670b91/E-ihracat%20Karar.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Bu Karar kapsamında ödenecek destek miktarı, her hâlükârda desteğe konu giderlerin %75’ini aşamaz."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "E-ihracat Genelgesinde son değişiklik",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-16",
+          "sourceUrl": "https://ticaret.gov.tr/data/6447baf113b8761694f892bb/E-%C4%B0HRACAT%20DESTEKLER%C4%B0NE%20%C4%B0L%C4%B0%C5%9EK%C4%B0N%20GENELGE%2016.11.2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "(Ek:16/11/2026) Dijital Teşvik Takip Modülü (DTTM): Destek ön onay ve destek ödeme başvurularına ilişkin inceleme ve değerlendirme süreçlerinin elektronik ortamda yürütülmesini"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Yeni yıllık destek sınırının başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-01-01",
+          "sourceUrl": "https://ticaret.gov.tr/data/6447baf113b8761694f892bb/E-%C4%B0HRACAT%20DESTEKLER%C4%B0NE%20%C4%B0L%C4%B0%C5%9EK%C4%B0N%20GENELGE%2016.11.2026.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Genelgenin 20/A maddesi 1/1/2027 tarihinden itibaren gerçekleştirilen faaliyetlere yönelik destek başvurularında uygulanır."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "E-ihracat, gümrük beyannamesiyle yapılan uzaktan mal satışıdır."
+    ],
+    "uygunGider": [
+      "Mal ihracatına bağlı giderler"
+    ],
+    "haricGider": [
+      "Hizmet ihracatı"
+    ],
+    "belgeler": [],
+    "kanal": "Destek Yönetim Sistemi",
+    "kaynak": {
+      "url": "https://ticaret.gov.tr/destekler/e-ihracat-destekleri/genelge-ekleri",
+      "ad": "Ticaret Bakanlığı e-ihracat destekleri sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/632b13e013b8767974670b91/E-ihracat%20Karar.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/data/632b13e013b8767974670b91/E-ihracat%20Karar.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Harcama sonrası. İşletme ödeme belgesi tarihinden itibaren en geç altı ay içinde ödeme başvurusu yapar. Çoğu destek için önce ön onay alınır.",
+      "sourceUrl": "https://ticaret.gov.tr/data/6447baf113b8761694f892bb/E-%C4%B0HRACAT%20DESTEKLER%C4%B0NE%20%C4%B0L%C4%B0%C5%9EK%C4%B0N%20GENELGE%2016.11.2026.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "ve eki bilgi/belgelerle ödeme belgesi tarihinden itibaren en geç 6 (altı) ay içerisinde incelemeci kuruluşa yapılır."
+    }
+  },
+  {
+    "id": "yatirimTesvik",
+    "ad": "Yatırım Teşvik Belgesi (9903 sayılı Karar)",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi ve gümrük muafiyeti, yatırım yeri ayırma",
+    "ozet": "Bakanlık, belgeli sabit yatırımlara vergi ve gümrük muafiyeti gibi kolaylıklar sağlar.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal"
+    },
+    "tarihler": [
+      {
+        "ad": "Son başvuru",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2030-12-31",
+          "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar kapsamında 31/12/2030 tarihine kadar yapılacak olan teşvik belgesi müracaatları değerlendirilir."
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Deprem bölgesi ve Cazibe Merkezleri illerinde 6. bölge desteği için son başvuru",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "31/12/2026 tarihine kadar yapılacak müracaatlara istinaden düzenlenen teşvik belgeleri kapsamında 6 ncı bölgede uygulanan destekler aynı oran, miktar, süre ve şartlarda sağlanır."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Yatırım, en düşük sabit yatırım tutarını karşılamalıdır.",
+      "İstanbul'daki hedef yatırımlarda vergi indirimi ile faiz ya da kâr payı desteği uygulanmaz."
+    ],
+    "uygunGider": [
+      "Sabit yatırım giderleri"
+    ],
+    "haricGider": [
+      "Personel giderleri",
+      "Pazarlama giderleri"
+    ],
+    "belgeler": [
+      "Sabit yatırımların kalem kalem listesi ve proforma faturalar"
+    ],
+    "kanal": "Yatırım teşvik başvuru sistemi",
+    "kaynak": {
+      "url": "https://www.sanayi.gov.tr/destek-ve-tesvikler/yatirim-tesvik-sistemleri",
+      "ad": "9903 sayılı Karar",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Destekler çoğunlukla vergi indirimi ve muafiyet olarak verilir. Faiz desteği ve makine desteği ödeme olarak verilir. Yatırım yeri de tahsis edilebilir.",
+      "sourceUrl": "https://yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/karar-yatirim_tesvik_uygulamalari.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "a) Gümrük vergisi muafiyeti. b) Katma Değer Vergisi (KDV) istisnası. c) Vergi indirimi. ç) Faiz veya kâr payı desteği. d) Makine desteği."
+    }
+  },
+  {
+    "id": "hit30",
+    "ad": "HIT-30 Yüksek Teknoloji Yatırım Programı",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi teşviki, hibe, uygun kredi ve istihdam desteği",
+    "ozet": "Bakanlık, çok büyük yüksek teknoloji yatırımlarına teşvik, hibe ve kredi desteği verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Sabit bir tavan yoktur. Bütün destek kalemlerinin toplamı sabit yatırım tutarının %100'üne kadar çıkabilir. Her çağrının ayrı bir bütçesi vardır. Örneğin HIT-Çip çağrısının bütçesi 5 milyar dolardır. HIT-Ar-Ge çağrısının hibe bütçesi 1 milyar dolardır.",
+        "sourceUrl": "https://hit30.sanayi.gov.tr/tesvikler",
+        "asOf": "2026-11-20",
+        "alinti": "Farklı destek kalemlerinde sağlanacak toplam destek miktarı, sabit yatırım tutarının %100’üne kadar ulaşabilmektedir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://hit30.sanayi.gov.tr/tesvikler",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Destek oranı her proje için ayrı belirlenir.",
+        "sourceUrl": "https://hit30.sanayi.gov.tr/tesvikler",
+        "asOf": "2026-11-20",
+        "alinti": "Proje bazlı teşvikler, projenin stratejik değeri, katma değer potansiyeli ve karakteristiği dikkate alınarak, proje bazında özel olarak oluşturulmaktadır."
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "En düşük sabit yatırım tutarı aranır. Yapay zekâ çağrısında bu tutar çok yüksektir. Ar-Ge çağrısında çok sayıda personel aranır."
+    ],
+    "uygunGider": [
+      "Büyük ölçekli sabit yatırım"
+    ],
+    "haricGider": [],
+    "belgeler": [],
+    "kanal": "HIT-30 çağrı portalı",
+    "kaynak": {
+      "url": "https://hit30.sanayi.gov.tr/cagrilar",
+      "ad": "HIT-30 resmî portal ve sıkça sorulan sorular",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Program Ofisi başvuruyu en geç 15 iş günü içinde değerlendirmeye alır ve firmaya bilgi verir. Süre şu olayla başlar: Başvurunun Program Ofisine ulaşması.",
+        "sourceUrl": "https://hit30.sanayi.gov.tr/sikcasorulansorular",
+        "asOf": "2026-11-20",
+        "alinti": "HIT-30 programı için başvurular, en geç 15 iş günü içerisinde Program Ofisi tarafından değerlendirmeye alınarak tarafınıza bilgi sağlanacaktır."
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://hit30.sanayi.gov.tr/tesvikler",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Destekler birçok biçimde verilir. Vergi indirimi, muafiyet, hibe, faiz desteği, uygun kredi ve sermaye katkısı vardır.",
+      "sourceUrl": "https://hit30.sanayi.gov.tr/tesvikler",
+      "asOf": "2026-11-20",
+      "alinti": "HIT-30 kapsamındaki yatırımlara özel olarak sermaye katkısı, uygun faizli yatırım kredisi, faiz giderlerinin karşılanması gibi finansman destekleri sunulmaktadır."
+    }
+  },
+  {
+    "id": "argeMerkezi",
+    "ad": "Ar-Ge Merkezi ve Tasarım Merkezi Belgesi",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi ve sigorta primi indirimi",
+    "ozet": "Belge alan Ar-Ge ve tasarım merkezleri vergi ve sigorta primi indirimi alır.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/ozet_arge_ve_tasarim_merkezleri_destegi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/ozet_arge_ve_tasarim_merkezleri_destegi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Ar-Ge ve tasarım harcamasının tamamı kazançtan indirilir. Ar-Ge personelinin işveren sigorta primi payının yarısı desteklenir. Personel ücretinin gelir vergisinin %80 ile %95 arası kısmı terkin edilir.",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "tasarım projelerinde ve tasarım merkezlerinde gerçekleştirilen münhasıran tasarım harcamalarının tamamı"
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "5746 sayılı Kanunun uygulama süresinin sonu",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2028-12-31",
+          "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Kanun 31/12/2028 tarihine kadar uygulanmak üzere, yayımını takip eden ay başında yürürlüğe girer."
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Ar-Ge Merkezi için en az 15 tam zamanlı çalışana denk Ar-Ge personeli gerekir. Tasarım Merkezi için en az 10 tam zamanlı çalışana denk tasarım personeli gerekir.",
+      "Merkezin yeri öteki birimlerden ayrı olmalıdır.",
+      "Konusu, süresi, bütçesi ve personel ihtiyacı yazılı projeler olmalıdır."
+    ],
+    "uygunGider": [
+      "Ar-Ge ve tasarım işleri"
+    ],
+    "haricGider": [
+      "Satış, pazarlama, operasyon ve genel yönetim personeli"
+    ],
+    "belgeler": [
+      "Personelin görevine göre tam zamanlı çalışan karşılığı listesi",
+      "Merkezin yer planı",
+      "Proje tanımları"
+    ],
+    "kanal": "Bakanlık başvuru süreci",
+    "kaynak": {
+      "url": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/arge_ve_tasarim_merkezleri_basvuru_bilgilendirme_kilavuzu.pdf",
+      "ad": "Ar-Ge ve Tasarım Merkezleri başvuru bilgilendirme kılavuzu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kanun4691",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "hükümleri ile 4691 sayılı Kanunun geçici 2 nci maddesi hükümlerinden ayrıca yararlanamazlar."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/ozet_arge_ve_tasarim_merkezleri_destegi.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/ozet_arge_ve_tasarim_merkezleri_destegi.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Destek vergi ve prim indirimi olarak verilir. Para olarak ödenmez.",
+      "sourceUrl": "https://www.yatirimadestek.gov.tr/pdf/assets/upload/dosyalar/ozet_arge_ve_tasarim_merkezleri_destegi.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "Vergiye Tabi Kazancın Tespitinde İndirim"
+    }
+  },
+  {
+    "id": "kanun4691",
+    "ad": "Teknoloji Geliştirme Bölgesi kazanç istisnası (4691 sayılı Kanun)",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi indirimi. Para olarak verilmez.",
+    "ozet": "Teknoloji geliştirme bölgesindeki yazılım ve Ar-Ge kazancından koşullu olarak vergi alınmaz.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Bölgedeki yazılım, tasarım ve Ar-Ge kazancının tamamı gelir ve kurumlar vergisinden istisnadır. Tutar kazanca bağlıdır.",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "münhasıran bu Bölgedeki yazılım, tasarım ve AR-GE faaliyetlerinden elde ettikleri kazançları 31/12/2028 tarihine kadar gelir ve kurumlar vergisinden müstesnadır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "İstisnanın bitiş günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2028-12-31",
+          "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "münhasıran bu Bölgedeki yazılım, tasarım ve AR-GE faaliyetlerinden elde ettikleri kazançları 31/12/2028 tarihine kadar gelir ve kurumlar vergisinden müstesnadır."
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Girişim sermayesi fonu tutarlarının yürürlük günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://www.resmigazete.gov.tr/eskiler/2025/12/20251231M5-9.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Karar 1/1/2026 tarihinde yürürlüğe girer."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Bölgenin yönetici şirketi projeyi kabul etmeli. İşletme bölgeye girmelidir.",
+      "İstisna, yalnız bölgede yapılan yazılım, tasarım ve Ar-Ge işinin kazancına uygulanır.",
+      "Kapsam dışındaki gelir ve giderler ayrı tutulmalıdır. Bu ayrım geriye dönük yapılamaz.",
+      "Yıllık beyannamede istisna edilen kazanç 5.000.000 TL ya da daha fazlaysa bir kural vardır. Bu kazancın %3'ü girişim sermayesi fonuna aktarılmalıdır. Yıllık aktarım sınırı 100.000.000 TL'dir.",
+      "Aktarım yapılmazsa o yılın istisna edilen kazancının %20'si istisnadan çıkar."
+    ],
+    "uygunGider": [
+      "Bölgede yapılan yazılım ve Ar-Ge işi"
+    ],
+    "haricGider": [
+      "Bölge dışındaki işlerin geliri"
+    ],
+    "belgeler": [
+      "Bölge kabul kararı",
+      "Ayrı tutulmuş muhasebe ve bordro"
+    ],
+    "kanal": "Teknoloji geliştirme bölgesi yönetici şirketi başvurusu",
+    "kaynak": {
+      "url": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+      "ad": "4691 sayılı Kanun ve girişim sermayesi fonu parametrelerini belirleyen Cumhurbaşkanı Kararı",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kanun5746",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "hükümleri ile 4691 sayılı Kanunun geçici 2 nci maddesi hükümlerinden ayrıca yararlanamazlar."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Destek vergi istisnası olarak verilir. Para olarak ödenmez.",
+      "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.4691.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "31/12/2028 tarihine kadar gelir ve kurumlar vergisinden müstesnadır."
+    }
+  },
+  {
+    "id": "teknogirisimRozeti",
+    "ad": "Teknogirişim Rozeti",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "ag",
+    "destekTuru": "Belge. Para olarak verilmez.",
+    "ozet": "Bakanlık, teknolojiye dayalı KOBİ'lere bazı desteklerde istenen bir belge verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://teknogirisim.sanayi.gov.tr/faq",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://teknogirisim.sanayi.gov.tr/faq",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Türkiye'de kurulmuş şahıs işletmesi ya da sermaye şirketi olmalı.",
+      "KOBİ olmalı.",
+      "Son 15 yıl içinde kurulmuş olmalı.",
+      "Eksik belgeyi tamamlamak için 90 gün vardır.",
+      "Rozet 3 yıl geçerlidir."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Ticaret Sicil Gazetesi",
+      "KOBİ beyannamesi",
+      "İşin teknolojiye ve yeniliğe dayandığını gösteren dosya"
+    ],
+    "kanal": "Teknogirişim Rozeti başvuru portalı",
+    "kaynak": {
+      "url": "https://teknogirisim.sanayi.gov.tr/",
+      "ad": "Teknogirişim Rozeti başvuru portalı ve ilgili düzenleme",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://teknogirisim.sanayi.gov.tr/faq",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://teknogirisim.sanayi.gov.tr/faq",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Para desteği değildir. Bakanlık girişime bir belge verir.",
+      "sourceUrl": "https://teknogirisim.sanayi.gov.tr/faq",
+      "asOf": "2026-11-20",
+      "alinti": "Teknogirişim Rozeti, teknoloji ve yenilik odaklı, ölçeklenebilir iş modellerine sahip girişimlerin belirlendiği ve belgelendirildiği bir sistemdir"
+    }
+  },
+  {
+    "id": "turcorn",
+    "ad": "Turcorn 100 Programı",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "ag",
+    "destekTuru": "Bağlantı, tanıtım ve hızlandırma",
+    "ozet": "Bakanlık, hızla büyüyen girişimlere bağlantı, tanıtım ve hızlandırma desteği verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turcorn.gov.tr/site/upload/Node/100497/files/Turcorn-100-Programi-Usul-ve-Esaslari.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turcorn.gov.tr/site/upload/Node/100497/files/Turcorn-100-Programi-Usul-ve-Esaslari.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Kuruluş yılı ile başvuru yılı arasında en çok 15 yıl olmalı.",
+      "Ayrıca iki koşuldan biri sağlanmalı. Birinci koşul, üç yıllık satış ortalaması ve büyüme sınırıdır. İkinci koşul, belli bir değerlemeyle alınmış yatırım ve büyüme sınırıdır.",
+      "Hesaplamalar kurumlar vergisi beyannamesi verileriyle yapılır."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Son üç yıla ait kurumlar vergisi beyannameleri",
+      "Yatırım ve değerleme belgeleri"
+    ],
+    "kanal": "Program başvuru süreci",
+    "kaynak": {
+      "url": "https://www.turcorn.gov.tr/tr/sikca-sorulan-sorular",
+      "ad": "Turcorn 100 usul ve esasları ile sıkça sorulan sorular",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Bakanlık önce başvuruyu ön incelemeden geçirir. Uygun bulunan başvuru en geç 60 iş günü içinde jüriye sunulur. Süre şu olayla başlar: Ön incelemenin olumlu sonuçlanması.",
+        "sourceUrl": "https://www.turcorn.gov.tr/tr/sikca-sorulan-sorular",
+        "asOf": "2026-11-20",
+        "alinti": "Ön değerlendirmeyi geçen girişimler en geç 60 (altmış) iş günü içerisinde Jüri değerlendirmesine sunulur."
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turcorn.gov.tr/site/upload/Node/100497/files/Turcorn-100-Programi-Usul-ve-Esaslari.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Para desteği yoktur. Destekler hizmet olarak verilir. Örneğin marka kullanımı, iş ağı ve yol gösterici desteği verilir.",
+      "sourceUrl": "https://www.turcorn.gov.tr/site/upload/Node/100497/files/Turcorn-100-Programi-Usul-ve-Esaslari.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "a) Turcorn 100 markasından yararlanma, b) Nitelikli iş ağlarına erişim, c) Kamu ilişkileri desteği, ç) Yol gösterici desteği,"
+    }
+  },
+  {
+    "id": "kanun5746",
+    "ad": "Ar-Ge indirimi ve SGK işveren hissesi desteği (5746 sayılı Kanun)",
+    "kurum": "Sanayi ve Teknoloji Bakanlığı ile Sosyal Güvenlik Kurumu",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi ve sigorta primi indirimi. Para olarak verilmez.",
+    "ozet": "Ar-Ge harcamaları vergiden düşülür ve Ar-Ge personelinin primine destek verilir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Uygun Ar-Ge ve yenilik harcamasının tamamı kazançtan indirilir. Uygun personelin işveren sigorta primi payının yarısı karşılanır. Katalogdaki iki oran resmî metinle aynıdır.",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+        "asOf": "2026-11-20",
+        "alinti": "gerçekleştirilen Ar-Ge ve yenilik harcamalarının tamamı ile bu Kanun kapsamında yukarıda sayılan kurum ve kuruluşlar tarafından desteklenen tasarım projelerinde"
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Prim desteğinin bitiş günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2028-12-31",
+          "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+          "asOf": "2026-11-20",
+          "alinti": "sigorta primi işveren hissesinin yarısı, 31.12.2028 tarihine kadar Hazine ve Maliye Bakanlığınca karşılanmaktadır."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "İşletme uygun olmalı ve kayıt yaptırmalıdır. Proje ve bordro ayrı tutulmalıdır.",
+      "Hibeyle ödenen kısım Ar-Ge indiriminden düşülür.",
+      "Bu destekten yararlanan çalışanın gideri, hizmet ihracatı desteğine yazılamaz.",
+      "İndirim belli bir sınırı aşarsa girişim sermayesi fonuna para aktarmak gerekir."
+    ],
+    "uygunGider": [
+      "Uygun Ar-Ge ve yenilik harcamaları",
+      "Uygun Ar-Ge, tasarım ve destek personelinin primleri"
+    ],
+    "haricGider": [
+      "Hibeyle ödenmiş kısım",
+      "Ar-Ge dışı personel"
+    ],
+    "belgeler": [
+      "Ar-Ge personelinin ay ay çalışma listesi",
+      "Giderleri projeye göre ayıran muhasebe düzeni",
+      "Ar-Ge personelinin ayrı bordrosu"
+    ],
+    "kanal": "Mali müşavir, bordro ve kurumun beyannamesi",
+    "kaynak": {
+      "url": "https://www.gib.gov.tr/yardim-kaynaklar/yararli-bilgiler/kanunlarina-gore-vergisel-tesvikler/l-5746",
+      "ad": "5746 sayılı Kanuna göre vergisel teşvikler (Gelir İdaresi Başkanlığı)",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kanun4691",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "dislayici",
+          "sourceUrl": "https://www.mevzuat.gov.tr/mevzuatmetin/1.5.5746.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "hükümleri ile 4691 sayılı Kanunun geçici 2 nci maddesi hükümlerinden ayrıca yararlanamazlar."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "İndirim. Ar-Ge harcaması beyannamede kazançtan düşülür. Prim desteği SGK bildirgesinde işveren payından düşülür.",
+      "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5746&MevzuatTertip=5",
+      "asOf": "2026-11-20",
+      "alinti": "kurum kazancının ve 31/12/1960 tarihli ve 193 sayılı Gelir Vergisi Kanununun 89 uncu maddesi uyarınca ticari kazancın tespitinde indirim konusu yapılır."
+    }
+  },
+  {
+    "id": "vergi11257",
+    "ad": "Hizmet ihracatı kazanç indirimi (11257 sayılı Karar)",
+    "kurum": "Hazine ve Maliye Bakanlığı ile Gelir İdaresi Başkanlığı",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Vergi indirimi. Para olarak verilmez.",
+    "ozet": "Yurt dışındaki müşteriye verilen hizmetin kazancı koşullu olarak vergiden düşülür.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5520&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5520&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Hizmet ihracatı kazancının yüzde 100'ü kurum kazancından indirilir. Gelir vergisi mükellefleri için de oran yüzde 100'dür. Kanundaki eski oran yüzde 80'di.",
+        "sourceUrl": "https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=DUYURU%2FUNIVERSAL%2F2026%2FCK11257_not.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Kurumlar Vergisi Kanununun 10 uncu maddesinin birinci fıkrasının (ğ) bendi kapsamında uygulanacak indirim oranı %100 olarak belirlenmiştir."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Kararın Resmî Gazetede yayımlandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-04-30",
+          "sourceUrl": "https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=DUYURU%2FUNIVERSAL%2F2026%2FCK11257_not.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "YAYINLANMA TARİHİ 30/4/2026"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Yüzde 100 oranın geçerli olduğu ilk dönemin başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=DUYURU%2FUNIVERSAL%2F2026%2FCK11257_not.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "1/1/2026 tarihinden itibaren başlayan vergilendirme dönemlerine ilişkin gelir ve kazançlara uygulanmak üzere, yayımı tarihinde yürürlüğe girmiştir."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "Hizmet, Türkiye'de yerleşik olmayan kişilere ya da şirketlere verilmeli.",
+      "Hizmetten yurt dışında yararlanılmalı.",
+      "Kazanç Türkiye'ye getirilmeli.",
+      "Kapsanan hizmetler arasında yazılım, veri saklama ve veri analizi de vardır."
+    ],
+    "uygunGider": [],
+    "haricGider": [
+      "Türkiye'deki müşterilere verilen hizmetin kazancı"
+    ],
+    "belgeler": [
+      "Yabancı müşteri sözleşmesi ve faturası",
+      "Hizmetin yurt dışında kullanıldığını gösteren belge",
+      "Kazancın Türkiye'ye geldiğini gösteren kayıt",
+      "Bu gelirin ayrı tutulduğu muhasebe"
+    ],
+    "kanal": "Kurumlar vergisi beyannamesi",
+    "kaynak": {
+      "url": "https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=DUYURU%2FUNIVERSAL%2F2026%2FCK11257_not.pdf",
+      "ad": "Gelir İdaresi Başkanlığı 11257 sayılı Karar açıklayıcı bilgi notu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5520&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5520&MevzuatTertip=5",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "İndirim. Kazanç, kurumlar vergisi beyannamesinde vergilendirilen kazançtan düşülür. Kazancın tamamı beyanname gününe kadar Türkiye'ye getirilmelidir.",
+      "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5520&MevzuatTertip=5",
+      "asOf": "2026-11-20",
+      "alinti": "elde edildiği hesap dönemine ilişkin kurumlar vergisi beyannamesinin verilmesi gereken tarihe kadar tamamının Türkiye’ye transfer edilmesi şartıyla"
+    }
+  },
+  {
+    "id": "sgk4447",
+    "ad": "SGK 4447 sayılı Kanun geçici 10. madde prim teşviki",
+    "kurum": "Sosyal Güvenlik Kurumu",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Sigorta primi desteği",
+    "ozet": "Önceden işsiz olan kişiyi ek olarak işe alan işveren, sigorta primi desteği alır.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal",
+      "oran": {
+        "state": "kaynakli",
+        "value": "İşveren sigorta primi payının tamamı İşsizlik Sigortası Fonundan karşılanır. Destek kişiye göre 6 ay ile 54 ay arasında sürer. Süre cinsiyete, eğitime, belgeye ve yaşa bağlıdır.",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20",
+        "alinti": "sigorta primine esas kazançları üzerinden hesaplanan sigorta primi işveren payının tamamı İşsizlik Sigortası Fonundan karşılanmaktadır."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Teşvikin son günü (en son bu güne kadar işe alınanlar yararlanır)",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+          "asOf": "2026-11-20",
+          "alinti": "Özel sektör işverenleri tarafından, 01.03.2011-31.12.2026 tarihleri arasında işe alınan sigortalılar için"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "İşe alınan kişi 18 yaşından büyük olmalı.",
+      "Kişi önceki altı ay işsiz olmalı.",
+      "Kişi, işletmenin ortalama çalışan sayısına ek olmalı.",
+      "İşveren borç ve uyum şartlarını sağlamalı."
+    ],
+    "uygunGider": [
+      "Yeni çalışanların işveren sigorta primi"
+    ],
+    "haricGider": [
+      "Hizmet ihracatı desteğine yazılan çalışan"
+    ],
+    "belgeler": [
+      "Yeni çalışanın koşulları sağladığını gösteren liste",
+      "Ortalama çalışan sayısı hesabı"
+    ],
+    "kanal": "SGK işveren bildirimleri",
+    "kaynak": {
+      "url": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+      "ad": "SGK güncel sigorta primi teşvik, destek ve indirimleri duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Prim desteği. İşverenin ödeyeceği prim payı Fondan karşılanır. İşveren bu payı ödemez.",
+      "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+      "asOf": "2026-11-20",
+      "alinti": "Teşvikten yararlanma süreleri sigortalının cinsiyetine, mezuniyet durumuna, sahip olduğu belgelere ve yaşına göre 6 ila 54 ay arasında değişmektedir."
+    }
+  },
+  {
+    "id": "asgariUcretDestegi",
+    "ad": "Asgari ücret desteği",
+    "kurum": "Sosyal Güvenlik Kurumu",
+    "kategori": "vergi_sgk",
+    "destekTuru": "Sigorta primi desteği",
+    "ozet": "Koşulları sağlayan işveren, çalışan başına günlük bir prim desteği alır.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Destek her prim günü için 42,33 TL'dir. 30 günlük çalışan için ayda en çok 1.269,90 TL olur. SGK sayfası bu tutarı yuvarlayıp 1.270 TL yazıyor.",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20",
+        "alinti": "Destek tutarı günlük 42,33 TL aylık 1.270 TL’dir."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal"
+    },
+    "tarihler": [
+      {
+        "ad": "Destek döneminin başlangıcı",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-01-01",
+          "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5510&MevzuatTertip=5",
+          "asOf": "2026-11-20",
+          "alinti": "1/1/2026 tarihinden itibaren uygulanmak üzere yayımı tarihinde (29/1/2026)"
+        },
+        "kritik": false
+      },
+      {
+        "ad": "Destek döneminin son günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-31",
+          "sourceUrl": "https://www.mevzuat.gov.tr/anasayfa/MevzuatFihristDetayIframe?MevzuatTur=1&MevzuatNo=5510&MevzuatTertip=5",
+          "asOf": "2026-11-20",
+          "alinti": "2026 yılı Ocak ila Aralık ayları/dönemi için günlük 42,33 Türk lirası ile çarpımı sonucu bulunacak tutar"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Destek, kapsamdaki koşulları sağlayan işverene verilir.",
+      "Destek her çalışana kendiliğinden uygulanmayabilir."
+    ],
+    "uygunGider": [
+      "Bordrodaki prim gideri"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Aylık prim ve hizmet belgeleri"
+    ],
+    "kanal": "SGK işveren bildirimleri",
+    "kaynak": {
+      "url": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+      "ad": "SGK güncel sigorta primi teşvik, destek ve indirimleri duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Mahsup. Destek tutarı işverenin SGK'ya ödeyeceği primden düşülür. Para ayrıca ödenmez.",
+      "sourceUrl": "https://www.sgk.gov.tr/Content/Post/c52f99f0-da6c-4029-9b9a-a0d6f96a6a42/Guncel-Sigorta-Primi-Tesvik-Destek-ve-Indirimleri-2026-08-04-10-29-55",
+      "asOf": "2026-11-20",
+      "alinti": "bu işverenlerin Kuruma ödeyecekleri sigorta primlerinden mahsup edilir ve bu tutar İşsizlik Sigortası Fonundan karşılanır."
+    }
+  },
+  {
+    "id": "iskurIep",
+    "ad": "İŞKUR İşbaşı Eğitim Programları",
+    "kurum": "Türkiye İş Kurumu",
+    "kategori": "katilimciya_odeme",
+    "destekTuru": "Katılımcıya yapılan ödeme",
+    "ozet": "İŞKUR, işyerinde eğitim gören katılımcıya ücret öder.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Günlük ödeme katılımcının durumuna göre değişir. Genel programda iş arayana 1.079,83 TL, öğrenciye 809,87 TL, işsizlik ödeneği alana 539,91 TL ödenir. Geleceğin meslekleri programında bu tutarlar 1.403,78 TL, 1.052,83 TL ve 701,89 TL olur. Meslek lisesi mezunu kendi alanında katılırsa ödeme yüzde 30 artar. Belirlenen mesleklerdeki kadın katılımcı için de ödeme yüzde 30 artar.",
+        "sourceUrl": "https://www.iskur.gov.tr/is-arayan/aktif-isgucu-programlari/isbasi-egitim-programlari/",
+        "asOf": "2026-11-20",
+        "alinti": "İş arayan statüsündeki katılımcılara günlük 1.079,83 TL, lise ve altı örgün eğitime devam eden öğrencilere 809,87 TL ve işsizlik ödeneği alanlara günlük 539,91 TL"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.iskur.gov.tr/is-arayan/aktif-isgucu-programlari/isbasi-egitim-programlari/",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "oransal"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Geleceğin meslekleri programında katılımcı 18 ile 29 yaş arasında olmalı. Bu programda meslek alanı da sınırlıdır.",
+      "Genel programda işverende genellikle en az 5 sigortalı çalışan aranır. İşveren katılımcıyı işe alacağına söz verir."
+    ],
+    "uygunGider": [
+      "Eğitim süresince katılımcının ücreti ve sigorta primi"
+    ],
+    "haricGider": [
+      "Aynı katılımcının aynı aylarının hibeye personel gideri olarak yazılması"
+    ],
+    "belgeler": [
+      "Katılımcıların ay ay listesi",
+      "Program sözleşmesi"
+    ],
+    "kanal": "İŞKUR il müdürlükleri",
+    "kaynak": {
+      "url": "https://engelsiz.iskur.gov.tr/faaliyetlerimiz/isbasi-egitim-programlari-iep/",
+      "ad": "İŞKUR işbaşı eğitim programları sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.iskur.gov.tr/is-arayan/aktif-isgucu-programlari/isbasi-egitim-programlari/",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.iskur.gov.tr/is-arayan/aktif-isgucu-programlari/isbasi-egitim-programlari/",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Katılımcıya aylık ödeme. İŞKUR parayı katılımcıya banka yoluyla her ay öder. Ödeme yalnız katılımcının gerçekten geldiği günler için yapılır.",
+      "sourceUrl": "https://www.iskur.gov.tr/medya/svunhe1j/isbasi-egitim-programi-kapsaminda-katilimcilarin-temel-haklari-ve-yukumlulukleri.pdf",
+      "asOf": "2026-11-20",
+      "alinti": "Devam edilmeyen günler için ödeme yapılmaz. Ödemeler banka aracılığıyla aylık olarak yapılır."
+    }
+  },
+  {
+    "id": "bks",
+    "ad": "Bireysel Katılım Sermayesi",
+    "kurum": "Hazine ve Maliye Bakanlığı",
+    "kategori": "ozsermaye",
+    "destekTuru": "Ortaklık yatırımı. Yatırımcı vergi avantajı alır.",
+    "ozet": "Bireysel yatırımcılar küçük anonim şirketlere ortak olur ve vergi avantajı alır.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Yatırım üst sınırı yok. 2026 yılında en düşük yatırım 250.980 TL. Yatırımcının yıllık vergi indirimi en çok 2.500.000 TL.",
+        "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "asOf": "2026-11-20",
+        "alinti": "Diğer taraftan yatırım üst limitine ilişkin herhangi bir sınırlama bulunmamaktadır."
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Yatırımcı hisse tutarının yüzde 75'ini vergiden indirir. Bazı Ar-Ge destekli şirketlerde oran yüzde 100 olur.",
+        "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "asOf": "2026-11-20",
+        "alinti": "hesapladıkları hisselerin tutarlarının %75’ini yıllık beyannamelerine konu kazanç ve iratlarından hisselerin iktisap edildiği dönemde indirebilirler."
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Şirket, tam mükellef bir anonim şirket olmalı.",
+      "Şirket halka açık olmamalı.",
+      "Ölçüm gününde en çok 50 çalışan olmalı.",
+      "Şirket en çok 10 yaşında olmalı.",
+      "Şirket belirlenen sektörlerde çalışmalı. Şirket başka bir şirketin kontrolünde olmamalı.",
+      "Sermaye, iş planına göre 24 ay içinde kullanılmalıdır.",
+      "Yatırımcı payı en az iki tam yıl tutmalıdır."
+    ],
+    "uygunGider": [
+      "Genel işletme giderleri. Gider kalemi sınırı yoktur."
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Ana sözleşme ve şirket türünü gösteren belge",
+      "Belli bir tarihteki çalışan sayısını gösteren belge",
+      "24 aylık sermaye kullanım iş planı",
+      "Şirketin kimin kontrolünde olduğunu gösteren beyan"
+    ],
+    "kanal": "Akredite bireysel katılım yatırımcısı ağları",
+    "kaynak": {
+      "url": "https://www.hmb.gov.tr/finansal-bks-sss",
+      "ad": "Hazine ve Maliye Bakanlığı Bireysel Katılım Sermayesi rehberleri",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Ortaklık yatırımı. Para şirkete girer, vergi indirimini yatırımcı alır.",
+      "sourceUrl": "https://www.hmb.gov.tr/finansal-bks-sss",
+      "asOf": "2026-11-20",
+      "alinti": "nakdi sermayenin girişim şirketinin banka hesabına yatırılması, iktisap edilen hisselerin en az iki tam yıl elde tutulması"
+    }
+  },
+  {
+    "id": "kgf",
+    "ad": "Kredi Garanti Fonu kefaleti",
+    "kurum": "Kredi Garanti Fonu",
+    "kategori": "kefalet",
+    "destekTuru": "Kefalet ve teminat",
+    "ozet": "Kredi Garanti Fonu, işletmenin banka kredisi için kefil olur.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Banka krediyi değerlendirir.",
+      "Kefalet için komisyon ödenir."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Mali tablolar",
+      "Bankanın limit değerlendirmesi"
+    ],
+    "kanal": "Anlaşmalı bankalar",
+    "kaynak": {
+      "url": "https://www.kgf.com.tr/",
+      "ad": "Kredi Garanti Fonu kurumsal kaynakları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [
+      {
+        "digerProgramId": "kosgebKapasite",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://www.kosgeb.gov.tr/site/tr/genel/detay/9467/kobilerin-buyumesine-guclu-destek-yeni-basvuru-donemi-basladi",
+          "asOf": "2026-11-20",
+          "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunuluyor."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kosgebKuresel",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://webdosya.kosgeb.gov.tr/Content/Upload/Dosya/KURESEL%20REKABETC%C4%B0L%C4%B0K/2026/2026.09.07/2026_Y%C4%B1l%C4%B1_1._Proje_Teklif_C%CC%A7ag%CC%86r%C4%B1s%C4%B1.pdf",
+          "asOf": "2026-11-20",
+          "alinti": "Ayrıca işletmelere Kredi Garanti Fonu A.Ş. (KGF) aracılığıyla kefalet imkânı da sunulmaktadır."
+        },
+        "yonlu": false
+      },
+      {
+        "digerProgramId": "kosgebGirisimciA",
+        "iliski": {
+          "state": "kaynakli",
+          "value": "uyumlu",
+          "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/dogrudan-krediler/kosgeb-geri-odemeli-destekleri",
+          "asOf": "2026-11-20",
+          "alinti": "KOSGEB Destek Programları kapsamında verilen destekler için KOBİ’ler lehine KGF A.Ş. tarafından doğrudan kefalet sağlanmaktadır."
+        },
+        "yonlu": false
+      }
+    ],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Kefalet. Banka krediyi verir, KGF kefil olur. İşletme komisyon öder.",
+      "sourceUrl": "https://www.kgf.com.tr/index.php/tr/urunlerimiz/ozkaynak-kefaletlerimiz/banka-kredileri/kgf-genel-destek-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Komisyon oranı: Yıllık %1,5"
+    }
+  },
+  {
+    "id": "eximbank",
+    "ad": "Türk Eximbank Döviz Kazandırıcı Hizmetler Kredisi",
+    "kurum": "Türk Eximbank",
+    "kategori": "kredi",
+    "destekTuru": "Kredi",
+    "ozet": "Türk Eximbank, döviz kazandıran hizmet işletmelerine kredi verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Sabit bir tutar yoktur. Tutar bankanın kredi değerlendirmesine bağlıdır.",
+        "sourceUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+        "asOf": "2026-08-12"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+        "asOf": "2026-08-12"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "İşletme hizmet ihracatı yapacağına söz verir ve ihracatı yapar.",
+      "Banka mali tablolara bakar ve limit ayırır."
+    ],
+    "uygunGider": [
+      "İşletmenin günlük işleri için gereken para"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Hizmet ihracatını gösteren belge",
+      "Mali tablolar"
+    ],
+    "kanal": "Türk Eximbank",
+    "kaynak": {
+      "url": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+      "ad": "Türk Eximbank krediler sayfası",
+      "asOf": "2026-08-12"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+        "asOf": "2026-08-12"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+        "asOf": "2026-08-12"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://www.eximbank.gov.tr/tr/urun-ve-hizmetlerimiz/krediler",
+      "asOf": "2026-08-12"
+    }
+  },
+  {
+    "id": "tkyb",
+    "ad": "Türkiye Kalkınma Fonu, Teknoloji ve İnovasyon Fonu",
+    "kurum": "Türkiye Kalkınma ve Yatırım Bankası",
+    "kategori": "ozsermaye",
+    "destekTuru": "Ortaklık yatırımı ve ortak yatırım",
+    "ozet": "Türkiye Kalkınma Fonu, teknoloji girişimlerine fonlar ve ortak yatırım yoluyla para koyar.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Fonun büyüklüğü 745 milyon TL. Girişim başına sabit tutar yazmıyor.",
+        "sourceUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "asOf": "2026-11-20",
+        "alinti": "Fon Büyüklüğü 745 Milyon TL"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Fon, başka fonlara para koyar ve girişimlere ortak yatırım yapar."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Yatırıma hazırlık dosyası"
+    ],
+    "kanal": "Fon yöneticileri",
+    "kaynak": {
+      "url": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+      "ad": "Türkiye Kalkınma Fonu Teknoloji ve İnovasyon Fonu sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Ortaklık yatırımı. Fon başka fonlarla birlikte girişime ortak olur.",
+      "sourceUrl": "https://www.turkiyekalkinmafonu.com.tr/fonlarimiz/teknoloji-ve-inovasyon-fonu",
+      "asOf": "2026-11-20",
+      "alinti": "teknoloji odaklı girişimleri, girişimcilik ekosistemindeki diğer girişim sermayesi fonları ile ortak yatırım yoluyla(yatırım turu) desteklemektedir."
+    }
+  },
+  {
+    "id": "ttgv",
+    "ad": "Türkiye Teknoloji Geliştirme Vakfı programları",
+    "kurum": "Türkiye Teknoloji Geliştirme Vakfı",
+    "kategori": "ayni",
+    "destekTuru": "Hizmet desteği",
+    "ozet": "Vakıf, teknoloji projelerine hizmet desteği verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [
+      {
+        "ad": "Güdümlü Projeler son başvuru günü",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-11-30",
+          "sourceUrl": "https://ttgv.org.tr/tr/gudumlu-projeler",
+          "asOf": "2026-11-20",
+          "alinti": "Son başvuru tarihi 30 Kasım 23:59 olarak güncellenmiştir."
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Vakıf çağrı açar. İşletme programa kabul edilmelidir."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Program başvuru dosyası"
+    ],
+    "kanal": "Vakıf başvuru süreçleri",
+    "kaynak": {
+      "url": "https://ttgv.org.tr/",
+      "ad": "Türkiye Teknoloji Geliştirme Vakfı program sayfaları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Hizmet. Vakıf analiz, yol haritası ve finansmana erişim desteği verir.",
+      "sourceUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+      "asOf": "2026-11-20",
+      "alinti": "Eko-Klinik® süreciyle her firmanın dönüşüm önceliklerine özel yol haritası geliştirilerek proje hayata geçirme ve finansmana erişim süreçlerinde uçtan uca destek sağlanması"
+    }
+  },
+  {
+    "id": "istka",
+    "ad": "İstanbul Kalkınma Ajansı destek programları",
+    "kurum": "İstanbul Kalkınma Ajansı",
+    "kategori": "hibe",
+    "destekTuru": "Hibe. Çağrıya göre verilir.",
+    "ozet": "İstanbul Kalkınma Ajansı, çağrı açtığında projelere hibe verir.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "2026 Yaratıcı Ekonomi programında proje başına en az 5.000.000 TL, en çok 20.000.000 TL.",
+        "sourceUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "kaynakli",
+        "value": 20000000,
+        "sourceUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "hibe_tavani",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Azami destek oranı yüzde 75.",
+        "sourceUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "asOf": "2026-11-20"
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "2026 Yaratıcı Ekonominin Güçlendirilmesi Mali Destek Programı son başvuru günü (saat 23.59)",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-12-04",
+          "sourceUrl": "https://www.istka.org.tr/acik-destek-programlari",
+          "asOf": "2026-11-20"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Açık çağrıya şirketler başvuramaz.",
+      "Kamu kurumları, belediyeler, odalar, dernekler, vakıflar, üniversiteler ve teknoloji geliştirme bölgesi yönetici şirketleri başvurabilir.",
+      "Ajans yeni bir program açarsa rehberdeki başvuru sahibi tanımını okuyun."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [],
+    "kanal": "Ajans başvuru sistemi",
+    "kaynak": {
+      "url": "https://www.istka.org.tr/acik-destek-programlari",
+      "ad": "İstanbul Kalkınma Ajansı açık destek programları sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Ajansın planladığı sonuç tarihi 18 Mart 2027. Tarih kesin değildir. Süre şu olayla başlar: Son başvuru tarihi.",
+        "sourceUrl": "https://istka.org.tr/Archive/Content/f77c5ed3f36892a6e109b6c26e22e6a9f767d35d.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "Değerlendirme sonuçları hakkında Başvuru Sahiplerini bilgilendirmek için Ajansın planladığı tarih 18/03/2027’dir."
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.istka.org.tr/acik-destek-programlari",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Avans. Desteğin yüzde 60'ı teminatla ön ödeme olarak verilir. Kalanı hak edişle ödenir.",
+      "sourceUrl": "https://istka.org.tr/Archive/Content/f77c5ed3f36892a6e109b6c26e22e6a9f767d35d.pdf",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "techIstanbul",
+    "ad": "Tech Istanbul Growth",
+    "kurum": "İstanbul Büyükşehir Belediyesi",
+    "kategori": "ag",
+    "destekTuru": "Hizmet desteği ve kamu referansı",
+    "ozet": "Program, satışa hazır teknoloji ürünü olan girişimlere hizmet ve deneme fırsatı verir.",
+    "durum": "cagri_bekleniyor",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tech.istanbul/growth",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tech.istanbul/growth",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Satışa hazır teknoloji ürünü olan ileri aşamadaki girişimler başvurabilir.",
+      "Ürün, kavram kanıtlama denemesine uygun olmalı."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Ürünün hazır olduğunu gösteren belge",
+      "Kavram kanıtlama denemesinin kapsamı"
+    ],
+    "kanal": "Program başvuru sayfası",
+    "kaynak": {
+      "url": "https://tech.istanbul/growth",
+      "ad": "Tech Istanbul Growth program sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tech.istanbul/growth",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://tech.istanbul/growth",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Hizmet ve deneme. İBB ile kavram kanıtlama denemesi yapılır.",
+      "sourceUrl": "https://tech.istanbul/growth",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "ekip",
+    "ad": "Emlak Konut İnovasyon Platformu, hızlandırma ve kavram kanıtlama",
+    "kurum": "Emlak Konut GYO",
+    "kategori": "ag",
+    "destekTuru": "Hizmet desteği, kurumsal referans ve deneme projesi",
+    "ozet": "Platform, prototipi olan girişimlere hızlandırma ve kavram kanıtlama fırsatı verir.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "En az prototip düzeyinde bir ürün olmalı. Çekirdek ekip en az iki kişi olmalı.",
+      "Fikir aşamasındaki projeler kabul edilmez."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Prototipin hazır olduğunu gösteren belge"
+    ],
+    "kanal": "Platform başvuru sayfası",
+    "kaynak": {
+      "url": "https://ekip.emlakkonut.com.tr/programlar/poc",
+      "ad": "Emlak Konut İnovasyon Platformu program sayfaları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Hizmet ve deneme. Ürün Emlak Konut projelerinde denenir.",
+      "sourceUrl": "https://ekip.emlakkonut.com.tr/programlar/poc",
+      "asOf": "2026-11-20",
+      "alinti": "… geliştirdikleri ürünü Emlak Konut projelerinde uygulama fırsatı bulur"
+    }
+  },
+  {
+    "id": "adim",
+    "ad": "Avrupa Dijital İnovasyon Merkezleri",
+    "kurum": "Avrupa Birliği ile Sanayi ve Teknoloji Bakanlığı",
+    "kategori": "ayni",
+    "destekTuru": "Hizmet desteği",
+    "ozet": "Avrupa Dijital İnovasyon Merkezleri, işletmelere dijitalleşme için hizmet verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "İşletme merkezin hizmet kapsamına uymalı. Merkez işletmeyi kabul etmeli."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [],
+    "kanal": "Merkez hizmet talebi",
+    "kaynak": {
+      "url": "https://dijitalavrupa.sanayi.gov.tr/",
+      "ad": "Dijital Avrupa Programı Türkiye duyuruları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "Hizmet. Merkezler test, danışmanlık, eğitim ve finansmana erişim desteği verir.",
+      "sourceUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+      "asOf": "2026-11-20",
+      "alinti": "test ve deney ortamları sunan bu merkezler aynı zamanda danışmanlık, eğitim ve finansmana erişim desteği sağlamaktadır."
+    }
+  },
+  {
+    "id": "abProgramlari",
+    "ad": "Ufuk Avrupa ve Dijital Avrupa programları",
+    "kurum": "Avrupa Birliği",
+    "kategori": "hibe",
+    "destekTuru": "Hibe. Çağrıya göre verilir.",
+    "ozet": "Avrupa Birliği, ortaklıkla yürütülen Ar-Ge ve dijitalleşme projelerine hibe verir.",
+    "durum": "yururlukte",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "Ufuk Avrupa yenilik eyleminde oran en çok %70 olur. Kâr amacı gütmeyen kuruluşta oran %100 olabilir. Araştırma ve yenilik eyleminde oran %100 olur.",
+        "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "asOf": "2026-11-20",
+        "alinti": "– Innovation action: 70% (except for non-profit legal entities, where a rate of up to 100% applies)"
+      }
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Bir çağrı ve ortaklık gerekir. Çoğu zaman yabancı ortak da gerekir.",
+      "Değerlendirme ve sözleşme uzun sürer."
+    ],
+    "uygunGider": [
+      "Çağrı kapsamındaki Ar-Ge ve dijitalleşme işleri"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Yabancı ortak",
+      "İngilizce teknik dosya"
+    ],
+    "kanal": "Avrupa Birliği başvuru portalları",
+    "kaynak": {
+      "url": "https://ufukavrupa.org.tr/en",
+      "ad": "Ufuk Avrupa ulusal portalı ve Dijital Avrupa Programı sayfaları",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "eic",
+    "ad": "Avrupa Yenilik Konseyi Hızlandırıcısı",
+    "kurum": "Avrupa Birliği",
+    "kategori": "hibe",
+    "destekTuru": "Hibe ve ortaklık yatırımı",
+    "ozet": "Avrupa Yenilik Konseyi, çığır açıcı teknoloji girişimlerine hibe ve ortaklık yatırımı sağlar.",
+    "durum": "acik",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Hibe en çok 2,5 milyon Avro olur. Ortaklık yatırımı 1 milyon ile 10 milyon Avro arasında olur.",
+        "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+        "asOf": "2026-11-20",
+        "alinti": "Grant component up to EUR 2.5M for innovation activities (TRL 6 to 8)"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [
+      {
+        "ad": "Tam başvuruların toplandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-01-20",
+          "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "asOf": "2026-11-20",
+          "alinti": "20/01/2027"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Tam başvuruların toplandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-03-17",
+          "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "asOf": "2026-11-20",
+          "alinti": "17/03/2027"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Tam başvuruların toplandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-09-01",
+          "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "asOf": "2026-11-20",
+          "alinti": "01/09/2027"
+        },
+        "kritik": true
+      },
+      {
+        "ad": "Tam başvuruların toplandığı gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2027-11-04",
+          "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "asOf": "2026-11-20",
+          "alinti": "04/11/2027"
+        },
+        "kritik": true
+      }
+    ],
+    "kosullar": [
+      "Teknoloji ileri bir olgunluk düzeyinde olmalı.",
+      "Teknoloji çığır açıcı olmalı ve yeni bir pazar yaratmalı. Fikri mülkiyet korunabilir olmalı. İş Avrupa ölçeğinde büyüyebilmeli."
+    ],
+    "uygunGider": [
+      "İleri teknoloji Ar-Ge'si"
+    ],
+    "haricGider": [],
+    "belgeler": [
+      "Teknoloji olgunluk değerlendirmesi",
+      "Fikri mülkiyet listesi"
+    ],
+    "kanal": "Avrupa Yenilik Konseyi başvuru platformu",
+    "kaynak": {
+      "url": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+      "ad": "Avrupa Yenilik Konseyi Hızlandırıcı sayfası",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "kaynakli",
+        "value": "Kısa başvuruya yanıt genellikle 4 ile 6 hafta içinde gelir. Süre şu olayla başlar: Kısa başvurunun gönderilmesi.",
+        "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+        "asOf": "2026-11-20",
+        "alinti": "You will normally receive feedback within approximately 4-6 weeks."
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+      "asOf": "2026-11-20"
+    }
+  },
+  {
+    "id": "turkpatent",
+    "ad": "Türk Patent ve Marka Kurumu tescili ve KOBİ ücret indirimi",
+    "kurum": "Türk Patent ve Marka Kurumu",
+    "kategori": "ayni",
+    "destekTuru": "Ücret indirimi",
+    "ozet": "Kurum, ilk patent başvurusu yapan KOBİ için ücret indirimi uygular.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "asOf": "2026-11-20"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "asOf": "2026-11-20"
+      },
+      "tavanTuru": "yok",
+      "oran": {
+        "state": "kaynakli",
+        "value": "İlk kez patent başvurusu yapan KOBİ, ilk başvurusunda başvuru, araştırma ve inceleme ücretlerinde %75 indirim alır.",
+        "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "asOf": "2026-11-20",
+        "alinti": "ilk kez patent başvurusunda bulunacak KOBİ’lerin ilk patent başvurularında başvuru, araştırma ve inceleme raporu ücretlerine yüzde 75 indirim getirildi."
+      }
+    },
+    "tarihler": [
+      {
+        "ad": "Ücret indiriminin yürürlüğe girdiği gün",
+        "tarih": {
+          "state": "kaynakli",
+          "value": "2026-10-31",
+          "sourceUrl": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261031-6.htm",
+          "asOf": "2026-11-20",
+          "alinti": "Bu Tebliğ yayımı tarihinde yürürlüğe girer."
+        },
+        "kritik": false
+      }
+    ],
+    "kosullar": [
+      "İndirim yalnız KOBİ'nin ilk patent başvurusunda geçerlidir.",
+      "Kurum her yıl belirlediği ücreti alır."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [
+      "Marka başvuru dosyası"
+    ],
+    "kanal": "Kurum başvuru sistemi",
+    "kaynak": {
+      "url": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+      "ad": "Türk Patent ve Marka Kurumu KOBİ ücret indirimi duyurusu",
+      "asOf": "2026-11-20"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "asOf": "2026-11-20"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "asOf": "2026-11-20"
+      }
+    },
+    "odemeBicimi": {
+      "state": "kaynakli",
+      "value": "İndirim. Başvuru sahibi ücreti elektronik başvuru sisteminde indirimli öder.",
+      "sourceUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+      "asOf": "2026-11-20",
+      "alinti": "TÜRKPATENT Elektronik Başvuru Sistemi (EPATS) üzerinden gerçekleştirecekleri ilgili işlemlerde indirimli ücretlerden yararlanabilecek."
+    }
+  },
+  {
+    "id": "meslekOrgutleri",
+    "ad": "Meslek örgütleri ve sektörel birlikler",
+    "kurum": "Sivil toplum ve meslek kuruluşları",
+    "kategori": "ag",
+    "destekTuru": "Bağlantı, yol gösterme ve tanıtım",
+    "ozet": "Meslek kuruluşları üyelerine bağlantı, yol gösterme ve tanıtım fırsatı sağlar.",
+    "durum": "surekli",
+    "tutar": {
+      "metin": {
+        "state": "kaynakli",
+        "value": "Bu kuruluşlar para vermez.",
+        "sourceUrl": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+        "asOf": "2026-08-12"
+      },
+      "tavanTL": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+        "asOf": "2026-08-12"
+      },
+      "tavanTuru": "yok"
+    },
+    "tarihler": [],
+    "kosullar": [
+      "Kuruluş üyeliği kabul etmelidir."
+    ],
+    "uygunGider": [],
+    "haricGider": [],
+    "belgeler": [],
+    "kanal": "Üyelik başvurusu",
+    "kaynak": {
+      "url": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+      "ad": "İlgili birlik ve kurum sayfaları",
+      "asOf": "2026-08-12"
+    },
+    "kombinasyon": [],
+    "metinKontrol": "2026-08-12",
+    "sure": {
+      "degerlendirme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+        "asOf": "2026-08-12"
+      },
+      "ilkOdeme": {
+        "state": "bilinmiyor",
+        "sourceUrl": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+        "asOf": "2026-08-12"
+      }
+    },
+    "odemeBicimi": {
+      "state": "bilinmiyor",
+      "sourceUrl": "https://ticaret.gov.tr/destekler/hizmet-sektoru-destekleri",
+      "asOf": "2026-08-12"
+    }
+  }
+]

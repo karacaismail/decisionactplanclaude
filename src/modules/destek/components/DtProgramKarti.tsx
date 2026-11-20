@@ -17,7 +17,7 @@ export function DtProgramKarti({ program, bugun }: { program: Program; bugun: st
       <span className="dt-program-karti-ozet">{program.ozet}</span>
       <span className="dt-program-karti-etiketler">
         <DtEtiket>{KATEGORI_ADI[program.kategori]}</DtEtiket>
-        <DtEtiket ton={durum === 'kapandi' || durum === 'kapali' ? 'kapali' : 'notr'}>{DURUM_ADI[durum]}</DtEtiket>
+        <DtEtiket ton={durum === 'kapandi' || durum === 'kapali' || durum === 'kaldirildi' ? 'kapali' : 'notr'}>{DURUM_ADI[durum]}</DtEtiket>
         {eski ? <DtEtiket ton="uyari">Eski bilgi</DtEtiket> : null}
       </span>
       <span className="dt-program-karti-kontrol">Son kontrol: {tarihYaz(program.kaynak.asOf)}</span>
