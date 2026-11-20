@@ -5,7 +5,7 @@
 import type { Kategori, Kombinasyon, TavanTuru, Terim } from './data/tipler'
 import type { BasvuruDurumu, DesteksizCevap } from './motor/basvuru'
 import type { EslesmeSonucu } from './motor/eslestir'
-import type { Alan, IhracatDurumu, KurucuDurumu } from './motor/profil'
+import type { Alan, IhracatDurumu, IsletmeTuru, KurucuDurumu, KurulusDurumu, Olcek } from './motor/profil'
 import type { GecerliDurum } from './motor/tazelik'
 
 export const UYARI_METNI = 'Bu bilgi resmî kaynak değildir. Tutar ve tarih değişebilir. Başvurmadan önce kurumun sayfasını okuyun. Bu uygulama destek vermez ve söz vermez.'
@@ -57,10 +57,36 @@ export const IHRACAT_ADI: Record<IhracatDurumu, string> = { yok: 'İhracat yok',
 
 export const KURUCU_ADI: Record<KurucuDurumu, string> = { genc: 'Genç girişimci', kadin: 'Kadın girişimci', engelli: 'Engelli girişimci', gazi: 'Gazi girişimci' }
 
+/* Konsey planı B.5: profilin yeni alanları, boş sonuç metinleri ve tercih süzgeci. */
+export const KURULUS_DURUMU_ADI: Record<KurulusDurumu, string> = { kuruldu: 'Kuruldu', kurulmadi: 'Henüz kurulmadı' }
+
+export const OLCEK_ADI: Record<Olcek, string> = { mikro: 'Mikro', kucuk: 'Küçük', orta: 'Orta', buyuk: 'Büyük' }
+
+export const ISLETME_TURU_ADI: Record<IsletmeTuru, string> = {
+  sahis: 'Şahıs ya da esnaf işletmesi',
+  limited: 'Limited şirket',
+  anonim: 'Anonim şirket',
+  kooperatif: 'Kooperatif',
+  diger: 'Diğer',
+  secilmedi: 'Henüz seçilmedi',
+}
+
+export const BOS_SONUC_METNI = 'Katalogda profilinizle eşleşen program bulunamadı. Başka destekler olabilir. Kuruma sorun.'
+export const ISE_OZEL_YOK_METNI = 'Katalogda işinize özel program yok. Listede genel programlar var.'
+export const TERCIH_KREDI = 'Kredi ya da geri ödemeli destek istemiyorum'
+export const TERCIH_HISSE = 'Ortaklık payı vermek istemiyorum'
+export const TERCIHE_UYMUYOR = 'Tercihinize uymuyor'
+
+/* Konsey planı B.2: gider eşleşmesi. */
+export const GIDER_KARSILIK_YOK = 'Katalogda bu gideri karşılayan program bulunmadı. Kuruma sorun.'
+
 export const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'] as const
 
 /** Sihirbaz soruları. Her soruda "Bilmiyorum" düğmesi vardır. */
 export const SORULAR: Record<Alan, { baslik: string; aciklama: string; kisa: string }> = {
+  kurulusDurumu: { kisa: 'Kuruluş durumu', baslik: 'İşletmeniz kuruldu mu?', aciklama: 'Bazı programlar yalnız kurulmuş işletmeler içindir. İşletme kurulmadıysa “Henüz kurulmadı” seçeneğini seçin.' },
+  olcek: { kisa: 'Ölçek', baslik: 'İşletmeniz hangi ölçekte?', aciklama: 'Ölçeği kurumun resmî KOBİ tanımı belirler. Emin değilseniz “Bilmiyorum” düğmesine basın.' },
+  isletmeTuru: { kisa: 'İşletme türü', baslik: 'İşletmenizin türü ne?', aciklama: 'Bazı programlar yalnız belli şirket türleri içindir. Tür henüz belli değilse “Henüz seçilmedi” seçeneğini seçin.' },
   kurulus: { kisa: 'Kuruluş tarihi', baslik: 'İşletmeniz ne zaman kuruldu?', aciklama: 'Kuruluş yılını seçin. Ayı biliyorsanız ayı da seçin.' },
   calisan: { kisa: 'Sigortalı çalışan sayısı', baslik: 'Kaç sigortalı çalışanınız var?', aciklama: "SGK'ya bildirdiğiniz çalışan sayısını yazın." },
   faaliyet: { kisa: 'İş kolu', baslik: 'İşletmeniz hangi iş kolunda çalışıyor?', aciklama: 'NACE kodu, iş kolunu gösteren resmî koddur. Kodun ilk harfine göre bir ya da daha çok iş kolu seçin.' },

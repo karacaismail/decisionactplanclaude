@@ -29,3 +29,5 @@
 .dt-giderler-acilir .ant-select-item-option-content { white-space: normal; overflow-wrap: break-word; }
 
 .dt-giderler .dt-giderler-durum { color: var(--color-text-secondary); }
+
+.dt-giderler .dt-giderler-yok { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); background: var(--color-selected-bg); border-radius: var(--radius-panel); min-inline-size: 0; }

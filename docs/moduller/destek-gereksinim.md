@@ -199,7 +199,7 @@ Kaynak tek bir işletme için yazılmıştı. Bu yüzden o işletmeye ve sektör
 
 - Ekranın adresi `/destek/giderler` olur.
 - Kişi bir gider seçer. Ekran bu gideri ödeyebilecek programları gösterir. Her program kendi sayfasına bağlanır.
-- Listede 14 gider var. Kaynaktaki 14 giderin hepsi alındı. Notlardaki sektöre özel sözler çıkarıldı.
+- Listede 14 gider vardı. Kaynaktaki 14 giderin hepsi alındı. Notlardaki sektöre özel sözler çıkarıldı. Sonra kira ve hammadde eklendi.
 - Ekran bu listenin ilk rehber olduğunu söyler. Liste söz değildir.
 - Seçilen gider adreste durur. Sayfa yenilenince seçim kalır.
 
@@ -234,6 +234,113 @@ Program sayfasında 7. bölümün adı "Bu programla birlikte kullanma" olur. B�
 - Metinde noktalı virgül, uzun çizgi ve eğik çizgi olmaz. Tek işletmenin bakışıyla yazılmış söz olmaz.
 - Bir cümle en çok 16 kelime olur. Belgenin nedeni tek cümledir.
 - Destek verisi plan dosyasına yazılmaz.
+
+### Profil, sorular ve gider eşleşmesi
+
+Bu bölümü Claude 20 Kasım 2026 Cuma günü yazdı. Bölüm konsey planının B.5 ve B.2 maddelerini uygular.
+
+#### Profilin yeni alanları
+
+Destek profiline üç yeni soru eklendi:
+
+- **Kuruluş durumu.** Seçenekler şunlardır: kuruldu, henüz kurulmadı, bilmiyorum.
+- **Ölçek.** Seçenekler şunlardır: mikro, küçük, orta, büyük, bilmiyorum.
+- **İşletme türü.** Yedi seçenek vardır:
+  - şahıs ya da esnaf işletmesi,
+  - limited şirket,
+  - anonim şirket,
+  - kooperatif,
+  - diğer,
+  - henüz seçilmedi,
+  - bilmiyorum.
+
+Ölçeği kişi kendisi seçer. Uygulama ölçeği çalışan sayısından hesaplamaz. Ölçek sorusu kurumun resmî KOBİ tanımına yönlendirir.
+
+Eski profiller açılır. Eski profilde yeni alanlar boştur. Uygulama boş alanı "Bilmiyorum" sayar. Eski profilde kuruluş tarihi varsa işletme kurulmuş sayılır.
+
+#### Soru katmanları
+
+1. **Temel akış** en çok 5 sorudur. Sorular şunlardır: kuruluş durumu, kuruluş tarihi, ölçek, işletme türü ve iş kolu.
+2. Kuruluş tarihi yalnız "Kuruldu" cevabından sonra sorulur. Kişi "Henüz kurulmadı" ya da "Bilmiyorum" derse akış 4 soruya iner.
+3. **İkinci katman** "Sonucu netleştirin" kartıdır. Kart yalnız "Belki" sonucunu netleştiren soruları ister. Cevaplanmış soru yeniden sorulmaz. "Bilmiyorum" da bir cevaptır.
+4. **Üçüncü katman** tercih süzgecidir. Süzgeçte iki kutu vardır:
+   - "Kredi ya da geri ödemeli destek istemiyorum",
+   - "Ortaklık payı vermek istemiyorum".
+
+Tercih süzgeci hiçbir programı "Uygun değil" yapmaz. Tercihe uymayan program kendi grubunda kalır. Program grubun sonuna geçer ve "Tercihinize uymuyor" etiketi alır. Uygulama bu ayrımı programın destek türüne göre yapar. Fayda türleri gelince süzgeç onlara bağlanabilir.
+
+E-imza ve kurum sistemi kaydı sorulmaz. Bu bilgiler belge listesine aittir.
+
+#### Yeni kurallar
+
+Kurallar yalnız katalogdaki açık koşullardan türetildi. Yeni kurallar şunlardır:
+
+| Program | Katalogdaki koşul | Kural |
+|---|---|---|
+| 1501 | Sermaye şirketi olmalı. | Limited ve anonim şirket tutar. Şahıs işletmesi tutmaz. |
+| 1507 | KOBİ olan bir sermaye şirketi olmalı. | Tür kuralı 1501 ile aynıdır. Büyük işletme tutmaz. |
+| KOSGEB Dijital Dönüşüm | Mikro işletmeler başvuramaz. | Mikro işletme tutmaz. |
+| KOSGEB Kapasite Geliştirme | Küçük ya da orta ölçekli işletmeler başvurabilir. | Büyük işletme tutmaz. Mikro işletme "Belki" olur. |
+| Teknogirişim Rozeti | Şahıs işletmesi ya da sermaye şirketi olmalı. KOBİ olmalı. | Büyük işletme tutmaz. |
+| Bireysel Katılım Sermayesi | Anonim şirket olmalı. | Yalnız anonim şirket tutar. |
+| Markalaşma Programı | En az üç yıl önce kurulmuş olmalı. | Kurulmamış girişim tutmaz. |
+
+"Küçük ya da orta ölçekli" sözü mikro işletmeyi de kapsayabilir. Söz iki türlü okunabildiği için mikro işletme "Belki" olur.
+
+Katalog kooperatifi hiçbir koşulda anmaz. Bu yüzden kooperatif, sermaye şirketi koşulunda "Belki" olur.
+
+Bir program "en çok 3 yaşında" gibi bir yaş sınırı koyabilir. Kurulmamış girişim böyle programda "Belki" olur. Ekran şunu yazar: "Kurulmamış girişimin başvurup başvuramayacağını kuruma sorun."
+
+#### Bilinmeyen cevap
+
+Kişi "Bilmiyorum" seçebilir ya da soruyu boş bırakabilir. İşletme türünde "Henüz seçilmedi" de bilinmeyen sayılır. Bu durumda o koşula bağlı program en çok "Belki" olur.
+
+"Diğer" cevabı bir koşulu her zaman çözemez. Örneğin sermaye şirketi koşulunu çözemez. Bu durumda program "Belki" olur ve ekran kuruma sormayı söyler. Anonim şirket koşulunu ise çözer. Çünkü anonim şirket listede ayrı bir seçenektir.
+
+Tür koşulu olmayan program "Diğer" cevabından etkilenmez. Test bunu 30'dan çok programda denetler.
+
+#### Boş sonuç
+
+- Sonuç listesi "Uygun" ve "Belki" programlarından oluşur.
+- Liste boşsa ekran şunu yazar: "Katalogda profilinizle eşleşen program bulunamadı. Başka destekler olabilir. Kuruma sorun."
+- Liste dolu olabilir ama iş koluna özel program olmayabilir. Kişi iş kolunu seçtiyse ekran şunu yazar: "Katalogda işinize özel program yok. Listede genel programlar var."
+- Kişi iş kolunu seçmediyse bu not görünmez.
+
+İşe özel program, iş kolu kuralı tutan programdır. Örneğin imalat işletmesi için KOSGEB Dijital Dönüşüm böyledir.
+
+#### Gider eşleşmesi
+
+Gider rehberi artık katalog metnine bağlıdır. Her bağ şu dört bilgiyi taşır: gider, program, tür ve kanıt metni. Tür "uygun" ya da "hariç" olur.
+
+- Kanıt metni katalogdaki gider metniyle birebir aynıdır. Test bunu her bağ için denetler.
+- Uygulama dizi sırasını kullanmaz. Katalog metni değişirse test bağın koptuğunu söyler.
+- Gideri hariç tutan program aday listesine girmez. Ekran bu programları ayrı bir listede gösterir.
+- Ekran her programın altında katalogdaki gider metnini yazar.
+- Gider listesine "İşyeri kirası" ve "Hammadde ve malzeme alımı" eklendi. Listede artık 16 gider var.
+- Kira ve hammadde sözleri katalogda hiç geçmez. Bu iki giderde ekran şunu yazar: "Katalogda bu gideri karşılayan program bulunmadı. Kuruma sorun." Bu durum desteğin olmadığı anlamına gelmez.
+- Eski gider listesindeki program bağları kaldırıldı. O bağlar katalog metnine dayanmıyordu. Bu yüzden bazı giderlerin program sayısı değişti. Örneğin yazılım lisansında 4 yerine 5 program var.
+
+Bağlar `src/modules/destek/data/giderEslesmeleri.ts` dosyasındadır. Denetim `giderEslesmeleri.test.ts` dosyasındadır.
+
+#### Denetim
+
+Şu kapılar çalıştı:
+
+- `npm run lint`
+- `npm run test:unit`
+- `npm run build`
+- `tests/destek.spec.ts` dosyası. Projeler chromium-320, chromium-1280 ve webkit-390 oldu.
+- `npm run test:e2e:ci`
+
+Profil testleri beş örnek profili sınar:
+
+1. kurulmamış girişim,
+2. 3 kişilik kafe,
+3. 200 kişilik ayakkabı üreticisi,
+4. büyük işletme,
+5. tarım ve turizm işletmesi.
+
+Beşinci profil iki senaryoda sınanır. Tarım işletmesi genel programlarla eşleşir ve bilgi notu görünür. Turizm işletmesi küçük bir katalogla sınanır. Bu katalogda hiçbir program eşleşmez ve boş sonuç metni görünür. Gerçek katalogda her zaman "Belki" sonucu alan programlar vardır. Bu yüzden ikinci senaryo seçilmiş programlarla sınanır.
 
 ### Sonraki sürüme kalanlar
 

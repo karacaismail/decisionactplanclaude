@@ -6,15 +6,19 @@ import { PageHeader } from '@/components/PageHeader'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
-import { profilAlanKaydet } from '../depo'
+import { profilAlanKaydet, tercihKaydet } from '../depo'
 import { DtEtiket } from '../components/DtEtiket'
 import { OKUMA_HATASI, useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
-import { AYLAR, DURUM_ADI, IHRACAT_ADI, KURUCU_ADI, SORULAR } from '../metinler'
-import { eslestirHepsi, sonrakiSorular, type Eslesme, type EslesmeGruplari } from '../motor/eslestir'
+import {
+  AYLAR, BOS_SONUC_METNI, DURUM_ADI, IHRACAT_ADI, ISE_OZEL_YOK_METNI, ISLETME_TURU_ADI, KURUCU_ADI, KURULUS_DURUMU_ADI, OLCEK_ADI, SORULAR,
+  TERCIH_HISSE, TERCIH_KREDI, TERCIHE_UYMUYOR,
+} from '../metinler'
+import { eslestirHepsi, netlestirmeSorulari, sonucNotu, tercihSirala, tercihUymuyor, type Eslesme, type EslesmeGruplari } from '../motor/eslestir'
 import { gecerliDurum } from '../motor/tazelik'
 import {
-  BILMIYORUM, EN_ESKI_KURULUS_YILI, IHRACAT_DURUMLARI, ILLER, KURUCU_DURUMLARI, NACE_BOLUMLERI, profilDoluMu, sorulacaklar, SORU_SIRASI,
-  type Alan, type DestekProfili, type IhracatDurumu, type KurucuDurumu, type NaceHarfi,
+  akisiGuncelle, BILMIYORUM, EN_ESKI_KURULUS_YILI, IHRACAT_DURUMLARI, ILLER, ISLETME_TURLERI, KURUCU_DURUMLARI, KURULUS_DURUMLARI, NACE_BOLUMLERI, OLCEKLER,
+  profilDoluMu, sorulacaklar, SORU_SIRASI, tarihSorulur,
+  type Alan, type DestekProfili, type DestekTercihi, type IhracatDurumu, type IsletmeTuru, type KurucuDurumu, type KurulusDurumu, type NaceHarfi, type Olcek,
 } from '../motor/profil'
 
 type Mod = { tur: 'soru'; sorular: Alan[]; i: number } | { tur: 'sonuc' }
@@ -39,6 +43,12 @@ function cevapYaz(profil: DestekProfili, alan: Alan): string {
       return `${(v as NaceHarfi[]).map((h) => NACE_ADI.get(h)).join(', ')}.`
     case 'ihracat':
       return `${IHRACAT_ADI[v as IhracatDurumu]}.`
+    case 'kurulusDurumu':
+      return `${KURULUS_DURUMU_ADI[v as KurulusDurumu]}.`
+    case 'olcek':
+      return `${OLCEK_ADI[v as Olcek]}.`
+    case 'isletmeTuru':
+      return `${ISLETME_TURU_ADI[v as IsletmeTuru]}.`
     case 'kurucu':
       return (v as KurucuDurumu[]).length ? `${(v as KurucuDurumu[]).map((k) => KURUCU_ADI[k]).join(', ')}.` : 'Hiçbiri.'
     case 'kosgeb':
@@ -89,6 +99,18 @@ function SoruAlani({ alan, taslak, setTaslak, bugun }: { alan: Alan; taslak: Tas
           <label htmlFor="dt-soru-faaliyet">İş kolu</label>
           <Select<NaceHarfi[]> id="dt-soru-faaliyet" mode="multiple" virtual={false} placeholder="İş kolu seçin" showSearch optionFilterProp="label" notFoundContent="Eşleşen iş kolu yok." value={Array.isArray(taslak) ? (taslak as NaceHarfi[]) : []} options={NACE_BOLUMLERI.map((n) => ({ value: n.harf, label: `${n.harf}. ${n.ad}` }))} onChange={(v) => setTaslak(v.length ? v : undefined)} />
         </div>
+      )
+    case 'kurulusDurumu':
+      return (
+        <Radio.Group className="dt-eslesme-secenekler" aria-labelledby="dt-soru-baslik" value={taslak} onChange={(e) => setTaslak(e.target.value as KurulusDurumu)} options={KURULUS_DURUMLARI.map((d) => ({ value: d, label: KURULUS_DURUMU_ADI[d] }))} />
+      )
+    case 'olcek':
+      return (
+        <Radio.Group className="dt-eslesme-secenekler" aria-labelledby="dt-soru-baslik" value={taslak} onChange={(e) => setTaslak(e.target.value as Olcek)} options={OLCEKLER.map((o) => ({ value: o, label: OLCEK_ADI[o] }))} />
+      )
+    case 'isletmeTuru':
+      return (
+        <Radio.Group className="dt-eslesme-secenekler" aria-labelledby="dt-soru-baslik" value={taslak} onChange={(e) => setTaslak(e.target.value as IsletmeTuru)} options={ISLETME_TURLERI.map((t) => ({ value: t, label: ISLETME_TURU_ADI[t] }))} />
       )
     case 'ihracat':
       return (
@@ -142,7 +164,7 @@ function Sihirbaz({ mod, profil, bugun, odakla, cevapla, geri }: { mod: Extract<
   )
 }
 
-function SonucSatiri({ program, eslesme, bugun }: { program: Program; eslesme: Eslesme; bugun: string }) {
+function SonucSatiri({ program, eslesme, bugun, tercih }: { program: Program; eslesme: Eslesme; bugun: string; tercih?: DestekTercihi }) {
   const durum = gecerliDurum(program, bugun)
   const kapali = durum === 'kapandi' || durum === 'kapali'
   return (
@@ -150,6 +172,7 @@ function SonucSatiri({ program, eslesme, bugun }: { program: Program; eslesme: E
       <Link className="dt-sonuc-ad" to={`/destek/${program.id}`}>{program.ad}</Link>
       <span className="dt-sonuc-kurum">{program.kurum}</span>
       {kapali ? <span><DtEtiket ton="kapali">{DURUM_ADI[durum]}</DtEtiket></span> : null}
+      {tercihUymuyor(program, tercih) ? <span><DtEtiket>{TERCIHE_UYMUYOR}</DtEtiket></span> : null}
       {eslesme.sorulanlarTuttu ? (
         <>
           <span className="dt-sonuc-kurum">Tutan koşullar:</span>
@@ -166,7 +189,7 @@ function SonucSatiri({ program, eslesme, bugun }: { program: Program; eslesme: E
   )
 }
 
-function Grup({ sinif, baslik, aciklama, eslesmeler, programlar, bugun }: { sinif: string; baslik: string; aciklama: string; eslesmeler: Eslesme[]; programlar: Map<string, Program>; bugun: string }) {
+function Grup({ sinif, baslik, aciklama, eslesmeler, programlar, bugun, tercih }: { sinif: string; baslik: string; aciklama: string; eslesmeler: Eslesme[]; programlar: Map<string, Program>; bugun: string; tercih?: DestekTercihi }) {
   const id = `${sinif}-baslik`
   return (
     <section className={`dt-sonuc-grup ${sinif}`} aria-labelledby={id}>
@@ -174,27 +197,51 @@ function Grup({ sinif, baslik, aciklama, eslesmeler, programlar, bugun }: { sini
       <p>{aciklama}</p>
       {eslesmeler.length ? (
         <ul className="dt-sonuc-liste">
-          {eslesmeler.map((e) => <SonucSatiri key={e.programId} program={programlar.get(e.programId)!} eslesme={e} bugun={bugun} />)}
+          {tercihSirala(eslesmeler, programlar, tercih).map((e) => <SonucSatiri key={e.programId} program={programlar.get(e.programId)!} eslesme={e} bugun={bugun} tercih={tercih} />)}
         </ul>
       ) : null}
     </section>
   )
 }
 
-function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil: DestekProfili; programlar: readonly Program[]; gruplar: EslesmeGruplari; bugun: string; odakla: boolean; sor: (sorular: Alan[]) => void }) {
+/** Üçüncü katman. Süzgeç hiçbir programı "Uygun değil" yapmaz. Yalnız sırayı ve etiketi değiştirir. */
+function TercihSuzgeci({ tercih, degistir }: { tercih?: DestekTercihi; degistir: (t: DestekTercihi) => void }) {
+  return (
+    <section className="dt-sonuc-tercih" aria-labelledby="dt-tercih-baslik">
+      <h2 id="dt-tercih-baslik">Tercihleriniz</h2>
+      <p>Tercih bir programı listeden çıkarmaz. Tercihe uymayan program kendi grubunun sonuna geçer.</p>
+      <div className="dt-eslesme-secenekler">
+        <Checkbox checked={Boolean(tercih?.krediIstemiyorum)} onChange={(e) => degistir({ ...tercih, krediIstemiyorum: e.target.checked })}>{TERCIH_KREDI}</Checkbox>
+        <Checkbox checked={Boolean(tercih?.hisseIstemiyorum)} onChange={(e) => degistir({ ...tercih, hisseIstemiyorum: e.target.checked })}>{TERCIH_HISSE}</Checkbox>
+      </div>
+    </section>
+  )
+}
+
+function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor, tercihDegistir }: { profil: DestekProfili; programlar: readonly Program[]; gruplar: EslesmeGruplari; bugun: string; odakla: boolean; sor: (sorular: Alan[]) => void; tercihDegistir: (t: DestekTercihi) => void }) {
   const baslik = useRef<HTMLHeadingElement>(null)
   useEffect(() => {
     if (odakla) baslik.current?.focus()
   }, [odakla])
   const harita = useMemo(() => new Map(programlar.map((p) => [p.id, p])), [programlar])
-  const sorular = sonrakiSorular([...gruplar.belki, ...gruplar.uygun])
-  const tutan = gruplar.belki.filter((e) => e.sorulanlarTuttu)
-  const bilgiEksik = gruplar.belki.filter((e) => e.kuralVar && !e.sorulanlarTuttu)
-  const kuralsiz = gruplar.belki.filter((e) => !e.kuralVar)
+  const sorular = netlestirmeSorulari(gruplar, profil)
+  const not = sonucNotu(gruplar, profil)
+  const tercih = profil.tercih
+  const sirala = (liste: Eslesme[]) => tercihSirala(liste, harita, tercih)
+  const tutan = sirala(gruplar.belki.filter((e) => e.sorulanlarTuttu))
+  const bilgiEksik = sirala(gruplar.belki.filter((e) => e.kuralVar && !e.sorulanlarTuttu))
+  const kuralsiz = sirala(gruplar.belki.filter((e) => !e.kuralVar))
+  const satir = (e: Eslesme) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} tercih={tercih} />
   return (
     <>
       <h2 className="dt-sonuc-baslik" ref={baslik} tabIndex={-1}>Sonuçlar</h2>
       <p className="dt-sonuc-not">Bu bir ön eşleşmedir. Uygulama yalnız sorduğu koşulları denetler. Kesin kararı kurum verir.</p>
+      {not ? (
+        <section className="dt-sonuc-bilgi" aria-labelledby="dt-sonuc-bilgi-baslik">
+          <h2 id="dt-sonuc-bilgi-baslik">{not === 'bos' ? 'Eşleşen program yok' : 'İşinize özel program yok'}</h2>
+          <p>{not === 'bos' ? BOS_SONUC_METNI : ISE_OZEL_YOK_METNI}</p>
+        </section>
+      ) : null}
       {sorular.length ? (
         <section className="dt-sonuc-netlestir" aria-labelledby="dt-netlestir-baslik">
           <h2 id="dt-netlestir-baslik">Sonucu netleştirin</h2>
@@ -205,7 +252,8 @@ function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil:
           <Button type="primary" onClick={() => sor(sorulacaklar(profil, sorular))}>Bu soruları cevaplayın</Button>
         </section>
       ) : null}
-      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Uygulama bir programın bütün koşullarını denetleyemezse “Uygun” demez. Bu sürümde hiçbir programın bütün koşulları denetlenmiyor. Bu yüzden bu grup boş kalır." eslesmeler={gruplar.uygun} programlar={harita} bugun={bugun} />
+      <TercihSuzgeci tercih={tercih} degistir={tercihDegistir} />
+      <Grup sinif="dt-sonuc-uygun" baslik="Uygun" aciklama="Uygulama bir programın bütün koşullarını denetleyemezse “Uygun” demez. Bu sürümde hiçbir programın bütün koşulları denetlenmiyor. Bu yüzden bu grup boş kalır." eslesmeler={gruplar.uygun} programlar={harita} bugun={bugun} tercih={tercih} />
       <section className="dt-sonuc-grup dt-sonuc-belki" aria-labelledby="dt-sonuc-belki-baslik">
         <h2 id="dt-sonuc-belki-baslik">Belki ({gruplar.belki.length})</h2>
         <p>Bu programlarda bazı koşulları uygulama denetleyemiyor. Bu koşulları programın sayfasında okuyun.</p>
@@ -213,7 +261,7 @@ function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil:
           <>
             <h3>Sorduğumuz koşullar tutuyor ({tutan.length})</h3>
             <ul className="dt-sonuc-liste">
-              {tutan.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
+              {tutan.map(satir)}
             </ul>
           </>
         ) : null}
@@ -221,7 +269,7 @@ function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil:
           <>
             <h3>Bilgi eksik ya da sonuç kesin değil ({bilgiEksik.length})</h3>
             <ul className="dt-sonuc-liste">
-              {bilgiEksik.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
+              {bilgiEksik.map(satir)}
             </ul>
           </>
         ) : null}
@@ -229,17 +277,17 @@ function Sonuclar({ profil, programlar, gruplar, bugun, odakla, sor }: { profil:
           <>
             <h3>Koşulları kendiniz okuyun ({kuralsiz.length})</h3>
             <ul className="dt-sonuc-liste">
-              {kuralsiz.map((e) => <SonucSatiri key={e.programId} program={harita.get(e.programId)!} eslesme={e} bugun={bugun} />)}
+              {kuralsiz.map(satir)}
             </ul>
           </>
         ) : null}
       </section>
-      <Grup sinif="dt-sonuc-uygun-degil" baslik="Uygun değil" aciklama="Bu programlarda en az bir koşul tutmuyor. Tutmayan koşul her programın altında yazıyor." eslesmeler={gruplar.uygunDegil} programlar={harita} bugun={bugun} />
+      <Grup sinif="dt-sonuc-uygun-degil" baslik="Uygun değil" aciklama="Bu programlarda en az bir koşul tutmuyor. Tutmayan koşul her programın altında yazıyor." eslesmeler={gruplar.uygunDegil} programlar={harita} bugun={bugun} tercih={tercih} />
       <section className="dt-sonuc-cevaplar" aria-labelledby="dt-cevaplar-baslik">
         <h2 id="dt-cevaplar-baslik">Cevaplarınız</h2>
         <p>Cevaplarınız plan dosyasına yazılmaz. Bu cevaplar kararlarınızı eskitmez.</p>
         <dl>
-          {SORU_SIRASI.map((a) => (
+          {SORU_SIRASI.filter((a) => a !== 'kurulus' || tarihSorulur(profil)).map((a) => (
             <div key={a} className="dt-sonuc-cevap">
               <dt>{SORULAR[a].kisa}</dt>
               <dd>
@@ -291,7 +339,18 @@ function Eslesme({ yer }: { yer: string }) {
       console.error(error)
       setHata('Cevabınız kaydedilemedi. Önceki cevaplarınız duruyor. Sayfayı yenileyip yeniden deneyin.')
     })
-    git(mod.i + 1 < mod.sorular.length ? { ...mod, i: mod.i + 1 } : { tur: 'sonuc' })
+    /* "Henüz kurulmadı" cevabından sonra kuruluş tarihi sorulmaz. "Kuruldu" cevabından sonra tarih sorulur. */
+    const sorular = akisiGuncelle(mod.sorular, mod.i, { ...profil, [alan]: deger })
+    git(mod.i + 1 < sorular.length ? { ...mod, sorular, i: mod.i + 1 } : { tur: 'sonuc' })
+  }
+
+  const tercihDegistir = (tercih: DestekTercihi) => {
+    if (!profil) return
+    setProfil({ ...profil, tercih })
+    tercihKaydet(yer, tercih, bugun).catch((error: unknown) => {
+      console.error(error)
+      setHata('Tercihiniz kaydedilemedi. Önceki cevaplarınız duruyor. Sayfayı yenileyip yeniden deneyin.')
+    })
   }
 
   const durumMetni = mod?.tur === 'soru'
@@ -312,7 +371,7 @@ function Eslesme({ yer }: { yer: string }) {
       {profil && mod?.tur === 'soru' ? (
         <Sihirbaz key={`${mod.sorular.join('-')}-${mod.i}`} mod={mod} profil={profil} bugun={bugun} odakla={odakla} cevapla={cevapla} geri={() => git({ ...mod, i: mod.i - 1 })} />
       ) : null}
-      {profil && gruplar && mod?.tur === 'sonuc' ? <Sonuclar profil={profil} programlar={programlar} gruplar={gruplar} bugun={bugun} odakla={odakla} sor={(sorular) => git({ tur: 'soru', sorular, i: 0 })} /> : null}
+      {profil && gruplar && mod?.tur === 'sonuc' ? <Sonuclar profil={profil} programlar={programlar} gruplar={gruplar} bugun={bugun} odakla={odakla} sor={(sorular) => git({ tur: 'soru', sorular, i: 0 })} tercihDegistir={tercihDegistir} /> : null}
       <DtTerimler />
     </div>
   )

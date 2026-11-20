@@ -139,12 +139,14 @@ test('sihirbazda hep Bilmiyorum diyen kişi Uygun sonucu almaz', async ({ page }
   await page.goto('/#/destek/eslesme')
   await ready(page)
   const main = page.getByRole('main')
-  for (let i = 1; i <= 5; i++) {
-    await expect(main.getByRole('status')).toHaveText(`Soru ${i}. Toplam 5 soru var.`)
-    if (i === 1) {
-      await denetle(page, 'sihirbaz')
-      await kanit(page, info, 'sihirbaz')
-    }
+  // Temel akış en çok 5 sorudur. Kuruluş durumu bilinmezse kuruluş tarihi sorulmaz. Bu yüzden toplam 4 soruya iner.
+  await expect(main.getByRole('status')).toHaveText('Soru 1. Toplam 5 soru var.')
+  await expect(main.getByRole('heading', { level: 2, name: 'İşletmeniz kuruldu mu?' })).toBeVisible()
+  await denetle(page, 'sihirbaz')
+  await kanit(page, info, 'sihirbaz')
+  await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
+  for (let i = 2; i <= 4; i++) {
+    await expect(main.getByRole('status')).toHaveText(`Soru ${i}. Toplam 4 soru var.`)
     await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
   }
   await expect(main.getByRole('heading', { level: 2, name: 'Uygun (0)' })).toBeVisible()
@@ -153,6 +155,8 @@ test('sihirbazda hep Bilmiyorum diyen kişi Uygun sonucu almaz', async ({ page }
   // Son cevaptan sonra odak sonuç başlığına geçer. Durum satırı sayıları söyler.
   await expect(main.getByRole('heading', { level: 2, name: 'Sonuçlar' })).toBeFocused()
   await expect(main.getByRole('status')).toHaveText('Uygun: 0. Belki: 46. Uygun değil: 0.')
+  // İş kolu seçilmedi. Bu yüzden "işe özel program yok" notu görünmez.
+  await expect(main.getByText('Katalogda işinize özel program yok.', { exact: false })).toHaveCount(0)
   await denetle(page, 'sonuç')
   await kanit(page, info, 'sonuc-bilmiyorum')
 })
@@ -166,37 +170,77 @@ test('1 yaşında 3 kişilik kafede KOSGEB Küresel Rekabetçilik uygun değildi
     await page.locator('.ant-select-dropdown:visible .ant-select-item-option').filter({ hasText: new RegExp(`^${metin}$`) }).click()
   }
   const devam = () => main.getByRole('button', { name: /^(Devam|Sonucu gösterin)$/ }).click()
+  const bilmiyorum = () => main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
+
+  // Temel akış: kuruluş durumu, kuruluş tarihi, ölçek, işletme türü ve iş kolu.
+  await main.getByText('Kuruldu', { exact: true }).click()
+  await devam()
   await sec('dt-soru-yil', '2025')
   await sec('dt-soru-ay', 'Kasım')
   await devam()
-  await main.getByLabel('Sigortalı çalışan sayısı').fill('3')
+  await expect(main.getByRole('heading', { level: 2, name: 'İşletmeniz hangi ölçekte?' })).toBeFocused()
+  await main.getByText('Mikro', { exact: true }).click()
+  await devam()
+  await expect(main.getByRole('heading', { level: 2, name: 'İşletmenizin türü ne?' })).toBeFocused()
+  await denetle(page, 'seçenekli soru')
+  await kanit(page, info, 'isletme-turu')
+  await main.getByText('Şahıs ya da esnaf işletmesi', { exact: true }).click()
   await devam()
   await sec('dt-soru-faaliyet', 'I. Konaklama ve yiyecek hizmeti')
   await page.keyboard.press('Escape')
+  await expect(main.getByRole('status')).toHaveText('Soru 5. Toplam 5 soru var.')
+  await devam()
+
+  // Katalogda kafeye özel program yok. Liste genel programları gösterir.
+  await expect(main.getByText('Katalogda işinize özel program yok. Listede genel programlar var.')).toBeVisible()
+  // Şahıs işletmesi sermaye şirketi değildir. Katalog 1501 için sermaye şirketi ister.
+  const ret = main.locator('section.dt-sonuc-uygun-degil')
+  await expect(ret.locator('li', { hasText: '1501 Sanayi Ar-Ge Destek Programı' })).toContainText('Şahıs ya da esnaf işletmesi başvuramaz.')
+
+  // İkinci katman yalnız "Belki" sonucunu netleştiren soruları ister. Cevaplanan soru yeniden sorulmaz.
+  const netlestir = main.locator('section.dt-sonuc-netlestir')
+  await expect(netlestir).toContainText('İhracat')
+  await expect(netlestir).not.toContainText('İş kolu')
+  await netlestir.getByRole('button', { name: 'Bu soruları cevaplayın' }).click()
+  await expect(main.getByRole('heading', { level: 2, name: 'Kaç sigortalı çalışanınız var?' })).toBeFocused()
+  await main.getByLabel('Sigortalı çalışan sayısı').fill('3')
   await devam()
   await expect(main.getByRole('heading', { level: 2, name: 'Yurt dışına satış yapıyor musunuz?' })).toBeFocused()
-  await denetle(page, 'seçenekli soru')
   await main.getByText('İhracat yok', { exact: true }).click()
   await devam()
+  await bilmiyorum()
+  await bilmiyorum()
+  await bilmiyorum()
+  // İhracat yoksa Küresel Rekabetçilik Ar-Ge sorusunu ister.
+  await expect(netlestir).toContainText('Ar-Ge çalışması')
+  await netlestir.getByRole('button', { name: 'Bu soruları cevaplayın' }).click()
   await main.getByText('Hayır', { exact: true }).click()
   await devam()
-  const ret = main.locator('section.dt-sonuc-uygun-degil')
+
   await expect(ret.getByRole('heading', { level: 2 })).toHaveText(/^Uygun değil \(\d+\)$/)
   await expect(ret.locator('li', { hasText: 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği' })).toContainText('Sizin iş kolunuz bunlardan biri değil.')
   // Kurumun sayfasına göre ihracatsız işletmeye açık iki yol daha var. Bu yüzden Küresel Rekabetçilik "Belki" olur ve neden yazar.
   const kuresel = main.locator('section.dt-sonuc-belki li', { hasText: 'KOSGEB Küresel Rekabetçilik Destek Programı' })
   await expect(kuresel).toBeVisible()
   await expect(kuresel).toContainText('Sizin ihracatınız ve Ar-Ge çalışmanız yok.')
-  // Yalnız yaşı ya da çalışan sayısı tutan program "Uygun" sayılmaz. Öteki koşullar denetlenmedi.
+  // Yalnız sorulan koşulları tutan program "Uygun" sayılmaz. Öteki koşullar denetlenmedi.
   await expect(main.getByRole('heading', { level: 2, name: 'Uygun (0)' })).toBeVisible()
-  await expect(main.locator('section.dt-sonuc-belki li', { hasText: 'Bireysel Katılım Sermayesi' })).toContainText('Tutan koşullar:')
+  await expect(main.locator('section.dt-sonuc-belki li', { hasText: 'Teknogirişim Rozeti' })).toContainText('Tutan koşullar:')
   await denetle(page, 'kafe sonucu')
   await kanit(page, info, 'sonuc-kafe')
 
-  // Cevaplar sayfa yenilenince kalır. Plan olmadan da saklanır.
+  // Tercih süzgeci programı gruptan çıkarmaz. Yalnız etiket ekler ve sona taşır.
+  const belkiSayisi = await main.locator('#dt-sonuc-belki-baslik').textContent()
+  await main.getByText('Kredi ya da geri ödemeli destek istemiyorum', { exact: true }).click()
+  await expect(kuresel).toContainText('Tercihinize uymuyor')
+  await expect(main.locator('#dt-sonuc-belki-baslik')).toHaveText(belkiSayisi ?? '')
+  await denetle(page, 'tercih')
+
+  // Cevaplar ve tercih sayfa yenilenince kalır. Plan olmadan da saklanır.
   await page.reload()
   await ready(page)
-  await expect(main.locator('section.dt-sonuc-belki li', { hasText: 'KOSGEB Küresel Rekabetçilik Destek Programı' })).toContainText('Sizin ihracatınız')
+  await expect(kuresel).toContainText('Sizin ihracatınız')
+  await expect(kuresel).toContainText('Tercihinize uymuyor')
 
   // Bir cevabı değiştirmek tek soruluk sihirbazı açar ve odağı soruya taşır.
   await main.getByRole('button', { name: 'İhracat cevabını değiştirin' }).click()
@@ -205,6 +249,26 @@ test('1 yaşında 3 kişilik kafede KOSGEB Küresel Rekabetçilik uygun değildi
   await main.getByText('Düzenli ihracat yapıyoruz', { exact: true }).click()
   await main.getByRole('button', { name: 'Sonucu gösterin' }).click()
   await expect(main.locator('section.dt-sonuc-belki li', { hasText: 'KOSGEB Küresel Rekabetçilik Destek Programı' })).toContainText('Tutan koşullar:')
+})
+
+test('henüz kurulmamış girişimde kuruluş tarihi sorulmaz', async ({ page }) => {
+  await page.goto('/#/destek/eslesme')
+  await ready(page)
+  const main = page.getByRole('main')
+  await main.getByText('Henüz kurulmadı', { exact: true }).click()
+  await main.getByRole('button', { name: 'Devam' }).click()
+  await expect(main.getByRole('status')).toHaveText('Soru 2. Toplam 4 soru var.')
+  await expect(main.getByRole('heading', { level: 2, name: 'İşletmeniz hangi ölçekte?' })).toBeFocused()
+  await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
+  await main.getByText('Henüz seçilmedi', { exact: true }).click()
+  await main.getByRole('button', { name: 'Devam' }).click()
+  await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
+  await expect(main.getByRole('heading', { level: 2, name: 'Sonuçlar' })).toBeFocused()
+  const ret = main.locator('section.dt-sonuc-uygun-degil')
+  await expect(ret.locator('li', { hasText: 'Markalaşma Programı' })).toContainText('Sizin işletmeniz henüz kurulmadı.')
+  await expect(main.locator('.dt-sonuc-cevap dt', { hasText: /^Kuruluş tarihi$/ })).toHaveCount(0)
+  await expect(main.locator('.dt-sonuc-cevap', { hasText: 'İşletme türü' })).toContainText('Henüz seçilmedi.')
+  await denetle(page, 'kurulmamış girişim')
 })
 
 test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirmez', async ({ page, hasTouch }, info) => {
@@ -250,7 +314,7 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   await page.goto('/#/destek/eslesme')
   await ready(page)
   await main.getByRole('button', { name: 'Bilmiyorum', exact: true }).click()
-  await expect(main.getByRole('status')).toHaveText('Soru 2. Toplam 5 soru var.')
+  await expect(main.getByRole('status')).toHaveText('Soru 2. Toplam 4 soru var.')
 
   expect(await planOku(page)).toEqual(once)
   const ozet = await page.evaluate(() => JSON.parse(localStorage.getItem('decisionactplan-rollups-v1') ?? '{}').data?.destek?.['ornek-mahalle-kafesi'])
@@ -316,10 +380,12 @@ test('gider rehberi giderden programa götürür ve seçimi yenilemede korur', a
   await secenekSec(page, main.locator('.dt-giderler-alan .ant-select'), 'Yazılım lisansları')
   await expect(page).toHaveURL(/kalem=yazilimLisansi/)
   await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeVisible()
-  await expect(main.getByText('Bu gider için 4 program bulundu. Programlar aşağıda.')).toBeVisible()
+  // Programlar katalogdaki gider metnine dayanır. Ekran bu metni de gösterir.
+  await expect(main.getByText('Bu gider için 5 program bulundu. Programlar aşağıda.')).toBeVisible()
   await expect(main.getByText('Aynı faturayı iki programa yazmayın.')).toBeVisible()
-  await expect(main.getByRole('heading', { level: 3 })).toHaveText('Bu gideri ödeyebilecek programlar (4)')
-  await expect(main.locator('.dt-giderler-program')).toHaveCount(4)
+  await expect(main.getByRole('heading', { level: 3 })).toHaveText('Bu gideri ödeyebilecek programlar (5)')
+  await expect(main.locator('.dt-giderler-program')).toHaveCount(5)
+  await expect(main.getByText('Katalogdaki gider: “Proje ekipmanı ve yazılım”').first()).toBeVisible()
   await expect(main.getByRole('link', { name: '“Çift finansman” ne demek?' })).toBeVisible()
   await denetle(page, '/destek/giderler seçili')
   await kanit(page, info, 'giderler')
@@ -329,6 +395,26 @@ test('gider rehberi giderden programa götürür ve seçimi yenilemede korur', a
   await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeVisible()
   await main.getByRole('link', { name: '1501 Sanayi Ar-Ge Destek Programı' }).click()
   await expect(page).toHaveURL(/#\/destek\/tubitak1501$/)
+})
+
+test('gider rehberi katalogda karşılığı olmayan gideri söyler ve hariç tutan programı aday yapmaz', async ({ page }, info) => {
+  await page.goto('/#/destek/giderler?kalem=kira')
+  await ready(page)
+  const main = page.getByRole('main')
+  await expect(main.getByRole('heading', { level: 2, name: 'İşyeri kirası' })).toBeVisible()
+  await expect(main.getByRole('heading', { level: 3, name: 'Bu gideri ödeyebilecek programlar (0)' })).toBeVisible()
+  await expect(main.locator('.dt-giderler-yok')).toContainText('Katalogda bu gideri karşılayan program bulunmadı. Kuruma sorun.')
+  await expect(main.locator('.dt-giderler-durum')).toHaveText('Katalogda bu gideri karşılayan program bulunmadı. Kuruma sorun.')
+  await denetle(page, '/destek/giderler karşılıksız')
+  await kanit(page, info, 'giderler-kira')
+
+  await secenekSec(page, main.locator('.dt-giderler-alan .ant-select'), 'Yurt içinde internetten pazarlama')
+  const haric = main.getByRole('heading', { level: 3, name: /^Bu gideri ödemeyen programlar/ })
+  await expect(haric).toBeVisible()
+  const adaylar = main.locator('.dt-giderler-liste').first()
+  await expect(adaylar.getByRole('link', { name: 'Hizmet Sektörleri Atılım Programı (10962 sayılı Karar)' })).toHaveCount(0)
+  await expect(main.locator('.dt-giderler-liste').last()).toContainText('Türkiye\'deki pazarlama giderleri')
+  await denetle(page, '/destek/giderler hariç')
 })
 
 test('destek sözlüğü Türkçe abece sırasıyla dizilir', async ({ page }, info) => {

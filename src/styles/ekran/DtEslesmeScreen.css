@@ -34,9 +34,11 @@
 
 .dt-eslesme .dt-sonuc-not { color: var(--color-text-secondary); }
 
-.dt-eslesme .dt-sonuc-netlestir, .dt-eslesme .dt-sonuc-grup, .dt-eslesme .dt-sonuc-cevaplar { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); border-radius: var(--radius-panel); background: var(--color-surface-work); min-inline-size: 0; }
+.dt-eslesme .dt-sonuc-netlestir, .dt-eslesme .dt-sonuc-grup, .dt-eslesme .dt-sonuc-cevaplar, .dt-eslesme .dt-sonuc-tercih, .dt-eslesme .dt-sonuc-bilgi { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); border-radius: var(--radius-panel); background: var(--color-surface-work); min-inline-size: 0; }
 
 .dt-eslesme .dt-sonuc-netlestir { background: var(--color-selected-bg); }
+
+.dt-eslesme .dt-sonuc-bilgi { background: var(--color-selected-bg); }
 
 .dt-eslesme .dt-sonuc-netlestir ul { margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); }
 

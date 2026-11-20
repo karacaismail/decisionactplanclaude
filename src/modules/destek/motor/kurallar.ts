@@ -5,7 +5,7 @@
  * "Kesin" olmayan kural tutmazsa sonuç "Belki" olur. Örneğin veride "genellikle" diye yazan koşul böyledir.
  */
 import type { IsoTarih } from '../data/tipler'
-import { BILMIYORUM, bilinmiyor, yasAraligiAy, type Alan, type DestekProfili, type Kurulus, type NaceHarfi } from './profil'
+import { BILMIYORUM, bilinmiyor, kurulusDurumuOf, yasAraligiAy, type Alan, type DestekProfili, type IsletmeTuru, type Kurulus, type NaceHarfi, type Olcek } from './profil'
 
 export type KuralSonucu =
   | { durum: 'gecti' }
@@ -18,6 +18,8 @@ export interface Kural {
   kosul: string
   /** Tutmazsa sonuç "Uygun değil" olur. Kesin değilse "Belki" olur. */
   kesin: boolean
+  /** Kuralın okuduğu profil alanları. Her soru en az bir kurala bağlıdır. */
+  alanlar: readonly Alan[]
   denetle(profil: DestekProfili, bugun: IsoTarih): KuralSonucu
 }
 
@@ -27,6 +29,9 @@ const eksik = (alan: Alan, neden: string): KuralSonucu => ({ durum: 'bilinmiyor'
 const okuyun = (neden: string): KuralSonucu => ({ durum: 'bilinmiyor', neden })
 
 const EKSIK_METNI: Record<Alan, string> = {
+  kurulusDurumu: 'İşletmenizin kurulup kurulmadığını bilmiyoruz.',
+  olcek: 'İşletmenizin ölçeğini bilmiyoruz.',
+  isletmeTuru: 'İşletme türünüzü bilmiyoruz.',
   il: 'İlinizi bilmiyoruz.',
   kurulus: 'Kuruluş tarihinizi bilmiyoruz.',
   calisan: 'Sigortalı çalışan sayınızı bilmiyoruz.',
@@ -38,7 +43,19 @@ const EKSIK_METNI: Record<Alan, string> = {
 }
 const bilgiYok = (alan: Alan) => eksik(alan, EKSIK_METNI[alan])
 
-const kurulusOf = (p: DestekProfili): Kurulus | undefined => (p.kurulus && p.kurulus !== BILMIYORUM ? p.kurulus : undefined)
+/**
+ * Kuruluş bilgisi. Kişi "henüz kurulmadı" dediyse eski tarih cevabı okunmaz.
+ * Kuruluş durumu bilinmiyorsa önce bu soru istenir. İşletme kurulduysa tarih sorusu istenir.
+ */
+type KurulusBilgisi = { tur: 'tarih'; k: Kurulus } | { tur: 'kurulmadi' } | { tur: 'eksik'; sonuc: KuralSonucu }
+function kurulusBilgisi(p: DestekProfili): KurulusBilgisi {
+  const durum = kurulusDurumuOf(p)
+  if (durum === 'kurulmadi') return { tur: 'kurulmadi' }
+  if (p.kurulus && p.kurulus !== BILMIYORUM) return { tur: 'tarih', k: p.kurulus }
+  return { tur: 'eksik', sonuc: bilgiYok(durum === 'kuruldu' ? 'kurulus' : 'kurulusDurumu') }
+}
+const KURULUS_ALANLARI: readonly Alan[] = ['kurulusDurumu', 'kurulus']
+const KURULMAMIS_SORUN = okuyun('İşletmeniz henüz kurulmadı. Kurulmamış girişimin başvurup başvuramayacağını kuruma sorun.')
 const sayi = (p: DestekProfili): number | undefined => (typeof p.calisan === 'number' ? p.calisan : undefined)
 const harfler = (p: DestekProfili): readonly NaceHarfi[] | undefined => (Array.isArray(p.faaliyet) ? p.faaliyet : undefined)
 
@@ -47,10 +64,12 @@ function enCokYas(yil: number, kosul: string): Kural {
   return {
     kosul,
     kesin: true,
+    alanlar: KURULUS_ALANLARI,
     denetle(p, bugun) {
-      const k = kurulusOf(p)
-      if (!k) return bilgiYok('kurulus')
-      const { min, max } = yasAraligiAy(k, bugun)
+      const b = kurulusBilgisi(p)
+      if (b.tur === 'kurulmadi') return KURULMAMIS_SORUN
+      if (b.tur === 'eksik') return b.sonuc
+      const { min, max } = yasAraligiAy(b.k, bugun)
       if (max <= yil * 12) return GECTI
       if (min >= (yil + 1) * 12) return kaldi(`Bu program en çok ${yil} yaşındaki işletmeler içindir. Sizin işletmeniz daha eski.`)
       return okuyun(`İşletmenizin yaşı ${yil} yıl sınırına yakın. Kesin kuralı kurumun sayfasında okuyun.`)
@@ -63,10 +82,12 @@ function sonYillardaKurulmus(yil: number, kosul: string): Kural {
   return {
     kosul,
     kesin: true,
+    alanlar: KURULUS_ALANLARI,
     denetle(p, bugun) {
-      const k = kurulusOf(p)
-      if (!k) return bilgiYok('kurulus')
-      const { min, max } = yasAraligiAy(k, bugun)
+      const b = kurulusBilgisi(p)
+      if (b.tur === 'kurulmadi') return KURULMAMIS_SORUN
+      if (b.tur === 'eksik') return b.sonuc
+      const { min, max } = yasAraligiAy(b.k, bugun)
       if (max <= yil * 12) return GECTI
       if (min > yil * 12) return kaldi(`Bu program son ${yil} yıl içinde kurulmuş işletmeler içindir. Sizin işletmeniz daha eski.`)
       return okuyun(`İşletmenizin yaşı ${yil} yıl sınırına yakın. Kesin kuralı kurumun sayfasında okuyun.`)
@@ -77,12 +98,53 @@ function sonYillardaKurulmus(yil: number, kosul: string): Kural {
 const KOSGEB_KAYDI: Kural = {
   kosul: 'İşletme KOSGEB veri tabanına kayıtlı olmalı.',
   kesin: true,
+  alanlar: ['kosgeb'],
   denetle(p) {
     if (p.kosgeb === 'evet') return GECTI
     if (p.kosgeb === 'hayir') return kaldi('Bu program KOSGEB kaydı ister. Sizin KOSGEB kaydınız yok. Kayıt olursanız bu sonuç değişebilir.')
     return bilgiYok('kosgeb')
   },
 }
+
+/**
+ * İşletme türü kuralı. gecer listesindeki tür koşulu karşılar. kalir listesindeki tür karşılamaz.
+ * Öteki türler koşulu çözemez. Örneğin katalog kooperatifi anmıyorsa kooperatif "Belki" olur.
+ * "Diğer" cevabı yalnız kalir listesindeyse çözülür. Bu yalnız koşul listedeki bir türü istediğinde olur.
+ */
+function turKurali(kosul: string, gecer: readonly IsletmeTuru[], kalir: readonly IsletmeTuru[], kaldiMetni: string): Kural {
+  return {
+    kosul,
+    kesin: true,
+    alanlar: ['isletmeTuru'],
+    denetle(p) {
+      if (bilinmiyor(p, 'isletmeTuru')) return bilgiYok('isletmeTuru')
+      const tur = p.isletmeTuru as IsletmeTuru
+      if (gecer.includes(tur)) return GECTI
+      if (kalir.includes(tur)) return kaldi(kaldiMetni)
+      return okuyun('Bu programın işletme türü koşulu var. Sizin türünüzün uyup uymadığını kuruma sorun.')
+    },
+  }
+}
+
+const SERMAYE_SIRKETI_METNI = 'Bu program sermaye şirketleri içindir. Şahıs ya da esnaf işletmesi başvuramaz. Şirket kurarsanız bu sonuç değişebilir.'
+
+/** Ölçek kuralı. Ölçeği kişi seçer. Uygulama ölçeği çalışan sayısından hesaplamaz. */
+function olcekKurali(kosul: string, gecer: readonly Olcek[], kalir: readonly Olcek[], kaldiMetni: string, sorunMetni?: string): Kural {
+  return {
+    kosul,
+    kesin: true,
+    alanlar: ['olcek'],
+    denetle(p) {
+      if (bilinmiyor(p, 'olcek')) return bilgiYok('olcek')
+      const olcek = p.olcek as Olcek
+      if (gecer.includes(olcek)) return GECTI
+      if (kalir.includes(olcek)) return kaldi(kaldiMetni)
+      return okuyun(sorunMetni ?? 'Bu programın ölçek koşulunu kuruma sorun.')
+    },
+  }
+}
+
+const KOBI_OLMALI = (kosul: string) => olcekKurali(kosul, ['mikro', 'kucuk', 'orta'], ['buyuk'], "Bu program KOBİ'ler içindir. Siz işletmenizi büyük olarak seçtiniz.")
 
 /**
  * Bir programın kural seti. Kurallar programın bütün zorunlu koşullarını kapsıyorsa eksiksiz olur.
@@ -103,6 +165,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'İşletmenin NACE kodu 61, 62, 63, 72 ya da bir imalat kodu olmalı.',
       kesin: true,
+      alanlar: ['faaliyet'],
       denetle(p) {
         const h = harfler(p)
         if (!h) return bilgiYok('faaliyet')
@@ -116,6 +179,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'Yalnız kadın ya da genç girişimcilerin işletmeleri başvurabilir.',
       kesin: true,
+      alanlar: ['kurucu'],
       denetle(p) {
         if (!Array.isArray(p.kurucu)) return bilgiYok('kurucu')
         if (p.kurucu.includes('kadin') || p.kurucu.includes('genc')) return GECTI
@@ -134,6 +198,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
        */
       kosul: 'Program hızlı büyüme, yüksek teknoloji, ihracat ya da Ar-Ge büyümesi şartı arar.',
       kesin: false,
+      alanlar: ['ihracat', 'arge'],
       denetle(p) {
         if (p.ihracat === 'yeni' || p.ihracat === 'duzenli' || p.arge === 'evet') return GECTI
         if (p.ihracat === 'yok' && p.arge === 'hayir') return kaldi('Bu program çoğu yolda ihracat ya da Ar-Ge büyümesi ister. Sizin ihracatınız ve Ar-Ge çalışmanız yok. Program yüksek teknolojili işletmelere de açık olabilir. Kurumun sayfasını okuyun.')
@@ -145,21 +210,40 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'Yalnız imalat sektöründeki işletmeler başvurabilir.',
       kesin: true,
+      alanlar: ['faaliyet'],
       denetle(p) {
         const h = harfler(p)
         if (!h) return bilgiYok('faaliyet')
         return h.includes('C') ? GECTI : kaldi('Bu program yalnız imalat işletmeleri içindir. Sizin iş kolunuz imalat değil.')
       },
     },
+    olcekKurali('Mikro işletmeler başvuramaz.', ['kucuk', 'orta', 'buyuk'], ['mikro'], 'Bu programa mikro işletmeler başvuramaz. Siz işletmenizi mikro olarak seçtiniz.'),
+  ),
+  kosgebKapasite: set(
+    olcekKurali(
+      'Hızlı büyüyen küçük ya da orta ölçekli işletmeler başvurabilir.',
+      ['kucuk', 'orta'],
+      ['buyuk'],
+      'Bu program küçük ya da orta ölçekli işletmeler içindir. Siz işletmenizi büyük olarak seçtiniz.',
+      /* "Küçük ya da orta ölçekli" sözü mikro işletmeyi de kapsayabilir. İki türlü okunabildiği için sonuç "Belki" olur. */
+      'Program küçük ya da orta ölçekli işletmeler içindir. Mikro işletmenin başvurup başvuramayacağını kuruma sorun.',
+    ),
+  ),
+  tubitak1501: set(turKurali("Türkiye'de yerleşik bir sermaye şirketi olmalı.", ['limited', 'anonim'], ['sahis'], SERMAYE_SIRKETI_METNI)),
+  tubitak1507: set(
+    turKurali('KOBİ olan bir sermaye şirketi olmalı.', ['limited', 'anonim'], ['sahis'], SERMAYE_SIRKETI_METNI),
+    KOBI_OLMALI('KOBİ olan bir sermaye şirketi olmalı.'),
   ),
   tb10962Marka: set(
     {
       kosul: 'İşletme, başvurudan en az üç yıl önce kurulmuş olmalı.',
       kesin: true,
+      alanlar: KURULUS_ALANLARI,
       denetle(p, bugun) {
-        const k = kurulusOf(p)
-        if (!k) return bilgiYok('kurulus')
-        const { min, max } = yasAraligiAy(k, bugun)
+        const b = kurulusBilgisi(p)
+        if (b.tur === 'kurulmadi') return kaldi('Bu program en az üç yıl önce kurulmuş işletmeler içindir. Sizin işletmeniz henüz kurulmadı.')
+        if (b.tur === 'eksik') return b.sonuc
+        const { min, max } = yasAraligiAy(b.k, bugun)
         if (min >= 36) return GECTI
         if (max < 36) return kaldi('Bu program en az üç yıl önce kurulmuş işletmeler içindir. Sizin işletmeniz daha yeni.')
         return okuyun('İşletmenizin yaşı 3 yıl sınırına yakın. Kesin kuralı kurumun sayfasında okuyun.')
@@ -168,6 +252,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'Son üç yılın her birinde hizmet ihracatı ya da yurt dışından gelir olmalı.',
       kesin: true,
+      alanlar: ['ihracat'],
       denetle(p) {
         if (p.ihracat === 'yok') return kaldi('Bu program son üç yılda yurt dışından gelir ister. Sizin ihracatınız yok.')
         if (bilinmiyor(p, 'ihracat')) return bilgiYok('ihracat')
@@ -175,22 +260,36 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
       },
     },
   ),
-  teknogirisimRozeti: set(sonYillardaKurulmus(15, 'Son 15 yıl içinde kurulmuş olmalı.')),
+  teknogirisimRozeti: set(
+    turKurali(
+      "Türkiye'de kurulmuş şahıs işletmesi ya da sermaye şirketi olmalı.",
+      ['sahis', 'limited', 'anonim'],
+      [],
+      'Bu program şahıs işletmeleri ve sermaye şirketleri içindir.',
+    ),
+    KOBI_OLMALI('KOBİ olmalı.'),
+    sonYillardaKurulmus(15, 'Son 15 yıl içinde kurulmuş olmalı.'),
+  ),
   turcorn: set(
     {
       kosul: 'Kuruluş yılı ile başvuru yılı arasında en çok 15 yıl olmalı.',
       kesin: true,
+      alanlar: KURULUS_ALANLARI,
       denetle(p, bugun) {
-        const k = kurulusOf(p)
-        if (!k) return bilgiYok('kurulus')
-        return Number(bugun.slice(0, 4)) - k.yil <= 15 ? GECTI : kaldi('Bu program son 15 yıl içinde kurulmuş işletmeler içindir. Sizin işletmeniz daha eski.')
+        const b = kurulusBilgisi(p)
+        if (b.tur === 'kurulmadi') return KURULMAMIS_SORUN
+        if (b.tur === 'eksik') return b.sonuc
+        return Number(bugun.slice(0, 4)) - b.k.yil <= 15 ? GECTI : kaldi('Bu program son 15 yıl içinde kurulmuş işletmeler içindir. Sizin işletmeniz daha eski.')
       },
     },
   ),
   bks: set(
+    /* Anonim şirket listede ayrı seçenektir. Bu yüzden "Diğer" cevabı bu koşulu çözer. */
+    turKurali('Şirket bir anonim şirket olmalı.', ['anonim'], ['sahis', 'limited', 'kooperatif', 'diger'], 'Bu program yalnız anonim şirketler içindir. Sizin işletmeniz anonim şirket değil.'),
     {
       kosul: 'Ölçüm gününde en çok 50 çalışan olmalı.',
       kesin: true,
+      alanlar: ['calisan'],
       denetle(p) {
         const n = sayi(p)
         if (n === undefined) return bilgiYok('calisan')
@@ -203,6 +302,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'Merkez için en az 10 tam zamanlı çalışana denk personel gerekir.',
       kesin: true,
+      alanlar: ['calisan'],
       denetle(p) {
         const n = sayi(p)
         if (n === undefined) return bilgiYok('calisan')
@@ -215,6 +315,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: "Hizmet, Türkiye'de yerleşik olmayan kişilere ya da şirketlere verilmeli.",
       kesin: true,
+      alanlar: ['ihracat'],
       denetle(p) {
         if (p.ihracat === 'yok') return kaldi('Bu indirim yurt dışındaki müşteriye verilen hizmetin kazancı içindir. Sizin ihracatınız yok.')
         if (bilinmiyor(p, 'ihracat')) return bilgiYok('ihracat')
@@ -226,6 +327,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'Genel programda işverende genellikle en az 5 sigortalı çalışan aranır.',
       kesin: false,
+      alanlar: ['calisan'],
       denetle(p) {
         const n = sayi(p)
         if (n === undefined) return bilgiYok('calisan')
@@ -237,6 +339,7 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
     {
       kosul: 'İstanbul Kalkınma Ajansı İstanbul için çağrı açar.',
       kesin: false,
+      alanlar: ['il'],
       denetle(p) {
         if (typeof p.il !== 'string' || p.il === BILMIYORUM) return bilgiYok('il')
         return p.il === 'İstanbul' ? GECTI : kaldi('Bu ajans İstanbul için çağrı açar. Başvuru sahibi tanımını çağrı rehberinde okuyun.')

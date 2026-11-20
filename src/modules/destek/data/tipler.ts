@@ -80,14 +80,24 @@ export interface KanitGrubu {
   maddeler: readonly KanitMaddesi[]
 }
 
-/** Gider kalemi ve bu gideri ödeyebilecek programlar. Liste ilk rehberdir, söz değildir. */
+/** Genel gider türü. Bu gideri ödeyen programlar GiderEslesme kayıtlarından gelir. Liste ilk rehberdir, söz değildir. */
 export interface GiderKalemi {
   id: string
   ad: string
   not?: string
-  /** Katalogdaki program kimlikleri. */
-  programlar: readonly string[]
   terim?: string
+}
+
+/**
+ * Bir gider ile bir program arasındaki bağ. kanitMetni katalogdaki metinle birebir aynıdır.
+ * tur "uygun" ise metin programın uygunGider listesindedir. tur "haric" ise metin haricGider listesindedir.
+ * Dizi sırası kullanılmaz. Katalog metni değişirse test bağın koptuğunu yakalar.
+ */
+export interface GiderEslesme {
+  giderId: string
+  programId: string
+  tur: 'uygun' | 'haric'
+  kanitMetni: string
 }
 
 export interface Terim {
