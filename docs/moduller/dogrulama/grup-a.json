@@ -1,0 +1,754 @@
+[
+  {
+    "id": "tubitak1501",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 20000000,
+        "metin": "Proje başına TÜBİTAK katkısı en çok 20.000.000 TL olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "alinti": "* Proje başına TÜBİTAK katkısı 20 milyon TL ile sınırlandırılmıştır.",
+        "kaynakTarihi": "2026-07-13",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "İlk 5 projede oran %75 olur. Altıncı projeden sonra oran %60 olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "alinti": "Destek oranı %75 ve hibe destek tutarı en fazla 20 Milyon TL*",
+        "kaynakTarihi": "2026-07-13",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Kuruluş ön kaydının son günü",
+          "tarih": "2026-10-22",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "alinti": "Kuruluş Bazlı Ön Kayıt Başvurusu Son Tarihi1, 2 22.10.2026 (Saat 23.59 )"
+        },
+        {
+          "ad": "Çağrının kapandığı gün",
+          "tarih": "2026-10-26",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "alinti": "Çağrı Kapanış Tarihi3 26.10.2026 (Saat 23:59)"
+        },
+        {
+          "ad": "Sistem hatasında dilekçenin son günü",
+          "tarih": "2026-11-02",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+          "alinti": "02.11.2026 mesai bitimine kadar Başkanlığımıza dilekçe iletilmesi gerekmektedir."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Harcama sonrası. Firma altı ayda bir gider raporu verir. TÜBİTAK sonra öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+        "alinti": "Firma projeyi yürütür ve altışar aylık dönemlerde proje giderlerini ve proje faaliyetlerini içeren dönem raporunu (Ar-Ge Yardımı İstek Formu) TÜBİTAK’a sunar."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1501-tubitak-sanayi-ar-ge-projeleri-destekleme-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "tubitak1507",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1501_Sanayi_Ar-Ge_Destek_Programi_2026-2_Proje_Cagri_Metni_13.07.2026_v2.pdf",
+        "alinti": "1507 çağrısı için 1 başvuru, 1501 çağrısı için 1 başvuru veya sadece 1507 çağrısı için 2 başvuru, 1501 çağrısı için 2 başvuru yapabilir."
+      }
+    ],
+    "kataloglaFark": "2026 yılı 2. çağrı 26 Ekim 2026 Pazartesi günü kapandı. Katalog programı açık gösteriyor. Tarihler katalogla aynı. Kaynağa göre yalnız KOBİ ölçeğindeki sermaye şirketleri başvurabilir. Katalog bu sınırı yazmıyor. Tutar ve oran aynı.",
+    "not": "Sonraki çağrının tarihi bilinmiyor. Program yılda 2 kez çağrıyla açılır. 1501 ve 1507 çağrılarına toplam en çok 2 öneri verilebilir. Ödeme kuralları uygulama esaslarındadır. Teminatla ön ödeme alınabilir. 1505, 1512, 1812, 1831 ve 1702 projeleri ilk 5 proje sayısına girmez. Bu bilgi program sayfasındadır."
+  },
+  {
+    "id": "tubitak1507",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 3500000,
+        "metin": "Proje bütçesi en çok 3.500.000 TL olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "alinti": "Proje bütçesi en fazla 3.500.000 TL’dir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "Destek oranı %75 olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "alinti": "Programın destek oranı % 75 olarak uygulanır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Kuruluş ön kaydının son günü",
+          "tarih": "2026-11-23",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+          "alinti": "Kuruluş Bazlı Ön Kayıt Son Tarihi1 23.11.2026 (Saat 23:59)"
+        },
+        {
+          "ad": "Çağrının kapandığı gün",
+          "tarih": "2026-11-25",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+          "alinti": "Çağrı Kapanış Tarihi2 25.11.2026 (Saat 23:59)"
+        },
+        {
+          "ad": "Sistem hatasında dilekçenin son günü",
+          "tarih": "2026-12-02",
+          "kaynakUrl": "https://tubitak.gov.tr/tr/duyuru/1507-kobi-ar-ge-baslangic-destek-programi-ve-1707-siparise-dayali-ar-ge-projeleri-icin-kobi-destekleme-programi-2026-yili-cagrilarinin-suresi-uzatildi",
+          "alinti": "1507 Programı için en geç 2 Aralık 2026"
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Harcama sonrası. Firma altı ayda bir gider raporu verir. TÜBİTAK sonra öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+        "alinti": "Firma projeyi yürütür ve altışar aylık dönemlerde proje giderlerini ve proje faaliyetlerini içeren dönem raporunu (Ar-Ge Yardımı İstek Formu) TÜBİTAK’a sunar."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1507-tubitak-kobi-ar-ge-baslangic-destek-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [
+      {
+        "digerProgramId": "tubitak1501",
+        "iliski": "uyumlu",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1507_KOBI_Ar-Ge_Baslangic_Destek_Programlari_2026-2_Proje_Cagri_Metni_06.11.2026.pdf",
+        "alinti": "1507 çağrısı için 1 başvuru, 1501 çağrısı için 1 başvuru veya sadece 1507 çağrısı için 2 başvuru, 1501 çağrısı için 2 başvuru yapabilir."
+      }
+    ],
+    "kataloglaFark": "TÜBİTAK son günleri uzattı. Ön kaydın son günü 9 Kasım 2026 Pazartesi değil, 23 Kasım 2026 Pazartesi oldu. Çağrı 11 Kasım 2026 Çarşamba değil, 25 Kasım 2026 Çarşamba günü kapanır. Katalogdaki 2.625.000 TL kaynakta yazmıyor. Bu tutar hesapla bulunmuş. Kaynak yalnız bütçe tavanını ve oranı yazar.",
+    "not": "Uzatma duyurusu 9 Kasım 2026 Pazartesi günü yayımlandı. Bugün çağrı açık."
+  },
+  {
+    "id": "tubitak1707",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 10000000,
+        "metin": "Proje bütçesi en çok 10.000.000 TL olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "alinti": "Başvurulan projelerin bütçesi en fazla 10.000.000 TL ( on milyon Türk Lirası) olacaktır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 40,
+        "metin": "TÜBİTAK kabul ettiği harcamanın %40 kadarını tedarikçiye öder. Müşteriye de kendi harcamasının %40 kadarını öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "alinti": "“ Kabul Edilen Harcama Tutarının” %40’ını Tedarikçi Kuruluşa hibe destek olarak verecektir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Çağrının açıldığı gün",
+          "tarih": "2026-09-01",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "alinti": "01 Eylül 2026"
+        },
+        {
+          "ad": "Kuruluş ön kaydının son günü",
+          "tarih": "2026-11-25",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "alinti": "Kuruluş Bazlı Ön Kayıt son tarihi 2, 3 25 Kasım 2026"
+        },
+        {
+          "ad": "Çağrının kapandığı gün",
+          "tarih": "2026-11-27",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+          "alinti": "Çağrı kapanış tarihi4 27 Kasım 2026"
+        },
+        {
+          "ad": "Sistem hatasında dilekçenin son günü",
+          "tarih": "2026-12-04",
+          "kaynakUrl": "https://tubitak.gov.tr/tr/duyuru/1507-kobi-ar-ge-baslangic-destek-programi-ve-1707-siparise-dayali-ar-ge-projeleri-icin-kobi-destekleme-programi-2026-yili-cagrilarinin-suresi-uzatildi",
+          "alinti": "1707 Programı için en geç 4 Aralık 2026 mesai bitimine kadar"
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Harcama sonrası. Müşteri önce giderin en az %40 kadarını tedarikçiye öder. TÜBİTAK sonra öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+        "alinti": "TÜBİTAK, Tedarikçi Kuruluş için Kabul Edilen Harcama Tutarının %40'ını Tedarikçi Kuruluşa öder."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/sites/default/files/2026-11/1707_Siparis_Ar-Ge_2026-3_Cagri_Dokumani-sure_uzatimi.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "TÜBİTAK son günü uzattı. Çağrı 13 Kasım 2026 Cuma değil, 27 Kasım 2026 Cuma günü kapanır. Katalogdaki 4.000.000 TL kaynakta yazmıyor. Bu tutar hesapla bulunmuş. Kaynak bütçe tavanını ve oranı yazar.",
+    "not": "Bugün çağrı açık. Katalogdaki techIstanbul ve ekip ile önkoşul bağı bu belgede geçmiyor."
+  },
+  {
+    "id": "tubitak1711",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 10000000,
+        "metin": "Proje bütçesi en çok 10.000.000 TL olur. Genel gider, ikramiye ve kurum hissesi bu tutara girmez.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+        "alinti": "en fazla 10.000.000 TL (on milyon Türk Lirası) olacaktır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 70,
+        "metin": "Müşteri KOBİ ise TÜBİTAK teknoloji sağlayıcının kabul edilen harcamasının %70 kadarını öder. Müşteri büyük ise oran %60 olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "alinti": "TÜBİTAK giderleri değerlendirdikten sonra “kabul edilen harcama tutarının” %70’ini Teknoloji Sağlayıcı Kuruluş(lar)a hibe destek olarak vermektedir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Çağrının açıldığı gün",
+          "tarih": "2026-06-15",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "alinti": "Çağrının açılış tarihi 15 Haziran 2026"
+        },
+        {
+          "ad": "Kuruluş ön kaydının son günü",
+          "tarih": "2026-09-28",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "alinti": "28 Eylül 2026, saat: 23:59"
+        },
+        {
+          "ad": "Çağrının kapandığı gün",
+          "tarih": "2026-10-02",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1711_YZE_2026_Cagri_Metni_Guncel.pdf",
+          "alinti": "Çağrı kapanış tarihi 5 2 Ekim 2026, saat 23:59"
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Harcama sonrası. TÜBİTAK dönem raporundaki giderleri inceler. Sonra öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+        "alinti": "TÜBİTAK giderleri değerlendirdikten sonra “kabul edilen harcama tutarının” %70’ini Teknoloji Sağlayıcı Kuruluş(lar)a hibe destek olarak vermektedir."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1711-yapay-zeka-ekosistem-cagrisi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "2026 çağrısı 2 Ekim 2026 Cuma günü kapandı. Katalog çağrıyı açık gösteriyor. Ön kaydın son günü 14 Eylül 2026 değil, 28 Eylül 2026 Pazartesi oldu. Kapanış 18 Eylül 2026 değil, 2 Ekim 2026 Cuma oldu. Katalogdaki 7.000.000 TL kaynakta yazmıyor. Bu tutar hesapla bulunmuş.",
+    "not": "Program sayfası şunu yazar: \"1711 – Yapay Zeka Ekosistem 2026 Çağrısı 02.10.2026 tarihinde kapandı.\" Çağrı yılda 1 kez açılır. Sonraki çağrının tarihi bilinmiyor. TÜBİTAK üst limit tablosu bu çağrı için 5.000.000 TL yazıyor. Bu tablo eskidir. Çağrı metni 10.000.000 TL yazar."
+  },
+  {
+    "id": "tubitak1505",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 2300000,
+        "metin": "TÜBİTAK proje bütçesinin en çok 2.300.000 TL kadarını karşılar.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2024-03/teydeb_destek_programlari_ve_cagrilari_ust_limitleri%20%282%29.xlsx",
+        "alinti": "PROJE BÜTÇESİNİN TÜBİTAK TARAFINDAN KARŞILANACAK KISMI:2.300.000 TL",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "Müşteri KOBİ ise TÜBİTAK %75, müşteri %25 öder. Müşteri büyük ise TÜBİTAK %60, müşteri %40 öder.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-04/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+        "alinti": "destek kapsamına alınan proje bütçesinin %75'i TÜBİTAK, kalan %25'i müşteri kuruluş tarafından karşılanır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Dönemlik taksit. Müşteri ve TÜBİTAK parayı üniversitenin proje hesabına yatırır.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1505-universite-sanayi-isbirligi-destek-programi",
+        "alinti": "proje başlangıç tarihinden başlayacak şekilde tanımlanan 6’şar aylık dönemlerdeki proje giderlerine orantılı olarak ve taksitler halinde yapılacaktır."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/sites/default/files/2026-04/1505_uygulama_esaslari_29.12.2025_77YK_05.03.2026_907659_baskanlik_oluru_islenmis_hali_koprulu.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Başvuru sürekli açık. Katalog \"çağrı bekleniyor\" diyor. Katalog tavanı 1.500.000 TL yazıyor ve uygulama esaslarını kaynak gösteriyor. Uygulama esaslarında tutar yok. TÜBİTAK üst limit tablosu 2.300.000 TL yazıyor.",
+    "not": "Program sayfası şunu yazar: \"Başvurular sürekli açıktır ve yılın her günü eteydeb.tubitak.gov.tr adresinden online olarak yapılabilir.\" Üst limit tablosunun tarihi yazmıyor. Tablonun 1711 satırı eskidir. Bu yüzden 2.300.000 TL bilgisini kuruma sorun. Para firmaya değil, projeyi yürüten üniversiteye gider."
+  },
+  {
+    "id": "tubitak1702",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 4000000,
+        "metin": "Proje bütçesi en çok 4.000.000 TL olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "alinti": "Proje bütçesi üst sınırı 4.000.000 TL’dir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "Oranın üst sınırı KOBİ için %75, büyük şirket için %60 olur. Patent alımında oran %25 ile başlar ve koşullara göre artar.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+        "alinti": "Destek oranı üst sınırı büyük ölçekli Müşteri Kuruluşlar için %60, KOBİ ölçeğindeki Müşteri Kuruluşlar için %75’tir.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Sürekli başvurunun başladığı gün",
+          "tarih": "2022-10-10",
+          "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+          "alinti": "10 Ekim 2022 tarihinden itibaren TÜBİTAK tarafından ayrıca bir duyuru yapılana kadar Çağrı sürekli başvuruya açıktır."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1702-patent-tabanli-teknoloji-transferi-destekleme-cagrisi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Çağrı sürekli açık. Katalog \"çağrı bekleniyor\" diyor. Tutar ve oran katalogla aynı.",
+    "not": "Kavram doğrulama, prototip ve test hizmetlerinde üst tutar 500.000 TL olur. Teknoloji değerleme hizmetinde üst tutar 100.000 TL olur. Ödeme biçimi bu sayfada okunmadı."
+  },
+  {
+    "id": "tubitak1509",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 25000000,
+        "metin": "Tek ortaklı projede bütçe en çok 25.000.000 TL olur. Ortaklı projede bütçe en çok 80.000.000 TL olur. Her ortak en çok 25.000.000 TL ile başvurur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "alinti": "tek ortaklı projelerde 25 M TL, ortaklı projelerde 80 M TL (Her ortak en fazla 25 M TL bütçe limiti ile başvuru yapabilir)",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "İlk 5 projede KOBİ için %75, büyük şirket için %60 olur. Sonraki projelerde KOBİ için %60, büyük şirket için %40 olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "alinti": "KOBİ destek oranı %75, Büyük Ölçekli Firma destek oranı %60*",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Harcama sonrası. Firma altı ayda bir gider formu verir. İzleyici inceler, sonra ödeme olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+        "alinti": "Desteklenmeye hak kazanan projeler için altı aylık dönemler halinde PRODİS üzerindeki Ar-Ge Yardım İstek Formu doldurularak elektronik ortamda Başkanlığımıza sunulur."
+      }
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/uluslararasi-ortakli-destek-programlari/1509-tubitak-uluslararasi-sanayi-ar-ge-projeleri-destekleme-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Başvuru sürekli açık. Katalog \"çağrı bekleniyor\" diyor. Katalogdaki 18.750.000 TL kaynakta yazmıyor. Bu tutar hesapla bulunmuş. Ortaklı projede bütçe tavanı 80.000.000 TL olur. Katalog bunu yazmıyor.",
+    "not": "Program sayfası şunu yazar: \"Başvurular sürekli açıktır ve yılın her günü eteydeb.tubitak.gov.tr adresinden çevrimiçi (online) olarak yapılabilir.\" Firma önce EUREKA araçlarına uluslararası başvuru yapmalıdır. Katalogdaki 1709 ile \"ret sonrası seçenek\" bağı bu sayfada yazmıyor. Sayfadaki ikinci oran satırının hangi projelere uyduğunu kuruma sorun."
+  },
+  {
+    "id": "eureka1709",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Türk ortağın proje bütçesi en çok 600.000 Avro olur. Türk kuruluşlar ortaklı başvurursa bütçe en çok 850.000 Avro olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "alinti": "İlgili çağrıya başvuru yapacak projeler için (Türk proje ortakların) proje bütçesi 600.000 Avroyu geçemez.",
+        "kaynakTarihi": "2026-07-20",
+        "ikincil": false
+      },
+      "oran": {
+        "deger": 75,
+        "metin": "KOBİ için %75, büyük şirket için %60 olur. Kamu kurumu ve üniversite için %100 olur.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+        "alinti": "Çağrı kapsamında uygulanacak destek oranı büyük ölçekli kuruluşlar için %60, KOBİ ölçeğindeki kuruluşlar için %75",
+        "kaynakTarihi": "2026-07-20",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Uluslararası başvurunun son günü",
+          "tarih": "2026-09-10",
+          "kaynakUrl": "https://tubitak.gov.tr/tr/duyuru/1709-eureka-eurostars-2026-yili-2-cagrisi-acildi",
+          "alinti": "Uluslararası çağrı için son başvuru tarihi: 10 Eylül 2026 (14:00, CEST)"
+        },
+        {
+          "ad": "Kuruluş ön kaydının son günü",
+          "tarih": "2026-09-21",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "alinti": "Kuruluş bazlı ön kayıt için son tarih* 21 Eylül 2026 (23:59 Türkiye saati)"
+        },
+        {
+          "ad": "Ulusal ön başvurunun son günü",
+          "tarih": "2026-09-24",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "alinti": "Ön Proje Başvuruları için son tarih** 24 Eylül 2026 (23:59 Türkiye Saati)"
+        },
+        {
+          "ad": "Kabul alan projelerin ikinci aşama başvurusunun başladığı gün",
+          "tarih": "2027-01-08",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "alinti": "08 Ocak 2027 – 10 Mayıs 2027"
+        },
+        {
+          "ad": "Kabul alan projelerin ikinci aşama başvurusunun son günü",
+          "tarih": "2027-05-10",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "alinti": "08 Ocak 2027 – 10 Mayıs 2027"
+        }
+      ],
+      "sure": {
+        "degerlendirme": {
+          "metin": "Uluslararası sonuçlar 26 Kasım 2026 ile 10 Aralık 2026 arasında duyurulur.",
+          "baslangicOlayi": "Uluslararası başvurunun 10 Eylül 2026 Perşembe günü kapanması",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+          "alinti": "26 Kasım – 10 Aralık 2026"
+        },
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/sites/default/files/2026-07/1709-EUREKA-EUROSTARS_CAGRI_DUYURUSU_20262.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog çağrıyı açık sayıyor ve tarihi bilmiyor. Yeni başvuru dönemi 24 Eylül 2026 Perşembe günü kapandı. İkinci aşamaya yalnız uluslararası kabul alan projeler başvurur. Tavan Avro ile yazılı. Bu yüzden \"deger\" alanı boş kaldı.",
+    "not": "Ulusal çağrı bütçesi 4.000.000 Avro olur. Sonraki Eurostars çağrısının tarihi bilinmiyor."
+  },
+  {
+    "id": "bigg1812",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": 1350000,
+        "metin": "TÜBİTAK BİGG Fonu şirketin %3 payı karşılığında 1.350.000 TL yatırır. Şirket sonra en çok 1.350.000 TL devam yatırımı isteyebilir.",
+        "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+        "alinti": "kuruluşun %3 payı karşılığında TÜBİTAK BİGG Fonu kuruluşa 1.350.000 TL yatırım yapacaktır.",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": null,
+      "tarihler": [
+        {
+          "ad": "Tohum öncesi başvurunun son günü",
+          "tarih": "2026-09-30",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "alinti": "31 Ağustos 2026 –30 Eylül 2026"
+        },
+        {
+          "ad": "Şirket kurulumu ve sözleşmenin son günü",
+          "tarih": "2026-12-31",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "alinti": "Şirket kurulumu ve sözleşme imzalanması için son tarih 31 Aralık 2026"
+        },
+        {
+          "ad": "Destek başlangıç günü",
+          "tarih": "2027-01-01",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "alinti": "Destek başlangıç tarihi 1 Ocak 2027"
+        },
+        {
+          "ad": "BİGG+ tohum yatırım çağrısının kapandığı gün",
+          "tarih": "2026-11-20",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-10/2026_1_BIGG_Tohum_Yatirim_Cagri_Duyuru_Metni.pdf",
+          "alinti": "Çağrı kapanış tarihi3 20.11.2026"
+        }
+      ],
+      "sure": {
+        "degerlendirme": {
+          "metin": "Değerlendirme 12 Ekim 2026 ile 4 Aralık 2026 arasında yapılır.",
+          "baslangicOlayi": "Başvuruların 30 Eylül 2026 Çarşamba günü kapanması",
+          "kaynakUrl": "https://tubitak.gov.tr/sites/default/files/2026-09/1812-2026-2_Cagri_Duyurusu_v2.pdf",
+          "alinti": "12 Ekim 2026 – 4 Aralık 2026"
+        },
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Ortaklık yatırımı. Fon pay alır ya da paya dönüşen borç verir.",
+        "kaynakUrl": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1812-yatirim-tabanli-girisimcilik-destek-programi-bigg-yatirim",
+        "alinti": "Fonun yapacağı yatırım, hisse ortaklığı, hisseye dönüştürülebilir borç veya bunların her ikisinden oluşabilir."
+      }
+    },
+    "faydalar": [
+      "ortaklik_yatirimi"
+    ],
+    "faydaKaynak": "https://tubitak.gov.tr/tr/destekler/sanayi/ulusal-destek-programlari/1812-yatirim-tabanli-girisimcilik-destek-programi-bigg-yatirim",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Tutar ve pay oranı katalogla aynı. 2026 yılı 2. çağrının başvuruları 30 Eylül 2026 Çarşamba günü kapandı. Katalog çağrıyı açık gösteriyor. Ayrıca bir tohum yatırım çağrısı var. Bu çağrı en çok 8 milyon TL yatırım yapar ve en çok %10 pay alır. Bu çağrı bugün, 20 Kasım 2026 Cuma günü kapanır.",
+    "not": "Katalogdaki KOSGEB ile \"birlikte kullanılamaz\" bağı bu belgelerde yazmıyor. Pay oranı \"oran\" alanına yazılmadı. Bu alan destek oranı içindir."
+  },
+  {
+    "id": "adim",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Hizmet. Merkezler test, danışmanlık, eğitim ve finansmana erişim desteği verir.",
+        "kaynakUrl": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+        "alinti": "test ve deney ortamları sunan bu merkezler aynı zamanda danışmanlık, eğitim ve finansmana erişim desteği sağlamaktadır."
+      }
+    },
+    "faydalar": [
+      "hizmet_ayni"
+    ],
+    "faydaKaynak": "https://dijitalavrupa.sanayi.gov.tr/Adim",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalogla çelişki yok. Fonu merkezler alır. Kaynak şunu yazar: \"ADİM ağına Türkiye’den 3 yeni merkez eklenerek toplamda 3,1 milyon avro fon almaya hak kazandı.\" Türkiye’de sekiz merkez var.",
+    "not": "Bazı merkezler bölgeseldir. Örneğin EDIH Anadolu Doğu Akdeniz ve çevresindeki dokuz ile odaklanır. EDIH West Marmara Batı Marmara’ya odaklanır. Kayıt genel olduğu için \"bolge\" boş kaldı."
+  },
+  {
+    "id": "abProgramlari",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "dogrulandi",
+    "alanlar": {
+      "tavan": null,
+      "oran": {
+        "deger": 70,
+        "metin": "Ufuk Avrupa yenilik eyleminde oran en çok %70 olur. Kâr amacı gütmeyen kuruluşta oran %100 olabilir. Araştırma ve yenilik eyleminde oran %100 olur.",
+        "kaynakUrl": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+        "alinti": "– Innovation action: 70% (except for non-profit legal entities, where a rate of up to 100% applies)",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "hibe"
+    ],
+    "faydaKaynak": "https://ec.europa.eu/info/funding-tenders/opportunities/docs/2021-2027/horizon/wp-call/2026-2027/wp-15-general-annexes_horizon-2026-2027_en.pdf",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Tutar çağrıya göre değişir. Bu bilgi katalogla uyumlu. Ufuk Avrupa oranları eklendi. Katalogdaki 1709 ile \"birlikte kullanılabilir\" bağı için resmî kaynak bulunamadı.",
+    "not": "Dijital Avrupa Programının oranı doğrulanmadı. Çağrı metni kendi oranını yazabilir. Ulusal portal ufukavrupa.org.tr adresidir."
+  },
+  {
+    "id": "eic",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": {
+        "deger": null,
+        "metin": "Hibe en çok 2,5 milyon Avro olur. Ortaklık yatırımı 1 milyon ile 10 milyon Avro arasında olur.",
+        "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+        "alinti": "Grant component up to EUR 2.5M for innovation activities (TRL 6 to 8)",
+        "kaynakTarihi": null,
+        "ikincil": false
+      },
+      "oran": null,
+      "tarihler": [
+        {
+          "ad": "Tam başvuruların toplandığı gün",
+          "tarih": "2027-01-20",
+          "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "alinti": "20/01/2027"
+        },
+        {
+          "ad": "Tam başvuruların toplandığı gün",
+          "tarih": "2027-03-17",
+          "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "alinti": "17/03/2027"
+        },
+        {
+          "ad": "Tam başvuruların toplandığı gün",
+          "tarih": "2027-09-01",
+          "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "alinti": "01/09/2027"
+        },
+        {
+          "ad": "Tam başvuruların toplandığı gün",
+          "tarih": "2027-11-04",
+          "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "alinti": "04/11/2027"
+        }
+      ],
+      "sure": {
+        "degerlendirme": {
+          "metin": "Kısa başvuruya yanıt genellikle 4 ile 6 hafta içinde gelir.",
+          "baslangicOlayi": "Kısa başvurunun gönderilmesi",
+          "kaynakUrl": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+          "alinti": "You will normally receive feedback within approximately 4-6 weeks."
+        },
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [
+      "hibe",
+      "ortaklik_yatirimi"
+    ],
+    "faydaKaynak": "https://eic.ec.europa.eu/eic-funding-opportunities/eic-accelerator_en",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalogdaki \"%70\" oranı resmî sayfada yazmıyor. Bu yüzden oran boş kaldı. Hibe tavanı 2,5 milyon Avro olur. Yatırım 1 milyon ile 10 milyon Avro arasında olur. 2027 yılında dört tam başvuru günü var.",
+    "not": "Kısa başvuru her zaman yapılabilir. Tavan Avro ile yazılı. Bu yüzden \"deger\" alanı boş kaldı. Kaynak şunu yazar: \"Proposals will be batched for evaluation at 5pm Brussels time on the following dates:\""
+  },
+  {
+    "id": "ttgv",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [
+        {
+          "ad": "Güdümlü Projeler son başvuru günü",
+          "tarih": "2026-11-30",
+          "kaynakUrl": "https://ttgv.org.tr/tr/gudumlu-projeler",
+          "alinti": "Son başvuru tarihi 30 Kasım 23:59 olarak güncellenmiştir."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "Hizmet. Vakıf analiz, yol haritası ve finansmana erişim desteği verir.",
+        "kaynakUrl": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+        "alinti": "Eko-Klinik® süreciyle her firmanın dönüşüm önceliklerine özel yol haritası geliştirilerek proje hayata geçirme ve finansmana erişim süreçlerinde uçtan uca destek sağlanması"
+      }
+    },
+    "faydalar": [
+      "hizmet_ayni"
+    ],
+    "faydaKaynak": "https://ttgv.org.tr/tr/programlar/eko-uretim-programi",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Vakfın sitesinde geri ödemeli destek programı görünmüyor. Katalog \"Ticarileşme desteği geri ödenir\" diyor. Bu bilgi doğrulanamadı. Güncel programlar hizmet ve teknoloji gösterim projeleridir. Katalogdaki \"geri ödemeli\" türü artık uymuyor.",
+    "not": "Vakıf başkanının sitedeki sözü şudur: \"artık destek veya yatırım veren değil, doğrudan talep tarafında konumlandığımız müşteri dönemindeyiz.\" Güdümlü Projeler sayfasında yıl yazmıyor. Lansman 20 Ekim 2026 Salı günü yapıldı. Bu yüzden yıl 2026 kabul edildi. Bu programda vakfın nasıl ödeme yaptığı bilinmiyor."
+  },
+  {
+    "id": "turkpatent",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "degisti",
+    "alanlar": {
+      "tavan": null,
+      "oran": {
+        "deger": 75,
+        "metin": "İlk kez patent başvurusu yapan KOBİ, ilk başvurusunda başvuru, araştırma ve inceleme ücretlerinde %75 indirim alır.",
+        "kaynakUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "alinti": "ilk kez patent başvurusunda bulunacak KOBİ’lerin ilk patent başvurularında başvuru, araştırma ve inceleme raporu ücretlerine yüzde 75 indirim getirildi.",
+        "kaynakTarihi": "2026-10-31",
+        "ikincil": false
+      },
+      "tarihler": [
+        {
+          "ad": "Ücret indiriminin yürürlüğe girdiği gün",
+          "tarih": "2026-10-31",
+          "kaynakUrl": "https://www.resmigazete.gov.tr/eskiler/2026/10/20261031-6.htm",
+          "alinti": "Bu Tebliğ yayımı tarihinde yürürlüğe girer."
+        }
+      ],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": {
+        "metin": "İndirim. Başvuru sahibi ücreti elektronik başvuru sisteminde indirimli öder.",
+        "kaynakUrl": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+        "alinti": "TÜRKPATENT Elektronik Başvuru Sistemi (EPATS) üzerinden gerçekleştirecekleri ilgili işlemlerde indirimli ücretlerden yararlanabilecek."
+      }
+    },
+    "faydalar": [
+      "destek_degil"
+    ],
+    "faydaKaynak": "https://www.turkpatent.gov.tr/haberler/kobilerin-ilk-patent-basvurularina-ve-yapay-zeka-alanindaki-acil-arastirma-raporlarina-indirim",
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalog \"Bu bir destek değildir. Tescil ücretlidir.\" diyor. 31 Ekim 2026 Cumartesi gününden beri KOBİ için ücret indirimi var. İlk patent başvurusunda başvuru, araştırma ve inceleme ücretleri %75 indirimlidir. Yapay zekâ alanındaki acil araştırma raporu ücreti %50 indirimlidir.",
+    "not": "İndirim 31 Ekim 2026 tarihli ve 33416 sayılı Resmî Gazete’deki tebliğle geldi. Fayda türleri listesinde \"ücret indirimi\" yok. \"destek_degil\" geçici olarak kaldı. Ürün sahibi yeni tür gerekip gerekmediğine karar vermeli. Katalogdaki iki önkoşul bağı bu kaynaklarda yazmıyor."
+  },
+  {
+    "id": "meslekOrgutleri",
+    "kontrolTarihi": "2026-11-20",
+    "durum": "bulunamadi",
+    "alanlar": {
+      "tavan": null,
+      "oran": null,
+      "tarihler": [],
+      "sure": {
+        "degerlendirme": null,
+        "ilkOdeme": null
+      },
+      "odemeBicimi": null
+    },
+    "faydalar": [],
+    "faydaKaynak": null,
+    "bolge": null,
+    "ozelKurum": false,
+    "kombinasyon": [],
+    "kataloglaFark": "Katalogdaki kaynak Ticaret Bakanlığının hizmet sektörü destekleri sayfasıdır. Bu sayfa meslek örgütlerinden söz etmiyor. \"Bu kuruluşlar para vermez\" bilgisi doğrulanamadı.",
+    "not": "Kayıt tek bir kurumu değil, bir kuruluş türünü anlatıyor. Bu yüzden tek bir resmî kaynak yok. Fayda türü kaynaksız kaldı. Plan her programda en az bir fayda ister. Ürün sahibi bu kaydı tutmaya ya da kaldırmaya karar vermeli."
+  }
+]
