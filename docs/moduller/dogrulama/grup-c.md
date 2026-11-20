@@ -6,8 +6,8 @@ Bu belge C grubundaki 15 programın doğrulamasını özetler. Kontrol 20 Kasım
 
 - 15 programın hepsi hâlâ yürürlüktedir.
 - Kapanan ya da yürürlükten kalkan program yoktur.
-- 9 programda katalogdaki değerler resmî kaynakla tutuyor.
-- 6 programda katalogdan farklı bir bilgi çıktı.
+- 10 programda katalogdaki değerler resmî kaynakla tutuyor.
+- 5 programda katalogdan farklı bir bilgi çıktı.
 - Değerlendirme süresi çoğu programın resmî metninde yazmıyor. Bu alanlar boş kaldı.
 
 ## Önce karar verilmesi gereken çelişki
