@@ -22,7 +22,8 @@ describe('ek veri denetimi', () => {
   it('kaynaktan alınan madde sayıları belgedeki sayılarla aynıdır', () => {
     expect(KANIT_GRUPLARI).toHaveLength(9)
     expect(KANIT_GRUPLARI.flatMap((g) => g.maddeler)).toHaveLength(36)
-    expect(GIDER_KALEMLERI).toHaveLength(14)
+    // Kaynaktaki 14 gidere kira ve hammadde eklendi. Bu ikisinin katalogda karşılığı yoktur.
+    expect(GIDER_KALEMLERI).toHaveLength(16)
     expect(SOZLUK).toHaveLength(26)
   })
 
@@ -41,19 +42,11 @@ describe('ek veri denetimi', () => {
     expect(metin).not.toMatch(/TTBS|EİDS|taşınmaz|gayrimenkul|parsel|kadastro|68\.31/iu)
   })
 
-  it('katalogda olmayan program kimliğini reddeder', () => {
-    expect(hatalar((v) => { v.giderler[0].programlar = ['yokProgram'] })).toMatch(/yokProgram.*katalogda yok/)
-  })
-
   it('aynı kimliği reddeder', () => {
     expect(hatalar((v) => { v.giderler[1].id = v.giderler[0].id })).toMatch(/aynı kimlik/)
     expect(hatalar((v) => { v.kanitlar[1].maddeler[0].id = v.kanitlar[0].maddeler[0].id })).toMatch(/aynı kimlik/)
     expect(hatalar((v) => { v.sozluk[1].id = v.sozluk[0].id })).toMatch(/aynı kimlik/)
     expect(hatalar((v) => { v.sozluk[1].ad = v.sozluk[0].ad.toLocaleUpperCase('tr-TR') })).toMatch(/aynı terim/)
-  })
-
-  it('aynı programı bir giderde iki kez reddeder', () => {
-    expect(hatalar((v) => { v.giderler[0].programlar = ['tubitak1501', 'tubitak1501'] })).toMatch(/iki kez/)
   })
 
   it('sözlükte olmayan terim bağlantısını reddeder', () => {

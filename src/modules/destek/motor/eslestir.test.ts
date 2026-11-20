@@ -44,8 +44,9 @@ describe('ön eşleşme', () => {
   })
 
   it('kuralı olmayan program belki olur ve koşulları okumayı ister', () => {
-    const sonuc = eslestir(program('tubitak1501'), KAFE, BUGUN)
-    expect(KURALLAR.tubitak1501).toBeUndefined()
+    // 1501 artık şirket türü kuralı taşır. Kefalet programının katalogda denetlenebilen koşulu yoktur.
+    const sonuc = eslestir(program('kgf'), KAFE, BUGUN)
+    expect(KURALLAR.kgf).toBeUndefined()
     expect(sonuc.sonuc).toBe('belki')
     expect(sonuc.kuralVar).toBe(false)
     expect(sonuc.nedenler).toEqual(['Koşulları kendiniz okuyun.'])
@@ -60,7 +61,8 @@ describe('ön eşleşme', () => {
   })
 
   it('kafe profilinde yaş ya da çalışan kuralı tutan program uygun sayılmaz', () => {
-    const gruplar = eslestirHepsi(PROGRAMLAR, KAFE, BUGUN)
+    // BKS yalnız anonim şirkete açıktır. Bu yüzden tür anonim seçilir.
+    const gruplar = eslestirHepsi(PROGRAMLAR, { ...KAFE, isletmeTuru: 'anonim' }, BUGUN)
     expect(gruplar.uygun).toEqual([])
     expect(gruplar.belki.find((e) => e.programId === 'bks')?.sorulanlarTuttu).toBe(true)
   })
@@ -80,7 +82,9 @@ describe('ön eşleşme', () => {
   it('eksik bilgi belki sonucunu ve sonraki soruyu verir', () => {
     const sonuc = eslestir(program('kosgebGirisimciA'), { faaliyet: ['C'] }, BUGUN)
     expect(sonuc.sonuc).toBe('belki')
-    expect(sonuc.sonrakiSorular).toEqual(['kurulus'])
+    // Kuruluş durumu bilinmiyor. Önce bu soru gelir. "Kuruldu" cevabından sonra tarih sorulur.
+    expect(sonuc.sonrakiSorular).toEqual(['kurulusDurumu'])
+    expect(eslestir(program('kosgebGirisimciA'), { faaliyet: ['C'], kurulusDurumu: 'kuruldu' }, BUGUN).sonrakiSorular).toEqual(['kurulus'])
   })
 
   it('bir kesin kural tutmazsa öteki bilgiler eksik olsa da sonuç uygun değildir', () => {
@@ -131,7 +135,7 @@ describe('ön eşleşme', () => {
       const ids = grup.map((e) => index(e.programId))
       expect(ids).toEqual([...ids].sort((a, b) => a - b))
     }
-    expect(Object.keys(sira[0]).sort()).toEqual(['denetlenenKosullar', 'kuralVar', 'nedenler', 'programId', 'sonrakiSorular', 'sonuc', 'sorulanlarTuttu'])
+    expect(Object.keys(sira[0]).sort()).toEqual(['denetlenenKosullar', 'kuralVar', 'nedenler', 'programId', 'sonrakiSorular', 'sonuc', 'sorulanlarTuttu', 'tutanAlanlar'])
   })
 
   it('sonraki sorular soru sırasıyla ve tekrarsız gelir', () => {
@@ -140,7 +144,7 @@ describe('ön eşleşme', () => {
     expect(sorular).toEqual(SORU_SIRASI.filter((a) => sorular.includes(a)))
     expect(new Set(sorular).size).toBe(sorular.length)
     expect(sorular).not.toContain('faaliyet')
-    expect(sorular).toContain('kurulus')
+    expect(sorular).toContain('kurulusDurumu')
   })
 
   it('her kural katalogdaki bir programa bağlıdır', () => {

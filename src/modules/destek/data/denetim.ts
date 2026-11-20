@@ -139,7 +139,6 @@ const terimAnahtari = (m: string) => m.toLocaleLowerCase('tr-TR').normalize('NFC
  */
 export function ekVeriHatalari(v: { kanitlar: readonly KanitGrubu[]; giderler: readonly GiderKalemi[]; sozluk: readonly Terim[]; programlar: readonly Program[] }): string[] {
   const hatalar: string[] = []
-  const programlar = new Set(v.programlar.map((p) => p.id))
   const terimler = new Set(v.sozluk.map((t) => t.id))
   const tek = (kume: Set<string>, id: unknown, yer: string) => {
     if (typeof id !== 'string' || !KIMLIK.test(id)) hatalar.push(`${yer}: kimlik yalnız harf ve rakamdan oluşmalı.`)
@@ -172,9 +171,6 @@ export function ekVeriHatalari(v: { kanitlar: readonly KanitGrubu[]; giderler: r
     tek(giderKimlikleri, g.id, yer)
     hatalar.push(...ekMetinHatalari(g.ad, `${yer}.ad`))
     if (g.not !== undefined) hatalar.push(...ekMetinHatalari(g.not, `${yer}.not`))
-    if (!g.programlar.length) hatalar.push(`${yer}: program listesi boş.`)
-    if (new Set(g.programlar).size !== g.programlar.length) hatalar.push(`${yer}: aynı program iki kez var.`)
-    for (const p of g.programlar) if (!programlar.has(p)) hatalar.push(`${yer}: "${p}" programı katalogda yok.`)
     terimVar(g.terim, yer)
   }
 

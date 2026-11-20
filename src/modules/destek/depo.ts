@@ -9,7 +9,7 @@ import { moduleStore } from '@/platform/kv'
 import { writeRollup } from '@/platform/rollups'
 import type { IsoTarih, Program } from './data/tipler'
 import { basvuruDegistir, basvuruOku, ozetHesapla, type Basvuru, type BasvuruDegisikligi, type DesteksizCevap } from './motor/basvuru'
-import { profilOku, type Alan, type DestekProfili } from './motor/profil'
+import { profilOku, type Alan, type DestekProfili, type DestekTercihi } from './motor/profil'
 import { bugunIso } from './motor/tazelik'
 
 export { ozetHesapla } from './motor/basvuru'
@@ -43,6 +43,15 @@ export function profilKaydet(yer: string, profil: DestekProfili): Promise<void> 
 export function profilAlanKaydet(yer: string, alan: Alan, deger: DestekProfili[Alan], bugun: IsoTarih = bugunIso()): Promise<DestekProfili> {
   return sirayla(async () => {
     const sonraki = profilOku({ ...(await profilYukle(yer, bugun)), [alan]: deger }, bugun)
+    await depo().set(profilAnahtari(yer), sonraki)
+    return sonraki
+  })
+}
+
+/** Tercih süzgecini yazar. Öteki cevaplar depodaki son halinden okunur. */
+export function tercihKaydet(yer: string, tercih: DestekTercihi, bugun: IsoTarih = bugunIso()): Promise<DestekProfili> {
+  return sirayla(async () => {
+    const sonraki = profilOku({ ...(await profilYukle(yer, bugun)), tercih }, bugun)
     await depo().set(profilAnahtari(yer), sonraki)
     return sonraki
   })
