@@ -8,12 +8,14 @@ import { PageHeader } from '@/components/PageHeader'
 import { DtBasvuruEkle } from '../components/DtBasvuruEkle'
 import { DtEskiBilgi } from '../components/DtEskiBilgi'
 import { DtEtiket } from '../components/DtEtiket'
+import { DtTerimBaglantisi } from '../components/DtTerimBaglantisi'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
 import { useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
-import { DURUM_ADI, KATEGORI_ADI, SONUC_ADI, TAVAN_TURU_ADI, TUTARI_OKUYUN } from '../metinler'
+import { DURUM_ADI, farkliKayitMetni, KATEGORI_ADI, KOMBINASYON_METNI, SONUC_ADI, TAVAN_TURU_ADI, TUTARI_OKUYUN } from '../metinler'
 import { eslestir } from '../motor/eslestir'
+import { programIliskileri } from '../motor/kombinasyon'
 import { profilDoluMu } from '../motor/profil'
 import { gecerliDurum, tarihGectiMi, tarihYaz, tazelik, tutarlariGizle } from '../motor/tazelik'
 
@@ -83,6 +85,34 @@ function OnEslesme({ program, bugun }: { program: Program; bugun: string }) {
   )
 }
 
+/** Bu programla birlikte kullanma. Bilgi yalnız katalogdaki kayıtlardan gelir. */
+function BirlikteKullanma({ program, programlar }: { program: Program; programlar: readonly Program[] }) {
+  const gruplar = programIliskileri(program, programlar)
+  if (!gruplar.length) {
+    return <EmptyState level={3} announce={false} title="Bilgi yok" text="Kaynakta bu program için birlikte kullanma bilgisi yok. Kurumun sayfasını okuyun." actionless="Kurumun sayfasının bağlantısı 5. bölümde duruyor." />
+  }
+  return (
+    <>
+      <p>Bu bilgi kaynaktaki kayıtlardan gelir. Kesin kararı kurumlar verir. Burada olmayan program için bilgi yok.</p>
+      {gruplar.map((g) => (
+        <div key={g.tur} className="dt-program-birlikte">
+          <h3>{KOMBINASYON_METNI[g.tur].baslik} ({g.programlar.length})</h3>
+          <p>{KOMBINASYON_METNI[g.tur].aciklama}</p>
+          {g.tur === 'ayri_gider' ? <DtTerimBaglantisi terim="ciftFinansman" /> : null}
+          <ul className="dt-program-birlikte-liste">
+            {g.programlar.map((x) => (
+              <li key={x.program.id}>
+                <Link className="dt-program-baglanti" to={`/destek/${x.program.id}`}>{x.program.ad}</Link>
+                {x.farkli ? <p>{farkliKayitMetni(x.farkli)}</p> : null}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </>
+  )
+}
+
 /** Tek programın ekranı. Bu ekran plan istemez. Başvuru eklemek plan ister. */
 export default function DtProgramScreen() {
   const { programId } = useParams()
@@ -132,6 +162,7 @@ export default function DtProgramScreen() {
         <Bolum no={2} baslik="Neyi öder?">
           <p>Destek türü: {metin(program.destekTuru)}</p>
           <Liste maddeler={program.uygunGider.map(metin)} bos="Kaynakta gider listesi yok. Kurumun sayfasını okuyun." />
+          <Link className="dt-program-baglanti" to="/destek/giderler">Giderden programa bakın</Link>
           {program.haricGider.length ? (
             <>
               <h3>Kapsamın dışında kalanlar</h3>
@@ -173,6 +204,10 @@ export default function DtProgramScreen() {
         </Bolum>
         <Bolum no={6} baslik="Hangi belgeler gerekir?">
           <Liste maddeler={program.belgeler.map(metin)} bos="Kaynakta belge listesi yok. Kurumun sayfasını okuyun." />
+          <Link className="dt-program-baglanti" to="/destek/belgeler">Belge ve kanıt listesini açın</Link>
+        </Bolum>
+        <Bolum no={7} baslik="Bu programla birlikte kullanma">
+          <BirlikteKullanma program={program} programlar={programlar} />
         </Bolum>
       </div>
 

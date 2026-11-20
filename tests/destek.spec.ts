@@ -1,6 +1,7 @@
 import { expect, test, type Page, type TestInfo } from '@playwright/test'
+import { readFileSync } from 'node:fs'
 import { mkdir } from 'node:fs/promises'
-import { openDemo, ready } from './uyarlanir/audit'
+import { activate, openDemo, ready } from './uyarlanir/audit'
 
 /*
  * Destek ve teşvik modülü. Bugün 19 Kasım 2026 Perşembe günü olarak sabitlenir.
@@ -12,6 +13,7 @@ const SON_KONTROL = 'Son kontrol: 12 Ağustos 2026 Çarşamba'
 const UYARI = 'Bu bilgi resmî kaynak değildir. Tutar ve tarih değişebilir. Başvurmadan önce kurumun sayfasını okuyun. Bu uygulama destek vermez ve söz vermez.'
 const PLAN_KEY = 'decisionactplan-v1'
 const DEMO_ID = 'ornek-mahalle-kafesi'
+const DEMO_ADI = 'Örnek: Mahalle kafesi'
 const KANIT = process.env.DESTEK_KANIT_DIR
 
 test.beforeEach(async ({ page }) => {
@@ -116,7 +118,7 @@ test('program kartı numaralı bölümleri gösterir, eski tutarı gizler ve res
   const main = page.getByRole('main')
   await expect(main.getByRole('heading', { level: 1 })).toHaveText('1501 Sanayi Ar-Ge Destek Programı')
   await expect(main.getByRole('heading', { level: 2 }).filter({ hasText: /^\d\. / })).toHaveText([
-    '1. Kim alabilir?', '2. Neyi öder?', '3. Ne kadar?', '4. Son tarih ne zaman?', '5. Resmî sayfa nerede?', '6. Hangi belgeler gerekir?',
+    '1. Kim alabilir?', '2. Neyi öder?', '3. Ne kadar?', '4. Son tarih ne zaman?', '5. Resmî sayfa nerede?', '6. Hangi belgeler gerekir?', '7. Bu programla birlikte kullanma',
   ])
   await expect(main.getByText(SON_KONTROL)).toBeVisible()
   const tutar = main.locator('section', { has: page.getByRole('heading', { name: '3. Ne kadar?' }) })
@@ -232,7 +234,8 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   await belgeler.nth(1).click()
   await belgeler.nth(1).click()
   await expect(kart.getByText('4 belgeden 1 tanesi hazır.')).toBeVisible()
-  await kart.locator('.ant-select').click()
+  const durumKutusu = kart.locator('.ant-select').filter({ has: page.locator('[id$="-durum"]') })
+  await durumKutusu.click()
   await page.locator('.ant-select-dropdown:visible').getByText('Başvuruldu', { exact: true }).click()
   await expect(main.getByRole('status')).toHaveText('1 başvuru var. 0 tanesi hazırlanıyor.')
   await denetle(page, '/destek/basvurular')
@@ -241,7 +244,7 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   await page.reload()
   await ready(page)
   await expect(kart.locator('.ant-checkbox-wrapper').first().locator('input')).toBeChecked()
-  await expect(kart.locator('.ant-select')).toContainText('Başvuruldu')
+  await expect(durumKutusu).toContainText('Başvuruldu')
 
   // Profil yazmak da planı değiştirmez.
   await page.goto('/#/destek/eslesme')
@@ -263,4 +266,176 @@ test('başvuru belge listesiyle eklenir, yenilemede kalır ve planı değiştirm
   const sonOzet = await page.evaluate(() => JSON.parse(localStorage.getItem('decisionactplan-rollups-v1') ?? '{}').data?.destek?.['ornek-mahalle-kafesi'])
   expect(sonOzet).toMatchObject({ toplam: 0 })
   expect(await planOku(page)).toEqual(once)
+})
+
+/** Markalı seçim kutusunda bir seçenek seçer. Yerel açılır menü kullanılmaz. */
+async function secenekSec(page: Page, kutu: ReturnType<Page['locator']>, metin: string) {
+  await kutu.click()
+  await page.locator('.ant-select-dropdown:visible .ant-select-item-option').filter({ hasText: new RegExp(`^${metin}$`) }).click()
+  await expect(page.locator('.ant-select-dropdown:visible')).toHaveCount(0)
+}
+
+test('belge ve kanıt listesi numaralı gruplarla açılır ve terim sözlüğe bağlanır', async ({ page }, info) => {
+  await page.goto('/#/destek/belgeler')
+  await ready(page)
+  const main = page.getByRole('main')
+  await expect(main.getByRole('heading', { level: 1 })).toHaveText('Belge ve kanıt listesi')
+  await expect(main.getByText(UYARI)).toBeVisible()
+  await expect(main.getByText('Son kontrol: 12 Ağustos 2026 Çarşamba.', { exact: false })).toBeVisible()
+  const gruplar = main.getByRole('heading', { level: 2 }).filter({ hasText: /^\d\. / })
+  await expect(gruplar).toHaveCount(9)
+  await expect(gruplar.first()).toHaveText('1. Şirketin kuruluş ve kimlik belgeleri')
+  await expect(main.getByText('9 grupta 36 belge var.')).toBeVisible()
+  await expect(main.getByText('Şirket adına kimin imza atabileceğini gösterir.')).toBeVisible()
+  await expect(main).not.toContainText(/TTBS|taşınmaz|kadastro/)
+  await expect(main.locator('select')).toHaveCount(0)
+  await denetle(page, '/destek/belgeler')
+  await kanit(page, info, 'belgeler')
+
+  await main.getByRole('link', { name: '“NACE kodu” ne demek?' }).click()
+  await expect(page).toHaveURL(/#\/destek\/sozluk\?terim=naceKodu$/)
+  await ready(page)
+  await expect(main.locator('#dt-terim-naceKodu')).toBeFocused()
+  await expect(main.locator('.dt-sozluk-secili')).toContainText('İşletmenin iş kolunu gösteren resmî koddur.')
+})
+
+test('gider rehberi giderden programa götürür ve seçimi yenilemede korur', async ({ page }, info) => {
+  await page.goto('/#/destek/giderler')
+  await ready(page)
+  const main = page.getByRole('main')
+  await expect(main.getByRole('heading', { level: 1 })).toHaveText('Gider rehberi')
+  await expect(main.getByRole('heading', { name: 'Bu liste ilk rehberdir' })).toBeVisible()
+  await expect(main.getByText('Bu liste söz değildir.', { exact: false })).toBeVisible()
+  await expect(main.getByRole('heading', { name: 'Henüz gider seçmediniz' })).toBeVisible()
+  await expect(main.locator('select')).toHaveCount(0)
+  await denetle(page, '/destek/giderler boş')
+
+  await secenekSec(page, main.locator('.dt-giderler-alan .ant-select'), 'Yazılım lisansları')
+  await expect(page).toHaveURL(/kalem=yazilimLisansi/)
+  await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeFocused()
+  await expect(main.getByText('Aynı faturayı iki programa yazmayın.')).toBeVisible()
+  await expect(main.getByRole('heading', { level: 3 })).toHaveText('Bu gideri ödeyebilecek programlar (4)')
+  await expect(main.locator('.dt-giderler-program')).toHaveCount(4)
+  await expect(main.getByRole('link', { name: '“Çift finansman” ne demek?' })).toBeVisible()
+  await denetle(page, '/destek/giderler seçili')
+  await kanit(page, info, 'giderler')
+
+  await page.reload()
+  await ready(page)
+  await expect(main.getByRole('heading', { level: 2, name: 'Yazılım lisansları' })).toBeVisible()
+  await main.getByRole('link', { name: '1501 Sanayi Ar-Ge Destek Programı' }).click()
+  await expect(page).toHaveURL(/#\/destek\/tubitak1501$/)
+})
+
+test('destek sözlüğü Türkçe abece sırasıyla dizilir', async ({ page }, info) => {
+  await page.goto('/#/destek/sozluk')
+  await ready(page)
+  const main = page.getByRole('main')
+  await expect(main.getByRole('heading', { level: 1 })).toHaveText('Destek sözlüğü')
+  await expect(main.getByText('Sözlükte 26 terim var.')).toBeVisible()
+  const harfler = await main.getByRole('heading', { level: 2 }).allTextContents()
+  expect(harfler).toEqual(['A', 'Ç', 'D', 'E', 'F', 'G', 'H', 'İ', 'K', 'N', 'O', 'Ö', 'P', 'S', 'T', 'Y'])
+  const terimler = await main.locator('dt').allTextContents()
+  expect(terimler).toHaveLength(26)
+  expect(terimler.slice(0, 3)).toEqual(['Ar-Ge', 'Çağrı', 'Çift finansman'])
+  expect(terimler.indexOf('İşbirliği kuruluşu')).toBeGreaterThan(terimler.indexOf('Hibe'))
+  expect(terimler.indexOf('Ön eşleşme')).toBeGreaterThan(terimler.indexOf('Ortaklık yatırımı'))
+  await denetle(page, '/destek/sozluk')
+  await kanit(page, info, 'sozluk')
+})
+
+test('program kartı birlikte kullanma bilgisini türlere göre gruplar', async ({ page }, info) => {
+  await page.goto('/#/destek/kosgebGirisimciA')
+  await ready(page)
+  const main = page.getByRole('main')
+  const bolum = main.locator('section', { has: page.getByRole('heading', { name: '7. Bu programla birlikte kullanma' }) })
+  await expect(bolum.getByRole('heading', { level: 3 }).first()).toHaveText(/^Birlikte kullanılamaz \(\d+\)$/)
+  await expect(bolum.getByText('Birini seçmeniz gerekir.', { exact: false })).toBeVisible()
+  const bks = bolum.locator('li', { has: page.getByRole('link', { name: 'Bireysel Katılım Sermayesi', exact: true }) })
+  await expect(bks).toContainText('Kaynaktaki iki kayıt farklı.')
+  await expect(bolum.getByRole('heading', { level: 3, name: /^Ayrı giderle birlikte kullanılabilir/ })).toBeVisible()
+  await expect(bolum.getByRole('heading', { level: 3, name: /^Biri ötekine bağlı/ })).toBeVisible()
+  await denetle(page, 'birlikte kullanma')
+  await kanit(page, info, 'program-birlikte')
+
+  await page.goto('/#/destek/kosgebTekmer')
+  await ready(page)
+  const bos = main.locator('section', { has: page.getByRole('heading', { name: '7. Bu programla birlikte kullanma' }) })
+  await expect(bos.getByRole('heading', { name: 'Bilgi yok' })).toBeVisible()
+})
+
+test('başvuruya belge eklenir, birlikte kullanma uyarısı çıkar, yenileme ve dışa aktarmada kalır', async ({ page, hasTouch }, info) => {
+  await openDemo(page, hasTouch)
+  const once = await planOku(page)
+  const main = page.getByRole('main')
+  for (const id of ['bigg1812', 'kosgebGirisimciA']) {
+    await page.goto(`/#/destek/${id}`)
+    await ready(page)
+    await main.getByRole('button', { name: 'Başvuru listeme ekle' }).click()
+    await main.getByRole('button', { name: 'Evet', exact: true }).click()
+    await expect(main.getByText('Program başvuru listenize eklendi.')).toBeVisible()
+  }
+
+  await page.goto('/#/destek/basvurular')
+  await ready(page)
+  const birlikte = main.locator('section.dt-basvurular-birlikte')
+  await expect(birlikte.getByRole('heading', { level: 2 })).toHaveText('Programları birlikte kullanma')
+  const cift = birlikte.locator('li.dt-cift')
+  await expect(cift).toHaveCount(1)
+  await expect(cift).toContainText('1812 Yatırım Tabanlı Girişimcilik (BiGG Yatırım) ile KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği')
+  await expect(cift.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılamaz.')
+  await expect(cift.locator('.dt-cift-durum svg')).toBeVisible()
+  await expect(birlikte).toContainText('1 tanesi için uyarı var.')
+
+  const kart = main.locator('.dt-basvuru', { hasText: 'KOSGEB Girişimci Destek Programı, İş Geliştirme Desteği' })
+  const belgeler = kart.locator('.dt-basvuru-belgeler .ant-checkbox-wrapper')
+  await expect(belgeler).toHaveCount(5)
+  await kart.locator('.dt-basvuru-ekle-belge .ant-select').click()
+  const acilir = page.locator('.ant-select-dropdown:visible')
+  await expect(acilir.locator('.ant-select-item-option-disabled', { hasText: 'Ticaret Sicil Gazetesi (listede var)' })).toBeVisible()
+  await acilir.locator('.ant-select-item-option').filter({ hasText: /^İmza sirküleri$/ }).click()
+  await expect(acilir).toHaveCount(0)
+  await kart.getByRole('button', { name: 'Belgeyi ekleyin' }).click()
+  await expect(kart.getByText('“İmza sirküleri” belge listesine eklendi.')).toBeVisible()
+  await expect(belgeler).toHaveCount(6)
+  await expect(kart.getByText('6 belgeden 0 tanesi hazır.')).toBeVisible()
+  await belgeler.last().click()
+  await expect(kart.getByText('6 belgeden 1 tanesi hazır.')).toBeVisible()
+  await denetle(page, 'başvuru belge ekleme')
+  await kanit(page, info, 'basvuru-belge-birlikte')
+
+  await page.reload()
+  await ready(page)
+  await expect(belgeler).toHaveCount(6)
+  await expect(belgeler.last()).toContainText('İmza sirküleri')
+  await expect(belgeler.last().locator('input')).toBeChecked()
+  await expect(cift.locator('.dt-cift-durum')).toHaveText('Bu iki program birlikte kullanılamaz.')
+  expect(await planOku(page)).toEqual(once)
+
+  // Dışa aktarma eklenen belgeyi taşır. Plan silinip dosya içe alınınca belge geri gelir.
+  await page.goto('/#/')
+  await ready(page)
+  const indirme = page.waitForEvent('download')
+  await activate(page, page.getByRole('button', { name: `JSON indir: ${DEMO_ADI}` }), hasTouch)
+  const dosya = info.outputPath('plan.json')
+  await (await indirme).saveAs(dosya)
+  const paket = JSON.parse(readFileSync(dosya, 'utf8'))
+  expect(paket.kind).toBe('decisionactplan-bundle')
+  const kayitlar = (paket.modules.destek.entries as [string, { belgeler?: { ad: string; kanit?: string }[] }][]).flatMap(([, v]) => v.belgeler ?? [])
+  expect(kayitlar).toContainEqual({ ad: 'İmza sirküleri', hazir: true, kanit: 'k4' })
+  await activate(page, page.getByRole('button', { name: `Sil: ${DEMO_ADI}` }), hasTouch)
+  await activate(page, page.locator('.ant-popconfirm').getByRole('button', { name: 'Sil' }), hasTouch)
+  await expect(page.getByRole('button', { name: `Sil: ${DEMO_ADI}` })).toHaveCount(0)
+  await page.locator('input[type="file"][aria-label="JSON dosyası seç"]').setInputFiles(dosya)
+  await expect(page.getByText('Plan içe alındı.')).toBeVisible()
+  await page.goto('/#/destek/basvurular')
+  await ready(page)
+  await expect(belgeler).toHaveCount(6)
+  await expect(belgeler.last()).toContainText('İmza sirküleri')
+  await expect(belgeler.last().locator('input')).toBeChecked()
+
+  // Eklenen belge çıkarılabilir. Programın kendi belgesinde çıkarma düğmesi yoktur.
+  await expect(kart.getByRole('button', { name: /belgesini listeden çıkarın$/ })).toHaveCount(1)
+  await kart.getByRole('button', { name: '“İmza sirküleri” belgesini listeden çıkarın' }).click()
+  await expect(belgeler).toHaveCount(5)
 })

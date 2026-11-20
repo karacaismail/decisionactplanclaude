@@ -35,3 +35,37 @@
 .dt-basvurular .dt-basvuru-cikar { justify-self: start; }
 
 .dt-basvurular .dt-basvurular-baslik { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); }
+
+.dt-basvurular .dt-basvuru-belgeler li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-basvurular .dt-basvuru-ekle-belge { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-basvurular .dt-basvuru-dugmeler { display: flex; flex-wrap: wrap; align-items: center; gap: var(--gap-control); }
+
+.dt-basvurular .dt-basvuru-baglanti { display: inline-flex; align-items: center; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; }
+
+.dt-basvurular .dt-basvuru-sonuc:empty { display: none; }
+
+.dt-basvurular .dt-basvurular-birlikte { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-basvurular .dt-basvurular-birlikte h2 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); }
+
+.dt-basvurular .dt-ciftler { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); margin: 0; padding: 0; list-style: none; min-inline-size: 0; }
+
+.dt-basvurular .dt-cift { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); min-inline-size: 0; }
+
+.dt-basvurular .dt-cift.dt-cift-uyari { background: var(--color-status-hold-bg); }
+
+.dt-basvurular .dt-cift p { overflow-wrap: break-word; }
+
+.dt-basvurular .dt-cift-ad { font-weight: var(--weight-strong); }
+
+.dt-basvurular .dt-cift-durum { display: flex; align-items: flex-start; gap: var(--gap-icon); font-weight: var(--weight-strong); }
+
+.dt-basvurular .dt-cift-ikon { flex-shrink: 0; inline-size: var(--icon-control); block-size: var(--icon-control); margin-block-start: 2px; color: var(--color-status-info); }
+
+.dt-basvurular .dt-cift-dislayici .dt-cift-ikon { color: var(--color-status-harm); }
+
+.dt-basvurular .dt-cift-ayri_gider .dt-cift-ikon { color: var(--color-status-hold); }
+
+.dt-basvurular-belge-acilir .ant-select-item-option-content, .dt-basvurular-belge-acilir .ant-select-item-group { white-space: normal; overflow-wrap: break-word; }

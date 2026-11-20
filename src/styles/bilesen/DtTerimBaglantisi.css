@@ -1,0 +1,3 @@
+/* Sözlükteki terime bağlantı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-terim-baglantisi { display: inline-flex; align-items: center; justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }

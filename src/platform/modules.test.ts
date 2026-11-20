@@ -53,8 +53,9 @@ describe('kayıtlı modüller', () => {
 
   it('istenen yollar tanımlıdır', () => {
     const paths = MODULE_ROUTES.map((r) => r.path).sort()
-    expect(paths).toEqual(['/destek', '/destek/:programId', '/destek/basvurular', '/destek/eslesme', '/projeler', '/projeler/:pid', '/projeler/:pid/is/:iid'].sort())
+    expect(paths).toEqual(['/destek', '/destek/:programId', '/destek/basvurular', '/destek/belgeler', '/destek/eslesme', '/destek/giderler', '/destek/sozluk', '/projeler', '/projeler/:pid', '/projeler/:pid/is/:iid'].sort())
     expect(MODULE_ROUTES.find((r) => r.path === '/destek')?.requiresPlan).toBe(false)
+    for (const path of ['/destek/belgeler', '/destek/giderler', '/destek/sozluk']) expect(MODULE_ROUTES.find((r) => r.path === path)?.requiresPlan).toBe(false)
     expect(MODULE_ROUTES.find((r) => r.path === '/projeler')?.requiresPlan).toBe(true)
   })
 
@@ -62,7 +63,8 @@ describe('kayıtlı modüller', () => {
     const projeler = MODULE_NAV.find((n) => n.to === '/projeler')
     expect(projeler).toMatchObject({ label: 'Projeler', bottom: true, requiresPlan: true })
     const destek = MODULE_NAV.filter((n) => n.group === 'Destek ve teşvik')
-    expect(destek.map((n) => n.to)).toContain('/destek')
+    expect(destek.map((n) => n.to)).toEqual(['/destek', '/destek/eslesme', '/destek/basvurular', '/destek/belgeler', '/destek/giderler', '/destek/sozluk'])
+    expect(new Set(destek.map((n) => n.icon)).size).toBe(destek.length)
     expect(destek.every((n) => !/^\d/.test(n.group ?? ''))).toBe(true)
   })
 
