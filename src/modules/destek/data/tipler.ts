@@ -9,16 +9,21 @@ export type IsoTarih = string
 /**
  * Kaynaklı bilgi. Kaynağı olan değer "kaynakli" olur.
  * Kaynağı ya da değeri olmayan bilgi "bilinmiyor" olur. Bu durumda sourceUrl bakılacak resmî sayfadır.
+ * alinti, kaynaktaki sözün kendisidir. Bazı değerler yalnız tablo hücresinde yazar. Bu değerlerde alıntı yoktur.
+ * ikincil, değerin resmî olmayan bir kaynaktan geldiğini gösterir. Ekran bu değeri işaretler.
  */
 export type Fact<T> =
-  | { state: 'kaynakli'; value: T; sourceUrl: string; asOf: IsoTarih }
-  | { state: 'bilinmiyor'; value?: undefined; sourceUrl: string; asOf: IsoTarih }
+  | { state: 'kaynakli'; value: T; sourceUrl: string; asOf: IsoTarih; alinti?: string; ikincil?: true }
+  | { state: 'bilinmiyor'; value?: undefined; sourceUrl: string; asOf: IsoTarih; alinti?: undefined; ikincil?: undefined }
 
 export const KATEGORILER = ['hibe', 'ozsermaye', 'geri_odemeli', 'kredi', 'vergi_sgk', 'ag', 'katilimciya_odeme', 'kefalet', 'ayni'] as const
 export type Kategori = (typeof KATEGORILER)[number]
 
-/** Kaynaktaki durum. Ekran bunu bugünün tarihiyle yeniden yorumlar. Örneğin son günü geçen çağrı "Kapandı" olur. */
-export const DURUMLAR = ['acik', 'cagri_bekleniyor', 'surekli', 'kapali', 'yururlukte'] as const
+/**
+ * Kaynaktaki durum. Ekran bunu bugünün tarihiyle yeniden yorumlar. Örneğin son günü geçen çağrı "Kapandı" olur.
+ * Kurum programı yürürlükten kaldırdıysa durum "kaldirildi" olur.
+ */
+export const DURUMLAR = ['acik', 'cagri_bekleniyor', 'surekli', 'kapali', 'yururlukte', 'kaldirildi'] as const
 export type Durum = (typeof DURUMLAR)[number]
 
 export const TAVAN_TURLERI = ['hibe_tavani', 'oransal', 'yok', 'kredi_anaparasi', 'program_butcesi'] as const
@@ -65,6 +70,8 @@ export interface Program {
     /** Türk lirası olarak üst sınır. */
     tavanTL: Fact<number>
     tavanTuru: TavanTuru
+    /** Destek oranını anlatan kaynaklı metin. Kaynakta oran yoksa alan yoktur. */
+    oran?: Fact<string>
   }
   tarihler: readonly ProgramTarihi[]
   /** Kim alabilir? */
@@ -75,12 +82,38 @@ export interface Program {
   haricGider: readonly string[]
   belgeler: readonly string[]
   kanal: string
+  /** asOf, kartın son kontrol günüdür. Doğrulanan alanlar bu günü taşır. */
   kaynak: { url: string; ad: string; asOf: IsoTarih }
+  /**
+   * Serbest metinlerin son kontrol günü. Koşullar, giderler, belgeler ve başvuru yolu bu metinlerdir.
+   * Bu metinler alan alan doğrulanmadı. İçlerindeki sayı bu güne göre eskir.
+   */
+  metinKontrol: IsoTarih
   kombinasyon: readonly KombinasyonKurali[]
   faydalar: readonly FaydaTuru[]
   faydaTavanlari?: Readonly<Partial<Record<FaydaTuru, Fact<number>>>>
   sure: { degerlendirme: Fact<string>; ilkOdeme: Fact<string> }
   odemeBicimi: Fact<string>
+}
+
+/** JSON katalog dosyasındaki kayıt. Fayda türleri faydalar.ts dosyasından eklenir. */
+export type KatalogKaydi = Omit<Program, 'faydalar'>
+
+export const BELGE_ASAMALARI = ['basvuru', 'odeme', 'izleme'] as const
+export type BelgeAsamasi = (typeof BELGE_ASAMALARI)[number]
+
+/**
+ * Konsey planı B.1: birçok başvuruda istenen ortak belge.
+ * kurulusSonrasi, belgenin ancak işletme kurulduktan sonra alınabildiğini gösterir.
+ * sureli, belgenin bir geçerlilik tarihi olduğunu gösterir. Tarihi kişi kendisi yazar. Uygulama gün sınırı koymaz.
+ */
+export interface OrtakBelge {
+  id: string
+  ad: string
+  aciklama: string
+  asama: BelgeAsamasi
+  kurulusSonrasi: boolean
+  sureli: boolean
 }
 
 /** Belge ve kanıt listesindeki tek madde. */

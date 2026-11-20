@@ -39,6 +39,8 @@ function factHatalari(fact: unknown, tur: Tur, yer: string): string[] {
     const ok = tur === 'number' ? typeof v === 'number' && Number.isFinite(v) && v > 0 : tur === 'tarih' ? gecerliIsoTarih(v) : typeof v === 'string' && v.trim().length > 0
     if (!ok) e.push(`${yer}: kaynaklı bilginin değeri geçersiz.${tur === 'tarih' ? ' Tarih ISO biçiminde olmalı.' : ''}`)
   } else if (f.state === 'bilinmiyor' && f.value !== undefined) e.push(`${yer}: bilinmeyen bilginin değeri olmamalı.`)
+  if (f.alinti !== undefined && (f.state !== 'kaynakli' || typeof f.alinti !== 'string' || !f.alinti.trim())) e.push(`${yer}: alıntı geçersiz. Alıntı yalnız kaynaklı bilgide durur ve boş olmaz.`)
+  if (f.ikincil !== undefined && (f.state !== 'kaynakli' || f.ikincil !== true)) e.push(`${yer}: ikincil kaynak işareti geçersiz.`)
   return e
 }
 
@@ -92,6 +94,8 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     const adres = adresHatasi(p.kaynak?.url)
     if (adres) hatalar.push(`${yer('kaynak.url')}: ${adres}. https kaynak gerekir.`)
     if (!gecerliIsoTarih(p.kaynak?.asOf)) hatalar.push(`${yer('kaynak.asOf')}: son kontrol tarihi ISO biçiminde değil.`)
+    if (!gecerliIsoTarih(p.metinKontrol)) hatalar.push(`${yer('metinKontrol')}: serbest metinlerin kontrol tarihi ISO biçiminde değil.`)
+    else if (gecerliIsoTarih(p.kaynak?.asOf) && p.metinKontrol > p.kaynak.asOf) hatalar.push(`${yer('metinKontrol')}: serbest metin karttan sonra kontrol edilemez.`)
     hatalar.push(...metinHatalari(p.kaynak?.ad, yer('kaynak.ad')))
     for (const alan of ['ad', 'kurum', 'destekTuru', 'ozet', 'kanal'] as const) hatalar.push(...metinHatalari(p[alan], yer(alan)))
     /* Bu alanlar her ekranda görünür. Tutar bu alanlarda durmaz. Tutar kendi alanında veya kaynak tarihiyle denetlenen metinde durur. */
@@ -101,7 +105,11 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
     for (const alan of ['kosullar', 'uygunGider', 'haricGider', 'belgeler'] as const) {
       p[alan].forEach((m, i) => hatalar.push(...metinHatalari(m, yer(`${alan}[${i}]`))))
     }
-    if (p.tutar?.metin?.state === 'kaynakli') hatalar.push(...metinHatalari(p.tutar.metin.value, yer('tutar.metin.value')))
+    if (p.tutar?.oran !== undefined) hatalar.push(...factHatalari(p.tutar.oran, 'string', yer('tutar.oran')))
+    /* Kaynaklı metinler ekranda görünür. Bu metinler de yalın yazım kurallarına uyar. Alıntı kaynağın kendi sözüdür. Alıntı denetlenmez. */
+    for (const [alan, fact] of [['tutar.metin', p.tutar?.metin], ['tutar.oran', p.tutar?.oran], ['sure.degerlendirme', p.sure?.degerlendirme], ['sure.ilkOdeme', p.sure?.ilkOdeme], ['odemeBicimi', p.odemeBicimi]] as const) {
+      if (fact?.state === 'kaynakli') hatalar.push(...metinHatalari(fact.value, yer(`${alan}.value`)))
+    }
     const ozet = typeof p.ozet === 'string' ? p.ozet.trim() : ''
     if (!ozet.endsWith('.') || /[.!?]\s/.test(ozet)) hatalar.push(`${yer('ozet')}: özet tek cümle olmalı ve noktayla bitmeli.`)
     if (ozet.split(/\s+/).length > OZET_EN_COK_KELIME) hatalar.push(`${yer('ozet')}: özet en çok ${OZET_EN_COK_KELIME} kelime olmalı.`)
@@ -120,7 +128,7 @@ export function katalogHatalari(programlar: readonly Program[]): string[] {
         hatalar.push(...factHatalari(kural.iliski, 'string', yol))
         if (kural.iliski?.state !== 'kaynakli' || !KOMBINASYONLAR.includes(kural.iliski.value)) {
           hatalar.push(`${yol}: kaynaklı ilişki türü gerekir.`)
-        }
+        } else if (!kural.iliski.alinti) hatalar.push(`${yol}: kombinasyon kuralı resmî metinden alıntı ister.`)
         if (typeof kural.yonlu !== 'boolean') hatalar.push(`${yol}: yön bilgisi gerekir.`)
       }
     }

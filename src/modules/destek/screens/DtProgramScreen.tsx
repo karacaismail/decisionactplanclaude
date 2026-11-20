@@ -9,16 +9,17 @@ import { DtBasvuruEkle } from '../components/DtBasvuruEkle'
 import { DtEskiBilgi } from '../components/DtEskiBilgi'
 import { DtEtiket } from '../components/DtEtiket'
 import { DtFaydalar } from '../components/DtFaydalar'
+import { DtKaynak } from '../components/DtKaynak'
 import { DtKurumSorulari } from '../components/DtKurumSorulari'
 import { DtTerimler } from '../components/DtTerimler'
 import { DtUyari } from '../components/DtUyari'
 import type { Program } from '../data/tipler'
 import { useBugun, useKatalog, useProfil, usePlanYeri } from '../kancalar'
 import { DURUM_ADI, KATEGORI_ADI, KOMBINASYON_METNI, SONUC_ADI, TAVAN_TURU_ADI } from '../metinler'
-import { eslestir } from '../motor/eslestir'
+import { eslestir, KALDIRILDI_NEDENI } from '../motor/eslestir'
 import { BILINMEYEN_ILISKI, iliskiBul } from '../motor/kombinasyon'
 import { profilDoluMu } from '../motor/profil'
-import { alanDurumu, alanMetni, eskiMetniGoster, gecerliDurum, tarihGectiMi, tarihYaz, tazelik } from '../motor/tazelik'
+import { alanDurumu, alanMetni, eskiMetniGoster, gecerliDurum, metinKaynagi, tarihGectiMi, tarihYaz, tazelik } from '../motor/tazelik'
 
 const TL = new Intl.NumberFormat('tr-TR')
 
@@ -42,12 +43,21 @@ function Liste({ maddeler, bos, metin = (m) => m }: { maddeler: readonly string[
 }
 
 function Tutar({ program, bugun }: { program: Program; bugun: string }) {
-  const { metin, tavanTL, tavanTuru } = program.tutar
+  const { metin, tavanTL, tavanTuru, oran } = program.tutar
+  const oranVar = oran !== undefined && alanDurumu(oran, bugun) !== 'bilinmiyor'
   return (
     <>
-      <p>{alanMetni(metin, bugun, (value) => value)}</p>
+      {/* Kaynak yalnız oranı yazıyorsa "Bilinmiyor." satırı çıkmaz. Oran satırı tutarı anlatır. */}
+      {alanDurumu(metin, bugun) !== 'bilinmiyor' || !oranVar ? <p>{alanMetni(metin, bugun, (value) => value)}</p> : null}
+      {alanDurumu(metin, bugun) === 'kaynakli' ? <DtKaynak fact={metin} ad="Tutar" /> : null}
       {tavanTuru !== 'yok' && tavanTuru !== 'oransal' ? (
         <p>{TAVAN_TURU_ADI[tavanTuru]}: {alanMetni(tavanTL, bugun, (value) => `${TL.format(value)} TL`)}</p>
+      ) : null}
+      {oran && oranVar ? (
+        <>
+          <p>Oran: {alanMetni(oran, bugun, (value) => value)}</p>
+          {alanDurumu(oran, bugun) === 'kaynakli' ? <DtKaynak fact={oran} ad="Oran" /> : null}
+        </>
       ) : null}
       {alanDurumu(metin, bugun) === 'kaynakli' ? (
         <p className="dt-program-kaynak">Kaynak: {program.kaynak.ad}. Son kontrol: {tarihYaz(metin.asOf)}</p>
@@ -65,10 +75,13 @@ function Sureler({ program, bugun }: { program: Program; bugun: string }) {
       {ayni ? <p>{bilinmiyor}</p> : (
         <>
           <p>Değerlendirme: {alanMetni(degerlendirme, bugun, (value) => value, bilinmiyor)}</p>
+          {alanDurumu(degerlendirme, bugun) === 'kaynakli' ? <DtKaynak fact={degerlendirme} ad="Değerlendirme süresi" /> : null}
           <p>İlk ödeme: {alanMetni(ilkOdeme, bugun, (value) => value, bilinmiyor)}</p>
+          {alanDurumu(ilkOdeme, bugun) === 'kaynakli' ? <DtKaynak fact={ilkOdeme} ad="İlk ödeme süresi" /> : null}
         </>
       )}
       <p>Ödeme biçimi: {alanMetni(program.odemeBicimi, bugun, (value) => value)}</p>
+      {alanDurumu(program.odemeBicimi, bugun) === 'kaynakli' ? <DtKaynak fact={program.odemeBicimi} ad="Ödeme biçimi" /> : null}
     </>
   )
 }
@@ -141,8 +154,11 @@ export default function DtProgramScreen() {
   }
 
   const eski = tazelik(program.kaynak.asOf, bugun).eski
-  const metin = (m: string) => eskiMetniGoster(m, program.kaynak, bugun)
+  /* Koşul, gider ve belge metinleri alan alan doğrulanmadı. Bu metinler kendi kontrol gününe göre eskir. */
+  const metinEski = !eski && tazelik(program.metinKontrol, bugun).eski
+  const metin = (m: string) => eskiMetniGoster(m, metinKaynagi(program), bugun)
   const durum = gecerliDurum(program, bugun)
+  const kaldirildi = durum === 'kaldirildi'
   return (
     <div className="page dt-program">
       <Link className="dt-program-geri" to="/destek">
@@ -154,15 +170,24 @@ export default function DtProgramScreen() {
         <p className="dt-program-kurum">Kurum: {program.kurum}</p>
         <div className="dt-program-etiketler">
           <DtEtiket>{KATEGORI_ADI[program.kategori]}</DtEtiket>
-          <DtEtiket ton={durum === 'kapandi' || durum === 'kapali' ? 'kapali' : 'notr'}>{DURUM_ADI[durum]}</DtEtiket>
+          <DtEtiket ton={durum === 'kapandi' || durum === 'kapali' || kaldirildi ? 'kapali' : 'notr'}>{DURUM_ADI[durum]}</DtEtiket>
           {eski ? <DtEtiket ton="uyari">Eski bilgi</DtEtiket> : null}
         </div>
         <p className="dt-program-kontrol">Son kontrol: {tarihYaz(program.kaynak.asOf)}</p>
       </div>
+      {kaldirildi ? (
+        <section className="dt-program-kaldirildi" aria-labelledby="dt-kaldirildi-baslik">
+          <h2 id="dt-kaldirildi-baslik">Program kaldırıldı</h2>
+          <p>{KALDIRILDI_NEDENI} Kurumun sayfası programı kaldırılan destekler arasında gösterir.</p>
+        </section>
+      ) : null}
       <DtFaydalar program={program} bugun={bugun} />
       <DtUyari />
       {eski ? <DtEskiBilgi asOf={program.kaynak.asOf} /> : null}
-      <OnEslesme program={program} bugun={bugun} />
+      {metinEski ? (
+        <p className="dt-program-metin-eski">Koşul, gider ve belge metinleri en son {tarihYaz(program.metinKontrol)} günü kontrol edildi. Bu metinlerdeki sayıları kuruma sorun.</p>
+      ) : null}
+      {kaldirildi ? null : <OnEslesme program={program} bugun={bugun} />}
 
       <div className="dt-program-bolumler">
         <Bolum no={1} baslik="Kim alabilir?">
@@ -188,7 +213,8 @@ export default function DtProgramScreen() {
             <ul className="dt-program-liste">
               {program.tarihler.map((t) => (
                 <li key={t.ad}>
-                  {metin(t.ad)}:{' '}
+                  {/* Tarihin adı tarihle birlikte doğrulandı. Ad, tarihin kendi kontrol gününe göre eskir. */}
+                  {eskiMetniGoster(t.ad, { url: t.tarih.sourceUrl, asOf: t.tarih.asOf }, bugun)}:{' '}
                   {t.tarih.state === 'kaynakli' && alanDurumu(t.tarih, bugun) === 'kaynakli' ? (
                     <>
                       {tarihYaz(t.tarih.value)}
@@ -221,7 +247,7 @@ export default function DtProgramScreen() {
         </Bolum>
       </div>
 
-      <DtBasvuruEkle key={program.id} program={program} />
+      {kaldirildi ? null : <DtBasvuruEkle key={program.id} program={program} />}
       <DtKurumSorulari />
       <DtTerimler />
     </div>

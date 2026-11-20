@@ -14,7 +14,7 @@ import { useBugun, useKatalog, usePlanYeri } from '../kancalar'
 import { aramaMetni, DURUM_ADI, KATEGORI_ADI } from '../metinler'
 import { gecerliDurum, tazelik, type GecerliDurum } from '../motor/tazelik'
 
-const DURUM_SIRASI: readonly GecerliDurum[] = ['acik', 'surekli', 'yururlukte', 'cagri_bekleniyor', 'kapandi', 'kapali']
+const DURUM_SIRASI: readonly GecerliDurum[] = ['acik', 'surekli', 'yururlukte', 'cagri_bekleniyor', 'kapandi', 'kapali', 'kaldirildi']
 
 /** Destek programları listesi. Bu ekran plan istemez. */
 export default function DtProgramlarScreen() {

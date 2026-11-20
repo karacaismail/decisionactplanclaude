@@ -8,14 +8,16 @@ import { Warning } from '@phosphor-icons/react'
 import { EmptyState } from '@/components/EmptyState'
 import { PageHeader } from '@/components/PageHeader'
 import { DtEtiket } from '../components/DtEtiket'
+import { SURESI_GECTI, TARIH_GEREKLI } from '../components/DtHavuzBelgesi'
 import { DtKurumSorulari } from '../components/DtKurumSorulari'
 import { DtUyari } from '../components/DtUyari'
 import { KANIT_GRUPLARI } from '../data/kanitlar'
 import type { Program } from '../data/tipler'
-import { basvuruGuncelle, basvuruSil } from '../depo'
-import { OKUMA_HATASI, useBasvurular, useBugun, useKatalog, usePlanYeri } from '../kancalar'
+import { basvuruGuncelle, basvuruSil, PLANSIZ } from '../depo'
+import { OKUMA_HATASI, useBasvurular, useBugun, useHavuz, useKatalog, usePlanYeri } from '../kancalar'
 import { BASVURU_DURUM_ADI, DESTEKSIZ_ADI, KOMBINASYON_METNI } from '../metinler'
 import { BASVURU_DURUMLARI, belgeAnahtari, type Basvuru, type BasvuruDegisikligi, type BasvuruDurumu } from '../motor/basvuru'
+import { basvuruBelgeOnerisi, type BelgeHavuzu } from '../motor/belgeHavuzu'
 import { basvuruCiftleri, BILINMEYEN_ILISKI } from '../motor/kombinasyon'
 import { alanDurumu, alanMetni, tarihGectiMi, tarihYaz } from '../motor/tazelik'
 
@@ -106,7 +108,7 @@ function BirlikteKullanma({ basvurular, programlar }: { basvurular: readonly Bas
   )
 }
 
-function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: { basvuru: Basvuru; program: Program | undefined; planId: string; bugun: string; hataGoster: (m: string) => void; silindi: () => void }) {
+function BasvuruKarti({ basvuru, program, planId, bugun, havuz, hataGoster, silindi }: { basvuru: Basvuru; program: Program | undefined; planId: string; bugun: string; havuz: BelgeHavuzu | undefined; hataGoster: (m: string) => void; silindi: () => void }) {
   const id = `dt-basvuru-${basvuru.id}`
   /*
    * İşaret hemen görünür. Bekleyen işaret belgenin adına ya da kimliğine bağlıdır. Sıra kaysa da doğru belgede kalır.
@@ -220,17 +222,39 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
           <>
             <p>{belgeler.length} belgeden {hazir} tanesi hazır.</p>
             <ul className="dt-basvuru-belgeler">
-              {belgeler.map((b, i) => (
+              {belgeler.map((b, i) => {
+                const oneri = basvuruBelgeOnerisi(b, havuz, bugun)
+                const isaretle = (hazir: boolean) => {
+                  setBekleyen((x) => ({ ...x, [belgeAnahtar(b)]: hazir }))
+                  void degistir({ belge: { sira: i, hazir, ad: b.ad } })
+                }
+                return (
                 <li key={b.kanit ?? `p-${i}`}>
-                  <Checkbox
-                    checked={b.hazir}
-                    onChange={(e) => {
-                      setBekleyen((x) => ({ ...x, [belgeAnahtar(b)]: e.target.checked }))
-                      void degistir({ belge: { sira: i, hazir: e.target.checked, ad: b.ad } })
-                    }}
-                  >
+                  <Checkbox checked={b.hazir} onChange={(e) => isaretle(e.target.checked)}>
                     {b.ad}
                   </Checkbox>
+                  {oneri === 'kullan' ? (
+                    <div className="dt-basvuru-havuz">
+                      <p>Bu belge havuzunuzda hazır görünüyor.</p>
+                      <Button
+                        aria-label={`Bu belgeyi kullanacağım (${b.ad})`}
+                        onClick={(e) => {
+                          /* Düğme işaretten sonra kaybolur. Odak kaybolmaz, aynı satırdaki işaret kutusuna geçer. */
+                          const kutu = e.currentTarget.closest('li')?.querySelector<HTMLInputElement>('input[type="checkbox"]')
+                          isaretle(true)
+                          kutu?.focus()
+                        }}
+                      >
+                        Bu belgeyi kullanacağım
+                      </Button>
+                    </div>
+                  ) : null}
+                  {oneri === 'suresiGecti' || oneri === 'tarihGerekli' ? (
+                    <p className="dt-basvuru-havuz-uyari" role="note">
+                      <Warning aria-hidden className="dt-cift-ikon" />
+                      <span>{oneri === 'suresiGecti' ? SURESI_GECTI : TARIH_GEREKLI}</span>
+                    </p>
+                  ) : null}
                   {b.kanit ? (
                     <Button
                       className="dt-basvuru-belge-cikar"
@@ -248,7 +272,8 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
                     </Button>
                   ) : null}
                 </li>
-              ))}
+                )
+              })}
             </ul>
           </>
         ) : (
@@ -269,6 +294,7 @@ function BasvuruKarti({ basvuru, program, planId, bugun, hataGoster, silindi }: 
 export default function DtBasvurularScreen() {
   const { planId } = usePlanYeri()
   const { basvurular, hata: okumaHatasi } = useBasvurular(planId)
+  const { havuz } = useHavuz(planId ?? PLANSIZ)
   const listeBasligi = useRef<HTMLHeadingElement>(null)
   const programlar = useKatalog()
   const bugun = useBugun()
@@ -298,7 +324,7 @@ export default function DtBasvurularScreen() {
             <ul className="dt-basvurular-liste">
               {basvurular.map((b) => (
                 <li key={b.id}>
-                  <BasvuruKarti basvuru={b} program={programlar.find((p) => p.id === b.programId)} planId={planId} bugun={bugun} hataGoster={setHata} silindi={() => listeBasligi.current?.focus()} />
+                  <BasvuruKarti basvuru={b} program={programlar.find((p) => p.id === b.programId)} planId={planId} bugun={bugun} havuz={havuz} hataGoster={setHata} silindi={() => listeBasligi.current?.focus()} />
                 </li>
               ))}
             </ul>

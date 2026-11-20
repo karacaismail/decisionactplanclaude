@@ -94,4 +94,10 @@ describe('gider adayları', () => {
   it('karşılığı olmayan giderde aday yoktur', () => {
     for (const id of ['kira', 'hammadde']) expect(giderAdaylari(id, GIDER_ESLESMELERI, PROGRAMLAR).adaylar).toEqual([])
   })
+
+  it('kaldırılan program gider adayı olmaz', () => {
+    for (const id of ['markaTescilGider', 'belgelendirme', 'testAnaliz', 'danismanlik']) {
+      expect(giderAdaylari(id, GIDER_ESLESMELERI, PROGRAMLAR).adaylar.map((a) => a.program.id), id).not.toContain('kosgebIsletmeGelistirme')
+    }
+  })
 })

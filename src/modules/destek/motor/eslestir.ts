@@ -4,7 +4,7 @@
  * Bilinmeyen bilgi hiçbir zaman "uygun" sonucunu vermez. Uygulamanın denetlemediği koşul da bilinmeyen bilgidir.
  * Bu yüzden "uygun" yalnız eksiksiz kural setinde çıkar. Tutar hesaplanmaz. Programlar puanlanmaz.
  */
-import type { IsoTarih, Program } from '../data/tipler'
+import type { FaydaTuru, IsoTarih, Program } from '../data/tipler'
 import { KURALLAR, type KuralSeti } from './kurallar'
 import { cevaplandi, SORU_SIRASI, type Alan, type DestekProfili, type DestekTercihi } from './profil'
 
@@ -32,7 +32,13 @@ export const OTEKI_KOSULLAR = 'Sorduğumuz koşulları karşılıyorsunuz. Ötek
 
 type KuralHaritasi = Readonly<Record<string, KuralSeti>>
 
+export const KALDIRILDI_NEDENI = 'Bu program kaldırıldı. Yeni başvuru alınmaz.'
+
 export function eslestir(program: Program, profil: DestekProfili, bugun: IsoTarih, kuralHaritasi: KuralHaritasi = KURALLAR): Eslesme {
+  /* Kurum programı kaldırdıysa hiçbir profil bu programa başvuramaz. */
+  if (program.durum === 'kaldirildi') {
+    return { programId: program.id, sonuc: 'uygun_degil', nedenler: [KALDIRILDI_NEDENI], sonrakiSorular: [], denetlenenKosullar: [], kuralVar: false, sorulanlarTuttu: false, tutanAlanlar: [] }
+  }
   const set = kuralHaritasi[program.id]
   const kurallar = set?.kurallar ?? []
   if (!kurallar.length) {
@@ -105,18 +111,24 @@ export function sonucNotu(gruplar: EslesmeGruplari, profil: DestekProfili): 'bos
   return liste.some((e) => e.tutanAlanlar.includes('faaliyet')) ? undefined : 'iseOzelYok'
 }
 
+/** Kredi istemeyen kişiye uymayan faydalar. Faiz desteği bir krediye bağlıdır. Kefalet ayrı bir türdür. */
+const KREDI_FAYDALARI: readonly FaydaTuru[] = ['kredi', 'faiz']
+const HISSE_FAYDALARI: readonly FaydaTuru[] = ['ortaklik']
+
 /**
- * Üçüncü katman: tercih süzgeci. Kredi istemeyen kişi için kredi ve geri ödemeli destek tercihe uymaz.
- * Ortaklık payı vermek istemeyen kişi için ortaklık yatırımı tercihe uymaz.
+ * Üçüncü katman: tercih süzgeci. Süzgeç programın fayda türlerine bakar.
+ * Programın bütün faydaları istenmeyen türdeyse program tercihe uymaz.
+ * Örneğin kredi istemeyen kişi için yalnız kredi veren program uymaz. Hibe de veren program uyar.
+ * Süzgeç sonucu değiştirmez. Yalnız sırayı değiştirir.
  */
-export function tercihUymuyor(program: Pick<Program, 'kategori'>, tercih: DestekTercihi | undefined): boolean {
-  if (!tercih) return false
-  if (tercih.krediIstemiyorum && (program.kategori === 'kredi' || program.kategori === 'geri_odemeli')) return true
-  return Boolean(tercih.hisseIstemiyorum && program.kategori === 'ozsermaye')
+export function tercihUymuyor(program: Pick<Program, 'faydalar'>, tercih: DestekTercihi | undefined): boolean {
+  if (!tercih || !program.faydalar.length) return false
+  const istenmeyen = new Set<FaydaTuru>([...(tercih.krediIstemiyorum ? KREDI_FAYDALARI : []), ...(tercih.hisseIstemiyorum ? HISSE_FAYDALARI : [])])
+  return program.faydalar.every((f) => istenmeyen.has(f))
 }
 
 /** Tercihe uymayan programlar aynı grupta kalır ve sona geçer. İki bölüm de katalog sırasını korur. */
-export function tercihSirala(eslesmeler: readonly Eslesme[], programlar: ReadonlyMap<string, Pick<Program, 'kategori'>>, tercih: DestekTercihi | undefined): Eslesme[] {
+export function tercihSirala(eslesmeler: readonly Eslesme[], programlar: ReadonlyMap<string, Pick<Program, 'faydalar'>>, tercih: DestekTercihi | undefined): Eslesme[] {
   const uymaz = (e: Eslesme) => {
     const p = programlar.get(e.programId)
     return p ? tercihUymuyor(p, tercih) : false

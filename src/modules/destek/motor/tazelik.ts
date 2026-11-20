@@ -81,10 +81,10 @@ export type GecerliDurum = Durum | 'kapandi'
 
 /**
  * Programın bugünkü durumu. Bütün kritik tarihleri geçen program "kapandi" olur.
- * Tarihi bilinmeyen kritik gün programı kapatmaz.
+ * Tarihi bilinmeyen kritik gün programı kapatmaz. Kaldırılan program her zaman "kaldirildi" olur.
  */
 export function gecerliDurum(program: Pick<Program, 'durum' | 'tarihler'>, bugun: IsoTarih): GecerliDurum {
-  if (program.durum === 'kapali') return 'kapali'
+  if (program.durum === 'kapali' || program.durum === 'kaldirildi') return program.durum
   const kritik = program.tarihler.filter((t) => t.kritik && t.tarih.state === 'kaynakli')
   if (kritik.length && kritik.every((t) => gunFarki(t.tarih.value as IsoTarih, bugun) > 0)) return 'kapandi'
   return program.durum
@@ -112,7 +112,12 @@ export function tutarVarMi(metin: string): boolean {
 // Eski katalog metinlerinin kaynak tarihi program kaydında durur.
 const SAYISAL_BILGI = /%|yüzde|(?<![\p{L}\p{N}])(?:\d+|bir|iki|üç|dört|beş|altı|yedi|sekiz|dokuz|on)\s+(?:(?:iş|tam)\s+)?(?:gün|hafta|ay|yıl)(?:[’']?(?:da|de|dan|den|ı|i|ın|in|lık|lik))?(?!\p{L})|\b\d{4}-\d{2}-\d{2}\b|\d{1,2}\s+(?:Ocak|Şubat|Mart|Nisan|Mayıs|Haziran|Temmuz|Ağustos|Eylül|Ekim|Kasım|Aralık)/iu
 
-export function eskiMetniGoster(metin: string, kaynak: Program['kaynak'], bugun: IsoTarih): string {
+/** Serbest metinlerin kaynağı. Adres kartın adresidir. Gün, serbest metinlerin kendi kontrol günüdür. */
+export function metinKaynagi(program: Pick<Program, 'kaynak' | 'metinKontrol'>): Pick<Program['kaynak'], 'url' | 'asOf'> {
+  return { url: program.kaynak.url, asOf: program.metinKontrol }
+}
+
+export function eskiMetniGoster(metin: string, kaynak: Pick<Program['kaynak'], 'url' | 'asOf'>, bugun: IsoTarih): string {
   if (!tutarVarMi(metin) && !SAYISAL_BILGI.test(metin.toLocaleLowerCase('tr-TR'))) return metin
   return alanMetni({ state: 'kaynakli', value: metin, sourceUrl: kaynak.url, asOf: kaynak.asOf }, bugun, (value) => value)
 }

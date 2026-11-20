@@ -11,9 +11,13 @@ describe('bilginin eskimesi', () => {
     expect(tazelik('2026-08-12', '2026-11-11')).toEqual({ gun: 91, eski: true })
   })
 
-  it('19 Kasım 2026 günü bütün aktarılan bilgi eskidir', () => {
-    for (const p of PROGRAMLAR) expect(tazelik(p.kaynak.asOf, '2026-11-19').eski, p.id).toBe(true)
-    for (const p of PROGRAMLAR) expect(tazelik(p.kaynak.asOf, '2026-09-01').eski, p.id).toBe(false)
+  it('20 Kasım 2026 günü doğrulanan kart güncel, doğrulanmayan kart ve serbest metin eskidir', () => {
+    for (const p of PROGRAMLAR) {
+      const dogrulandi = !['eximbank', 'meslekOrgutleri'].includes(p.id)
+      expect(tazelik(p.kaynak.asOf, '2026-11-20').eski, p.id).toBe(!dogrulandi)
+      expect(tazelik(p.metinKontrol, '2026-11-20').eski, p.id).toBe(true)
+      expect(tazelik(p.metinKontrol, '2026-09-01').eski, p.id).toBe(false)
+    }
   })
 
   it('tarihi gün adıyla yazar', () => {
@@ -38,7 +42,9 @@ describe('program durumu', () => {
     expect(gecerliDurum(program('tubitak1501'), '2026-10-01')).toBe('acik')
     expect(gecerliDurum(program('tubitak1501'), '2026-10-26')).toBe('acik')
     expect(gecerliDurum(program('tubitak1501'), '2026-10-27')).toBe('kapandi')
-    expect(gecerliDurum(program('tubitak1507'), '2026-11-19')).toBe('kapandi')
+    // TÜBİTAK 1507 çağrısını uzattı. Çağrı 25 Kasım 2026 Çarşamba günü kapanır.
+    expect(gecerliDurum(program('tubitak1507'), '2026-11-25')).toBe('acik')
+    expect(gecerliDurum(program('tubitak1507'), '2026-11-26')).toBe('kapandi')
   })
 
   it('kritik tarihi gelmeyen program açık kalır', () => {
@@ -46,8 +52,13 @@ describe('program durumu', () => {
   })
 
   it('tarihi olmayan program kaynaktaki durumu korur', () => {
-    expect(gecerliDurum(program('kosgebKapasite'), '2026-11-19')).toBe('kapali')
-    expect(gecerliDurum(program('kosgebKuresel'), '2026-11-19')).toBe('cagri_bekleniyor')
+    expect(gecerliDurum(program('kosgebGirisimciB'), '2026-11-20')).toBe('cagri_bekleniyor')
+    expect(gecerliDurum({ durum: 'kapali', tarihler: [] }, '2026-11-20')).toBe('kapali')
+  })
+
+  it('kaldırılan program tarihten bağımsız olarak kaldırılmış kalır', () => {
+    expect(gecerliDurum(program('kosgebIsletmeGelistirme'), '2024-01-01')).toBe('kaldirildi')
+    expect(gecerliDurum(program('kosgebIsletmeGelistirme'), '2026-11-20')).toBe('kaldirildi')
   })
 
   it('son gün geçmiş sayılmaz', () => {

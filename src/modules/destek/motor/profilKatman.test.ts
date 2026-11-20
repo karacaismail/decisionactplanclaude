@@ -51,7 +51,8 @@ describe('profilin yeni alanları', () => {
     // Boş alan "Bilmiyorum" sayılır. Tür koşulu olan program "Belki" olur ve tür sorusunu ister.
     const e = eslestir(program('tubitak1501'), eski, BUGUN)
     expect(e.sonuc).toBe('belki')
-    expect(e.sonrakiSorular).toEqual(['isletmeTuru'])
+    // 1501 doğrulamadan sonra KOBİ ölçeği de ister. Bu yüzden ölçek sorusu da gelir.
+    expect(e.sonrakiSorular).toEqual(['olcek', 'isletmeTuru'])
     // Kuruluş tarihi olan eski profil kurulmuş sayılır. Yaş kuralı eskisi gibi çalışır.
     expect(sonuc('tb10962Marka', eski)).toBe('uygun_degil')
   })
@@ -132,7 +133,8 @@ describe('bilinmeyen cevap kuralı', () => {
     for (const profil of [{}, hepsi, { isletmeTuru: 'secilmedi' } as DestekProfili]) {
       const g = eslestirHepsi(PROGRAMLAR, profil, BUGUN)
       expect(g.uygun).toEqual([])
-      expect(g.uygunDegil).toEqual([])
+      // Kaldırılan program bilgiden bağımsız olarak "Uygun değil" olur.
+      expect(g.uygunDegil.map((e) => e.programId)).toEqual(['kosgebIsletmeGelistirme'])
     }
   })
 
@@ -224,8 +226,8 @@ describe('beş örnek profil', () => {
     // Katalog: "Hızlı büyüyen küçük ya da orta ölçekli işletmeler başvurabilir."
     expect(sonuc('kosgebKapasite', p)).toBe('uygun_degil')
     expect(sonuc('teknogirisimRozeti', p)).toBe('uygun_degil')
-    // Katalog yalnız sermaye şirketi ister. Büyük işletme de sermaye şirketidir.
-    expect(eslestir(program('tubitak1501'), p, BUGUN).sorulanlarTuttu).toBe(true)
+    // 20 Kasım 2026 doğrulaması: 1501 çağrısına yalnız KOBİ ölçeğindeki sermaye şirketi başvurabilir.
+    expect(sonuc('tubitak1501', p)).toBe('uygun_degil')
     expect(eslestirHepsi(PROGRAMLAR, p, BUGUN).uygun).toEqual([])
   })
 
@@ -282,5 +284,40 @@ describe('tercih süzgeci', () => {
     expect(sirali.slice(ilkUymayan).every((e) => tercihUymuyor(harita.get(e.programId)!, tercih))).toBe(true)
     // Tercih yoksa katalog sırası korunur.
     expect(tercihSirala(belki, harita, undefined)).toEqual(belki)
+  })
+
+  it('süzgeç kategoriye değil fayda türlerine bakar', () => {
+    const kredi = { krediIstemiyorum: true }
+    const hisse = { hisseIstemiyorum: true }
+    const fayda = (...faydalar: Program['faydalar']) => ({ ...program('tubitak1501'), faydalar })
+    // Faiz desteği bir krediye bağlıdır. Kredi istemeyen kişiye uymaz.
+    expect(tercihUymuyor(fayda('faiz'), kredi)).toBe(true)
+    expect(tercihUymuyor(fayda('kredi'), kredi)).toBe(true)
+    // Programda başka bir fayda da varsa program sona geçmez.
+    expect(tercihUymuyor(fayda('hibe', 'kredi'), kredi)).toBe(false)
+    expect(tercihUymuyor(fayda('kefalet'), kredi)).toBe(false)
+    expect(tercihUymuyor(fayda('ortaklik'), hisse)).toBe(true)
+    expect(tercihUymuyor(fayda('hibe', 'ortaklik'), hisse)).toBe(false)
+    expect(tercihUymuyor(fayda('kredi', 'ortaklik'), { ...kredi, ...hisse })).toBe(true)
+    // Kategori artık okunmaz.
+    const krediKategorili: Program = { ...fayda('hibe'), kategori: 'kredi' }
+    expect(tercihUymuyor(krediKategorili, kredi)).toBe(false)
+    expect(tercihUymuyor(program('ttgv'), kredi)).toBe(false)
+    expect(tercihUymuyor(program('kosgebTekmer'), kredi)).toBe(false)
+    expect(tercihUymuyor(program('eic'), hisse)).toBe(false)
+  })
+})
+
+describe('kaldırılan program', () => {
+  it('kaldırılan program hiçbir profilde uygun ya da belki olmaz', () => {
+    for (const profil of [{}, { olcek: 'kucuk', isletmeTuru: 'limited' }] as DestekProfili[]) {
+      const e = eslestir(program('kosgebIsletmeGelistirme'), profil, BUGUN)
+      expect(e.sonuc).toBe('uygun_degil')
+      expect(e.nedenler).toEqual(['Bu program kaldırıldı. Yeni başvuru alınmaz.'])
+    }
+  })
+
+  it('1501 yalnız KOBİ ölçeğindeki şirkete açıktır', () => {
+    expect(sonuc('tubitak1501', { olcek: 'buyuk', isletmeTuru: 'anonim' })).toBe('uygun_degil')
   })
 })

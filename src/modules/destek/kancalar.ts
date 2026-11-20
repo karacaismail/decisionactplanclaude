@@ -1,13 +1,17 @@
 /**
  * Destek ekranlarının ortak kancaları.
- * Katalog ayrı bir parça olarak geç yüklenir. İlk açılışta inmez.
+ * Katalog JavaScript değildir. Aynı kökenden inen statik bir JSON dosyasıdır.
+ * Dosya yalnız bir destek ekranı açılınca bir kez iner. İlk açılışta inmez. Dış ağa istek gitmez.
  * Profil ve başvurular modül deposundan okunur. Başka sekme veriyi değiştirirse ekran yenilenir.
  */
 import { use, useCallback, useEffect, useState } from 'react'
 import { subscribeModuleChanges } from '@/platform/broadcast'
 import { useCurrentPlanView } from '@/platform/planSource'
-import type { Program } from './data/tipler'
-import { basvurulariYukle, giderBaglariYukle, MODUL_ID, PLANSIZ, profilYukle } from './depo'
+import katalogAdresi from './data/katalog.json?url'
+import { katalogOlustur } from './data/katalog'
+import type { KatalogKaydi, Program } from './data/tipler'
+import { basvurulariYukle, giderBaglariYukle, havuzYukle, MODUL_ID, PLANSIZ, profilYukle } from './depo'
+import type { BelgeHavuzu } from './motor/belgeHavuzu'
 import type { Basvuru } from './motor/basvuru'
 import type { GiderBagi } from './motor/finansman'
 import type { DestekProfili } from './motor/profil'
@@ -17,13 +21,15 @@ let katalog: Promise<readonly Program[]> | undefined
 
 /** Kataloğu bir kez yükler. Yükleme hata verirse sonraki istek yeniden dener. */
 export function katalogYukle(): Promise<readonly Program[]> {
-  katalog ??= import('./data/programlar').then(
-    (m) => m.PROGRAMLAR,
-    (error: unknown) => {
-      katalog = undefined
-      throw error
-    },
-  )
+  katalog ??= fetch(katalogAdresi).then(async (yanit) => {
+    if (!yanit.ok) throw new Error(`Katalog indirilemedi. Durum: ${yanit.status}.`)
+    const veri: unknown = await yanit.json()
+    if (!Array.isArray(veri)) throw new Error('Katalog dosyası bozuk.')
+    return katalogOlustur(veri as KatalogKaydi[])
+  }).catch((error: unknown) => {
+    katalog = undefined
+    throw error
+  })
   return katalog
 }
 
@@ -86,6 +92,12 @@ export function useBasvurular(planId: string | undefined) {
 export function useGiderBaglari(planId: string | undefined) {
   const { veri, hata, yenile } = useModulVerisi<GiderBagi[]>(planId, giderBaglariYukle)
   return { baglar: planId ? veri : [], hata, yenile }
+}
+
+/** Ortak belge havuzu. Plan açıksa planın, plan yoksa plansız yerin havuzu okunur. */
+export function useHavuz(yer: string) {
+  const { veri, hata, yenile } = useModulVerisi<BelgeHavuzu>(yer, havuzYukle)
+  return { havuz: veri, hata, yenile }
 }
 
 export const OKUMA_HATASI = 'Kayıtlı bilgiler okunamadı. Bilgileriniz silinmedi. Sayfayı yenileyin. Sorun sürerse tarayıcının depolama iznini kontrol edin.'

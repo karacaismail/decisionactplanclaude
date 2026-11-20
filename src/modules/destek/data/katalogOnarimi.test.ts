@@ -5,14 +5,22 @@ import { PROGRAMLAR } from './programlar'
 import { SOZLUK } from './sozluk'
 import { sozlukAra } from '../metinler'
 
-it('her program en az bir fayda taşır ve süreler bilinmiyor olarak başlar', () => {
+it('her program en az bir fayda taşır, süre yalnız resmî kaynakla bilinir', () => {
   expect(PROGRAMLAR).toHaveLength(46)
   for (const p of PROGRAMLAR) {
     expect(p.faydalar.length, p.id).toBeGreaterThan(0)
-    expect(p.sure.degerlendirme.state).toBe('bilinmiyor')
-    expect(p.sure.ilkOdeme.state).toBe('bilinmiyor')
-    expect(p.odemeBicimi.state).toBe('bilinmiyor')
+    for (const fact of [p.sure.degerlendirme, p.sure.ilkOdeme, p.odemeBicimi]) {
+      if (fact.state !== 'kaynakli') continue
+      // 20 Kasım 2026 doğrulamasından gelir. Kaynak adresi ve alıntı taşır.
+      expect(fact.sourceUrl, p.id).toMatch(/^https:\/\//)
+      expect(fact.asOf, p.id).toBe('2026-11-20')
+    }
+    // Resmî metinlerin hiçbiri ilk ödeme süresini yazmıyor.
+    expect(p.sure.ilkOdeme.state, p.id).toBe('bilinmiyor')
   }
+  expect(PROGRAMLAR.filter((p) => p.sure.degerlendirme.state === 'kaynakli').map((p) => p.id).sort()).toEqual(['bigg1812', 'eic', 'eureka1709', 'hit30', 'istka', 'kosgebGirisimciA', 'turcorn'])
+  // Kaynağı bulunamayan programın süresi ve ödeme biçimi bilinmiyor kalır.
+  for (const id of ['eximbank', 'meslekOrgutleri']) expect(PROGRAMLAR.find((p) => p.id === id)!.odemeBicimi.state).toBe('bilinmiyor')
 })
 
 it('katalog kaynaksız süreyi reddeder', () => {

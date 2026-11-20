@@ -38,8 +38,9 @@ describe('ön eşleşme', () => {
     for (const profil of [{}, HEPSI_BILMIYORUM]) {
       const gruplar = eslestirHepsi(PROGRAMLAR, profil, BUGUN)
       expect(gruplar.uygun).toEqual([])
-      expect(gruplar.uygunDegil).toEqual([])
-      expect(gruplar.belki).toHaveLength(PROGRAMLAR.length)
+      // Kaldırılan program bilgiden bağımsız olarak "Uygun değil" olur.
+      expect(gruplar.uygunDegil.map((e) => e.programId)).toEqual(['kosgebIsletmeGelistirme'])
+      expect(gruplar.belki).toHaveLength(PROGRAMLAR.length - 1)
     }
   })
 
@@ -116,7 +117,8 @@ describe('ön eşleşme', () => {
   })
 
   it('KOSGEB kaydı olmayan işletme kayıt isteyen programda uygun değildir', () => {
-    const sonuc = eslestir(program('kosgebIsletmeGelistirme'), { kosgeb: 'hayir' }, BUGUN)
+    // İşletme Geliştirme programı kaldırıldı. Yapay Zekâ Kredisi de KOSGEB kaydı ister.
+    const sonuc = eslestir(program('kosgebYapayZekaKredisi'), { kosgeb: 'hayir' }, BUGUN)
     expect(sonuc.sonuc).toBe('uygun_degil')
     expect(sonuc.nedenler.join(' ')).toMatch(/KOSGEB kaydı/)
   })

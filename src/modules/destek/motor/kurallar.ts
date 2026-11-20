@@ -229,7 +229,11 @@ export const KURALLAR: Readonly<Record<string, KuralSeti>> = {
       'Program küçük ya da orta ölçekli işletmeler içindir. Mikro işletmenin başvurup başvuramayacağını kuruma sorun.',
     ),
   ),
-  tubitak1501: set(turKurali("Türkiye'de yerleşik bir sermaye şirketi olmalı.", ['limited', 'anonim'], ['sahis'], SERMAYE_SIRKETI_METNI)),
+  /* 20 Kasım 2026 doğrulaması: 2026 yılı 2. çağrıya yalnız KOBİ ölçeğindeki sermaye şirketleri başvurabilir. */
+  tubitak1501: set(
+    turKurali("Türkiye'de yerleşik ve KOBİ ölçeğinde bir sermaye şirketi olmalı.", ['limited', 'anonim'], ['sahis'], SERMAYE_SIRKETI_METNI),
+    KOBI_OLMALI("Türkiye'de yerleşik ve KOBİ ölçeğinde bir sermaye şirketi olmalı."),
+  ),
   tubitak1507: set(
     turKurali('KOBİ olan bir sermaye şirketi olmalı.', ['limited', 'anonim'], ['sahis'], SERMAYE_SIRKETI_METNI),
     KOBI_OLMALI('KOBİ olan bir sermaye şirketi olmalı.'),

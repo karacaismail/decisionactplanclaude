@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { katalogHatalari } from './denetim'
 import { PROGRAMLAR } from './programlar'
 import type { Program } from './tipler'
-import { eskiMetniGoster, tutarVarMi } from '../motor/tazelik'
+import { alanMetni, eskiMetniGoster, metinKaynagi, tutarVarMi } from '../motor/tazelik'
 
 const temiz = (): Program => structuredClone(PROGRAMLAR.find((p) => p.id === 'tubitak1501')!) as Program
 
@@ -83,12 +83,16 @@ describe('katalog denetimi', () => {
 
   it('eski tutar, oran, süre ve tarih yerine bilgi verir', () => {
     for (const p of PROGRAMLAR) {
-      const metinler = [p.ad, p.ozet, p.destekTuru, p.kanal, ...p.kosullar, ...p.uygunGider, ...p.haricGider, ...p.belgeler, p.tutar.metin.value ?? '']
-      for (const m of metinler) expect(tutarVarMi(eskiMetniGoster(m, p.kaynak, '2026-11-19')), `${p.id}: ${m}`).toBe(false)
+      // Serbest metinler 12 Ağustos 2026 gününe göre eskir. Kart doğrulanmış olsa da eskir.
+      const metinler = [p.ad, p.ozet, p.destekTuru, p.kanal, ...p.kosullar, ...p.uygunGider, ...p.haricGider, ...p.belgeler]
+      for (const m of metinler) expect(tutarVarMi(eskiMetniGoster(m, metinKaynagi(p), '2026-11-20')), `${p.id}: ${m}`).toBe(false)
+      // Tutar metni kendi kontrol gününe göre eskir. Doğrulanmayan programın tutarı görünmez.
+      const tutar = alanMetni(p.tutar.metin, '2026-11-20', (v) => v)
+      if (p.tutar.metin.asOf !== '2026-11-20') expect(tutarVarMi(tutar), p.id).toBe(false)
     }
     for (const metin of ["Sınır 100.000.000 TL'dir.", 'Eşik 2 milyar TL dolayındadır.', 'Oran %75 olur.', 'Proje 24 ay sürer.', 'İki tam yıl sürer.', 'İki yılın sonunda biter.', 'Gider 24 ayda ödenir.', 'Başvuru 1 Ocak 2027 günü başlar.']) {
-      expect(eskiMetniGoster(metin, temiz().kaynak, '2026-11-19')).toBe('Bilinmiyor. Bilgi eski.')
-      expect(eskiMetniGoster(metin, temiz().kaynak, '2026-09-01')).toBe(metin)
+      expect(eskiMetniGoster(metin, metinKaynagi(temiz()), '2026-11-19')).toBe('Bilinmiyor. Bilgi eski.')
+      expect(eskiMetniGoster(metin, metinKaynagi(temiz()), '2026-09-01')).toBe(metin)
     }
     expect(tutarVarMi('1709 EUREKA ve Eurostars-3')).toBe(false)
   })
