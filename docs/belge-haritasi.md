@@ -90,6 +90,7 @@ Bu iş tamamlandı. Uygulamada çalışıyor.
 | [Yazılım, hizmet ve rol modeli](<../reports/Yazılım hizmet ve rol modeli.md>) | Önceki hizmet ve rol raporu | Tarihsel |
 | [Arka yüz planı](arka-yuz-plani.md) | Bütünleşik rapora taşındı. | Yönlendirme |
 | [Modül mimarisi](moduller/mimari.md) | Proje ve destek modüllerinin çekirdeğe bağlanışı. Veri yeri, taslaklar, dosya biçimi ve kapılar. | Tek kaynak |
+| [Destek konsey planı](moduller/destek-konsey-plani.md) | Destek ve teşvik bölümünün bütün sektörlere uygun sonraki geliştirme planı. Üç model uzlaştı. | Plan |
 
 ## Çekmece 5. Pazar, müşteri ve iş modeli
 
