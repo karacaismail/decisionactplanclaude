@@ -218,6 +218,16 @@ Destek modülü her başvuru yazımından sonra özet yazar. Özette başvuru sa
 
 Destek parası kesin para sayılmaz. İki yer de bunu açıkça yazar. 3.3 satırında "Beklenen, kesin değil" başlığı ayrı durur. Bağlanan toplam para değişmez. Uçtan uca test bu toplamı başvurudan önce ve sonra karşılaştırır.
 
+## Destek başvurusundaki eklenen belgeler
+
+Bu bölümü Claude 20 Kasım 2026 Cuma günü yazdı. Başvuru kaydının belge listesinde yeni bir alan var. Alanın adı `kanit` alanıdır.
+
+- Kişi belge ve kanıt listesinden belge ekleyince belge bu alanı taşır. Alan listedeki belgenin kimliğidir.
+- Programın kendi belgelerinde bu alan yoktur. Yalnız `kanit` alanı olan belge çıkarılabilir.
+- Veri sürümü 1 olarak kaldı. Alan isteğe bağlıdır. Eski kayıtlar değişmeden okunur.
+- Bozuk `kanit` değeri başvuruyu gizlemez. Belge yine okunur, yalnız alan atılır.
+- Eski sürüm bu alanı okumaz. Eski sürümde eklenen belge, programın belgesi gibi görünür ve çıkarılamaz.
+
 ## Yedek
 
 Her yedek modül verisini de taşır. Planlar ekranındaki "JSON indir" düğmesi paket yazar. Pano ekranındaki yedek düğmesi de paket yazar. Çıktılar ekranında güncel taslağın JSON dosyası da paket olur. Eski sürümün JSON dosyası yalnız donmuş planı taşır. Bu dosya yedek sayılmaz.
@@ -226,6 +236,6 @@ Bütün planları tek dosyaya yazan bir dışa aktarma yoktur. Her plan kendi do
 
 ## Bu sürümün sınırları
 
-- Proje modülünün ekranları çalışır. Destek modülünün ekranları yalnız açıklama ve boş durum gösterir.
+- Proje ve destek modüllerinin ekranları çalışır.
 - Plan silinirken modül verisi silinemezse uyarı yalnız konsola yazılır. Kalan veriyi sonradan temizleyen bir iş henüz yoktur.
 - Çekirdek yolların listesi iki yerde durur. Liste `src/platform/manifest.ts` ve `src/app/routes.tsx` dosyalarındadır. Yeni çekirdek yol eklenince iki liste de güncellenir.
