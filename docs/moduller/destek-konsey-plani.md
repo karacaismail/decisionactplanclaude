@@ -293,3 +293,18 @@ Turların bütün metinleri bu çalışmanın Pane klasöründe durur. Plan ger�
 1. Tarım, turizm ve öteki illerin programları kataloğa eklensin mi?
 2. Ortak sözleşmeye `selectLimits` eklensin mi?
 3. Toplam JS sınırı aşılırsa katalog ayrı veri dosyasına mı taşınsın?
+
+## G. Ürün sahibinin kararları
+
+Ürün sahibi bu kararları 20 Kasım 2026 Cuma günü verdi.
+
+1. **Meslek örgütleri kaydı kalır.** Meslek örgütleri ve sektörel birlikler araştırılır. Danışman, işletmenin hangi örgütten nasıl yararlanacağını uygulamada görür.
+2. **Eximbank kaydı doğru adını alır.** Kaynağı bulunamayan bütün veriler üç modelle araştırılır. Modeller Gemini, Claude ve Codex'tir.
+3. **Tutarlar para birimi alanı alır.** Para birimi ISO 4217 koduyla tutulur. Örneğin TRY, EUR ve USD. Ekran tutarı `tr-TR` biçimiyle yazar. Uygulama bir para birimini öbürüne çevirmez. Para, tarih ve sayıda uluslararası standartlar uygulanır.
+4. **TEKMER kaydı ikiye bölünür.** Kayıtlar Teknoloji Merkezi Destek Programı ve SEGEM Destek Programı olur. Ad, kapsam ve başvuran resmî kaynaktan alınır.
+5. **5746 ile 4691 kuralı önce araştırılır.** Kanun metni "yalnız aynı iş için" demiyor. "Bütün şirket için" de demiyor. Gelir İdaresinin yorumu araştırılır. Araştırma bitene kadar ekran kişiyi Gelir İdaresine ve mali müşavire yönlendirir.
+6. **Seçim ön motoru kurulur.** Motor çok adımlı bir akıştır. İşletme kendi koşullarını adım adım yazar. Motor her desteğin koşulunu işletmenin koşuluyla karşılaştırır. Biri seçilince öbürü kapanan desteklerde seçimi kişi yapar.
+7. **Tarım, turizm ve öteki illerin programları eklenir.** Örneğin TKDK, Kültür ve Turizm Bakanlığı ve 26 kalkınma ajansı araştırılır.
+8. **Ticaret Bakanlığının eksik destekleri eklenir.** Örneğin 5973 sayılı İhracat Destekleri Kararı, KOOP-DES, 2018/12 ihracat iadesi ve prefinansman eklenir. Destek Yönetim Sistemi formları belge listesine adlarıyla yazılır.
+9. **`selectLimits` okuma işlevi kalır.**
+10. **Katalog ayrı veri dosyasında kalır.**
