@@ -68,10 +68,11 @@ describe('kayıtlı modüller', () => {
     expect(destek.every((n) => !/^\d/.test(n.group ?? ''))).toBe(true)
   })
 
+  // Her ekran ilk kez dönüştürülür. Bütün test takımı paralel çalışınca bu iş 5 saniyeyi geçebilir.
   it('modül ekranları yükleyici işlevle gelir', async () => {
     const loaded = await Promise.all(MODULE_ROUTES.map((r) => r.load()))
     expect(loaded.every((m) => typeof m.default === 'function')).toBe(true)
-  })
+  }, 30_000)
 
   it('her modülün yaşam döngüsü geç yüklenir', async () => {
     for (const m of MODULES) {
