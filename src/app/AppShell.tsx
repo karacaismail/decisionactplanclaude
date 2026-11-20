@@ -22,7 +22,7 @@ import type { ModuleIcon } from '@/platform/types'
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
 /* Modül bildirimi ikonu adla verir. Bilinmeyen ad genel ikonla çizilir. */
-const MODULE_ICONS: Record<ModuleIcon, typeof Briefcase> = { kanban: Kanban, handCoins: HandCoins, target: Target, files: Files, folder: Folders, clipboard: ClipboardText, receipt: Receipt, bookBookmark: BookBookmark }
+const MODULE_ICONS: Record<ModuleIcon, typeof Briefcase> = { kanban: Kanban, handCoins: HandCoins, target: Target, files: Files, folder: Folders, clipboard: ClipboardText, receipt: Receipt, bookBookmark: BookBookmark, chartBar: ChartBar }
 
 /** Adrese en uzun önekle uyan modül bağlantısı seçilir. Böylece "/destek/eslesme" açıkken "/destek" seçili görünmez. */
 function activeModulePath(pathname: string): string | undefined {

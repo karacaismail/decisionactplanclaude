@@ -1,6 +1,7 @@
 /**
  * Destek modülünün deposu. Veri plan dosyasına yazılmaz. Modül deposunda durur.
- * Anahtarlar: "<plan>/profil" ve "<plan>/basvuru/<kimlik>".
+ * Anahtarlar: "<plan>/profil", "<plan>/basvuru/<kimlik>" ve "<plan>/gider-bag/<satır>".
+ * Gider bağı planın kaynak satırını başvurulara bağlar. Bağ plana yazılmaz ve özeti değiştirmez.
  * Plan açık değilse profil "_plansiz" yerinde durur. Bu yer bir plana bağlı değildir.
  * Yazmalar sırayla çalışır. Her yazma son kaydı okur, değişikliği uygular ve sonra yazar.
  * Böylece arka arkaya iki değişiklik birbirini silmez. Her başvuru yazımından sonra plan özeti yeniden hesaplanır.
@@ -8,8 +9,9 @@
 import { moduleStore } from '@/platform/kv'
 import { writeRollup } from '@/platform/rollups'
 import type { IsoTarih, Program } from './data/tipler'
-import { basvuruDegistir, basvuruOku, ozetHesapla, type Basvuru, type BasvuruDegisikligi, type DesteksizCevap } from './motor/basvuru'
+import { BASVURU_KIMLIGI, basvuruDegistir, basvuruOku, ozetHesapla, type Basvuru, type BasvuruDegisikligi, type DesteksizCevap } from './motor/basvuru'
 import { profilOku, type Alan, type DestekProfili, type DestekTercihi } from './motor/profil'
+import { giderBagiOku, SATIR_KIMLIGI, type GiderBagi } from './motor/finansman'
 import { bugunIso } from './motor/tazelik'
 
 export { ozetHesapla } from './motor/basvuru'
@@ -133,5 +135,47 @@ export function basvuruSil(planId: string, id: string): Promise<void> {
   return sirayla(async () => {
     await depo().delete(`${basvuruOnEki(planId)}${id}`)
     await ozetDene(planId)
+  })
+}
+
+const giderBagOnEki = (planId: string) => `${planId}/gider-bag/`
+
+/** Planın gider bağları. Satır kimliği anahtarıyla uyuşmayan kayıt okunmaz. */
+export async function giderBaglariYukle(planId: string): Promise<GiderBagi[]> {
+  const d = depo()
+  const onEk = giderBagOnEki(planId)
+  const liste: GiderBagi[] = []
+  for (const key of await d.keys(onEk)) {
+    const bag = giderBagiOku(await d.get(key))
+    if (bag && bag.satirId === key.slice(onEk.length)) liste.push(bag)
+  }
+  return liste.sort((a, b) => a.satirId.localeCompare(b.satirId))
+}
+
+/**
+ * Bir kaynak satırına tek bir bağı ekler ya da kaldırır. Bu yazma planı ve özeti değiştirmez.
+ * Değişiklik depodaki son kayda uygulanır. Böylece arka arkaya iki işaret birbirini silmez.
+ * Planda olmayan başvuruya bağ kurulmaz. Silinmiş başvurunun eski bağı bu yazmada atılır.
+ * Son bağ kalkınca kayıt silinir.
+ */
+export function giderBagiDegistir(planId: string, satirId: string, basvuruId: string, bagli: boolean): Promise<GiderBagi | undefined> {
+  return sirayla(async () => {
+    if (!planId || planId === PLANSIZ) throw new Error('Gider bağı için bir plan açın.')
+    if (!SATIR_KIMLIGI.test(satirId)) throw new Error('Gider satırı geçersiz.')
+    if (!BASVURU_KIMLIGI.test(basvuruId)) throw new Error('Başvuru kimliği geçersiz.')
+    const mevcut = new Set((await basvurulariYukle(planId)).map((b) => b.id))
+    if (bagli && !mevcut.has(basvuruId)) throw new Error('Başvuru bulunamadı.')
+    const key = `${giderBagOnEki(planId)}${satirId}`
+    const okunan = giderBagiOku(await depo().get(key))
+    const onceki = (okunan?.satirId === satirId ? okunan.basvuruIdleri : []).filter((id) => mevcut.has(id) && id !== basvuruId)
+    const istenen = bagli ? [...onceki, basvuruId] : onceki
+    const bag = giderBagiOku({ satirId, basvuruIdleri: istenen })
+    if (!bag || bag.basvuruIdleri.length !== istenen.length) throw new Error('Gider bağı geçersiz.')
+    if (!bag.basvuruIdleri.length) {
+      await depo().delete(key)
+      return undefined
+    }
+    await depo().set(key, bag)
+    return bag
   })
 }

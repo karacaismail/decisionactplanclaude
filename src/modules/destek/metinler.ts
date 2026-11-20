@@ -141,3 +141,6 @@ export function harfeGore<T extends Pick<Terim, 'ad'>>(terimler: readonly T[]): 
 export function terimBul<T extends Pick<Terim, 'id'>>(sozluk: readonly T[], id: string | undefined): T | undefined {
   return id ? sozluk.find((t) => t.id === id) : undefined
 }
+
+/** Aynı gider iki başvuruya bağlanınca çıkan yumuşak uyarı. Uyarı kesin kural değildir. */
+export const IKI_BASVURU_UYARISI = 'Bu gider iki başvuruda da yer alıyor. Birlikte kullanımı kurumlara sorun.'
