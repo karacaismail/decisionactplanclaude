@@ -133,7 +133,7 @@ Program kartının bölümleri şunlardır:
 **Sonra eklenebilecekler:**
 
 - illere göre kalkınma ajansı çağrıları,
-- birlikte kullanılamayan desteklerin denetimi,
+- birlikte kullanılamayan desteklerin kesin denetimi. Bugün yalnız katalogdaki kayıtlara göre uyarı çıkar,
 - uygulama dışında katalog güncelleme hattı.
 
 ## Kabul ölçütleri
@@ -178,6 +178,62 @@ KOSGEB Küresel Rekabetçilik için kurumun sayfası 19 Kasım 2026 Perşembe g�
 - Plan açık değilse profil plana bağlı olmayan ayrı bir yerde durur.
 - Başvurular plana bağlıdır. Başvuru eklemek için bir plan açık olmalıdır.
 - Her başvuru değişikliğinden sonra plan özeti yeniden yazılır. Özet, başvuruları durumlarına göre sayar.
+
+### 20 Kasım 2026 eklemeleri
+
+Bu bölümü Claude 20 Kasım 2026 Cuma günü yazdı. Dört yeni özellik eklendi. Verinin kaynağı önceki destek teşvik çalışmasıdır. Bu verinin son kontrolü 12 Ağustos 2026 Çarşamba günüdür.
+
+Kaynak tek bir işletme için yazılmıştı. Bu yüzden o işletmeye ve sektörüne özel maddeler alınmadı. Öteki metinler yalın Türkçeyle yeniden yazıldı. Yeni tutar, kural ya da bilgi eklenmedi.
+
+#### 1. Belge ve kanıt listesi
+
+- Ekranın adresi `/destek/belgeler` olur. Bu ekran plan istemez.
+- Listede 9 numaralı grup ve 36 belge var. Her belgenin yanında tek cümlelik nedeni yazar.
+- Kaynakta 45 belge vardı. 9 belge alınmadı. Bu belgeler tek işletmenin ürününe ya da emlak sektörüne aitti.
+- Kişi "Başvurularım" ekranında listeden belge seçer. Belge başvurunun belge listesine eklenir.
+- Aynı adlı belge ikinci kez eklenmez. Büyük ve küçük harf, boşluk ve noktalama farkı sayılmaz.
+- Kişi yalnız listeden eklediği belgeyi çıkarabilir. Programın kendi belgeleri çıkarılmaz.
+- Eklenen belge başvuru kaydında durur. Bu yüzden dışa aktarma ve içe almada korunur.
+
+#### 2. Gider rehberi
+
+- Ekranın adresi `/destek/giderler` olur.
+- Kişi bir gider seçer. Ekran bu gideri ödeyebilecek programları gösterir. Her program kendi sayfasına bağlanır.
+- Listede 14 gider var. Kaynaktaki 14 giderin hepsi alındı. Notlardaki sektöre özel sözler çıkarıldı.
+- Ekran bu listenin ilk rehber olduğunu söyler. Liste söz değildir.
+- Seçilen gider adreste durur. Sayfa yenilenince seçim kalır.
+
+#### 3. Birlikte kullanma
+
+Program sayfasında 7. bölümün adı "Bu programla birlikte kullanma" olur. Bölüm katalogdaki kayıtları türe göre gruplar. Katalogda beş tür var:
+
+| Kayıttaki değer | Ekrandaki başlık | Anlamı |
+|---|---|---|
+| `dislayici` | Birlikte kullanılamaz | Kişi iki programdan birini seçer. |
+| `ayri_gider` | Ayrı giderle birlikte kullanılabilir | Her program başka bir gideri öder. Aynı fatura iki programa yazılmaz. |
+| `onkosul` | Biri ötekine bağlı | Bir programa girmek için ötekinden bir adım gerekebilir. Kayıtta sıra yazmaz. |
+| `red_alternatifi` | Ret alırsanız seçenek | Bir programdan ret gelirse öteki program seçenek olabilir. |
+| `uyumlu` | Birlikte kullanılabilir | Kaynağa göre iki program birlikte kullanılır. |
+
+- Uygulama kaydı iki yönden okur. Örneğin A programının kaydı B programını anabilir.
+- İki kayıt farklı olabilir. Bu durumda daha sıkı tür gösterilir. Ekran öteki kaydı da yazar. Katalogda böyle iki çift var.
+- "Başvurularım" ekranı başvurulardaki her program çiftine bakar. Birlikte kullanılamayan çift için uyarı çıkar. Ayrı gider isteyen çift için "Aynı faturayı iki programa yazmayın." uyarısı çıkar. Uyarı yazı ve ikonla görünür.
+- Kaynakta kaydı olmayan çift "Bilgi yok" der. Bu çiftler ayrı bir açılır bölümde durur.
+
+#### 4. Destek sözlüğü
+
+- Ekranın adresi `/destek/sozluk` olur. Sözlükte 26 terim var. Terimler Türkçe abece sırasıyla dizilir.
+- Eski 12 terim aynı yerde durur. Program sayfalarındaki "Terimlerin anlamı" bölümü bu 12 terimi gösterir.
+- Kaynakta 23 terim vardı. 14 terim yeni eklendi. 5 terim eski terimlerle birleşti. 4 terim alınmadı. İki terim emlak sektörüne aitti. İki terim destek terimi değildi.
+- Belge listesi, gider rehberi ve program sayfası terimi ilk geçtiği yerde sözlüğe bağlar.
+- Yeni terimler yalnız destek bölümünde görünür. Bu yüzden `docs/terim-sozlugu.md` belgesi değişmedi.
+
+#### Denetim
+
+- `ekVeri.test.ts` testi yeni veriyi denetler. Kimlikler tektir. Program ve terim bağlantıları geçerlidir.
+- Metinde noktalı virgül, uzun çizgi ve eğik çizgi olmaz. Tek işletmenin bakışıyla yazılmış söz olmaz.
+- Bir cümle en çok 16 kelime olur. Belgenin nedeni tek cümledir.
+- Destek verisi plan dosyasına yazılmaz.
 
 ### Sonraki sürüme kalanlar
 

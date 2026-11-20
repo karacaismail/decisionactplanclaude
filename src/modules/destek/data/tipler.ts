@@ -24,7 +24,7 @@ export type Durum = (typeof DURUMLAR)[number]
 export const TAVAN_TURLERI = ['hibe_tavani', 'oransal', 'yok', 'kredi_anaparasi', 'program_butcesi'] as const
 export type TavanTuru = (typeof TAVAN_TURLERI)[number]
 
-/** İki programın birlikte kullanımı. Bu sürümde yalnız veri olarak saklanır. */
+/** İki programın birlikte kullanımı. Ekrandaki yalın açıklamalar metinler.ts dosyasındadır. */
 export const KOMBINASYONLAR = ['ayri_gider', 'uyumlu', 'onkosul', 'red_alternatifi', 'dislayici'] as const
 export type Kombinasyon = (typeof KOMBINASYONLAR)[number]
 
@@ -62,4 +62,38 @@ export interface Program {
   kanal: string
   kaynak: { url: string; ad: string; asOf: IsoTarih }
   kombinasyon: Readonly<Partial<Record<string, Kombinasyon>>>
+}
+
+/** Belge ve kanıt listesindeki tek madde. */
+export interface KanitMaddesi {
+  id: string
+  ad: string
+  /** Belgenin neden gerektiğini anlatan tek cümle. */
+  neden: string
+  /** Sözlükteki terimin kimliği. Ekran terimin anlamına bağlantı verir. */
+  terim?: string
+}
+
+export interface KanitGrubu {
+  id: string
+  ad: string
+  maddeler: readonly KanitMaddesi[]
+}
+
+/** Gider kalemi ve bu gideri ödeyebilecek programlar. Liste ilk rehberdir, söz değildir. */
+export interface GiderKalemi {
+  id: string
+  ad: string
+  not?: string
+  /** Katalogdaki program kimlikleri. */
+  programlar: readonly string[]
+  terim?: string
+}
+
+export interface Terim {
+  id: string
+  ad: string
+  anlam: string
+  /** Program ekranlarındaki kısa terim listesinde de görünür. */
+  temel?: boolean
 }

@@ -4,7 +4,7 @@ import { readRollup, ROLLUP_KEY } from '@/platform/rollups'
 import { PROGRAMLAR } from './data/programlar'
 import { basvuruEkle, basvuruGuncelle, basvuruSil, basvurulariYukle, ozetHesapla, PLANSIZ, profilAlanKaydet, profilKaydet, profilYukle } from './depo'
 import lifecycle from './lifecycle'
-import { BASVURU_DURUMLARI, DESTEKSIZ_CEVAPLARI, basvuruOku } from './motor/basvuru'
+import { BASVURU_DURUMLARI, DESTEKSIZ_CEVAPLARI, basvuruOku, belgeAnahtari } from './motor/basvuru'
 
 const PLAN_KEY = 'decisionactplan-v1'
 const SIMDI = '2026-11-19T10:00:00.000Z'
@@ -124,6 +124,67 @@ describe('başvurular', () => {
   it('bozuk başvuru kaydı okunmaz', () => {
     expect(basvuruOku({ id: 'x' })).toBeUndefined()
     expect(basvuruOku(null)).toBeUndefined()
+  })
+})
+
+describe('belge ve kanıt listesinden eklenen belgeler', () => {
+  it('belge listesine eklenir ve programın belgelerinden ayrı işaretlenir', async () => {
+    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'evet', SIMDI)
+    const g = await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
+    expect(g.belgeler).toHaveLength(5)
+    expect(g.belgeler.at(-1)).toEqual({ ad: 'İmza sirküleri', hazir: false, kanit: 'k4' })
+    expect(g.belgeler.slice(0, 4).every((x) => x.kanit === undefined)).toBe(true)
+    expect((await basvurulariYukle('plan-1'))[0].belgeler.at(-1)?.kanit).toBe('k4')
+  })
+
+  it('aynı adlı belge ikinci kez eklenmez', async () => {
+    const b = await basvuruEkle('plan-1', program('kosgebIsletmeGelistirme'), 'evet', SIMDI)
+    // Programın kendi belgesinde "KOBİ beyannamesi" var. Büyük ve küçük harf ile boşluk farkı sayılmaz.
+    await expect(basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: '  kobi   BEYANNAMESİ ', kanit: 'k10' } }, SIMDI)).rejects.toThrow(/zaten/)
+    await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
+    await expect(basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri.', kanit: 'k99' } }, SIMDI)).rejects.toThrow(/zaten/)
+    await expect(basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'Başka ad', kanit: 'k4' } }, SIMDI)).rejects.toThrow(/zaten/)
+    expect((await basvurulariYukle('plan-1'))[0].belgeler).toHaveLength(5)
+  })
+
+  it('yalnız eklenen belge çıkarılır, sonraki işaret doğru belgeye gider', async () => {
+    const b = await basvuruEkle('plan-1', program('kgf'), 'evet', SIMDI)
+    await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
+    await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'Vergi levhası', kanit: 'k5' } }, SIMDI)
+    // Olmayan belgeyi çıkarmak kaydı değiştirmez ve hata vermez.
+    expect((await basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'yok' } }, SIMDI)).belgeler).toHaveLength(4)
+    // Ekran eski listeyi gösterirken çıkarma ile işaret arka arkaya gelir. İşaret adıyla doğru belgeyi bulur.
+    // Çıkarma düğmesine iki kez basılsa da ikinci çıkarma hata vermez.
+    await Promise.all([
+      basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'k4' } }, SIMDI),
+      basvuruGuncelle('plan-1', b.id, { belgeCikar: { kanit: 'k4' } }, SIMDI),
+      basvuruGuncelle('plan-1', b.id, { belge: { sira: 3, hazir: true, ad: 'Vergi levhası' } }, SIMDI),
+    ])
+    const [g] = await basvurulariYukle('plan-1')
+    expect(g.belgeler.map((x) => [x.ad, x.hazir])).toEqual([['Mali tablolar', false], ['Bankanın limit değerlendirmesi', false], ['Vergi levhası', true]])
+    await expect(basvuruGuncelle('plan-1', b.id, { belge: { sira: 0, hazir: true, ad: 'İmza sirküleri' } }, SIMDI)).rejects.toThrow(/bulunamadı/)
+  })
+
+  it('bozuk belge kimliği başvuruyu gizlemez, eski kayıt kimliksiz okunur', () => {
+    const temel = { id: 'b-1', programId: 'kgf', programAdi: 'KGF', durum: 'hazirlaniyor', desteksizYapar: 'evet', olusturma: SIMDI, guncelleme: SIMDI }
+    expect(basvuruOku({ ...temel, belgeler: [{ ad: 'Mali tablolar', hazir: false }] })?.belgeler).toEqual([{ ad: 'Mali tablolar', hazir: false }])
+    expect(basvuruOku({ ...temel, belgeler: [{ ad: 'X', hazir: true, kanit: 'boşluk var' }] })?.belgeler).toEqual([{ ad: 'X', hazir: true }])
+  })
+
+  it('dışa aktarma ve içe alma eklenen belgeyi korur', async () => {
+    const b = await basvuruEkle('plan-1', program('kgf'), 'evet', SIMDI)
+    await basvuruGuncelle('plan-1', b.id, { belgeEkle: { ad: 'İmza sirküleri', kanit: 'k4' } }, SIMDI)
+    const slice = await lifecycle.exportSlice!('plan-1')
+    await lifecycle.importSlice!(slice, { 'plan-1': 'plan-7' })
+    const [g] = await basvurulariYukle('plan-7')
+    expect(g.belgeler.at(-1)).toEqual({ ad: 'İmza sirküleri', hazir: false, kanit: 'k4' })
+  })
+})
+
+describe('belge adının normal biçimi', () => {
+  it('Türkçe harfleri, boşlukları ve noktalamayı sadeleştirir', () => {
+    expect(belgeAnahtari('  KOBİ   beyannamesi. ')).toBe(belgeAnahtari('kobi beyannamesi'))
+    expect(belgeAnahtari('Işık')).not.toBe(belgeAnahtari('isik'))
   })
 })
 

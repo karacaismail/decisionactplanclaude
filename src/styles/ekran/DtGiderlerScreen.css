@@ -1,0 +1,31 @@
+/* Gider rehberi ekranı. Seçiciler "dt-" önekiyle başlar. Mimari: docs/css-mimarisi.md */
+
+.dt-giderler { min-inline-size: 0; }
+
+.dt-giderler h2 { margin: 0; font-size: var(--font-section-title); line-height: 1.3; font-weight: var(--weight-strong); overflow-wrap: break-word; }
+
+.dt-giderler h3 { margin: var(--space-2) 0 0; font-size: var(--font-subsection-title); font-weight: var(--weight-strong); }
+
+.dt-giderler p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; overflow-wrap: break-word; }
+
+.dt-giderler .dt-giderler-not { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); padding: var(--padding-panel); background: var(--color-surface-work); border-radius: var(--radius-panel); min-inline-size: 0; }
+
+.dt-giderler .dt-giderler-alan { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-label); max-inline-size: 32rem; min-inline-size: 0; }
+
+.dt-giderler .dt-giderler-alan label { font-size: var(--font-body); font-weight: var(--weight-strong); }
+
+.dt-giderler .dt-giderler-alan .ant-select { inline-size: 100%; }
+
+.dt-giderler .dt-giderler-sonuc { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-giderler .dt-giderler-liste { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); margin: 0; padding: 0; list-style: none; min-inline-size: 0; }
+
+.dt-giderler .dt-giderler-liste li { display: grid; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; }
+
+.dt-giderler .dt-giderler-liste li p { color: var(--color-text-secondary); }
+
+.dt-giderler .dt-giderler-program { display: inline-flex; align-items: center; justify-self: start; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; overflow-wrap: break-word; }
+
+.dt-giderler-acilir .ant-select-item-option-content { white-space: normal; overflow-wrap: break-word; }
+
+.dt-giderler .dt-giderler-durum { color: var(--color-text-secondary); }

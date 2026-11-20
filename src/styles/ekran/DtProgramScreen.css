@@ -33,3 +33,15 @@
 .dt-program .dt-program-vurgu { font-weight: var(--weight-strong); }
 
 .dt-program .dt-program-liste { display: grid; gap: var(--space-2); margin: 0; padding-inline-start: var(--space-6); font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; overflow-wrap: break-word; }
+
+.dt-program .dt-program-birlikte { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--gap-control); min-inline-size: 0; }
+
+.dt-program .dt-program-birlikte p { margin: 0; font-size: var(--font-body); line-height: var(--line-body); max-inline-size: 72ch; overflow-wrap: break-word; }
+
+.dt-program .dt-program-birlikte-liste { display: grid; grid-template-columns: minmax(0, 1fr); gap: var(--space-1); margin: 0; padding: 0; list-style: none; min-inline-size: 0; }
+
+.dt-program .dt-program-birlikte-liste li { display: grid; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; }
+
+.dt-program .dt-program-birlikte-liste p { color: var(--color-text-secondary); }
+
+.dt-program .dt-program-birlikte-liste .dt-program-baglanti { overflow-wrap: break-word; }

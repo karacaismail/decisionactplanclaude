@@ -15,3 +15,5 @@
 @media (min-width: 720px) {
   .dt-terimler .dt-terimler-satir { grid-template-columns: 12rem minmax(0, 1fr); }
 }
+
+.dt-terimler .dt-terimler-hepsi { display: inline-flex; align-items: center; min-block-size: var(--target-touch); min-inline-size: var(--target-touch); margin-block-start: var(--space-2); font-size: var(--font-body); font-weight: var(--weight-strong); color: var(--color-action-text); text-decoration: underline; text-underline-offset: 3px; }

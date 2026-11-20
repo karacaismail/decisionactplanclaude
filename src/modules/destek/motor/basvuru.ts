@@ -14,6 +14,16 @@ export type DesteksizCevap = (typeof DESTEKSIZ_CEVAPLARI)[number]
 export interface BelgeMaddesi {
   ad: string
   hazir: boolean
+  /** Belge ve kanıt listesinden eklenen maddenin kimliği. Programın kendi belgesinde bu alan yoktur. */
+  kanit?: string
+}
+
+/** Belge ve kanıt listesindeki maddenin kimliği. */
+export const KANIT_KIMLIGI = /^[A-Za-z][A-Za-z0-9]{0,40}$/
+
+/** Aynı belgeyi bulmak için adı sadeleştirir. Türkçe büyük ve küçük harf, boşluk ve noktalama farkı sayılmaz. */
+export function belgeAnahtari(ad: string): string {
+  return ad.toLocaleLowerCase('tr-TR').normalize('NFC').replace(/[^\p{L}\p{N}]+/gu, ' ').trim()
 }
 
 export interface Basvuru {
@@ -34,8 +44,14 @@ export interface Basvuru {
 /**
  * Başvuru değişikliği. Belge işareti tek madde olarak gelir.
  * Böylece arka arkaya iki işaret birbirini silmez. Değişiklik her zaman son okunan kayda uygulanır.
+ * İşaret belgenin adını da taşıyabilir. Sıra kaymışsa belge adıyla bulunur. Örneğin araya bir çıkarma girmiş olabilir.
+ * Belge ve kanıt listesinden belge eklenebilir. Yalnız böyle eklenen belge çıkarılabilir.
  */
-export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'sonTarih'>> & { belge?: { sira: number; hazir: boolean } }
+export type BasvuruDegisikligi = Partial<Pick<Basvuru, 'durum' | 'sonTarih'>> & {
+  belge?: { sira: number; hazir: boolean; ad?: string }
+  belgeEkle?: { ad: string; kanit: string }
+  belgeCikar?: { kanit: string }
+}
 
 const metin = (v: unknown): v is string => typeof v === 'string' && v.trim().length > 0
 
@@ -46,7 +62,9 @@ function belgelerOku(v: unknown): BelgeMaddesi[] | undefined {
     if (!b || typeof b !== 'object') return undefined
     const x = b as Record<string, unknown>
     if (!metin(x.ad) || typeof x.hazir !== 'boolean') return undefined
-    out.push({ ad: x.ad, hazir: x.hazir })
+    /* Bozuk belge kimliği kaydı gizlemez. Belge yine okunur, yalnız kimliği atılır. */
+    const kanit = typeof x.kanit === 'string' && KANIT_KIMLIGI.test(x.kanit) ? x.kanit : undefined
+    out.push(kanit === undefined ? { ad: x.ad, hazir: x.hazir } : { ad: x.ad, hazir: x.hazir, kanit })
   }
   return out
 }
@@ -78,13 +96,26 @@ export function basvuruOku(value: unknown): Basvuru | undefined {
 
 /** Değişikliği uygular. Geçersiz değişiklikte hata fırlatır. */
 export function basvuruDegistir(b: Basvuru, degisiklik: BasvuruDegisikligi, simdi: string): Basvuru {
-  const { belge, ...alanlar } = degisiklik
+  const { belge, belgeEkle, belgeCikar, ...alanlar } = degisiklik
   const sonraki: Basvuru = { ...b, ...alanlar, guncelleme: simdi }
   if ('sonTarih' in degisiklik && degisiklik.sonTarih === undefined) delete sonraki.sonTarih
-  if (belge) {
-    if (!Number.isInteger(belge.sira) || belge.sira < 0 || belge.sira >= b.belgeler.length || typeof belge.hazir !== 'boolean') throw new Error('Belge bulunamadı.')
-    sonraki.belgeler = b.belgeler.map((x, i) => (i === belge.sira ? { ...x, hazir: belge.hazir } : x))
+  let belgeler = b.belgeler
+  /* Çıkarma iki kez gelebilir. Örneğin düğmeye iki kez basılır. Belge zaten yoksa kayıt değişmez. */
+  if (belgeCikar) belgeler = belgeler.filter((x) => x.kanit !== belgeCikar.kanit)
+  if (belgeEkle) {
+    const ad = typeof belgeEkle.ad === 'string' ? belgeEkle.ad.trim() : ''
+    if (!ad || !KANIT_KIMLIGI.test(belgeEkle.kanit)) throw new Error('Belge geçersiz.')
+    const anahtar = belgeAnahtari(ad)
+    if (belgeler.some((x) => x.kanit === belgeEkle.kanit || belgeAnahtari(x.ad) === anahtar)) throw new Error('Bu belge listede zaten var.')
+    belgeler = [...belgeler, { ad, hazir: false, kanit: belgeEkle.kanit }]
   }
+  if (belge) {
+    let sira = belge.sira
+    if (belge.ad !== undefined && belgeler[sira]?.ad !== belge.ad) sira = belgeler.findIndex((x) => x.ad === belge.ad)
+    if (!Number.isInteger(sira) || sira < 0 || sira >= belgeler.length || typeof belge.hazir !== 'boolean') throw new Error('Belge bulunamadı.')
+    belgeler = belgeler.map((x, i) => (i === sira ? { ...x, hazir: belge.hazir } : x))
+  }
+  sonraki.belgeler = belgeler
   const okunan = basvuruOku(sonraki)
   if (!okunan) throw new Error('Başvuru değişikliği geçersiz.')
   return okunan

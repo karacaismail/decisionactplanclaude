@@ -4,7 +4,7 @@ import { Button, Drawer, Layout, Menu, theme } from 'antd'
 import { Link, Outlet, useLocation } from 'react-router'
 import { NewPill } from '@/components/Pill'
 import { isNewPage } from '@/data/newPages'
-import { List, ListChecks, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb, Kanban, HandCoins, Target, Files } from '@phosphor-icons/react'
+import { List, ListChecks, Folders, SquaresFour, Paperclip, CheckSquare, FileText, ClockCounterClockwise, Moon, Sun, Compass, ChartBar, BookOpenText, Briefcase, Users, MapTrifold, Handshake, Wallet, Package, ArrowsClockwise, Signpost, DoorOpen, Strategy, Stack, Lightbulb, Kanban, HandCoins, Target, Files, ClipboardText, Receipt, BookBookmark } from '@phosphor-icons/react'
 import { usePlanStore, useCurrentPlan } from '@/store/planStore'
 import { DECISIONS } from '@/data/decisions'
 import { EXECUTION_DECISIONS, STAGES } from '@/data/stages'
@@ -22,7 +22,7 @@ import type { ModuleIcon } from '@/platform/types'
 const ICONS: Record<string, typeof Briefcase> = { briefcase: Briefcase, users: Users, map: MapTrifold, handshake: Handshake, wallet: Wallet, package: Package, repeat: ArrowsClockwise, signpost: Signpost }
 
 /* Modül bildirimi ikonu adla verir. Bilinmeyen ad genel ikonla çizilir. */
-const MODULE_ICONS: Record<ModuleIcon, typeof Briefcase> = { kanban: Kanban, handCoins: HandCoins, target: Target, files: Files, folder: Folders }
+const MODULE_ICONS: Record<ModuleIcon, typeof Briefcase> = { kanban: Kanban, handCoins: HandCoins, target: Target, files: Files, folder: Folders, clipboard: ClipboardText, receipt: Receipt, bookBookmark: BookBookmark }
 
 /** Adrese en uzun önekle uyan modül bağlantısı seçilir. Böylece "/destek/eslesme" açıkken "/destek" seçili görünmez. */
 function activeModulePath(pathname: string): string | undefined {
